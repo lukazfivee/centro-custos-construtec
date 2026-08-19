@@ -102,6 +102,15 @@ if (!gotLock) {
 
     mainWindow.loadFile(path.join(__dirname, '..', 'public', 'loading.html'));
 
+    mainWindow.webContents.on('did-finish-load', () => {
+      try {
+        const prefs = loadPrefs();
+        if (prefs.darkMode) {
+          mainWindow.webContents.executeJavaScript('document.documentElement.classList.add("dark")');
+        }
+      } catch {}
+    });
+
     mainWindow.on('close', () => {
       isQuitting = true;
       if (server) { try { server.close(); } catch {} }

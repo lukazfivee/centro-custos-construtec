@@ -557,8 +557,8 @@ function openBugReportModal(){
 const toggleDark=$('#toggle-dark');
 function applyDarkMode(value){document.documentElement.classList.toggle('dark',value);toggleDark.checked=value;localStorage.setItem('cc_dark',value);}
 if(localStorage.getItem('cc_dark')==='true')applyDarkMode(true);
-api('/appearance').then((data)=>{if(data.darkMode!==undefined)applyDarkMode(data.darkMode);}).catch(()=>{});
-toggleDark.addEventListener('change',()=>{applyDarkMode(toggleDark.checked);api('/appearance',{method:'POST',body:JSON.stringify({darkMode:toggleDark.checked})}).catch(()=>{});});
+try{if(window.electronAPI){const diskValue=window.electronAPI.getDarkMode();applyDarkMode(diskValue);}}catch{}
+toggleDark.addEventListener('change',()=>{applyDarkMode(toggleDark.checked);try{if(window.electronAPI)window.electronAPI.setDarkMode(toggleDark.checked);}catch{}});
 
 if(token&&usuario) startApp();
 

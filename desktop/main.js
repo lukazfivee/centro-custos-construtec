@@ -1,4 +1,4 @@
-const { app, BrowserWindow, Tray, Menu, nativeImage, dialog } = require('electron');
+const { app, BrowserWindow, Tray, Menu, nativeImage, dialog, ipcMain } = require('electron');
 const path = require('path');
 const fs = require('fs');
 
@@ -10,6 +10,7 @@ let isQuitting = false;
 const PORT = 3333;
 const SERVER_URL = `http://127.0.0.1:${PORT}`;
 const TRAY_ICON = path.join(__dirname, 'icon.png');
+const PRELOAD = path.join(__dirname, 'preload.js');
 const gotLock = app.requestSingleInstanceLock();
 
 if (!gotLock) {
@@ -54,6 +55,38 @@ if (!gotLock) {
     return nativeImage.createEmpty();
   }
 
+  function getPrefsPath() {
+    const dataRoot = process.env.RESTORE_ROOT_DIR || path.join(app.getPath('appData'), 'Construtec', 'CentroCustos', 'dados');
+    return path.join(dataRoot, 'preferences.json');
+  }
+
+  function loadPrefs() {
+    try {
+      const p = getPrefsPath();
+      if (fs.existsSync(p)) return JSON.parse(fs.readFileSync(p, 'utf8'));
+    } catch {}
+    return {};
+  }
+
+  function savePrefs(prefs) {
+    const dir = path.dirname(getPrefsPath());
+    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+    fs.writeFileSync(getPrefsPath(), JSON.stringify(prefs, null, 2), 'utf8');
+  }
+
+  function initIPC() {
+    ipcMain.on('get-dark-mode', (event) => {
+      const prefs = loadPrefs();
+      event.returnValue = prefs.darkMode === true;
+    });
+    ipcMain.on('set-dark-mode', (event, value) => {
+      const prefs = loadPrefs();
+      prefs.darkMode = value === true;
+      savePrefs(prefs);
+      event.returnValue = true;
+    });
+  }
+
   function createWindow() {
     mainWindow = new BrowserWindow({
       width: 1280,
@@ -64,7 +97,7 @@ if (!gotLock) {
       icon: getIcon(),
       show: true,
       backgroundColor: '#021D26',
-      webPreferences: { nodeIntegration: false, contextIsolation: true },
+      webPreferences: { nodeIntegration: false, contextIsolation: true, preload: PRELOAD },
     });
 
     mainWindow.loadFile(path.join(__dirname, '..', 'public', 'loading.html'));
@@ -111,6 +144,7 @@ if (!gotLock) {
   app.whenReady().then(async () => {
     try {
       loadEnv();
+      initIPC();
       initUpdater();
       createWindow();
       createTray();

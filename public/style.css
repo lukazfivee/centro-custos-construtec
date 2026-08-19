@@ -57,38 +57,21 @@ input:focus,select:focus,textarea:focus{outline-color:rgba(50,169,205,.16);borde
 .fab-bug{position:fixed;bottom:24px;right:24px;z-index:40;width:50px;height:50px;border-radius:50%;border:0;background:var(--orange);color:white;font-size:20px;cursor:pointer;box-shadow:0 6px 20px rgba(50,169,205,.3);display:grid;place-items:center;transition:transform .15s,box-shadow .15s}.fab-bug:hover{transform:scale(1.1);box-shadow:0 8px 28px rgba(50,169,205,.4)}
 html.dark .fab-bug{box-shadow:0 6px 20px rgba(0,0,0,.4)}
 
-/* ===== MODO NOTURNO ===== */
-html.dark{--canvas:#0e1418;--white:#161e24;--line:#263340;--muted:#7a8e99;--ink:#dce5ea;--navy-2:#1a2f38}
-html.dark{background:var(--canvas);color:var(--ink)}
-html.dark .login-panel{background:linear-gradient(145deg,#0e1418,#161e24)}
-html.dark .login-card{background:#1a2630;border-top-color:var(--orange)}
-html.dark .kpi,html.dark .panel,html.dark .filter-bar,html.dark .table-card,html.dark .center-card,html.dark .first-use-banner{background:var(--white);border-color:var(--line);box-shadow:none}
-html.dark .check-item{background:#1a2630;border-color:#263340}
-html.dark .check-item.done{background:#0d2a1f;border-color:#1a5c3a}
-html.dark input,html.dark select,html.dark textarea{background:#1a2630;border-color:#2a3d48;color:var(--ink)}
-html.dark input:focus,html.dark select:focus,html.dark textarea:focus{border-color:var(--orange)}
-html.dark th{background:#1a2228;color:#8fa4b0}
-html.dark td{border-top-color:#1e2c34}
-html.dark tbody tr:hover{background:#1a2430}
-html.dark .modal{background:#1a2630}
-html.dark .modal-head{border-bottom-color:#263340}
-html.dark .result-details{background:#1a2228}
-html.dark .result-kpis div{background:#1a2228}
-html.dark .center-card-icon{background:#1a2a34}
-html.dark .toast{background:#1a2630}
-html.dark .btn.secondary{background:#1a2630;border-color:#2a3d48;color:var(--ink)}
-html.dark .btn.secondary:hover{border-color:var(--orange)}
-html.dark .btn.danger{background:#1a2630;border-color:#5a2a2a;color:var(--red)}
-html.dark .page-head h1{color:var(--ink)}
-html.dark .panel h2,.dark .panel-head h2{color:var(--ink)}
-html.dark .sync-intro{background:linear-gradient(135deg,#0a1216,#162228)}
-html.dark .sidebar{background:linear-gradient(180deg,rgba(10,18,22,.98),rgba(12,24,30,.99))}
-html.dark .pill{background:#1a2a34;color:#8fa4b0}
-html.dark .pill.receita,.dark .pill.ativo,.dark .pill.liquidado,.dark .pill.projeto-concluido{background:#0d2a1f;color:#4ac98f}
-html.dark .pill.despesa,.dark .pill.vencido{background:#2a1414;color:#e07070}
-html.dark .pill.pendente,.dark .pill.projeto-planejamento{background:#2a2410;color:#d4a830}
-html.dark .pill.projeto-execucao{background:#0e2a34;color:#4ac0e0}
-html.dark .pill.projeto-pausado{background:#1e1430;color:#a070d0}
-html.dark .pill.inativo,html.dark .pill.inativo{background:#1a2228;color:#7a8e99}
-html.dark .check-item{background:#1a2630;border-color:#263340}
-html.dark .first-use-banner{border-color:#2a4050}
+html.dark .kpi p,html.dark .panel p,html.dark .panel h2,html.dark .panel-head h2{color:var(--ink)!important}
+html.dark .kpi strong,html.dark .panel strong,html.dark .kpi span{color:var(--white)!important}
+html.dark .kpi strong{color:var(--white)!important}
+html.dark .legend i{filter:invert(1)}
+html.dark .legend .rev{background:var(--green)!important;color:var(--white)!important}
+html.dark .legend .desp{background:var(--red)!important;color:var(--white)!important}
+html.dark .pill{text-shadow:0 0 2px rgba(0,0,0,.5)}
+html.dark .pill.receita,.html.dark .pill.ativo,.html.dark .pill.liquidado,.html.dark .pill.projeto-concluido{filter:invert(1)}
+html.dark .pill.despesa,.html.dark .pill.vencido{filter:invert(1)}
+html.dark .pill.pendente,.html.dark .pill.projeto-planejamento{filter:invert(1)}
+html.dark .pill.projeto-execucao,.html.dark .pill.projeto-pausado{filter:invert(1)}
+html.dark .pill.inativo{filter:invert(1)}
+@media (prefers-contrast: more){html.dark{--contrast-boost:1.2}.html.dark *{filter:contrast(var(--contrast-boost))}.html.dark .kpi,.html.dark .panel,.html.dark .filter-bar,.html.dark .table-card{border-color:var(--line)!important}.html.dark .kpi:before,.html.dark .panel{border-color:var(--line)!important}}.noir{background:#000!important;color:#fff!important}}
+/* Focus states melhorados para modo escuro */
+html.dark :focus-visible{border:3px solid var(--orange)!important;outline:2px solid var(--orange)!important;outline-offset:2px}
+html.dark button:focus-visible,html.dark input:focus-visible,html.dark select:focus-visible,html.dark textarea:focus-visible{border-color:var(--orange)!important;box-shadow:0 0 0 4px rgba(50,169,205,.3)}
+html.dark .nav-item:focus-visible{background:var(--orange);color:white}
+html.dark .nav-item:focus-visible span{color:white}

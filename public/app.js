@@ -555,8 +555,10 @@ function openBugReportModal(){
 
 // Modo noturno
 const toggleDark=$('#toggle-dark');
-if(localStorage.getItem('cc_dark')==='true'){document.documentElement.classList.add('dark');toggleDark.checked=true;}
-toggleDark.addEventListener('change',()=>{document.documentElement.classList.toggle('dark',toggleDark.checked);localStorage.setItem('cc_dark',toggleDark.checked);});
+function applyDarkMode(value){document.documentElement.classList.toggle('dark',value);toggleDark.checked=value;localStorage.setItem('cc_dark',value);}
+if(localStorage.getItem('cc_dark')==='true')applyDarkMode(true);
+api('/appearance').then((data)=>{if(data.darkMode!==undefined)applyDarkMode(data.darkMode);}).catch(()=>{});
+toggleDark.addEventListener('change',()=>{applyDarkMode(toggleDark.checked);api('/appearance',{method:'POST',body:JSON.stringify({darkMode:toggleDark.checked})}).catch(()=>{});});
 
 if(token&&usuario) startApp();
 

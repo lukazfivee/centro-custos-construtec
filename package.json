@@ -70,7 +70,7 @@
     "publish": {
       "provider": "github",
       "owner": "lukazfivee",
-      "repo": "centro-custos-construtec"
+      "repo": "-centro-custos-construtec"
     }
   }
 }

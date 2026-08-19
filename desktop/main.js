@@ -1,0 +1,124 @@
+const { app, BrowserWindow, Tray, Menu, nativeImage, dialog } = require('electron');
+const path = require('path');
+const fs = require('fs');
+
+let mainWindow = null;
+let tray = null;
+let server = null;
+let isQuitting = false;
+
+const PORT = 3333;
+const SERVER_URL = `http://127.0.0.1:${PORT}`;
+const TRAY_ICON = path.join(__dirname, 'icon.png');
+const gotLock = app.requestSingleInstanceLock();
+
+if (!gotLock) {
+  app.quit();
+} else {
+  app.on('second-instance', () => {
+    if (mainWindow) {
+      if (mainWindow.isMinimized()) mainWindow.restore();
+      mainWindow.show();
+      mainWindow.focus();
+    }
+  });
+
+  function getAppDir() {
+    return path.join(__dirname, '..');
+  }
+
+  function loadEnv() {
+    const envPath = path.join(getAppDir(), '.env');
+    if (!fs.existsSync(envPath)) return;
+    const lines = fs.readFileSync(envPath, 'utf-8').split('\n');
+    for (const line of lines) {
+      const trimmed = line.trim();
+      if (!trimmed || trimmed.startsWith('#')) continue;
+      const eqIndex = trimmed.indexOf('=');
+      if (eqIndex === -1) continue;
+      const key = trimmed.substring(0, eqIndex).trim();
+      let value = trimmed.substring(eqIndex + 1).trim();
+      if ((value.startsWith('"') && value.endsWith('"')) || (value.startsWith("'") && value.endsWith("'"))) {
+        value = value.slice(1, -1);
+      }
+      if (!process.env[key]) process.env[key] = value;
+    }
+  }
+
+  function getIcon() {
+    if (fs.existsSync(TRAY_ICON)) return nativeImage.createFromPath(TRAY_ICON);
+    return nativeImage.createEmpty();
+  }
+
+  function createWindow() {
+    mainWindow = new BrowserWindow({
+      width: 1280,
+      height: 800,
+      minWidth: 900,
+      minHeight: 600,
+      title: 'Centro de Custos — Construtec',
+      icon: getIcon(),
+      show: true,
+      backgroundColor: '#021D26',
+      webPreferences: { nodeIntegration: false, contextIsolation: true },
+    });
+
+    mainWindow.loadFile(path.join(__dirname, '..', 'public', 'loading.html'));
+
+    mainWindow.on('close', () => {
+      isQuitting = true;
+      if (server) { try { server.close(); } catch {} }
+      app.quit();
+    });
+
+    mainWindow.on('closed', () => { mainWindow = null; });
+  }
+
+  function createTray() {
+    const icon = getIcon();
+    tray = new Tray(icon.isEmpty() ? nativeImage.createEmpty() : icon);
+    tray.setToolTip('Centro de Custos — Construtec');
+    tray.setContextMenu(Menu.buildFromTemplate([
+      { label: 'Abrir Centro de Custos', click: () => mainWindow?.show() },
+      { type: 'separator' },
+      { label: 'Sair', click: () => { isQuitting = true; app.quit(); } },
+    ]));
+    tray.on('click', () => mainWindow?.show());
+  }
+
+  function initUpdater() {
+    try {
+      const updater = require(path.join(__dirname, '..', 'services', 'updater'));
+      const repo = process.env.GITHUB_REPO || '';
+      if (repo) {
+        const [owner, repoName] = repo.split('/');
+        if (owner && repoName) {
+          updater.autoUpdater.setFeedURL({ provider: 'github', owner, repo: repoName });
+        }
+      }
+    } catch {}
+  }
+
+  async function startServer() {
+    const { start } = require(path.join(__dirname, '..', 'server.js'));
+    server = await start();
+  }
+
+  app.whenReady().then(async () => {
+    try {
+      loadEnv();
+      initUpdater();
+      createWindow();
+      createTray();
+      await startServer();
+      if (mainWindow) mainWindow.loadURL(SERVER_URL);
+    } catch (error) {
+      dialog.showErrorBox('Erro ao iniciar', `Não foi possível iniciar: ${error.message}`);
+      app.quit();
+    }
+  });
+
+  app.on('window-all-closed', () => { app.quit(); });
+  app.on('activate', () => { if (mainWindow) mainWindow.show(); });
+  app.on('before-quit', () => { isQuitting = true; });
+}

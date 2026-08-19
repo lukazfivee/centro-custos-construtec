@@ -28,6 +28,10 @@ if (!gotLock) {
   }
 
   function loadEnv() {
+    const appData = app.getPath('appData');
+    const dataRoot = path.join(appData, 'Construtec', 'CentroCustos');
+    if (!process.env.PGLITE_DATA_DIR) process.env.PGLITE_DATA_DIR = path.join(dataRoot, 'pglite');
+    if (!process.env.RESTORE_ROOT_DIR) process.env.RESTORE_ROOT_DIR = path.join(dataRoot, 'dados');
     const envPath = path.join(getAppDir(), '.env');
     if (!fs.existsSync(envPath)) return;
     const lines = fs.readFileSync(envPath, 'utf-8').split('\n');

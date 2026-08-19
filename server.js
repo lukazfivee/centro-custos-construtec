@@ -37,6 +37,7 @@ function createApp() {
   app.use('/api/fechamento-mensal',require('./routes/monthlyClosing'));
   app.use('/api/recorrentes',require('./routes/recurring'));
   app.use('/api/update',require('./routes/update'));
+  app.use('/api/bug-reports',require('./routes/bugReports'));
   app.use(express.static(path.join(__dirname,'public')));
   app.get('*',(req,res) => res.sendFile(path.join(__dirname,'public','index.html')));
   app.use((error,req,res,next) => {

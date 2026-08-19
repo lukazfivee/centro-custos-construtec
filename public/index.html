@@ -52,6 +52,7 @@
         <button class="nav-item admin-only" data-view="usuarios"><span>♙</span>Usuários</button>
         <button class="nav-item" data-view="config"><span>⚙</span>Configurações</button>
         <button class="nav-item admin-only" data-view="recorrentes"><span>↻</span>Recorrentes</button>
+        <button class="nav-item" data-view="bugreports"><span>⚑</span>Reports</button>
       </nav>
       <div class="user-block">
         <div class="avatar" id="usuario-avatar"></div>
@@ -175,7 +176,13 @@
         <div class="page-head"><div><p class="eyebrow">Automação</p><h1>Contas recorrentes</h1><p class="muted">Crie modelos de lançamentos que se repetem automaticamente.</p></div><div class="page-head-actions"><button id="btn-gerar-recorrentes" class="btn secondary">Gerar lançamentos do mês</button><button id="btn-novo-recorrente" class="btn primary manager-only">+ Novo modelo</button></div></div>
         <div id="lista-recorrentes" class="centers-grid"></div>
       </section>
+
+      <section id="view-bugreports" class="view oculto">
+        <div class="page-head"><div><p class="eyebrow">Suporte</p><h1>Reports de Bugs</h1></div><div class="page-head-actions"><button id="btn-novo-bugreport" class="btn primary">+ Reportar bug</button></div></div>
+        <div id="lista-bugreports" class="table-card"></div>
+      </section>
     </main>
+    <button id="fab-bugreport" class="fab-bug" title="Reportar bug ou falha">⚑</button>
   </div>
 
   <div id="modal-fundo" class="modal-backdrop oculto" role="dialog" aria-modal="true"><div class="modal"><div class="modal-head"><div><p class="eyebrow">Cadastro</p><h2 id="modal-titulo"></h2></div><button id="modal-fechar" class="icon-btn" aria-label="Fechar">×</button></div><div id="modal-corpo"></div></div></div>

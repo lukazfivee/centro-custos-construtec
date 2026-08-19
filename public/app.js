@@ -95,7 +95,7 @@ function showView(name) {
   $$('.view').forEach((view)=>view.classList.add('oculto'));
   $(`#view-${name}`).classList.remove('oculto');
   $$('.nav-item').forEach((button)=>button.classList.toggle('ativo',button.dataset.view===name));
-  const loaders={dashboard:loadDashboard,lancamentos:loadTransactions,centros:loadCenters,categorias:loadCategories,fornecedores:loadSuppliers,historico:loadHistory,sincronizacao:loadSync,usuarios:loadUsers,recorrentes:loadRecurring};
+  const loaders={dashboard:loadDashboard,lancamentos:loadTransactions,centros:loadCenters,categorias:loadCategories,fornecedores:loadSuppliers,historico:loadHistory,sincronizacao:loadSync,usuarios:loadUsers,recorrentes:loadRecurring,bugreports:loadBugReports};
   if (loaders[name]) loaders[name]().catch((error)=>toast(error.message,true));
 }
 
@@ -476,6 +476,82 @@ $('#btn-install-update').addEventListener('click', async () => {
     toast(error.message, true);
   }
 });
+
+// Bug Reports
+const bugTipoLabel={bug:'Bug',melhoria:'Melhoria',sugestao:'Sugestão'};
+const bugSeveridadeLabel={baixa:'Baixa',media:'Média',alta:'Alta',critica:'Crítica'};
+const bugStatusLabel={aberto:'Aberto','em andamento':'Em andamento',resolvido:'Resolvido',fechado:'Fechado'};
+const bugSeveridadeClass={baixa:'pill',media:'pill pendente',alta:'pill vencido',critica:'pill despesa'};
+const bugStatusClass={aberto:'pill pendente','em andamento':'pill projeto-execucao',resolvido:'pill ativo',fechado:'pill inativo'};
+
+async function loadBugReports(){
+  const items=await api('/bug-reports');
+  const el=$('#lista-bugreports');
+  if(!items.length){el.innerHTML='<div class="empty">Nenhum report cadastrado.</div>';return;}
+  const isAdminOrGestor=['admin','gestor'].includes(usuario.role);
+  el.innerHTML=`<div class="table-meta"><span>${items.length} report(s)</span></div><div class="table-scroll"><table><thead><tr><th>#</th><th>Título</th><th>Tipo</th><th>Severidade</th><th>Status</th><th>Autor</th><th>Data</th>${isAdminOrGestor?'<th>Ações</th>':''}</tr></thead><tbody>${items.map((r)=>`<tr><td><strong>${r.id}</strong></td><td>${esc(r.titulo)}</td><td><span class="pill">${bugTipoLabel[r.tipo]||r.tipo}</span></td><td><span class="${bugSeveridadeClass[r.severidade]||'pill'}">${bugSeveridadeLabel[r.severidade]||r.severidade}</span></td><td><span class="${bugStatusClass[r.status]||'pill'}">${bugStatusLabel[r.status]||r.status}</span></td><td>${esc(r.author_name)}</td><td>${dateBr(r.created_at)}</td>${isAdminOrGestor?`<td><div class="row-actions"><button data-edit-bug="${r.id}">Gerenciar</button></div></td>`:''}</tr>`).join('')}</tbody></table></div>`;
+  $$('[data-edit-bug]').forEach((btn)=>btn.addEventListener('click',()=>openBugDetail(items.find((i)=>i.id===Number(btn.dataset.editBug)))));
+}
+
+function openBugDetail(item){
+  if(!item)return;
+  const isAdminOrGestor=['admin','gestor'].includes(usuario.role);
+  modal(`Report #${item.id} — ${esc(item.titulo)}`,`
+    <div style="margin-bottom:14px">
+      <p style="margin:0"><strong>Descrição:</strong></p>
+      <p style="margin:5px 0 0;color:var(--muted);white-space:pre-wrap">${esc(item.descricao)}</p>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
+      <div><span class="hint">Tipo</span><br><span class="pill">${bugTipoLabel[item.tipo]||item.tipo}</span></div>
+      <div><span class="hint">Severidade</span><br><span class="${bugSeveridadeClass[item.severidade]||'pill'}">${bugSeveridadeLabel[item.severidade]||item.severidade}</span></div>
+      <div><span class="hint">Autor</span><br><strong>${esc(item.author_name)}</strong></div>
+      <div><span class="hint">Data</span><br><strong>${dateTimeBr(item.created_at)}</strong></div>
+    </div>
+    ${isAdminOrGestor?`
+      <label for="bug-status">Alterar status</label>
+      <select id="bug-status">${Object.entries(bugStatusLabel).map(([v,l])=>`<option value="${v}" ${item.status===v?'selected':''}>${l}</option>`).join('')}</select>
+      <label for="bug-severidade">Alterar severidade</label>
+      <select id="bug-severidade">${Object.entries(bugSeveridadeLabel).map(([v,l])=>`<option value="${v}" ${item.severidade===v?'selected':''}>${l}</option>`).join('')}</select>
+      <button class="btn primary wide" id="btn-salvar-bug" style="margin-top:14px">Salvar alterações</button>
+    `:''}
+    <div id="modal-error" class="form-error"></div>
+  `);
+  if(isAdminOrGestor){
+    $('#btn-salvar-bug').addEventListener('click',async()=>{
+      try{
+        await api(`/bug-reports/${item.id}`,{method:'PUT',body:JSON.stringify({status:$('#bug-status').value,severidade:$('#bug-severidade').value})});
+        closeModal();toast('Report atualizado.');loadBugReports();
+      }catch(error){$('#modal-error').textContent=error.message;}
+    });
+  }
+}
+
+$('#btn-novo-bugreport').addEventListener('click',openBugReportModal);
+$('#fab-bugreport').addEventListener('click',openBugReportModal);
+
+function openBugReportModal(){
+  modal('Reportar bug ou falha',`
+    <form id="bugreport-form">
+      <label for="br-titulo">Título</label>
+      <input id="br-titulo" required maxlength="200" placeholder="Resuma o problema">
+      <label for="br-tipo">Tipo</label>
+      <select id="br-tipo"><option value="bug">Bug</option><option value="melhoria">Melhoria</option><option value="sugestao">Sugestão</option></select>
+      <label for="br-severidade">Severidade</label>
+      <select id="br-severidade"><option value="baixa">Baixa</option><option value="media" selected>Média</option><option value="alta">Alta</option><option value="critica">Crítica</option></select>
+      <label for="br-descricao">Descrição</label>
+      <textarea id="br-descricao" required rows="4" placeholder="Descreva o problema detalhadamente..."></textarea>
+      <div id="modal-error" class="form-error"></div>
+      <button class="btn primary wide" type="submit" style="margin-top:14px">Enviar report</button>
+    </form>
+  `);
+  $('#bugreport-form').addEventListener('submit',async(event)=>{
+    event.preventDefault();
+    try{
+      await api('/bug-reports',{method:'POST',body:JSON.stringify({titulo:$('#br-titulo').value,tipo:$('#br-tipo').value,severidade:$('#br-severidade').value,descricao:$('#br-descricao').value})});
+      closeModal();toast('Report enviado com sucesso!');
+    }catch(error){$('#modal-error').textContent=error.message;}
+  });
+}
 
 // Modo noturno
 const toggleDark=$('#toggle-dark');

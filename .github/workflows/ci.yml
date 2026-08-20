@@ -1,0 +1,47 @@
+name: Verificacao continua
+
+on:
+  push:
+    branches:
+      - main
+      - 'chatgpt/**'
+  pull_request:
+    branches:
+      - main
+      - 'chatgpt/p0-base-solida'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: Node 20 - sintaxe e testes
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      CI: true
+      ELECTRON_SKIP_BINARY_DOWNLOAD: '1'
+      JWT_SECRET: segredo-de-ci-com-mais-de-trinta-e-dois-caracteres
+      ADMIN_INITIAL_PASSWORD: senha-ci-segura-123
+    steps:
+      - name: Baixar codigo
+        uses: actions/checkout@v6
+
+      - name: Preparar Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Verificar sintaxe
+        run: npm run check
+
+      - name: Executar testes
+        run: npm run test:ci

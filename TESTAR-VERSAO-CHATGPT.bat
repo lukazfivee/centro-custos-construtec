@@ -8,14 +8,15 @@ echo ================================================================
 echo   CENTRO DE CUSTOS - VERSAO DE TESTE CHATGPT
 echo ================================================================
 echo.
-echo Esta copia usa uma porta e um banco separados da versao principal.
-echo Nenhum dado real sera alterado por este inicializador.
+echo Esta copia usa a porta 3334 e um banco separado.
+echo Nenhum dado da versao principal sera alterado.
 echo.
 
 where node >nul 2>nul
 if errorlevel 1 (
   echo O Node.js nao foi encontrado neste computador.
-  echo Instale a versao LTS pelo site oficial e execute este arquivo novamente.
+  echo O site de instalacao sera aberto agora.
+  echo Instale a versao LTS, reinicie o computador e execute este arquivo novamente.
   echo.
   start "" "https://nodejs.org/en/download"
   pause
@@ -48,17 +49,15 @@ if not exist "node_modules\@electric-sql\pglite" (
 
 echo.
 echo Iniciando a versao de teste...
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%~dp0scripts\start-test-chatgpt.ps1"
-if errorlevel 1 (
-  echo.
-  echo O sistema nao conseguiu iniciar.
-  echo Consulte servidor-chatgpt-erro.log dentro desta pasta.
-  pause
-  exit /b 1
-)
+echo O navegador abrira automaticamente em alguns segundos.
+echo.
+echo IMPORTANTE: mantenha esta janela preta aberta enquanto estiver testando.
+echo Para encerrar o teste, volte aqui e pressione Ctrl+C.
+echo.
+
+start "" powershell.exe -NoProfile -Command "Start-Sleep -Seconds 4; Start-Process 'http://127.0.0.1:3334'"
+call npm start
 
 echo.
-echo O sistema foi aberto em http://localhost:3334
-echo Para encerrar, use o arquivo PARAR-TESTE-CHATGPT.bat.
-echo.
+echo A versao de teste foi encerrada.
 pause

@@ -31,9 +31,10 @@ router.post('/', exigirPapel('admin'), asyncRoute(async (req, res) => {
 
 router.delete('/:id', exigirPapel('admin'), asyncRoute(async (req, res) => {
   const id = Number(req.params.id);
-  const reason = String(req.body?.motivo || '').trim();
+  const suppliedReason = String(req.body?.motivo || '').trim();
+  const reason = suppliedReason || 'Reabertura solicitada pela interface do sistema.';
   if (!Number.isInteger(id) || id <= 0) throw httpError(400, 'ID inválido.');
-  if (reason.length < 5) throw httpError(400, 'Informe o motivo da reabertura com pelo menos 5 caracteres.');
+  if (suppliedReason && suppliedReason.length < 5) throw httpError(400, 'Informe um motivo de reabertura com pelo menos 5 caracteres.');
   const db = getDb();
   const { rows } = await db.query('SELECT * FROM monthly_closings WHERE id=$1', [id]);
   if (!rows[0]) throw httpError(404, 'Fechamento não encontrado.');
@@ -43,7 +44,7 @@ router.delete('/:id', exigirPapel('admin'), asyncRoute(async (req, res) => {
     summary:`Competência ${String(rows[0].month).padStart(2,'0')}/${rows[0].year} reaberta.`,
     data:{...rows[0],motivo:reason.slice(0,500)},user:req.usuario,
   });
-  res.json({ ok: true, mensagem: 'Competência reaberta com justificativa registrada no histórico.' });
+  res.json({ ok: true, mensagem: 'Competência reaberta e registrada no histórico.' });
 }));
 
 module.exports = router;

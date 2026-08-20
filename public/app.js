@@ -557,9 +557,8 @@ function openBugReportModal(){
 async function loadSmtpSettings(){
   try{
     const s=await api('/email-settings');
-    $('#smtp-host').value=s.smtp_host||'';$('#smtp-port').value=s.smtp_port||'587';
+    $('#smtp-host').value=s.smtp_host||'smtp.uol.com.br';$('#smtp-port').value=s.smtp_port||'587';
     $('#smtp-user').value=s.smtp_user||'';$('#smtp-pass').value=s.smtp_pass||'';
-    $('#smtp-from').value=s.smtp_from||'';$('#bug-report-email').value=s.bug_report_email||'';
   }catch{}
 }
 $('#form-smtp').addEventListener('submit',async(e)=>{
@@ -568,7 +567,7 @@ $('#form-smtp').addEventListener('submit',async(e)=>{
     await api('/email-settings',{method:'POST',body:JSON.stringify({
       smtp_host:$('#smtp-host').value,smtp_port:$('#smtp-port').value,
       smtp_user:$('#smtp-user').value,smtp_pass:$('#smtp-pass').value,
-      smtp_from:$('#smtp-from').value,bug_report_email:$('#bug-report-email').value
+      smtp_from:$('#smtp-user').value,bug_report_email:'pcm@rcconstrutec.com.br'
     })});
     $('#smtp-mensagem').style.color='var(--green)';$('#smtp-mensagem').textContent='SMTP salvo com sucesso!';
   }catch(error){$('#smtp-mensagem').textContent=error.message;}

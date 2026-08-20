@@ -10,12 +10,12 @@ async function getSmtpConfig() {
   const map = {};
   for (const row of result.rows) map[row.key] = row.value;
   return {
-    host: map.smtp_host || '',
-    port: Number(map.smtp_port || 587),
-    user: map.smtp_user || '',
-    pass: map.smtp_pass || '',
-    from: map.smtp_from || '',
-    to: map.bug_report_email || '',
+    host: map.smtp_host || process.env.SMTP_HOST || 'smtp.uol.com.br',
+    port: Number(map.smtp_port || process.env.SMTP_PORT || 587),
+    user: map.smtp_user || process.env.SMTP_USER || '',
+    pass: map.smtp_pass || process.env.SMTP_PASS || '',
+    from: map.smtp_from || process.env.SMTP_FROM || '',
+    to: map.bug_report_email || process.env.BUG_REPORT_EMAIL || 'pcm@rcconstrutec.com.br',
   };
 }
 

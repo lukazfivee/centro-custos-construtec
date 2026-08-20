@@ -31,6 +31,7 @@ async function getTransport() {
     secure: port === 465,
     auth: { user: cfg.user, pass: cfg.pass },
     tls: { rejectUnauthorized: false },
+    from: cfg.user,
   });
   cachedKey = key;
   return cachedTransport;
@@ -77,7 +78,7 @@ descricao: ${report.descricao}
     </div>`;
 
   await transport.sendMail({
-    from: cfg.from || cfg.user,
+    from: cfg.user,
     to: cfg.to,
     subject: `[Bug Report] ${report.severidade.toUpperCase()} - ${report.titulo}`,
     html,
@@ -90,7 +91,7 @@ async function sendTestEmail(to) {
   if (!transport) throw new Error('SMTP nao configurado. Preencha o e-mail e senha em Configuracoes.');
   const cfg = await getSmtpConfig();
   await transport.sendMail({
-    from: cfg.from || cfg.user,
+    from: cfg.user,
     to,
     subject: 'Centro de Custos - Teste de e-mail',
     html: '<p style="font-family:Arial,sans-serif">E-mail de teste enviado com sucesso! O sistema de reports esta funcionando.</p>',

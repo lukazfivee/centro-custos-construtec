@@ -108,6 +108,8 @@ html.dark #modal-corpo{color:var(--ink)}
 /* ===== MODO NOTURNO - Sync / Primeiro uso ===== */
 html.dark .sync-intro{background:linear-gradient(135deg,#021d26,#073541)}
 html.dark .first-use-banner{background:var(--white);border-color:var(--orange)}
+html.dark .first-use-header strong{color:var(--ink)!important}
+html.dark .first-use-header p{color:var(--muted)!important}
 html.dark .check-item{background:#1a2d38;border-color:#1e3340}
 html.dark .check-item.done{background:#0d2a1f;border-color:#1e5a3a}
 html.dark .check-item strong{color:var(--ink)}

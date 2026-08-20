@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#021D26">
+  <title>Centro de Custos — Teste ChatGPT P1</title>
+  <style>
+    html,body{width:100%;height:100%;margin:0;overflow:hidden;background:#021d26}
+    iframe{display:block;width:100%;height:100%;border:0;background:#f2f6f7}
+    .status{position:fixed;inset:0;display:grid;place-items:center;color:#fff;font:600 14px system-ui,sans-serif;letter-spacing:.02em}
+  </style>
+</head>
+<body>
+  <div id="status" class="status">Carregando a versão de teste…</div>
+  <iframe id="app-frame" title="Centro de Custos Construtec" src="/"></iframe>
+  <script>
+    (() => {
+      const frame = document.getElementById('app-frame');
+      const status = document.getElementById('status');
+      frame.addEventListener('load', () => {
+        try {
+          const doc = frame.contentDocument;
+          if (!doc || doc.getElementById('chatgpt-p1-script')) return;
+
+          const css = doc.createElement('link');
+          css.id = 'chatgpt-p1-style';
+          css.rel = 'stylesheet';
+          css.href = '/chatgpt-p1.css?v=1';
+          doc.head.appendChild(css);
+
+          const script = doc.createElement('script');
+          script.id = 'chatgpt-p1-script';
+          script.src = '/chatgpt-p1.js?v=1';
+          script.addEventListener('load', () => { status.style.display = 'none'; });
+          script.addEventListener('error', () => { status.textContent = 'Não foi possível carregar as melhorias de teste.'; });
+          doc.body.appendChild(script);
+        } catch (error) {
+          status.textContent = `Falha ao abrir a versão de teste: ${error.message}`;
+        }
+      });
+    })();
+  </script>
+</body>
+</html>

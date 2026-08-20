@@ -4,6 +4,7 @@ const os = require('os');
 const path = require('path');
 const { initializeDatabase, closeDatabase, getDb, getInstanceIdentity } = require('./db');
 const { observability } = require('./middleware/observability');
+const { startAutoBackupScheduler, stopAutoBackupScheduler } = require('./services/autoBackup');
 const logger = require('./lib/logger');
 
 function createApp() {
@@ -59,6 +60,7 @@ function createApp() {
   app.use('/api/email-settings', require('./routes/emailSettings'));
   app.use('/api/appearance', require('./routes/appearance'));
   app.use('/api/sistema', require('./routes/system'));
+  app.use('/api/avancado', require('./routes/advanced'));
 
   const publicDir = path.join(__dirname, 'public');
   app.use(express.static(publicDir, {
@@ -89,7 +91,6 @@ function createApp() {
 function localIPv4s() {
   return Object.values(os.networkInterfaces()).flat().filter((item) => item && item.family === 'IPv4' && !item.internal).map((item) => item.address);
 }
-
 function positiveEnv(name, fallback) {
   const value = Number(process.env[name]);
   return Number.isFinite(value) && value > 0 ? value : fallback;
@@ -119,6 +120,7 @@ async function start() {
   server.keepAliveTimeout = positiveEnv('HTTP_KEEP_ALIVE_TIMEOUT_MS', 5000);
   server.headersTimeout = Math.max(positiveEnv('HTTP_HEADERS_TIMEOUT_MS', 6500), server.keepAliveTimeout + 1000);
   server.requestTimeout = positiveEnv('HTTP_REQUEST_TIMEOUT_MS', 120000);
+  startAutoBackupScheduler();
   const t4 = Date.now();
   logger.info('application_started', { performanceMs:{env:t1-t0,database:t2-t1,app:t3-t2,listen:t4-t3,total:t4-t0}, databaseMode:info.mode, instance:info.instance.name, host, port });
   console.log(`\nCentro de Custos — ${info.instance.name}`);
@@ -131,6 +133,7 @@ async function start() {
   async function shutdown(reason = 'manual') {
     if (shuttingDown) return;
     shuttingDown = true;
+    stopAutoBackupScheduler();
     logger.info('application_shutdown_started', { reason });
     const forceTimer = setTimeout(() => { logger.error('application_shutdown_forced', { reason }); process.exit(1); }, positiveEnv('SHUTDOWN_TIMEOUT_MS', 10000));
     forceTimer.unref();

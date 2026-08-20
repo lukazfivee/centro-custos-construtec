@@ -1,23 +1,23 @@
 @echo off
 setlocal
-title Centro de Custos - Teste ChatGPT P3
+title Centro de Custos - Teste ChatGPT P4
 cd /d "%~dp0"
 
 echo.
 echo ================================================================
-echo   CENTRO DE CUSTOS - VERSAO DE TESTE CHATGPT P3
+echo   CENTRO DE CUSTOS - VERSAO DE TESTE CHATGPT P4
 echo ================================================================
 echo.
 echo Esta copia usa a porta 3334 e um banco separado.
 echo Nenhum dado da versao principal sera alterado.
 echo.
 echo NOVIDADES DESTA VERSAO:
-echo - mantem melhorias de desempenho, paginacao e estorno das P0/P1/P2;
-echo - adiciona pacote de SINCRONIZACAO INTELIGENTE .ccsync;
-echo - envia obras, categorias, fornecedores, lancamentos e estornos juntos;
-echo - valida integridade SHA-256 antes de importar;
-echo - impede importar o mesmo pacote duas vezes;
-echo - registra historico e conflitos da sincronizacao.
+echo - mantem desempenho, paginacao, estorno e sincronizacao inteligente;
+echo - adiciona COMPROVANTES E DOCUMENTOS aos lancamentos;
+echo - aceita PDF, JPG, PNG e WEBP de ate 8 MB;
+echo - bloqueia o mesmo arquivo duplicado no mesmo lancamento;
+echo - permite classificar como comprovante, NF, boleto, recibo ou contrato;
+echo - registra inclusao e exclusao dos documentos no historico.
 echo.
 
 where node >nul 2>nul
@@ -56,7 +56,7 @@ if not exist "node_modules\@electric-sql\pglite" (
 )
 
 echo.
-echo Iniciando a versao de teste P3...
+echo Iniciando a versao de teste P4...
 echo O navegador abrira automaticamente em alguns segundos.
 echo.
 echo IMPORTANTE: mantenha esta janela preta aberta enquanto estiver testando.

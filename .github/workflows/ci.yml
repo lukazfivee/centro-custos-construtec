@@ -8,7 +8,7 @@ on:
   pull_request:
     branches:
       - main
-      - 'chatgpt/p0-base-solida'
+      - 'chatgpt/**'
 
 permissions:
   contents: read

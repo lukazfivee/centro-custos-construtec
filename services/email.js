@@ -4,6 +4,11 @@ const { getDb } = require('../db');
 let cachedTransport = null;
 let cachedKey = null;
 
+function invalidateCache() {
+  cachedTransport = null;
+  cachedKey = null;
+}
+
 async function getSmtpConfig() {
   const db = getDb();
   const result = await db.query("SELECT key, value FROM app_settings WHERE key LIKE 'smtp_%' OR key = 'bug_report_email'");
@@ -22,7 +27,7 @@ async function getSmtpConfig() {
 async function getTransport() {
   const cfg = await getSmtpConfig();
   if (!cfg.host || !cfg.user || !cfg.pass) return null;
-  const key = `${cfg.host}:${cfg.port}:${cfg.user}`;
+  const key = `${cfg.host}:${cfg.port}:${cfg.user}:${cfg.pass}`;
   if (cachedKey === key && cachedTransport) return cachedTransport;
   const port = cfg.port || 465;
   cachedTransport = nodemailer.createTransport({
@@ -97,4 +102,4 @@ async function sendTestEmail(to) {
   });
 }
 
-module.exports = { sendBugReport, sendTestEmail, isConfigured, getSmtpConfig };
+module.exports = { sendBugReport, sendTestEmail, isConfigured, getSmtpConfig, invalidateCache };

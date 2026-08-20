@@ -4,7 +4,7 @@ const nodemailer = require('nodemailer');
 const { getDb } = require('../db');
 const { autenticar, exigirPapel } = require('../middleware/auth');
 const { asyncRoute, httpError } = require('../lib/http');
-const { sendTestEmail, getSmtpConfig } = require('../services/email');
+const { sendTestEmail, getSmtpConfig, invalidateCache } = require('../services/email');
 
 router.use(autenticar);
 
@@ -52,7 +52,8 @@ router.post('/test', exigirPapel('admin'), asyncRoute(async (req, res) => {
   }
   try {
     await transport.sendMail({ from: cfg.user, to: email, subject: 'Centro de Custos - Teste', html: '<p>Teste OK</p>' });
-    res.json({ ok: true });
+  res.json({ ok: true });
+  invalidateCache();
   } catch (err) {
     console.error('[SMTP-SEND]', err);
     throw httpError(500, `Falha ao enviar: ${err.message}`);

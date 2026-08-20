@@ -79,7 +79,7 @@ router.post('/', asyncRoute(async (req, res) => {
   ]);
   const report = result.rows[0];
   await recordAudit({ entityType: 'bug_report', entityId: report.id, action: 'create', summary: `Report: ${report.titulo}`, user: req.usuario });
-  sendBugReport({ ...report, usuario_nome: req.usuario.name, instancia: process.env.INSTANCE_NAME || '' }).catch(() => {});
+  sendBugReport({ ...report, usuario_nome: req.usuario.name, instancia: process.env.INSTANCE_NAME || '' }).catch((err) => console.error('[EMAIL] Falha ao enviar report:', err.message));
   res.status(201).json(report);
 }));
 

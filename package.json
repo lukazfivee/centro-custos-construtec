@@ -1,6 +1,6 @@
 {
   "name": "centro-de-custos",
-  "version": "2.2.1",
+  "version": "2.2.2",
   "private": true,
   "description": "Gestão offline de receitas, despesas e centros de custo com sincronização por planilha",
   "main": "desktop/main.js",

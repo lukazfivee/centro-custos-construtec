@@ -11,7 +11,7 @@ async function getSmtpConfig() {
   for (const row of result.rows) map[row.key] = row.value;
   return {
     host: map.smtp_host || process.env.SMTP_HOST || 'smtp.uol.com.br',
-    port: Number(map.smtp_port || process.env.SMTP_PORT || 587),
+    port: Number(map.smtp_port || process.env.SMTP_PORT || 465),
     user: map.smtp_user || process.env.SMTP_USER || '',
     pass: map.smtp_pass || process.env.SMTP_PASS || '',
     from: map.smtp_from || process.env.SMTP_FROM || '',
@@ -24,11 +24,13 @@ async function getTransport() {
   if (!cfg.host || !cfg.user || !cfg.pass) return null;
   const key = `${cfg.host}:${cfg.port}:${cfg.user}`;
   if (cachedKey === key && cachedTransport) return cachedTransport;
+  const port = cfg.port || 465;
   cachedTransport = nodemailer.createTransport({
     host: cfg.host,
-    port: cfg.port,
-    secure: cfg.port === 465,
+    port,
+    secure: port === 465,
     auth: { user: cfg.user, pass: cfg.pass },
+    tls: { rejectUnauthorized: false },
   });
   cachedKey = key;
   return cachedTransport;
@@ -85,9 +87,10 @@ descricao: ${report.descricao}
 
 async function sendTestEmail(to) {
   const transport = await getTransport();
-  if (!transport) throw new Error('SMTP nao configurado. Preencha os dados em Configuracoes.');
+  if (!transport) throw new Error('SMTP nao configurado. Preencha o e-mail e senha em Configuracoes.');
+  const cfg = await getSmtpConfig();
   await transport.sendMail({
-    from: (await getSmtpConfig()).from || (await getSmtpConfig()).user,
+    from: cfg.from || cfg.user,
     to,
     subject: 'Centro de Custos - Teste de e-mail',
     html: '<p style="font-family:Arial,sans-serif">E-mail de teste enviado com sucesso! O sistema de reports esta funcionando.</p>',

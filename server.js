@@ -46,10 +46,14 @@ function createApp() {
   app.use('/api/historico', require('./routes/history'));
   app.use('/api/lancamentos', require('./routes/transactions'));
   app.use('/api/anexos', require('./routes/attachments'));
+  app.use('/api/produtividade', require('./routes/productivity'));
+  app.use('/api/bancos', require('./routes/banking'));
+  app.use('/api/insights', require('./routes/insights'));
   app.use('/api/dashboard', require('./routes/dashboard'));
   app.use('/api/sincronizacao', require('./routes/sync'));
   app.use('/api/sincronizacao-inteligente', require('./routes/smartSync'));
   app.use('/api/backup', require('./routes/backup'));
+  app.use('/api/backup-automatico', require('./routes/backupAuto'));
   app.use('/api/first-use', require('./routes/firstUse'));
   app.use('/api/cadastro-sync', require('./routes/cadastroSync'));
   app.use('/api/fechamento-mensal', require('./routes/monthlyClosing'));
@@ -119,6 +123,8 @@ async function start() {
   server.keepAliveTimeout = positiveEnv('HTTP_KEEP_ALIVE_TIMEOUT_MS', 5000);
   server.headersTimeout = Math.max(positiveEnv('HTTP_HEADERS_TIMEOUT_MS', 6500), server.keepAliveTimeout + 1000);
   server.requestTimeout = positiveEnv('HTTP_REQUEST_TIMEOUT_MS', 120000);
+  const { startAutoBackup, stopAutoBackup } = require('./services/autoBackup');
+  startAutoBackup();
   const t4 = Date.now();
   logger.info('application_started', { performanceMs:{env:t1-t0,database:t2-t1,app:t3-t2,listen:t4-t3,total:t4-t0}, databaseMode:info.mode, instance:info.instance.name, host, port });
   console.log(`\nCentro de Custos — ${info.instance.name}`);
@@ -131,6 +137,7 @@ async function start() {
   async function shutdown(reason = 'manual') {
     if (shuttingDown) return;
     shuttingDown = true;
+    stopAutoBackup();
     logger.info('application_shutdown_started', { reason });
     const forceTimer = setTimeout(() => { logger.error('application_shutdown_forced', { reason }); process.exit(1); }, positiveEnv('SHUTDOWN_TIMEOUT_MS', 10000));
     forceTimer.unref();

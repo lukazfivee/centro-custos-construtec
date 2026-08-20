@@ -1,6 +1,6 @@
 {
   "name": "centro-de-custos",
-  "version": "2.1.9",
+  "version": "2.2.0",
   "private": true,
   "description": "Gestão offline de receitas, despesas e centros de custo com sincronização por planilha",
   "main": "desktop/main.js",
@@ -25,6 +25,7 @@
     "electron-updater": "^6.8.9",
     "express": "^4.21.2",
     "jsonwebtoken": "^9.0.2",
+    "nodemailer": "^9.0.5",
     "pg": "^8.13.1"
   },
   "devDependencies": {
@@ -57,8 +58,18 @@
     ],
     "win": {
       "target": [
-        { "target": "nsis", "arch": ["x64"] },
-        { "target": "portable", "arch": ["x64"] }
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        }
       ],
       "icon": "desktop/icon.png"
     },

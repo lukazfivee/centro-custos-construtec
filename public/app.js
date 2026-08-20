@@ -95,7 +95,7 @@ function showView(name) {
   $$('.view').forEach((view)=>view.classList.add('oculto'));
   $(`#view-${name}`).classList.remove('oculto');
   $$('.nav-item').forEach((button)=>button.classList.toggle('ativo',button.dataset.view===name));
-  const loaders={dashboard:loadDashboard,lancamentos:loadTransactions,centros:loadCenters,categorias:loadCategories,fornecedores:loadSuppliers,historico:loadHistory,sincronizacao:loadSync,usuarios:loadUsers,recorrentes:loadRecurring,bugreports:loadBugReports};
+  const loaders={dashboard:loadDashboard,lancamentos:loadTransactions,centros:loadCenters,categorias:loadCategories,fornecedores:loadSuppliers,historico:loadHistory,sincronizacao:loadSync,usuarios:loadUsers,recorrentes:loadRecurring,bugreports:loadBugReports,config:loadSmtpSettings};
   if (loaders[name]) loaders[name]().catch((error)=>toast(error.message,true));
 }
 
@@ -552,6 +552,48 @@ function openBugReportModal(){
     }catch(error){$('#modal-error').textContent=error.message;}
   });
 }
+
+// Config SMTP
+async function loadSmtpSettings(){
+  try{
+    const s=await api('/email-settings');
+    $('#smtp-host').value=s.smtp_host||'';$('#smtp-port').value=s.smtp_port||'587';
+    $('#smtp-user').value=s.smtp_user||'';$('#smtp-pass').value=s.smtp_pass||'';
+    $('#smtp-from').value=s.smtp_from||'';$('#bug-report-email').value=s.bug_report_email||'';
+  }catch{}
+}
+$('#form-smtp').addEventListener('submit',async(e)=>{
+  e.preventDefault();$('#smtp-mensagem').textContent='';
+  try{
+    await api('/email-settings',{method:'POST',body:JSON.stringify({
+      smtp_host:$('#smtp-host').value,smtp_port:$('#smtp-port').value,
+      smtp_user:$('#smtp-user').value,smtp_pass:$('#smtp-pass').value,
+      smtp_from:$('#smtp-from').value,bug_report_email:$('#bug-report-email').value
+    })});
+    $('#smtp-mensagem').style.color='var(--green)';$('#smtp-mensagem').textContent='SMTP salvo com sucesso!';
+  }catch(error){$('#smtp-mensagem').textContent=error.message;}
+});
+$('#btn-testar-smtp').addEventListener('click',async()=>{
+  const email=prompt('E-mail para teste:');
+  if(!email)return;$('#smtp-mensagem').textContent='Enviando...';
+  try{await api('/email-settings/test',{method:'POST',body:JSON.stringify({email})});$('#smtp-mensagem').style.color='var(--green)';$('#smtp-mensagem').textContent='E-mail de teste enviado!';}catch(error){$('#smtp-mensagem').textContent=error.message;}
+});
+
+// Importar report de e-mail
+$('#btn-importar-bugreport').addEventListener('click',()=>{
+  modal('Importar report de e-mail',`
+    <p class="hint">Cole aqui o conteúdo do bloco ---BUG_REPORT--- que veio no e-mail.</p>
+    <textarea id="importar-bugreport-content" rows="8" placeholder="Cole o conteúdo aqui..."></textarea>
+    <div id="modal-error" class="form-error"></div>
+    <button class="btn primary wide" id="btn-confirmar-importar" style="margin-top:14px">Importar report</button>
+  `);
+  $('#btn-confirmar-importar').addEventListener('click',async()=>{
+    try{
+      await api('/email-settings/import',{method:'POST',body:JSON.stringify({content:$('#importar-bugreport-content').value})});
+      closeModal();toast('Report importado com sucesso!');loadBugReports();
+    }catch(error){$('#modal-error').textContent=error.message;}
+  });
+});
 
 // Modo noturno
 const toggleDark=$('#toggle-dark');

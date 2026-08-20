@@ -38,6 +38,7 @@ function createApp() {
   app.use('/api/recorrentes',require('./routes/recurring'));
   app.use('/api/update',require('./routes/update'));
   app.use('/api/bug-reports',require('./routes/bugReports'));
+  app.use('/api/email-settings',require('./routes/emailSettings'));
   app.use('/api/appearance',require('./routes/appearance'));
   app.use(express.static(path.join(__dirname,'public')));
   app.get('*',(req,res) => res.sendFile(path.join(__dirname,'public','index.html')));

@@ -4,6 +4,7 @@ const { getDb } = require('../db');
 const { autenticar, exigirPapel } = require('../middleware/auth');
 const { asyncRoute, httpError, positiveId } = require('../lib/http');
 const { recordAudit } = require('../services/audit');
+const { sendBugReport } = require('../services/email');
 
 router.use(autenticar);
 
@@ -78,6 +79,7 @@ router.post('/', asyncRoute(async (req, res) => {
   ]);
   const report = result.rows[0];
   await recordAudit({ entityType: 'bug_report', entityId: report.id, action: 'create', summary: `Report: ${report.titulo}`, user: req.usuario });
+  sendBugReport({ ...report, usuario_nome: req.usuario.name, instancia: process.env.INSTANCE_NAME || '' }).catch(() => {});
   res.status(201).json(report);
 }));
 

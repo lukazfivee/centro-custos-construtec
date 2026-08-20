@@ -16,7 +16,7 @@ router.get('/', asyncRoute(async (req, res) => {
       cc.client AS cliente, cc.contract_number AS contrato,
       cc.start_date::text AS data_inicio, cc.end_date::text AS data_fim,
       cc.contract_amount AS valor_contrato, cc.project_status AS situacao,
-      cc.monthly_budget AS orcamento, cc.active AS ativo, cc.description AS descricao,
+      cc.monthly_budget AS orcamento, cc.active AS ativo, cc.description AS descricao,cc.revision,
       COALESCE(SUM(t.amount * t.accounting_sign) FILTER (WHERE t.type='despesa'),0) AS total_comprometido,
       COALESCE(SUM(t.amount * t.accounting_sign) FILTER (WHERE t.type='despesa' AND t.financial_status='liquidado'),0) AS total_despesas,
       COALESCE(SUM(t.amount * t.accounting_sign) FILTER (WHERE t.type='receita' AND t.financial_status='liquidado'),0) AS total_receitas
@@ -34,7 +34,7 @@ router.get('/:id/detalhes', asyncRoute(async (req, res) => {
       cc.client AS cliente, cc.contract_number AS contrato, cc.description AS descricao,
       cc.start_date::text AS data_inicio, cc.end_date::text AS data_fim,
       cc.contract_amount AS valor_contrato, cc.project_status AS situacao,
-      cc.monthly_budget AS orcamento, cc.active AS ativo,
+      cc.monthly_budget AS orcamento, cc.active AS ativo,cc.revision,
       COALESCE(SUM(t.amount * t.accounting_sign) FILTER (WHERE t.type='despesa'),0) AS total_comprometido,
       COALESCE(SUM(t.amount * t.accounting_sign) FILTER (WHERE t.type='despesa' AND t.financial_status='liquidado'),0) AS total_despesas,
       COALESCE(SUM(t.amount * t.accounting_sign) FILTER (WHERE t.type='receita' AND t.financial_status='liquidado'),0) AS total_receitas,
@@ -90,7 +90,7 @@ router.post('/', exigirPapel('admin','gestor'), asyncRoute(async (req, res) => {
   const { rows } = await getDb().query(
     `INSERT INTO cost_centers
       (public_id,code,name,responsible,monthly_budget,client,contract_number,start_date,end_date,contract_amount,project_status,description)
-     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12) RETURNING id`,
+     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12) RETURNING id,revision`,
     [publicId,data.code,data.name,data.responsible,data.budget,data.client,data.contractNumber,
       data.startDate,data.endDate,data.contractAmount,data.projectStatus,data.description]
   );
@@ -103,14 +103,14 @@ router.put('/:id', exigirPapel('admin','gestor'), asyncRoute(async (req, res) =>
   const result = await getDb().query(
     `UPDATE cost_centers SET code=$1,name=$2,responsible=$3,monthly_budget=$4,active=$5,
        client=$6,contract_number=$7,start_date=$8,end_date=$9,contract_amount=$10,
-       project_status=$11,description=$12,updated_at=NOW() WHERE id=$13`,
+       project_status=$11,description=$12,revision=revision+1,updated_at=NOW() WHERE id=$13 RETURNING revision`,
     [data.code,data.name,data.responsible,data.budget,req.body.ativo !== false,data.client,
       data.contractNumber,data.startDate,data.endDate,data.contractAmount,data.projectStatus,
       data.description,positiveId(req.params.id)]
   );
   if (!result.rowCount) throw httpError(404, 'Centro de custo não encontrado.');
-  await recordAudit({entityType:'obra',entityId:req.params.id,action:'atualizada',summary:'Obra / centro atualizado: '+data.name,data,user:req.usuario});
-  res.json({ ok: true });
+  await recordAudit({entityType:'obra',entityId:req.params.id,action:'atualizada',summary:'Obra / centro atualizado: '+data.name,data:{...data,revision:result.rows[0].revision},user:req.usuario});
+  res.json({ ok: true,revisao:result.rows[0].revision });
 }));
 
 function validate(body) {

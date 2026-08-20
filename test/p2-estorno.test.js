@@ -32,7 +32,7 @@ test('indicadores financeiros usam o sinal contábil dos estornos', () => {
   assert.match(centers, /t\.amount \* t\.accounting_sign/);
 });
 
-test('entrada de teste P2 carrega interface e fluxo de estorno', () => {
+test('entrada de teste mantém interface e fluxo de estorno P2 nas versões seguintes', () => {
   const html = read('public/teste-chatgpt.html');
   const script = read('public/chatgpt-p2.js');
   const batch = read('TESTAR-VERSAO-CHATGPT.bat');
@@ -40,7 +40,7 @@ test('entrada de teste P2 carrega interface e fluxo de estorno', () => {
   assert.match(html, /chatgpt-p2\.js/);
   assert.match(script, /Confirmar estorno/);
   assert.match(script, /\/api\/lancamentos\/\$\{item\.id\}\/estornar/);
-  assert.match(batch, /VERSAO DE TESTE CHATGPT P2/);
+  assert.match(batch, /mantem melhorias de desempenho, paginacao e estorno das P0\/P1\/P2/);
 });
 
 test('sincronização antiga é bloqueada após estornos para evitar perda de vínculo', () => {

@@ -74,6 +74,27 @@ test('API local cobre obras, fluxo financeiro, fornecedores, sincronização, au
   assert.equal(updatedTransaction.descricao,'Material atualizado');
   assert.equal(updatedTransaction.revision,beforeUpdate.revision+1);
 
+  const smartExport = await raw('/sincronizacao-inteligente/exportar', auth);
+  const smartPackage = JSON.parse(smartExport);
+  assert.equal(smartPackage.formatVersion, 3);
+  assert.match(smartPackage.payloadHash, /^[0-9a-f]{64}$/);
+  assert.ok(smartPackage.payload.costCenters.some((item)=>item.code==='OBRA-001'));
+  assert.ok(smartPackage.payload.suppliers.some((item)=>item.name==='Fornecedor Teste'));
+  assert.ok(smartPackage.payload.transactions.some((item)=>item.publicId===transaction.public_id));
+  const smartImport = await request('/sincronizacao-inteligente/importar', {
+    method:'POST',token:auth,body:{nomeArquivo:'pacote-teste.ccsync',conteudo:smartExport},
+  });
+  assert.equal(smartImport.duplicado,false);
+  assert.equal(smartImport.resumo.conflitos,0);
+  assert.equal(smartImport.resumo.incluidos,0);
+  assert.ok(smartImport.resumo.ignorados > 0);
+  const smartDuplicate = await request('/sincronizacao-inteligente/importar', {
+    method:'POST',token:auth,body:{nomeArquivo:'pacote-teste.ccsync',conteudo:smartExport},
+  });
+  assert.equal(smartDuplicate.duplicado,true);
+  const smartHistory = await request('/sincronizacao-inteligente/historico',{token:auth});
+  assert.ok(smartHistory.some((item)=>item.package_id===smartPackage.packageId));
+
   const exported = await raw('/sincronizacao/exportar.csv?sincronizar=1', auth);
   const exportedRows=parseCsv(exported);
   assert.ok(exportedRows[0].includes('status_financeiro'));
@@ -161,6 +182,5 @@ test('API local cobre obras, fluxo financeiro, fornecedores, sincronização, au
     return Buffer.from(await response.arrayBuffer());
   }
 });
-
 
 

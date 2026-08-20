@@ -1,15 +1,22 @@
 @echo off
 setlocal
-title Centro de Custos - Teste ChatGPT
+title Centro de Custos - Teste ChatGPT P1
 cd /d "%~dp0"
 
 echo.
 echo ================================================================
-echo   CENTRO DE CUSTOS - VERSAO DE TESTE CHATGPT
+echo   CENTRO DE CUSTOS - VERSAO DE TESTE CHATGPT P1
 echo ================================================================
 echo.
 echo Esta copia usa a porta 3334 e um banco separado.
 echo Nenhum dado da versao principal sera alterado.
+echo.
+echo NOVIDADES DESTA VERSAO:
+echo - lista de lancamentos dividida em paginas;
+echo - escolha de 25, 50, 100 ou 200 itens por pagina;
+echo - ordenacao por data, vencimento, valor ou alteracao;
+echo - pesquisa automatica e botao para limpar filtros;
+echo - cabecalho da tabela fixo durante a rolagem.
 echo.
 
 where node >nul 2>nul
@@ -48,14 +55,14 @@ if not exist "node_modules\@electric-sql\pglite" (
 )
 
 echo.
-echo Iniciando a versao de teste...
+echo Iniciando a versao de teste P1...
 echo O navegador abrira automaticamente em alguns segundos.
 echo.
 echo IMPORTANTE: mantenha esta janela preta aberta enquanto estiver testando.
 echo Para encerrar o teste, volte aqui e pressione Ctrl+C.
 echo.
 
-start "" powershell.exe -NoProfile -Command "Start-Sleep -Seconds 4; Start-Process 'http://127.0.0.1:3334'"
+start "" powershell.exe -NoProfile -Command "Start-Sleep -Seconds 4; Start-Process 'http://127.0.0.1:3334/teste-chatgpt.html'"
 call npm start
 
 echo.

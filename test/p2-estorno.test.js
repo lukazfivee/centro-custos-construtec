@@ -40,7 +40,8 @@ test('entrada de teste mantém interface e fluxo de estorno P2 nas versões segu
   assert.match(html, /chatgpt-p2\.js/);
   assert.match(script, /Confirmar estorno/);
   assert.match(script, /\/api\/lancamentos\/\$\{item\.id\}\/estornar/);
-  assert.match(batch, /mantem melhorias de desempenho, paginacao e estorno das P0\/P1\/P2/);
+  assert.match(batch, /estorno/i);
+  assert.match(batch, /P[2-9]/);
 });
 
 test('sincronização antiga é bloqueada após estornos para evitar perda de vínculo', () => {

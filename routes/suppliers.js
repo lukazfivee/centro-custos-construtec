@@ -12,7 +12,7 @@ router.use(autenticar);
 router.get('/', asyncRoute(async (req,res) => {
   const { rows } = await getDb().query(`
     SELECT id,name AS nome,document AS documento,contact_name AS contato,email,phone AS telefone,
-      notes AS observacao,active AS ativo,created_at,updated_at
+      notes AS observacao,active AS ativo,revision,created_at,updated_at
     FROM suppliers ORDER BY active DESC,name
   `);
   res.json(rows);
@@ -44,12 +44,12 @@ router.put('/:id', exigirPapel('admin','gestor'), asyncRoute(async (req,res) => 
   const data=validate(req.body);
   const result=await getDb().query(
     `UPDATE suppliers SET name=$1,document=$2,contact_name=$3,email=$4,phone=$5,notes=$6,
-       active=$7,updated_at=NOW() WHERE id=$8`,
+       active=$7,revision=revision+1,updated_at=NOW() WHERE id=$8 RETURNING revision`,
     [data.name,data.document,data.contact,data.email,data.phone,data.notes,req.body.ativo!==false,id]
   );
   if(!result.rowCount) throw httpError(404,'Fornecedor não encontrado.');
-  await recordAudit({entityType:'fornecedor',entityId:id,action:'atualizado',summary:`Fornecedor atualizado: ${data.name}`,data,user:req.usuario});
-  res.json({ok:true});
+  await recordAudit({entityType:'fornecedor',entityId:id,action:'atualizado',summary:`Fornecedor atualizado: ${data.name}`,data:{...data,revision:result.rows[0].revision},user:req.usuario});
+  res.json({ok:true,revisao:result.rows[0].revision});
 }));
 
 function validate(body) {

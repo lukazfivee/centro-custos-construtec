@@ -17,9 +17,9 @@ router.get('/', asyncRoute(async (req, res) => {
       cc.start_date::text AS data_inicio, cc.end_date::text AS data_fim,
       cc.contract_amount AS valor_contrato, cc.project_status AS situacao,
       cc.monthly_budget AS orcamento, cc.active AS ativo, cc.description AS descricao,
-      COALESCE(SUM(t.amount) FILTER (WHERE t.type='despesa'),0) AS total_comprometido,
-      COALESCE(SUM(t.amount) FILTER (WHERE t.type='despesa' AND t.financial_status='liquidado'),0) AS total_despesas,
-      COALESCE(SUM(t.amount) FILTER (WHERE t.type='receita' AND t.financial_status='liquidado'),0) AS total_receitas
+      COALESCE(SUM(t.amount * t.accounting_sign) FILTER (WHERE t.type='despesa'),0) AS total_comprometido,
+      COALESCE(SUM(t.amount * t.accounting_sign) FILTER (WHERE t.type='despesa' AND t.financial_status='liquidado'),0) AS total_despesas,
+      COALESCE(SUM(t.amount * t.accounting_sign) FILTER (WHERE t.type='receita' AND t.financial_status='liquidado'),0) AS total_receitas
     FROM cost_centers cc LEFT JOIN transactions t ON t.cost_center_id=cc.id AND t.deleted_at IS NULL
     GROUP BY cc.id ORDER BY cc.active DESC, cc.name
   `);
@@ -35,9 +35,9 @@ router.get('/:id/detalhes', asyncRoute(async (req, res) => {
       cc.start_date::text AS data_inicio, cc.end_date::text AS data_fim,
       cc.contract_amount AS valor_contrato, cc.project_status AS situacao,
       cc.monthly_budget AS orcamento, cc.active AS ativo,
-      COALESCE(SUM(t.amount) FILTER (WHERE t.type='despesa'),0) AS total_comprometido,
-      COALESCE(SUM(t.amount) FILTER (WHERE t.type='despesa' AND t.financial_status='liquidado'),0) AS total_despesas,
-      COALESCE(SUM(t.amount) FILTER (WHERE t.type='receita' AND t.financial_status='liquidado'),0) AS total_receitas,
+      COALESCE(SUM(t.amount * t.accounting_sign) FILTER (WHERE t.type='despesa'),0) AS total_comprometido,
+      COALESCE(SUM(t.amount * t.accounting_sign) FILTER (WHERE t.type='despesa' AND t.financial_status='liquidado'),0) AS total_despesas,
+      COALESCE(SUM(t.amount * t.accounting_sign) FILTER (WHERE t.type='receita' AND t.financial_status='liquidado'),0) AS total_receitas,
       COUNT(t.id) FILTER (WHERE t.deleted_at IS NULL) AS total_lancamentos
     FROM cost_centers cc LEFT JOIN transactions t ON t.cost_center_id=cc.id
     WHERE cc.id=$1 GROUP BY cc.id
@@ -46,7 +46,9 @@ router.get('/:id/detalhes', asyncRoute(async (req, res) => {
   const center = centerResult.rows[0];
   const { rows: transactions } = await db.query(`
     SELECT t.id, t.public_id, t.type AS tipo, t.description AS descricao, t.counterparty AS favorecido,
-      t.amount AS valor, t.transaction_date::text AS data, t.due_date::text AS vencimento,
+      t.amount AS valor,t.accounting_sign AS sinal_contabil,t.reversal_of AS estorno_de,
+      t.reversal_reason AS motivo_estorno,t.reversed_at,
+      t.transaction_date::text AS data, t.due_date::text AS vencimento,
       t.financial_status AS status_financeiro, t.document_number AS documento,
       t.payment_method AS forma_pagamento, t.notes AS observacao,
       CASE WHEN t.financial_status='pendente' AND t.due_date<CURRENT_DATE THEN 'vencido'
@@ -54,7 +56,7 @@ router.get('/:id/detalhes', asyncRoute(async (req, res) => {
       c.name AS categoria
     FROM transactions t JOIN categories c ON c.id=t.category_id
     WHERE t.cost_center_id=$1 AND t.deleted_at IS NULL
-    ORDER BY t.transaction_date DESC
+    ORDER BY t.transaction_date DESC,t.id DESC
   `, [id]);
   res.json({ centro: center, lancamentos: transactions });
 }));
@@ -63,9 +65,9 @@ router.get('/exportar.csv', asyncRoute(async (req, res) => {
   const { rows } = await getDb().query(`
     SELECT cc.code, cc.name, cc.client, cc.contract_number, cc.responsible,
       cc.start_date, cc.end_date, cc.contract_amount, cc.monthly_budget, cc.project_status, cc.active,
-      COALESCE(SUM(t.amount) FILTER (WHERE t.type='despesa'),0) AS committed,
-      COALESCE(SUM(t.amount) FILTER (WHERE t.type='despesa' AND t.financial_status='liquidado'),0) AS expenses,
-      COALESCE(SUM(t.amount) FILTER (WHERE t.type='receita' AND t.financial_status='liquidado'),0) AS revenues,
+      COALESCE(SUM(t.amount * t.accounting_sign) FILTER (WHERE t.type='despesa'),0) AS committed,
+      COALESCE(SUM(t.amount * t.accounting_sign) FILTER (WHERE t.type='despesa' AND t.financial_status='liquidado'),0) AS expenses,
+      COALESCE(SUM(t.amount * t.accounting_sign) FILTER (WHERE t.type='receita' AND t.financial_status='liquidado'),0) AS revenues,
       COUNT(t.id) AS transactions_count
     FROM cost_centers cc LEFT JOIN transactions t ON t.cost_center_id=cc.id AND t.deleted_at IS NULL
     GROUP BY cc.id ORDER BY cc.active DESC, cc.name
@@ -136,5 +138,3 @@ function validate(body) {
 }
 
 module.exports = router;
-
-

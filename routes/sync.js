@@ -1,6 +1,6 @@
 const express = require('express');
 const { autenticar } = require('../middleware/auth');
-const { asyncRoute } = require('../lib/http');
+const { asyncRoute, httpError } = require('../lib/http');
 const { buildTransactionFilters } = require('../lib/transactionFilters');
 const { exportTransactions, importTransactions } = require('../services/sync');
 const { getDb } = require('../db');
@@ -9,6 +9,16 @@ const router = express.Router();
 router.use(autenticar);
 
 router.get('/exportar.csv', asyncRoute(async (req, res) => {
+  const reversalResult = await getDb().query(`
+    SELECT COUNT(*)::int AS total
+    FROM transactions
+    WHERE deleted_at IS NULL AND (accounting_sign=-1 OR reversal_of IS NOT NULL)
+  `);
+  if (Number(reversalResult.rows[0]?.total || 0) > 0) {
+    throw httpError(409,
+      'Esta base possui estornos formais. A sincronização CSV antiga foi bloqueada para não perder o vínculo dos estornos. Use esta versão localmente até a próxima etapa de sincronização P3.'
+    );
+  }
   const filter = buildTransactionFilters(req.query,'t',req.query.sincronizar === '1');
   const csv = await exportTransactions(filter);
   const suffix = new Date().toISOString().slice(0,10);

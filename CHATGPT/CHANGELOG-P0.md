@@ -64,12 +64,20 @@ O workflow `.github/workflows/ci.yml` executa:
 2. `npm run check`;
 3. `npm run test:ci`.
 
+As ações oficiais do workflow usam runtime Node.js 24, enquanto a aplicação continua sendo validada com Node.js 20.
+
 ## Compatibilidade
 
 - Nenhuma dependência nova foi adicionada.
-- A versão permanece `2.2.4` durante a revisão.
+- A branch foi sincronizada com a versão `2.2.5` da `main`, preservando a correção SMTP mais recente.
 - O frontend atual continua consumindo a resposta antiga de lançamentos quando não solicita paginação.
 - A branch `main` não é alterada por este pacote.
+
+## Validação
+
+- 35 arquivos JavaScript passaram na verificação de sintaxe.
+- 12 testes automatizados passaram, incluindo o fluxo integrado de banco, API, sincronização e backup.
+- Resultado do GitHub Actions: aprovado.
 
 ## Próximo lote recomendado
 

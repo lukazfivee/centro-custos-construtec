@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const nodemailer = require('nodemailer');
 const { getDb } = require('../db');
 const { autenticar, exigirPapel } = require('../middleware/auth');
 const { asyncRoute, httpError } = require('../lib/http');
@@ -34,12 +35,27 @@ router.post('/', exigirPapel('admin'), asyncRoute(async (req, res) => {
 router.post('/test', exigirPapel('admin'), asyncRoute(async (req, res) => {
   const { email } = req.body;
   if (!email || !email.includes('@')) throw httpError(400, 'E-mail invalido.');
+  const { getSmtpConfig } = require('../services/email');
+  const cfg = await getSmtpConfig();
+  const transport = nodemailer.createTransport({
+    host: cfg.host,
+    port: cfg.port,
+    secure: cfg.port === 465,
+    auth: { user: cfg.user, pass: cfg.pass },
+    tls: { rejectUnauthorized: false },
+  });
   try {
-    await sendTestEmail(email);
-    res.json({ ok: true, mensagem: 'E-mail de teste enviado!' });
+    await transport.verify();
   } catch (err) {
-    console.error('[EMAIL-TEST]', err);
-    throw httpError(500, `Falha SMTP: ${err.message}`);
+    console.error('[SMTP-VERIFY]', err);
+    throw httpError(500, `Falha na autenticacao SMTP: ${err.message}`);
+  }
+  try {
+    await transport.sendMail({ from: cfg.user, to: email, subject: 'Centro de Custos - Teste', html: '<p>Teste OK</p>' });
+    res.json({ ok: true });
+  } catch (err) {
+    console.error('[SMTP-SEND]', err);
+    throw httpError(500, `Falha ao enviar: ${err.message}`);
   }
 }));
 

@@ -31,7 +31,6 @@ async function getTransport() {
     secure: port === 465,
     auth: { user: cfg.user, pass: cfg.pass },
     tls: { rejectUnauthorized: false },
-    from: cfg.user,
   });
   cachedKey = key;
   return cachedTransport;

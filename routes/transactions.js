@@ -4,6 +4,7 @@ const { getDb, getInstanceIdentity } = require('../db');
 const { autenticar, exigirPapel } = require('../middleware/auth');
 const { asyncRoute, httpError, positiveId } = require('../lib/http');
 const { buildTransactionFilters } = require('../lib/transactionFilters');
+const { parsePagination, wantsPagination, paginationMeta } = require('../lib/pagination');
 const { validDate } = require('../lib/dates');
 const { csvLine, decimalBr } = require('../lib/csv');
 const { recordAudit } = require('../services/audit');
@@ -13,11 +14,11 @@ router.use(autenticar);
 
 async function isMonthClosed(dateStr) {
   if (!dateStr) return false;
-  const d = new Date(dateStr);
+  const d = new Date(`${String(dateStr).slice(0, 10)}T12:00:00`);
   const year = d.getFullYear();
   const month = d.getMonth() + 1;
   const { rows } = await getDb().query('SELECT id FROM monthly_closings WHERE year=$1 AND month=$2', [year, month]);
-  return !!rows[0];
+  return Boolean(rows[0]);
 }
 
 const selectSql = `
@@ -38,25 +39,51 @@ const selectSql = `
 
 router.get('/', asyncRoute(async (req, res) => {
   const { where, values } = buildTransactionFilters(req.query);
-  const { rows } = await getDb().query(
-    `${selectSql} ${where} ORDER BY t.transaction_date DESC,t.id DESC LIMIT 1000`, values
-  );
-  res.json(rows);
+  const orderBy = transactionOrder(req.query);
+  if (!wantsPagination(req.query)) {
+    const { rows } = await getDb().query(
+      `${selectSql} ${where} ORDER BY ${orderBy} LIMIT 1000`, values
+    );
+    res.setHeader('X-Result-Limit', '1000');
+    return res.json(rows);
+  }
+
+  const { page, limit, offset } = parsePagination(req.query, { defaultLimit:50, maxLimit:200 });
+  const limitPosition = values.length + 1;
+  const offsetPosition = values.length + 2;
+  const [dataResult, countResult] = await Promise.all([
+    getDb().query(
+      `${selectSql} ${where} ORDER BY ${orderBy} LIMIT $${limitPosition} OFFSET $${offsetPosition}`,
+      [...values, limit, offset],
+    ),
+    getDb().query(`SELECT COUNT(*)::int AS total FROM transactions t ${where}`, values),
+  ]);
+  const total = Number(countResult.rows[0]?.total || 0);
+  res.setHeader('X-Total-Count', String(total));
+  return res.json({ itens:dataResult.rows, paginacao:paginationMeta(total, page, limit) });
 }));
 
-router.get('/exportar.csv', asyncRoute(async (req,res) => {
-  const { where,values }=buildTransactionFilters(req.query);
-  const { rows }=await getDb().query(`${selectSql} ${where} ORDER BY t.transaction_date DESC,t.id DESC LIMIT 10000`,values);
-  const lines=[csvLine(['Competência','Vencimento','Situação','Tipo','Centro','Obra / centro','Categoria','Descrição','Cliente / fornecedor','Documento','Forma de pagamento','Valor','Observação'])];
-  rows.forEach((row)=>lines.push(csvLine([row.data,row.vencimento,row.situacao,row.tipo,row.centro_codigo,row.centro_nome,row.categoria,row.descricao,row.favorecido,row.documento,row.forma_pagamento,decimalBr(row.valor),row.observacao])));
-  res.setHeader('Content-Type','text/csv; charset=utf-8');
-  res.setHeader('Content-Disposition','attachment; filename="relatorio-lancamentos.csv"');
+router.get('/exportar.csv', asyncRoute(async (req, res) => {
+  const { where, values } = buildTransactionFilters(req.query);
+  const { rows } = await getDb().query(
+    `${selectSql} ${where} ORDER BY t.transaction_date DESC,t.id DESC LIMIT 10000`, values
+  );
+  const lines = [csvLine(['Competência','Vencimento','Situação','Tipo','Centro','Obra / centro','Categoria','Descrição','Cliente / fornecedor','Documento','Forma de pagamento','Valor','Observação'])];
+  rows.forEach((row) => lines.push(csvLine([
+    row.data,row.vencimento,row.situacao,row.tipo,row.centro_codigo,row.centro_nome,
+    row.categoria,row.descricao,row.favorecido,row.documento,row.forma_pagamento,
+    decimalBr(row.valor),row.observacao,
+  ])));
+  res.setHeader('Content-Type', 'text/csv; charset=utf-8');
+  res.setHeader('Content-Disposition', 'attachment; filename="relatorio-lancamentos.csv"');
   res.send(`\uFEFF${lines.join('\r\n')}`);
 }));
 
 router.post('/', asyncRoute(async (req, res) => {
   const data = validatePayload(req.body);
-  if (await isMonthClosed(data.date)) throw httpError(403, 'Esta competência está fechada. Não é possível criar lançamentos nela.');
+  if (await isMonthClosed(data.date)) {
+    throw httpError(403, 'Esta competência está fechada. Não é possível criar lançamentos nela.');
+  }
   await validateRelations(data, true);
   const instance = getInstanceIdentity();
   const { rows } = await getDb().query(
@@ -71,20 +98,34 @@ router.post('/', asyncRoute(async (req, res) => {
       data.amount,data.date,data.notes,data.dueDate,data.settlementDate,data.financialStatus,
       data.documentNumber,data.paymentMethod,instance.id,instance.name,req.usuario.name,req.usuario.id]
   );
-  await recordAudit({entityType:'lancamento',entityId:rows[0].public_id,action:'criado',summary:`Lançamento criado: ${data.description}`,data,user:req.usuario});
+  await recordAudit({
+    entityType:'lancamento',entityId:rows[0].public_id,action:'criado',
+    summary:`Lançamento criado: ${data.description}`,data,user:req.usuario,
+  });
   res.status(201).json(rows[0]);
 }));
 
 router.put('/:id', asyncRoute(async (req, res) => {
   const data = validatePayload(req.body);
-  if (await isMonthClosed(data.date)) throw httpError(403, 'Esta competência está fechada. Não é possível editar lançamentos nela.');
-  await validateRelations(data, false);
-  const instance = getInstanceIdentity();
-  const id=positiveId(req.params.id);
-  const expectedRevision=Number(req.body.revisao);
+  const id = positiveId(req.params.id);
+  const expectedRevision = Number(req.body.revisao);
   if (!Number.isInteger(expectedRevision) || expectedRevision < 1) {
     throw httpError(400, 'Revisão do lançamento inválida. Atualize a lista e tente novamente.');
   }
+  const existingResult = await getDb().query(
+    `SELECT public_id,description,transaction_date::text AS data,revision
+     FROM transactions WHERE id=$1 AND deleted_at IS NULL`, [id]
+  );
+  const existing = existingResult.rows[0];
+  if (!existing) throw httpError(404, 'Lançamento não encontrado.');
+  if (Number(existing.revision) !== expectedRevision) {
+    throw httpError(409, 'Este lançamento foi alterado. Atualize a lista antes de editar novamente.');
+  }
+  if (await isMonthClosed(existing.data) || await isMonthClosed(data.date)) {
+    throw httpError(403, 'A competência de origem ou destino está fechada. Não é possível editar este lançamento.');
+  }
+  await validateRelations(data, false);
+  const instance = getInstanceIdentity();
   const result = await getDb().query(
     `UPDATE transactions SET type=$1,cost_center_id=$2,category_id=$3,description=$4,counterparty=$5,
        amount=$6,transaction_date=$7,notes=$8,due_date=$9,settlement_date=$10,
@@ -97,17 +138,27 @@ router.put('/:id', asyncRoute(async (req, res) => {
       data.paymentMethod,instance.id,instance.name,req.usuario.id,id,expectedRevision]
   );
   if (!result.rowCount) {
-    const existing=await getDb().query('SELECT id FROM transactions WHERE id=$1',[id]);
-    if (!existing.rows.length) throw httpError(404, 'Lançamento não encontrado.');
     throw httpError(409, 'Este lançamento foi alterado ou excluído. Atualize a lista antes de editar novamente.');
   }
-  await recordAudit({entityType:'lancamento',entityId:id,action:'atualizado',summary:`Lançamento atualizado: ${data.description}`,data,user:req.usuario});
-  res.json({ ok: true, revisao:result.rows[0].revision });
+  await recordAudit({
+    entityType:'lancamento',entityId:existing.public_id,action:'atualizado',
+    summary:`Lançamento atualizado: ${data.description}`,data,user:req.usuario,
+  });
+  res.json({ ok:true, revisao:result.rows[0].revision });
 }));
 
 router.delete('/:id', exigirPapel('admin','gestor'), asyncRoute(async (req, res) => {
   const instance = getInstanceIdentity();
-  const id=positiveId(req.params.id);
+  const id = positiveId(req.params.id);
+  const existingResult = await getDb().query(
+    `SELECT public_id,description,transaction_date::text AS data
+     FROM transactions WHERE id=$1 AND deleted_at IS NULL`, [id]
+  );
+  const existing = existingResult.rows[0];
+  if (!existing) throw httpError(404, 'Lançamento não encontrado.');
+  if (await isMonthClosed(existing.data)) {
+    throw httpError(403, 'Esta competência está fechada. Faça um estorno em período aberto em vez de excluir.');
+  }
   const result = await getDb().query(
     `UPDATE transactions SET deleted_at=NOW(),updated_at=NOW(),revision=revision+1,
        last_modified_instance_id=$1,last_modified_instance_name=$2,updated_by=$3
@@ -115,9 +166,25 @@ router.delete('/:id', exigirPapel('admin','gestor'), asyncRoute(async (req, res)
     [instance.id,instance.name,req.usuario.id,id]
   );
   if (!result.rowCount) throw httpError(404, 'Lançamento não encontrado.');
-  await recordAudit({entityType:'lancamento',entityId:id,action:'excluido',summary:'Lançamento enviado para a lixeira.',user:req.usuario});
-  res.json({ ok: true });
+  await recordAudit({
+    entityType:'lancamento',entityId:existing.public_id,action:'excluido',
+    summary:`Lançamento enviado para a lixeira: ${existing.description}`,user:req.usuario,
+  });
+  res.json({ ok:true });
 }));
+
+function transactionOrder(query) {
+  const fields = {
+    data:'t.transaction_date',
+    vencimento:'t.due_date',
+    valor:'t.amount',
+    criado:'t.created_at',
+    atualizado:'t.updated_at',
+  };
+  const field = fields[String(query.ordenarPor || 'data')] || fields.data;
+  const direction = String(query.ordem || 'desc').toLowerCase() === 'asc' ? 'ASC' : 'DESC';
+  return `${field} ${direction},t.id ${direction}`;
+}
 
 function validatePayload(body) {
   const type = String(body.tipo || '');
@@ -133,19 +200,26 @@ function validatePayload(body) {
   const paymentMethod = String(body.forma_pagamento || '').trim() || null;
   if (!['receita','despesa'].includes(type)) throw httpError(400, 'Informe se o lançamento é receita ou despesa.');
   if (!description) throw httpError(400, 'Informe a descrição.');
-  if (!Number.isFinite(amount) || amount <= 0) throw httpError(400, 'O valor precisa ser maior que zero.');
+  if (!Number.isFinite(amount) || amount <= 0 || amount > 999999999999.99) {
+    throw httpError(400, 'O valor precisa ser maior que zero e estar dentro do limite permitido.');
+  }
   if (!validDate(date)) throw httpError(400, 'Informe uma data válida.');
   if (requestedDueDate && !validDate(requestedDueDate)) throw httpError(400, 'Informe um vencimento válido.');
-  if (requestedSettlement && !validDate(requestedSettlement)) throw httpError(400, 'Informe uma data de pagamento ou recebimento válida.');
+  if (requestedSettlement && !validDate(requestedSettlement)) {
+    throw httpError(400, 'Informe uma data de pagamento ou recebimento válida.');
+  }
   if (!['pendente','liquidado'].includes(financialStatus)) throw httpError(400, 'Situação financeira inválida.');
   const dueDate = requestedDueDate || date;
   const settlementDate = financialStatus === 'liquidado' ? (requestedSettlement || date) : null;
   return {
-    type,costCenterId:positiveId(body.cost_center_id,'Centro de custo'),
-    categoryId:positiveId(body.category_id,'Categoria'),description:description.slice(0,240),
-    counterparty:counterparty?.slice(0,160),amount,date,notes,dueDate,
-    settlementDate,financialStatus,documentNumber:documentNumber?.slice(0,80),
-    paymentMethod:paymentMethod?.slice(0,40),
+    type,
+    costCenterId:positiveId(body.cost_center_id, 'Centro de custo'),
+    categoryId:positiveId(body.category_id, 'Categoria'),
+    description:description.slice(0, 240),
+    counterparty:counterparty?.slice(0, 160),
+    amount,date,notes:notes?.slice(0, 5000),dueDate,settlementDate,financialStatus,
+    documentNumber:documentNumber?.slice(0, 80),
+    paymentMethod:paymentMethod?.slice(0, 40),
   };
 }
 
@@ -166,4 +240,3 @@ async function validateRelations(data, requireActive) {
 }
 
 module.exports = router;
-

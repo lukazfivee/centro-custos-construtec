@@ -2,6 +2,8 @@ const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
 const bcrypt = require('bcryptjs');
+const logger = require('./lib/logger');
+const { recordQuery } = require('./lib/metrics');
 
 let database;
 let instanceIdentity;
@@ -37,7 +39,7 @@ function releaseLocalDatabaseLock() {
       if (Number(owner.pid) === process.pid) fs.unlinkSync(localLockPath);
     }
   } catch (error) {
-    console.error('Não foi possível liberar a trava do banco local:', error.message);
+    logger.error('database_lock_release_failed', { error });
   }
   localLockPath = null;
 }
@@ -71,9 +73,42 @@ function rollbackRestore(dataDir, restore, error) {
     if (fs.existsSync(restore.safetyDir)) fs.renameSync(restore.safetyDir, dataDir);
     fs.renameSync(restore.markerPath, `${restore.markerPath}.falhou-${restore.stamp}.json`);
   } catch (rollbackError) {
-    console.error('Falha ao reverter a restauração:', rollbackError);
+    logger.error('database_restore_rollback_failed', { error: rollbackError });
   }
   throw error;
+}
+
+function statementSummary(sql) {
+  return String(sql || '').replace(/\s+/g, ' ').trim().slice(0, 280);
+}
+
+function positiveEnv(name, fallback) {
+  const value = Number(process.env[name]);
+  return Number.isFinite(value) && value > 0 ? value : fallback;
+}
+
+function instrument(operation, executor) {
+  return async (...args) => {
+    const started = process.hrtime.bigint();
+    let failed = false;
+    try {
+      return await executor(...args);
+    } catch (error) {
+      failed = true;
+      throw error;
+    } finally {
+      const durationMs = Number(process.hrtime.bigint() - started) / 1e6;
+      const slowMs = positiveEnv('DB_SLOW_QUERY_MS', 500);
+      const statement = statementSummary(args[0]);
+      recordQuery({ operation, durationMs, failed, statement, slowMs });
+      if (durationMs >= slowMs) {
+        logger.warn('database_slow_operation', {
+          operation, durationMs: Math.round(durationMs * 100) / 100,
+          failed, statement,
+        });
+      }
+    }
+  };
 }
 
 async function createDatabase() {
@@ -84,17 +119,20 @@ async function createDatabase() {
     const pool = new Pool({
       connectionString: process.env.DATABASE_URL,
       max: Number(process.env.DB_POOL_MAX || 10),
+      idleTimeoutMillis: Number(process.env.DB_IDLE_TIMEOUT_MS || 30000),
+      connectionTimeoutMillis: Number(process.env.DB_CONNECTION_TIMEOUT_MS || 10000),
       ssl: process.env.DB_SSL === 'true' ? { rejectUnauthorized: false } : false,
     });
+    pool.on('error', (error) => logger.error('database_pool_error', { error }));
     return {
       mode: 'postgres',
-      query: (...args) => pool.query(...args),
-      exec: (sql) => pool.query(sql),
+      query: instrument('postgres.query', (...args) => pool.query(...args)),
+      exec: instrument('postgres.exec', (sql) => pool.query(sql)),
       transaction: async (callback) => {
         const client = await pool.connect();
         try {
           await client.query('BEGIN');
-          const result = await callback(normalizeClient(client));
+          const result = await callback(normalizeClient(client, 'postgres.transaction'));
           await client.query('COMMIT');
           return result;
         } catch (error) {
@@ -119,7 +157,7 @@ async function createDatabase() {
     if (restore) {
       restoreApplied = { archivePath: restore.archivePath, safetyDir: restore.safetyDir };
       fs.unlinkSync(restore.markerPath);
-      console.log(`Backup restaurado. A base anterior foi preservada em ${restore.safetyDir}`);
+      logger.info('database_backup_restored', { safetyDir: restore.safetyDir });
     }
   } catch (error) {
     releaseLocalDatabaseLock();
@@ -128,19 +166,19 @@ async function createDatabase() {
   }
   return {
     mode: 'pglite',
-    query: async (...args) => normalizeResult(await pglite.query(...args)),
-    exec: (...args) => pglite.exec(...args),
-    transaction: (callback) => pglite.transaction(async (tx) => callback(normalizeClient(tx))),
+    query: instrument('pglite.query', async (...args) => normalizeResult(await pglite.query(...args))),
+    exec: instrument('pglite.exec', (...args) => pglite.exec(...args)),
+    transaction: (callback) => pglite.transaction(async (tx) => callback(normalizeClient(tx, 'pglite.transaction'))),
     close: async () => { try { await pglite.close(); } finally { releaseLocalDatabaseLock(); } },
     dump: () => pglite.dumpDataDir(),
     dataDir,
   };
 }
 
-function normalizeClient(client) {
+function normalizeClient(client, operation = 'transaction') {
   return {
-    query: async (...args) => normalizeResult(await client.query(...args)),
-    exec: (...args) => client.exec ? client.exec(...args) : client.query(...args),
+    query: instrument(`${operation}.query`, async (...args) => normalizeResult(await client.query(...args))),
+    exec: instrument(`${operation}.exec`, (...args) => client.exec ? client.exec(...args) : client.query(...args)),
   };
 }
 
@@ -152,6 +190,11 @@ function normalizeResult(result) {
 function getDb() {
   if (!database) throw new Error('Banco de dados ainda não inicializado.');
   return database;
+}
+
+function getDatabaseInfo() {
+  if (!database) return { initialized:false, mode:null, dataDir:null };
+  return { initialized:true, mode:database.mode, dataDir:database.dataDir || null };
 }
 
 function getInstanceIdentity() {
@@ -180,7 +223,7 @@ async function runMigrations() {
       await tx.exec(sql);
       await tx.query('INSERT INTO schema_migrations (filename) VALUES ($1)', [filename]);
     });
-    console.log(`Migração aplicada: ${filename}`);
+    logger.info('database_migration_applied', { filename });
   }
 }
 
@@ -220,7 +263,7 @@ async function ensureInitialAdmin() {
      VALUES ($1, $2, $3, 'admin')`,
     [name, email, await bcrypt.hash(password, 12)]
   );
-  console.log(`Administrador inicial criado: ${email}. Troque a senha após o primeiro acesso.`);
+  logger.info('initial_admin_created', { email });
 }
 
 async function initializeDatabase() {
@@ -251,7 +294,7 @@ async function closeDatabase() {
   restoreApplied = null;
 }
 
-module.exports = { getDb, getInstanceIdentity, initializeDatabase, closeDatabase };
-
-
-
+module.exports = {
+  getDb, getDatabaseInfo, getInstanceIdentity,
+  initializeDatabase, closeDatabase,
+};

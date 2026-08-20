@@ -1,22 +1,23 @@
 @echo off
 setlocal
-title Centro de Custos - Teste ChatGPT P1
+title Centro de Custos - Teste ChatGPT P2
 cd /d "%~dp0"
 
 echo.
 echo ================================================================
-echo   CENTRO DE CUSTOS - VERSAO DE TESTE CHATGPT P1
+echo   CENTRO DE CUSTOS - VERSAO DE TESTE CHATGPT P2
 echo ================================================================
 echo.
 echo Esta copia usa a porta 3334 e um banco separado.
 echo Nenhum dado da versao principal sera alterado.
 echo.
 echo NOVIDADES DESTA VERSAO:
-echo - lista de lancamentos dividida em paginas;
-echo - escolha de 25, 50, 100 ou 200 itens por pagina;
-echo - ordenacao por data, vencimento, valor ou alteracao;
-echo - pesquisa automatica e botao para limpar filtros;
-echo - cabecalho da tabela fixo durante a rolagem.
+echo - mantem a lista paginada e filtros inteligentes da P1;
+echo - adiciona ESTORNO FORMAL para pagamentos e recebimentos;
+echo - o lancamento original nao e apagado;
+echo - o estorno cria um movimento compensatorio e preserva o historico;
+echo - totais do painel e das obras passam a considerar os estornos;
+echo - lancamentos estornados ficam bloqueados contra edicao e exclusao.
 echo.
 
 where node >nul 2>nul
@@ -55,7 +56,7 @@ if not exist "node_modules\@electric-sql\pglite" (
 )
 
 echo.
-echo Iniciando a versao de teste P1...
+echo Iniciando a versao de teste P2...
 echo O navegador abrira automaticamente em alguns segundos.
 echo.
 echo IMPORTANTE: mantenha esta janela preta aberta enquanto estiver testando.

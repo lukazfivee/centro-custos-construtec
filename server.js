@@ -45,6 +45,7 @@ function createApp() {
   app.use('/api/fornecedores', require('./routes/suppliers'));
   app.use('/api/historico', require('./routes/history'));
   app.use('/api/lancamentos', require('./routes/transactions'));
+  app.use('/api/anexos', require('./routes/attachments'));
   app.use('/api/dashboard', require('./routes/dashboard'));
   app.use('/api/sincronizacao', require('./routes/sync'));
   app.use('/api/sincronizacao-inteligente', require('./routes/smartSync'));

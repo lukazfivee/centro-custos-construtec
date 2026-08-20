@@ -113,11 +113,14 @@ router.put('/:id', asyncRoute(async (req, res) => {
     throw httpError(400, 'Revisão do lançamento inválida. Atualize a lista e tente novamente.');
   }
   const existingResult = await getDb().query(
-    `SELECT public_id,description,transaction_date::text AS data,revision
-     FROM transactions WHERE id=$1 AND deleted_at IS NULL`, [id]
+    `SELECT public_id,description,transaction_date::text AS data,revision,deleted_at
+     FROM transactions WHERE id=$1`, [id]
   );
   const existing = existingResult.rows[0];
   if (!existing) throw httpError(404, 'Lançamento não encontrado.');
+  if (existing.deleted_at) {
+    throw httpError(409, 'Este lançamento foi excluído. Atualize a lista antes de tentar editá-lo.');
+  }
   if (Number(existing.revision) !== expectedRevision) {
     throw httpError(409, 'Este lançamento foi alterado. Atualize a lista antes de editar novamente.');
   }

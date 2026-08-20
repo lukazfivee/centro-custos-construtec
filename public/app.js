@@ -572,10 +572,19 @@ $('#form-smtp').addEventListener('submit',async(e)=>{
     $('#smtp-mensagem').style.color='var(--green)';$('#smtp-mensagem').textContent='SMTP salvo com sucesso!';
   }catch(error){$('#smtp-mensagem').textContent=error.message;}
 });
-$('#btn-testar-smtp').addEventListener('click',async()=>{
-  const email=prompt('E-mail para teste:');
-  if(!email)return;$('#smtp-mensagem').textContent='Enviando...';
-  try{await api('/email-settings/test',{method:'POST',body:JSON.stringify({email})});$('#smtp-mensagem').style.color='var(--green)';$('#smtp-mensagem').textContent='E-mail de teste enviado!';}catch(error){$('#smtp-mensagem').textContent=error.message;}
+$('#btn-testar-smtp').addEventListener('click',()=>{
+  modal('Enviar e-mail de teste',`
+    <label for="smtp-test-email">Para qual e-mail?</label>
+    <input id="smtp-test-email" type="email" placeholder="seuemail@gmail.com" required>
+    <div id="modal-error" class="form-error"></div>
+    <button class="btn primary wide" id="btn-confirmar-teste" style="margin-top:14px">Enviar teste</button>
+  `);
+  $('#btn-confirmar-teste').addEventListener('click',async()=>{
+    const email=$('#smtp-test-email').value;
+    if(!email||!email.includes('@')){$('#modal-error').textContent='E-mail invalido.';return;}
+    $('#modal-error').textContent='Enviando...';
+    try{await api('/email-settings/test',{method:'POST',body:JSON.stringify({email})});closeModal();toast('E-mail de teste enviado!');}catch(error){$('#modal-error').textContent=error.message;}
+  });
 });
 
 // Importar report de e-mail

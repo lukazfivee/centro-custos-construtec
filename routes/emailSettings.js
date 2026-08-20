@@ -33,7 +33,7 @@ router.post('/', exigirPapel('admin'), asyncRoute(async (req, res) => {
 
 router.post('/test', exigirPapel('admin'), asyncRoute(async (req, res) => {
   const { email } = req.body;
-  if (!email || !email.includes('@')) httpError(400, 'E-mail invalido.');
+  if (!email || !email.includes('@')) throw httpError(400, 'E-mail invalido.');
   await sendTestEmail(email);
   res.json({ ok: true, mensagem: 'E-mail de teste enviado!' });
 }));

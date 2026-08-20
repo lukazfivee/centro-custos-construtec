@@ -50,6 +50,12 @@ Edições e exclusões agora respeitam também a competência original fechada. 
 - Não é permitido substituir silenciosamente uma restauração já agendada.
 - Novo endpoint administrativo: `GET /api/backup/status`.
 
+### Atualizador desktop
+
+- O `electron-updater` agora é carregado somente quando o aplicativo desktop realmente solicita atualização.
+- O servidor e os testes podem iniciar sem baixar o binário completo do Electron.
+- O comportamento do atualizador dentro do aplicativo instalado foi preservado.
+
 ### Entrega contínua
 
 O workflow `.github/workflows/ci.yml` executa:

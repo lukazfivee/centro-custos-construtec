@@ -46,3 +46,8 @@ test('métricas registram requisições e consultas sem expor parâmetros', () =
   assert.equal(snapshot.database.slow, 1);
   assert.equal(snapshot.database.recentSlow[0].statement, 'SELECT 1');
 });
+
+test('atualizador pode ser carregado no modo servidor sem inicializar o Electron', () => {
+  const updater = require('../services/updater');
+  assert.equal(updater.getState().status, 'idle');
+});

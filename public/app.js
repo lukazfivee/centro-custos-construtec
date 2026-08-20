@@ -557,8 +557,8 @@ function openBugReportModal(){
 async function loadSmtpSettings(){
   try{
     const s=await api('/email-settings');
-    $('#smtp-host').value=s.smtp_host||'smtp.uol.com.br';$('#smtp-port').value=s.smtp_port||'465';
-    $('#smtp-user').value=s.smtp_user||'comercial@rcconstrutec.com.br';$('#smtp-pass').value=s.smtp_pass||'';
+    $('#smtp-host').value=s.smtp_host||'smtp.gmail.com';$('#smtp-port').value=s.smtp_port||'465';
+    $('#smtp-user').value=s.smtp_user||'';$('#smtp-pass').value=s.smtp_pass||'';
   }catch{}
 }
 $('#form-smtp').addEventListener('submit',async(e)=>{

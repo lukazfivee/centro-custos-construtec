@@ -57,20 +57,92 @@ input:focus,select:focus,textarea:focus{outline-color:rgba(50,169,205,.16);borde
 .fab-bug{position:fixed;bottom:24px;right:24px;z-index:40;width:50px;height:50px;border-radius:50%;border:0;background:var(--orange);color:white;font-size:20px;cursor:pointer;box-shadow:0 6px 20px rgba(50,169,205,.3);display:grid;place-items:center;transition:transform .15s,box-shadow .15s}.fab-bug:hover{transform:scale(1.1);box-shadow:0 8px 28px rgba(50,169,205,.4)}
 html.dark .fab-bug{box-shadow:0 6px 20px rgba(0,0,0,.4)}
 
-html.dark .kpi p,html.dark .panel p,html.dark .panel h2,html.dark .panel-head h2{color:var(--ink)!important}
-html.dark .kpi strong,html.dark .panel strong,html.dark .kpi span{color:var(--white)!important}
-html.dark .kpi strong{color:var(--white)!important}
-html.dark .legend i{filter:invert(1)}
-html.dark .legend .rev{background:var(--green)!important;color:var(--white)!important}
-html.dark .legend .desp{background:var(--red)!important;color:var(--white)!important}
-html.dark .pill{text-shadow:0 0 2px rgba(0,0,0,.5)}
-html.dark .pill.receita,.html.dark .pill.ativo,.html.dark .pill.liquidado,.html.dark .pill.projeto-concluido{filter:invert(1)}
-html.dark .pill.despesa,.html.dark .pill.vencido{filter:invert(1)}
-html.dark .pill.pendente,.html.dark .pill.projeto-planejamento{filter:invert(1)}
-html.dark .pill.projeto-execucao,.html.dark .pill.projeto-pausado{filter:invert(1)}
-html.dark .pill.inativo{filter:invert(1)}
-@media (prefers-contrast: more){html.dark{--contrast-boost:1.2}.html.dark *{filter:contrast(var(--contrast-boost))}.html.dark .kpi,.html.dark .panel,.html.dark .filter-bar,.html.dark .table-card{border-color:var(--line)!important}.html.dark .kpi:before,.html.dark .panel{border-color:var(--line)!important}}.noir{background:#000!important;color:#fff!important}}
-/* Focus states melhorados para modo escuro */
+/* ===== MODO NOTURNO - Fundos e variáveis ===== */
+html.dark{--canvas:#0d1b21;--white:#152530;--ink:#d4dde2;--muted:#7a9aa8;--line:#1e3340;--navy:#021d26;--navy-2:#073541}
+html.dark body{background:var(--canvas);color:var(--ink)}
+html.dark .login-panel{background:linear-gradient(145deg,#0b1720,#112029)}
+html.dark .login-card{background:#152530;border-top-color:var(--orange);box-shadow:0 28px 75px rgba(0,0,0,.4)}
+html.dark .login-card h2{color:var(--ink)}
+html.dark input,html.dark select,html.dark textarea{background:#0d1b21;color:var(--ink);border-color:#1e3340}
+html.dark input:focus,html.dark select:focus,html.dark textarea:focus{border-color:var(--orange);outline-color:rgba(50,169,205,.3)}
+html.dark .btn.secondary{background:#152530;color:var(--ink);border-color:#1e3340}
+html.dark .btn.secondary:hover{border-color:var(--orange)}
+
+/* ===== MODO NOTURNO - Layout principal ===== */
+html.dark .app-shell{background:var(--canvas)}
+html.dark .main{background:var(--canvas)}
+html.dark .page-head h1{color:var(--ink)}
+
+/* ===== MODO NOTURNO - Cards, painéis, KPIs ===== */
+html.dark .kpi,html.dark .panel,html.dark .filter-bar,html.dark .table-card{background:var(--white);border-color:var(--line);color:var(--ink)}
+html.dark .kpi p{color:var(--muted)!important}
+html.dark .kpi strong{color:var(--ink)!important}
+html.dark .kpi span{color:var(--muted)!important}
+html.dark .panel h2,html.dark .panel-head h2{color:var(--ink)!important}
+html.dark .panel p{color:var(--muted)!important}
+
+/* ===== MODO NOTURNO - Tabelas ===== */
+html.dark th{background:#0b1720;color:var(--muted)}
+html.dark td{border-top-color:#1e3340;color:var(--ink)}
+html.dark tbody tr:hover{background:#1a2d38}
+html.dark .table-meta{color:var(--muted)}
+
+/* ===== MODO NOTURNO - Texto e labels ===== */
+html.dark .eyebrow{color:var(--orange)}
+html.dark .muted,html.dark .hint{color:var(--muted)}
+html.dark label{color:var(--muted)}
+html.dark .page-head p{color:var(--muted)}
+
+/* ===== MODO NOTURNO - Sidebar ===== */
+html.dark .sidebar{background:linear-gradient(180deg,rgba(2,29,38,.99),rgba(3,36,45,.99))}
+
+/* ===== MODO NOTURNO - Pills ===== */
+html.dark .pill{text-shadow:none;filter:brightness(1.4)}
+
+/* ===== MODO NOTURNO - Modal ===== */
+html.dark .modal{background:#152530;color:var(--ink)}
+html.dark .modal-head{border-bottom-color:#1e3340}
+html.dark .modal-head h2{color:var(--ink)}
+html.dark #modal-corpo{color:var(--ink)}
+
+/* ===== MODO NOTURNO - Sync / Primeiro uso ===== */
+html.dark .sync-intro{background:linear-gradient(135deg,#021d26,#073541)}
+html.dark .first-use-banner{background:var(--white);border-color:var(--orange)}
+html.dark .check-item{background:#1a2d38;border-color:#1e3340}
+html.dark .check-item.done{background:#0d2a1f;border-color:#1e5a3a}
+html.dark .check-item strong{color:var(--ink)}
+html.dark .check-hint{color:var(--muted)}
+
+/* ===== MODO NOTURNO - Center cards ===== */
+html.dark .center-card{background:var(--white);border-color:var(--line)}
+html.dark .center-card:hover{box-shadow:0 4px 16px rgba(0,0,0,.3)}
+html.dark .center-card-title{color:var(--ink)}
+html.dark .center-card-client{color:var(--muted)}
+html.dark .center-stat-label{color:var(--muted)}
+html.dark .center-stat-value{color:var(--ink)}
+
+/* ===== MODO NOTURNO - Config / Settings ===== */
+html.dark .settings-grid dl dt{color:var(--muted)}
+html.dark .settings-grid dl dd{color:var(--ink)}
+html.dark .settings-grid p{color:var(--muted)}
+html.dark .closing-list{color:var(--ink)}
+
+/* ===== MODO NOTURNO - Conflict cards ===== */
+html.dark .conflict-card{background:var(--white);border-color:var(--line);color:var(--ink)}
+
+/* ===== MODO NOTURNO - Progress bar / FAB ===== */
+html.dark .fab-bug{box-shadow:0 6px 20px rgba(0,0,0,.5)}
+
+/* ===== MODO NOTURNO - Scrollbar ===== */
+html.dark ::-webkit-scrollbar{width:8px;height:8px}
+html.dark ::-webkit-scrollbar-track{background:#0d1b21}
+html.dark ::-webkit-scrollbar-thumb{background:#1e3340;border-radius:4px}
+html.dark ::-webkit-scrollbar-thumb:hover{background:#2a4a5c}
+
+/* ===== MODO NOTURNO - Toast ===== */
+html.dark .toast{background:var(--navy);color:white;border-left-color:var(--orange)}
+
+/* ===== MODO NOTURNO - Focus states ===== */
 html.dark :focus-visible{border:3px solid var(--orange)!important;outline:2px solid var(--orange)!important;outline-offset:2px}
 html.dark button:focus-visible,html.dark input:focus-visible,html.dark select:focus-visible,html.dark textarea:focus-visible{border-color:var(--orange)!important;box-shadow:0 0 0 4px rgba(50,169,205,.3)}
 html.dark .nav-item:focus-visible{background:var(--orange);color:white}

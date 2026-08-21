@@ -1,8 +1,8 @@
 {
   "name": "centro-de-custos",
-  "version": "2.2.5",
+  "version": "3.0.0",
   "private": true,
-  "description": "Gestão offline de receitas, despesas e centros de custo com sincronização por planilha",
+  "description": "Gestão offline de receitas, despesas e centros de custo com sincronização inteligente.",
   "main": "desktop/main.js",
   "engines": {
     "node": ">=20"
@@ -32,15 +32,13 @@
     "pg": "^8.13.1"
   },
   "devDependencies": {
-    "electron": "^33.0.0",
-    "electron-builder": "^25.0.0"
+    "electron": "^41.7.1",
+    "electron-builder": "^26.15.3"
   },
   "build": {
     "appId": "com.construtec.centro-custos",
     "productName": "Centro de Custos Construtec",
-    "directories": {
-      "output": "dist"
-    },
+    "directories": {"output": "dist"},
     "files": [
       ".env",
       "server.js",
@@ -61,32 +59,27 @@
     ],
     "win": {
       "target": [
-        {
-          "target": "nsis",
-          "arch": [
-            "x64"
-          ]
-        },
-        {
-          "target": "portable",
-          "arch": [
-            "x64"
-          ]
-        }
+        {"target": "nsis", "arch": ["x64"]},
+        {"target": "portable", "arch": ["x64"]}
       ],
-      "icon": "desktop/icon.png"
+      "icon": "desktop/icon.png",
+      "artifactName": "Centro-de-Custos-Construtec-${version}-${arch}.${ext}"
     },
     "nsis": {
       "oneClick": false,
       "allowToChangeInstallationDirectory": true,
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true,
-      "shortcutName": "Centro de Custos Construtec"
+      "shortcutName": "Centro de Custos Construtec",
+      "artifactName": "Centro-de-Custos-Construtec-Setup-${version}-${arch}.${ext}"
+    },
+    "portable": {
+      "artifactName": "Centro-de-Custos-Construtec-Portable-${version}-${arch}.${ext}"
     },
     "publish": {
       "provider": "github",
       "owner": "lukazfivee",
-      "repo": "lukazfivee/centro-custos-construtec"
+      "repo": "centro-custos-construtec"
     }
   }
 }

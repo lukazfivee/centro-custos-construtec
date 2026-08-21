@@ -1,23 +1,25 @@
 @echo off
 setlocal
-title Centro de Custos - Teste ChatGPT P4
+title Centro de Custos - Teste ChatGPT FINAL
 cd /d "%~dp0"
 
 echo.
 echo ================================================================
-echo   CENTRO DE CUSTOS - VERSAO DE TESTE CHATGPT P4
-echo ================================================================
+echo   CENTRO DE CUSTOS - VERSAO DE TESTE CHATGPT FINAL
+ echo ================================================================
 echo.
 echo Esta copia usa a porta 3334 e um banco separado.
 echo Nenhum dado da versao principal sera alterado.
 echo.
 echo NOVIDADES DESTA VERSAO:
-echo - mantem desempenho, paginacao, estorno e sincronizacao inteligente;
-echo - adiciona COMPROVANTES E DOCUMENTOS aos lancamentos;
-echo - aceita PDF, JPG, PNG e WEBP de ate 8 MB;
-echo - bloqueia o mesmo arquivo duplicado no mesmo lancamento;
-echo - permite classificar como comprovante, NF, boleto, recibo ou contrato;
-echo - registra inclusao e exclusao dos documentos no historico.
+echo - mantem melhorias de desempenho, paginacao e estorno das P0/P1/P2;
+echo - mantem sincronizacao inteligente P3 e documentos P4;
+echo - adiciona COCKPIT INTELIGENTE com central de atencao;
+echo - adiciona fluxo de caixa projetado, curva ABC e tendencia por obra;
+echo - adiciona contas financeiras e conciliacao de extrato, inclusive Cora;
+echo - adiciona sugestoes pelo historico, visoes salvas e acoes em massa;
+echo - adiciona rateio entre centros de custo pela API;
+echo - adiciona backup automatico configuravel com retencao.
 echo.
 
 where node >nul 2>nul
@@ -56,7 +58,7 @@ if not exist "node_modules\@electric-sql\pglite" (
 )
 
 echo.
-echo Iniciando a versao de teste P4...
+echo Iniciando a versao final de teste...
 echo O navegador abrira automaticamente em alguns segundos.
 echo.
 echo IMPORTANTE: mantenha esta janela preta aberta enquanto estiver testando.

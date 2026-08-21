@@ -1,0 +1,73 @@
+name: Build final Windows
+
+on:
+  push:
+    branches:
+      - 'chatgpt/p5-p8-suite-final'
+    paths:
+      - 'package.json'
+      - 'package-lock.json'
+      - 'desktop/**'
+      - 'public/**'
+      - 'routes/**'
+      - 'services/**'
+      - 'lib/**'
+      - 'middleware/**'
+      - 'migrations/**'
+      - 'server.js'
+      - 'db.js'
+      - '.github/workflows/build-final-windows.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  build-windows:
+    name: Gerar instalador Windows x64
+    runs-on: windows-latest
+    timeout-minutes: 30
+    env:
+      JWT_SECRET: build-local-sem-uso-em-producao-123456789
+      ADMIN_INITIAL_PASSWORD: senha-build-local-123
+    steps:
+      - name: Baixar codigo
+        uses: actions/checkout@v6
+        with:
+          ref: chatgpt/p5-p8-suite-final
+
+      - name: Preparar Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Instalar dependencias
+        shell: pwsh
+        run: npm install --no-audit --no-fund
+
+      - name: Verificar vulnerabilidades restantes
+        shell: pwsh
+        run: |
+          npm audit --audit-level=high
+
+      - name: Validar aplicacao
+        shell: pwsh
+        run: npm run verify
+
+      - name: Gerar instalador e portatil
+        shell: pwsh
+        run: npm run build
+
+      - name: Listar artefatos
+        shell: pwsh
+        run: Get-ChildItem -Path dist -File | Format-Table Name,Length
+
+      - name: Publicar instaladores como artefato
+        uses: actions/upload-artifact@v4
+        with:
+          name: Centro-de-Custos-Construtec-v3.0.0-Windows
+          path: |
+            dist/*.exe
+            dist/latest*.yml
+          if-no-files-found: error
+          retention-days: 30

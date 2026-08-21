@@ -19,7 +19,7 @@ concurrency:
 
 jobs:
   test:
-    name: Node 20 - sintaxe e testes
+    name: Node 20 - sintaxe, testes e dependencias
     runs-on: ubuntu-latest
     timeout-minutes: 15
     env:
@@ -39,6 +39,32 @@ jobs:
 
       - name: Instalar dependencias
         run: npm ci
+
+      - name: Diagnosticar vulnerabilidades
+        shell: bash
+        run: |
+          npm audit --json > audit.json || true
+          node - <<'NODE'
+          const fs = require('fs');
+          const a = JSON.parse(fs.readFileSync('audit.json','utf8'));
+          console.log('AUDIT_METADATA', JSON.stringify(a.metadata || {}));
+          for (const [name, v] of Object.entries(a.vulnerabilities || {})) {
+            console.log('AUDIT_ITEM', JSON.stringify({name,severity:v.severity,isDirect:v.isDirect,via:v.via,effects:v.effects,range:v.range,nodes:v.nodes,fixAvailable:v.fixAvailable}));
+          }
+          NODE
+          rm -f audit.json
+
+      - name: Diagnosticar atualizacoes disponiveis
+        shell: bash
+        run: |
+          npm outdated --json > outdated.json || true
+          node - <<'NODE'
+          const fs = require('fs');
+          const raw = fs.existsSync('outdated.json') ? fs.readFileSync('outdated.json','utf8').trim() : '';
+          const data = raw ? JSON.parse(raw) : {};
+          for (const [name, v] of Object.entries(data)) console.log('OUTDATED_ITEM', JSON.stringify({name,...v}));
+          NODE
+          rm -f outdated.json
 
       - name: Verificar sintaxe
         run: npm run check

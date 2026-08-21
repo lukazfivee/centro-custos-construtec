@@ -2,7 +2,7 @@
   "name": "centro-de-custos",
   "version": "3.0.0",
   "private": true,
-  "description": "Gestão offline de receitas, despesas e centros de custo com sincronização inteligente",
+  "description": "Gestão offline de receitas, despesas e centros de custo com sincronização inteligente.",
   "main": "desktop/main.js",
   "engines": {
     "node": ">=20"
@@ -38,9 +38,7 @@
   "build": {
     "appId": "com.construtec.centro-custos",
     "productName": "Centro de Custos Construtec",
-    "directories": {
-      "output": "dist"
-    },
+    "directories": {"output": "dist"},
     "files": [
       ".env",
       "server.js",
@@ -61,14 +59,8 @@
     ],
     "win": {
       "target": [
-        {
-          "target": "nsis",
-          "arch": ["x64"]
-        },
-        {
-          "target": "portable",
-          "arch": ["x64"]
-        }
+        {"target": "nsis", "arch": ["x64"]},
+        {"target": "portable", "arch": ["x64"]}
       ],
       "icon": "desktop/icon.png",
       "artifactName": "Centro-de-Custos-Construtec-${version}-${arch}.${ext}"

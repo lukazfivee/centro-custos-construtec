@@ -29,7 +29,8 @@
     if (b) b.addEventListener('click', () => (Array.isArray(destino) ? CC.go(destino[0], destino[1]) : CC.go(destino || 'menu')));
   };
 
-  A.can = (p) => (CC.sv ? CC.sv.can(p) : false);
+  // Administrador tem tudo no servidor: vale ja, antes de /auth/me responder (o Menu nao pisca).
+  A.can = (p) => (CC.sv ? CC.sv.can(p) : false) || (!A.como() && A.papelReal() === 'admin');
   // Confere a permissao antes de abrir a tela. Sem ela, mostra o aviso e devolve false.
   A.guard = async function (params, perm, titulo) {
     if (CC.sv) await CC.sv.loadPerms();

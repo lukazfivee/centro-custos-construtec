@@ -73,7 +73,7 @@
   A.como = () => {
     const c = lerComo();
     if (!c || !c.papel) return null;
-    const pode = realCan ? realCan('p9') : A.papelReal() === 'admin';
+    const pode = A.papelReal() === 'admin' || (realCan ? realCan('p9') : false);
     return pode ? c : null;
   };
   A.simular = (papel, permissoes) => {

@@ -24,7 +24,7 @@
     const pode = F.podeCadastrar();
     const acoes = `<button class="back" type="button" id="fo-csv" aria-label="Baixar ou compartilhar CSV">${icon('download-simple', 22)}</button>
       ${pode ? `<button class="back" type="button" id="fo-novo" aria-label="Novo fornecedor">${icon('plus', 22)}</button>` : ''}`;
-    const page = CC.render(`${F.top('Fornecedores', `${F.plural(todos.length, 'cadastrado', 'cadastrados')} · gasto de ${CC.mesNome(mes).toLowerCase()}`, acoes)}
+    const page = CC.render(`${F.top('Fornecedores', `${F.plural(todos.length, 'cadastrado', 'cadastrados')} · gasto de ${F.mesCurto(mes)}`, acoes)}
       ${CC.staleNote(result)}${F.busca('fo-busca', busca, 'Nome, CPF/CNPJ ou contato')}<div id="fo-lista"></div>`, true, params);
     F.voltar(page, voltar);
     const pintar = () => {

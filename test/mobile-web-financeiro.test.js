@@ -87,3 +87,37 @@ test('celular: telas financeiras escapam o texto vindo da API', () => {
     assert.equal(raw.length, 0, `${f}: ${raw.map((x) => x[0]).join(', ')}`);
   }
 });
+
+test('celular: regras das cobrancas (situacao, 4 passos, filtros e indicadores em centavos)', () => {
+  const vm = require('node:vm');
+  const CC = {
+    esc: (v) => String(v == null ? '' : v), icon: () => '',
+    cents: (v) => { const n = Number(v) || 0; return Math.sign(n) * Math.round(Math.abs(n) * 100 + 1e-7) / 100; },
+    dateFull: (iso) => (iso ? `${iso.slice(8, 10)}/${iso.slice(5, 7)}/${iso.slice(0, 4)}` : ''),
+  };
+  vm.runInNewContext(read('cobr-regras.js'), { window: { CC }, Date });
+  const B = CC.cobr;
+  const itens = [
+    { publicId: 'a', code: 'OB-1', name: 'Alfa', operationalStatus: 'em_execucao', financialStatus: 'a_faturar', receivableAmount: 100.105 },
+    { publicId: 'b', code: 'OB-2', name: 'Beta', operationalStatus: 'finalizada', financialStatus: 'nf_emitida', invoiceNumber: '2199', receivableAmount: 200 },
+    { publicId: 'c', code: 'OB-3', name: 'Gama', operationalStatus: 'finalizada', financialStatus: 'aguardando_pagamento', dueDate: '2000-01-01', receivableAmount: 50.5 },
+    { publicId: 'd', code: 'OB-4', name: 'Delta', operationalStatus: 'entregue', financialStatus: 'pago', receivableAmount: 10 },
+  ];
+  const ind = B.indicadores(itens);
+  assert.equal(ind.finalizadas, 1000);
+  assert.equal(ind.aguardando, 5050);
+  assert.equal(ind.venceramEntre, 1);
+  assert.equal(ind.pendentes, 2);
+  assert.equal(ind.aReceber, 10011 + 20000 + 5050); // 100,105 arredonda para 100,11 (HALF_UP)
+  assert.deepEqual(B.filtrar(itens, 'vencidas', '').map((i) => i.publicId), ['c']);
+  assert.deepEqual(B.filtrar(itens, 'pendentes', '').map((i) => i.publicId), ['a', 'b']);
+  assert.deepEqual(B.filtrar(itens, '', '2199').map((i) => i.publicId), ['b']);
+  assert.equal(B.proximo(itens[0]).acao, 'aprovar');
+  assert.equal(B.proximo(itens[1]).acao, 'email');
+  assert.equal(B.proximo(itens[2]).acao, 'pagar');
+  assert.equal(B.proximo(itens[3]).acao, null);
+  assert.equal(B.passos(itens[2])[3].vencido, true);
+  assert.equal(B.textoFin(itens[0]), 'Pendente');
+  assert.equal(B.corpo(itens[1], { financialStatus: 'pago' }).invoiceNumber, '2199');
+  assert.match(B.csv(itens), /^\ufeff"Obra";"Cliente"/);
+});

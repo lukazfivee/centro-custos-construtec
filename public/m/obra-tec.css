@@ -53,6 +53,7 @@ html[data-theme="escuro"] { --g-rec: #22a0cc; --g-desp: #c2831c; --g-prev: #6f8f
 .hp-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; } .hp-head .chip-act { min-height: 44px; }
 .hp-rec-card .tx b { white-space: normal; }
 .hp-busca { flex-direction: row; align-items: center; width: 100%; min-height: 48px; padding: 0 14px 0 42px; border: 0; border-radius: 10px; background: var(--surface); box-shadow: inset 0 0 0 1px var(--divider); color: var(--n300); font-size: 15px; text-align: left; }
+.hp-busca > span { font-size: 15px; font-weight: 400; color: var(--n300); }
 .hp-busca:active { transform: scale(.98); }
 .bg-res { display: flex; flex-direction: column; gap: 4px; margin-top: 12px; min-height: 120px; }
 .bg-res .label { margin-top: 8px; }

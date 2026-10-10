@@ -87,15 +87,17 @@
   const sitAtual = (tipo) => { try { return localStorage.getItem(`cc.m.obras.sit.${tipo}`) || ''; } catch (e) { return ''; } };
   const guardarSit = (tipo, v) => { try { localStorage.setItem(`cc.m.obras.sit.${tipo}`, v); } catch (e) { /* sem armazenamento */ } };
 
-  function obraRow(c) {
-    const budget = Number(c.orcamento), spent = Number(c.total_comprometido), p = pct(spent, budget);
+  // n: numeros da carteira (portfolio-summary) da obra; com orcamento importado, o consumo e sobre o custo base, como no desktop.
+  function obraRow(c, n) {
+    const base = n && Number(n.baseCost) > 0;
+    const budget = base ? Number(n.baseCost) : Number(c.orcamento), spent = base ? Number(n.realizedCost) : Number(c.total_comprometido), p = pct(spent, budget);
     const over = p !== null && p > 100, atencao = p !== null && p > 80; // desktop: atencao acima de 80%
     const tag = c.ativo === false ? '<span class="tag">Inativa</span>' : (Number(c.total_lancamentos || 0) === 0 && !spent ? '<span class="tag">Nova</span>'
       : (p === null ? '<span class="tag">Sem orçamento</span>' : `<span class="tag${atencao ? ' warn' : ''}">${p}% gasto</span>`));
     return `<button class="row" type="button" data-obra="${c.id}">
       <span class="line"><span class="grow"><span class="name">${esc(c.nome)}</span><br><span class="cli">${esc(c.cliente || c.codigo || '')}</span></span>${tag}${icon('caret-right', 16)}</span>
       ${p === null ? '' : `<span class="bar${over ? ' warn' : ''}"><span style="width:${Math.min(100, p)}%"></span></span>`}
-      <span class="foot">Gasto ${esc(moneyShort(spent))}${budget > 0 ? ` de ${esc(moneyShort(budget))} orçado` : ''}</span></button>`;
+      <span class="foot">Gasto ${esc(moneyShort(spent))}${budget > 0 ? ` de ${esc(moneyShort(budget))} orçado` : ''}${n && Number(n.billed) > 0 ? ` · faturado ${esc(moneyShort(n.billed))}` : ''}</span></button>`;
   }
 
   // Cartao compacto do servico: codigo, data, nome, cliente, tecnico, situacao e cobrado, gasto e resultado numa linha.
@@ -161,7 +163,9 @@
     const title = tipo === 'obra' ? 'Obras' : tipo === 'servico' ? 'Serviços' : 'Obras e serviços';
     const sub = tipo === 'obra' ? `${obras.length} obras · orçado × gasto` : tipo === 'servico' ? `${servs.length} serviços · ${CC.monthName()}` : `${obras.length} obras e ${servs.length} serviços`;
     const vazio = `<div class="empty">${icon(tipo === 'servico' ? 'wrench' : 'buildings', 28)}${sitO || sitS ? 'Nada nesta situação.' : (tipo === 'servico' ? 'Nenhum serviço cadastrado.' : tipo === 'todos' ? 'Nenhuma obra ou serviço cadastrado.' : 'Nenhuma obra cadastrada.')}</div>`;
-    const lista = tipo === 'obra' ? obras.map(obraRow).join('') : tipo === 'servico' ? servs.map(servicoRow).join('')
+    const porObra = new Map(((carteira && carteira.porObra) || []).map((x) => [Number(x.id), x]));
+    const row = (c) => obraRow(c, porObra.get(Number(c.id)));
+    const lista = tipo === 'obra' ? obras.map(row).join('') : tipo === 'servico' ? servs.map(servicoRow).join('')
       : `${obras.length ? `<div class="group">Obras</div>${obras.map(obraRow).join('')}` : ''}${servs.length ? `<div class="group">Serviços</div>${servs.map(servicoRow).join('')}` : ''}`;
     CC.render(`${top}<h1 class="title">${title}</h1><p class="sub">${esc(sub)}</p>${staleNote(stale)}${totais(tipo, obras, servs, carteira)}${chips}
       <div class="rows">${lista || vazio}</div>

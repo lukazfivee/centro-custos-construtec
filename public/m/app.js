@@ -7,8 +7,8 @@
     ['obras', 'Obras', 'buildings', ['obras', 'obra', 'obra-editar', 'servico', 'servico-rel']],
     ['lancar', 'Lançar', 'plus-circle', ['lancar', 'ok']],
     ['lancamentos', 'Lançamentos', 'list-bullets', ['lancamentos', 'lanc']],
-    ['menu', 'Menu', 'list', ['menu', 'pedidos', 'perfil', 'descartadas', 'descartada', 'atualizacao',
-      'fechamento', 'historico', 'reports', 'report', 'report-novo', 'usuarios', 'usuario-form', 'papeis', 'emails-ext', 'sistema']],
+    ['menu', 'Menu', 'list', ['menu', 'pedidos', 'perfil', 'fechamento', 'historico', 'reports', 'report', 'report-novo',
+      'usuarios', 'usuario-form', 'papeis', 'emails-ext', 'sistema', 'descartadas', 'descartada', 'atualizacao']],
   ];
   let current = 'home', currentParams = {};
   let lensTimer;

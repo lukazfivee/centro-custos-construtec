@@ -49,11 +49,17 @@
     const sh = CC.sheet('obra-menu', `${CC.sheetHead('buildings', c.nome)}
       <p class="sheet-sec">${esc(c.codigo)}</p>
       ${CC.sv && CC.sv.can('p5') && CC.screens['obra-editar'] ? item('om-edit', 'pencil-simple', 'Editar obra', 'Dados, contrato, datas, situação e orçamento') : ''}
+      ${CC.screens['obra-folha'] ? item('om-rel', 'printer', 'Relatório executivo', 'Orçado × realizado · imprimir, PDF ou CSV') : ''}
+      ${CC.obraImportar && CC.sv && CC.sv.can('p5') ? item('om-imp', 'file-arrow-down', 'Importar ou atualizar orçamento', 'Arquivo .json do Orçamentos e PDF da proposta') : ''}
       ${item('om-copy', 'copy', 'Copiar código da obra', c.codigo)}
       ${linked ? `<a class="suite-item om-item" id="om-prop" href="${esc(CC.suite.orcLink(c.proposta_origem.id))}"${/SuiteConstrutec\//.test(navigator.userAgent) ? '' : ' target="_blank" rel="noopener"'}>${icon('file-text', 22)}<span><b>Proposta de origem</b><small>${esc(propLabel)} · no Orçamentos</small></span></a>` : ''}
       ${canDel ? item('om-del', 'trash', 'Excluir obra', 'Obra sem vínculo com orçamento · apaga de vez', 'danger') : ''}
       ${canDesc ? item('om-desc', 'trash', 'Descartar obra', `Ligada à ${propLabel} · fica guardada`, 'danger') : ''}`);
     CC.$('#om-copy', sh.el).addEventListener('click', () => { sh.close(); copy(c.codigo); });
+    const rel = CC.$('#om-rel', sh.el);
+    if (rel) rel.addEventListener('click', () => { sh.close(); CC.go('obra-folha', { id: c.id, tipo: 'relatorio' }); });
+    const imp = CC.$('#om-imp', sh.el);
+    if (imp) imp.addEventListener('click', () => { sh.close(); CC.obraImportar(c, () => CC.go('obra', { id: c.id, tab: 'orcado' })); });
     const edit = CC.$('#om-edit', sh.el);
     if (edit) edit.addEventListener('click', () => { sh.close(); CC.go('obra-editar', { id: c.id }); });
     const prop = CC.$('#om-prop', sh.el);

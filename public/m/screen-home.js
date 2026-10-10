@@ -52,27 +52,24 @@
       <div class="skeleton"></div><div class="skeleton"></div>`);
     let result;
     try {
-      result = await CC.cached(`dash-${CC.month()}`, `/dashboard/resumo?mes=${CC.month()}`);
+      result = await CC.cached(`dash-${CC.month()}`, CC.homeQuery ? CC.homeQuery(CC.month(), '') : `/dashboard/resumo?mes=${CC.month()}`);
     } catch (error) {
       return CC.errorScreen(el, error, () => CC.screens.home());
     }
     const dash = result.data;
     const tasks = tasksFrom(dash, CC.queue.state);
-    const active = (dash.porCentro || []).filter((c) => c.situacao !== 'concluido').length;
     const title = tasks.length ? (tasks.length === 1 ? '1 pendência hoje' : `${tasks.length} pendências hoje`) : 'Nada pendente hoje';
     CC.render(`${header('')}<p class="hello">${esc(CC.greeting())}${first ? `, ${esc(first)}` : ''}</p>
       <h1 class="title">${esc(title)}</h1>${staleNote(result)}
-      <button class="summary" type="button" id="resumo" aria-label="Ver lançamentos do mês">
-        <span><small>Saldo de ${esc(CC.monthName())}</small><b>${esc((dash.saldo < 0 ? '− ' : '+ ') + moneyShort(dash.saldo))}</b></span>
-        <span><small>Vencidas</small><b class="${dash.vencidos > 0 ? 'warn' : ''}">${esc(moneyShort(dash.vencidos))}</b></span>
-        <span><small>Obras</small><b>${active === 1 ? '1 ativa' : `${active} ativas`}</b></span>
-        ${icon('caret-right', 18)}
-      </button>
+      ${CC.buscaCampo ? CC.buscaCampo() : ''}
       ${tasks.map((t, i) => `<div class="card task${t.alert ? ' hot' : ''}"><span class="ic">${icon(t.icon, 18)}</span>
         <span class="txt"><b>${esc(t.title)}</b><small>${esc(t.sub)}</small></span>${t.value ? `<span class="val">${esc(t.value)}</span>` : ''}
         <button class="chip-act" type="button" data-task="${i}">${esc(t.action)}${icon('arrow-right', 14)}</button></div>`).join('')}
-      ${tasks.length ? '' : `<div class="empty">${icon('check-circle', 28)}Tudo em dia por aqui.</div>`}`, false, params);
-    CC.$('#resumo').addEventListener('click', () => CC.go('lancamentos'));
+      ${tasks.length ? '' : `<div class="empty">${icon('check-circle', 28)}Tudo em dia por aqui.</div>`}
+      <div id="home-mais" class="hp"></div>`, false, params);
+    const busca = CC.$('#hp-busca');
+    if (busca) busca.addEventListener('click', () => CC.busca(['home']));
+    if (CC.homePainel) CC.homePainel(CC.$('#home-mais'), dash, params);
     CC.$$('[data-task]').forEach((b) => b.addEventListener('click', () => { const t = tasks[Number(b.dataset.task)]; CC.go(t.go[0], t.go[1]); }));
   };
 
@@ -112,7 +109,8 @@
   }
 
   // Tres totais que acompanham a aba. Tecnico (sem valores) ve contagem e gastos.
-  function totais(tipo, obras, servs) {
+  function totais(tipo, obras, servs, carteira) {
+    if (tipo === 'obra' && carteira && carteira.portfolio && CC.carteiraTiles) return CC.carteiraTiles(carteira.portfolio, obras);
     const ve = servs.length ? servs.some((v) => v.valor !== undefined) : CC.sv.can('p1');
     const sum = (list, f) => list.reduce((a, x) => a + (Number(f(x)) || 0), 0);
     const mes = servs.filter((v) => String(v.data || '').startsWith(CC.month()));
@@ -144,10 +142,12 @@
     };
     const el = CC.render(`${top}<div class="skeleton" style="height:72px"></div><div class="skeleton"></div><div class="skeleton"></div>`, false, params);
     bind();
-    let obrasRes = { data: [] }, servRes = { data: [] };
+    let obrasRes = { data: [] }, servRes = { data: [] }, carteira = null;
     try {
-      [obrasRes, servRes] = await Promise.all([tipo === 'servico' ? obrasRes : CC.cached('obras', `/centros-custo?mes=${CC.month()}`),
-        tipo === 'obra' ? servRes : CC.cached('servicos', '/servicos?ativo=true')]);
+      [obrasRes, servRes, carteira] = await Promise.all([tipo === 'servico' ? obrasRes : CC.cached('obras', `/centros-custo?mes=${CC.month()}`),
+        tipo === 'obra' ? servRes : CC.cached('servicos', '/servicos?ativo=true'),
+        // Numeros reais da carteira (como o desktop). Engenharia e tecnico nao tem acesso: ficam os totais da lista.
+        tipo === 'obra' ? CC.cached('carteira-obra', '/centros-custo/portfolio-summary?kind=obra').then((r) => r.data).catch(() => null) : null]);
     } catch (error) {
       return CC.errorScreen(el, error, () => CC.screens.obras());
     }
@@ -163,9 +163,12 @@
     const vazio = `<div class="empty">${icon(tipo === 'servico' ? 'wrench' : 'buildings', 28)}${sitO || sitS ? 'Nada nesta situação.' : (tipo === 'servico' ? 'Nenhum serviço cadastrado.' : tipo === 'todos' ? 'Nenhuma obra ou serviço cadastrado.' : 'Nenhuma obra cadastrada.')}</div>`;
     const lista = tipo === 'obra' ? obras.map(obraRow).join('') : tipo === 'servico' ? servs.map(servicoRow).join('')
       : `${obras.length ? `<div class="group">Obras</div>${obras.map(obraRow).join('')}` : ''}${servs.length ? `<div class="group">Serviços</div>${servs.map(servicoRow).join('')}` : ''}`;
-    CC.render(`${top}<h1 class="title">${title}</h1><p class="sub">${esc(sub)}</p>${staleNote(stale)}${totais(tipo, obras, servs)}${chips}
-      <div class="rows">${lista || vazio}</div>`, false, params);
+    CC.render(`${top}<h1 class="title">${title}</h1><p class="sub">${esc(sub)}</p>${staleNote(stale)}${totais(tipo, obras, servs, carteira)}${chips}
+      <div class="rows">${lista || vazio}</div>
+      ${tipo === 'obra' && CC.obraImportar && CC.sv && CC.sv.can('p5') ? `<button class="btn2" type="button" id="importar">${icon('file-arrow-down', 18)}Importar orçamento do Orçamentos</button>` : ''}`, false, params);
     bind();
+    const imp = CC.$('#importar');
+    if (imp) imp.addEventListener('click', () => CC.obraImportar(null, (r) => (r && r.costCenterId ? CC.go('obra', { id: Number(r.costCenterId), tab: 'orcado' }) : CC.screens.obras(params))));
     CC.$$('[data-sit]').forEach((b) => b.addEventListener('click', () => { guardarSit(tipo, b.dataset.sit); CC.screens.obras(params); }));
     CC.$$('[data-obra]').forEach((b) => b.addEventListener('click', () => CC.go('obra', { id: Number(b.dataset.obra) })));
     CC.$$('[data-servico]').forEach((b) => b.addEventListener('click', () => CC.go('servico', { id: Number(b.dataset.servico) })));

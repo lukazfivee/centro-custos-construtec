@@ -1,7 +1,9 @@
-// Detalhe da obra: Resumo, Lancamentos e Caixa. Prototipo: sObra (otResumo, otLanc, otCaixa).
+// Detalhe da obra: Resumo, Lancamentos, Caixa, Orcado, Notas, Medicoes e Curva S. Prototipo: sObra (otResumo, otLanc, otCaixa).
 (function (CC) {
   const { esc, icon, money, moneyShort } = CC;
-  const TABS = [['resumo', 'Resumo'], ['lanc', 'Lançamentos'], ['caixa', 'Caixa'], ['orcado', 'Orçado × realizado'], ['nf', 'Notas fiscais']];
+  const TABS = [['resumo', 'Resumo'], ['lanc', 'Lançamentos'], ['caixa', 'Caixa'], ['orcado', 'Orçado × realizado'], ['nf', 'Notas fiscais'], ['medicoes', 'Medições'], ['curva', 'Curva S']];
+  // Abas desenhadas por outros arquivos (screen-obra-abas.js, screen-obra-tec.js, screen-obra-curva.js).
+  const ABAS = { orcado: 'obraOrcado', nf: 'obraNf', medicoes: 'obraMedicoes', curva: 'obraCurva' };
 
   function amountOf(t) {
     const v = Number(t.valor) * Number(t.sinal_contabil || 1);
@@ -80,7 +82,7 @@
     const queued = tab === 'lanc' ? await CC.queuedRows((i) => Number(i.payload.cost_center_id) === id) : '';
     const body = tab === 'resumo' ? resumo(c, list)
       : (tab === 'caixa' ? caixa(list)
-        : (tab === 'orcado' || tab === 'nf' ? '<div id="obra-aba"></div>'
+        : (ABAS[tab] ? '<div id="obra-aba"></div>'
           : (list.length || queued ? `${queued}${byDate(list)}` : `<div class="empty">${icon('receipt', 28)}Nenhum lançamento nesta obra ainda.</div>`)));
     CC.render(`<div class="top obra-top"><button class="back" type="button" id="voltar" aria-label="Voltar">${icon('caret-left', 20)}</button>
         <span class="grow"><h1>${esc(c.nome)}</h1><small class="muted">${esc([c.cliente, c.codigo].filter(Boolean).join(' · '))}</small></span>
@@ -93,7 +95,7 @@
     CC.$$('[data-tab]').forEach((b) => b.addEventListener('click', () => CC.screens.obra({ id, tab: b.dataset.tab })));
     CC.wireTx(document, ['obra', { id, tab }]);
     const aba = CC.$('#obra-aba');
-    if (aba) (tab === 'orcado' ? CC.obraOrcado : CC.obraNf)(aba, c);
+    if (aba && CC[ABAS[tab]]) CC[ABAS[tab]](aba, c);
     const sel = CC.$('.obra-abas [aria-pressed="true"]');
     if (sel && sel.scrollIntoView) sel.scrollIntoView({ block: 'nearest', inline: 'center' });
     const mais = CC.$('#obra-mais');

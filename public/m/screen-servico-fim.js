@@ -134,15 +134,23 @@
     }
     if (params.__nav !== CC.nav) return;
     const s = CC.sv.atual && CC.sv.atual.id === id ? CC.sv.atual : null;
-    const url = URL.createObjectURL(new Blob([html], { type: 'text/html' }));
     const page = CC.render(`${head(`${s ? `${s.codigo} · ` : ''}1 página`)}
-      <iframe class="sv-rel" id="sv-rel" src="${url}" title="Relatório do serviço"></iframe>
+      <iframe class="sv-rel" id="sv-rel" title="Relatório do serviço"></iframe>
       <div class="sv-note">${icon('eye-slash', 16)}<span>Sem custos internos: gastos, resultado e margem não entram no relatório. O cliente vê o que foi feito, as fotos e o valor.</span></div>
       <div class="actions"><button class="btn2" type="button" id="r-share">${icon('share-network', 18)}Compartilhar</button>
         <button class="btn" type="button" id="r-print">${icon('printer', 18)}Imprimir ou PDF</button></div>`, true, params);
     document.body.classList.add('no-tabs');
-    CC.$('#voltar', page).addEventListener('click', () => { URL.revokeObjectURL(url); CC.go('servico', { id }); });
-    CC.$('#r-print', page).addEventListener('click', () => { try { CC.$('#sv-rel', page).contentWindow.print(); } catch { window.open(url, '_blank'); } });
+    CC.$('#voltar', page).addEventListener('click', () => CC.go('servico', { id }));
+    // srcdoc depois de a tela estar montada: o quadro pinta na hora (blob ficava branco ate imprimir).
+    const quadro = CC.$('#sv-rel', page);
+    requestAnimationFrame(() => { if (quadro.isConnected) quadro.srcdoc = html; });
+    CC.$('#r-print', page).addEventListener('click', () => {
+      try { quadro.contentWindow.print(); } catch {
+        const url = URL.createObjectURL(new Blob([html], { type: 'text/html' }));
+        window.open(url, '_blank');
+        setTimeout(() => URL.revokeObjectURL(url), 60000);
+      }
+    });
     CC.$('#r-share', page).addEventListener('click', async () => {
       const file = new File([html], `relatorio-${s ? s.codigo : id}.html`, { type: 'text/html' });
       if (navigator.canShare && navigator.canShare({ files: [file] })) {

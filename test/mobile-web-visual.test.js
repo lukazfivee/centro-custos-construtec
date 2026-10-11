@@ -24,19 +24,33 @@ function themes() {
   return { light, dark };
 }
 
-test('fundo do html e do body segue o tema e a barra inferior fica sobre uma faixa opaca', () => {
+test('fundo do html e do body segue o tema e a barra inferior fica sobre um esmaecido que deixa o conteudo aparecer', () => {
   const all = css();
   assert.match(all, /html, body \{[^}]*background: var\(--bg\)/);
   assert.match(all, /body \{ padding-bottom: calc\(96px \+ var\(--sab\)\)/);
   assert.match(all, /--sab: env\(safe-area-inset-bottom, 0px\)/);
   assert.match(all, /\.tabs \{[^}]*bottom: calc\(12px \+ var\(--sab\)\)/);
   const faixa = read('barra.css').match(/body::after \{[^}]*\}/);
-  assert.ok(faixa, 'falta a faixa opaca atras da barra de abas');
+  assert.ok(faixa, 'falta o esmaecido atras da barra de abas');
   assert.match(faixa[0], /position: fixed/);
   assert.match(faixa[0], /bottom: 0/);
   assert.match(faixa[0], /var\(--sab\)/);
-  assert.match(faixa[0], /var\(--bg\)/);
+  assert.match(faixa[0], /background: var\(--bg\)/);
+  assert.match(faixa[0], /(?<!-webkit-)mask-image: linear-gradient\(to top, rgba\(0, 0, 0, \.9\)/, 'a mascara deixa o conteudo aparecer pelo vidro');
+  assert.match(faixa[0], /-webkit-mask-image: linear-gradient/);
   assert.match(all, /body\.no-tabs::after \{ display: none/);
+});
+
+test('barra de abas no estilo do iPhone: capsula de vidro e pilula na aba ativa', () => {
+  const m = read('m.css');
+  const barra = m.match(/\.tabs \{[^}]*\}/)[0];
+  assert.match(barra, /height: 64px/);
+  assert.match(barra, /border-radius: 32px/, 'capsula: raio igual a metade da altura');
+  assert.match(barra, /repeat\(var\(--tabs-n\), minmax\(0, 1fr\)\)/);
+  assert.match(m, /\.tabs-refraction \{[^}]*backdrop-filter: blur\(\d+px\) saturate/);
+  assert.match(m, /\.tabs::before \{[^}]*width: calc\(\(100% - 8px\) \/ var\(--tabs-n\)\)[^}]*border-radius: 28px/);
+  assert.doesNotMatch(`${m}\n${read('index.html')}`, /cc-glass-distortion|feDisplacementMap/, 'sem a distorcao SVG antiga');
+  assert.match(m, /\.tab:active:not\(\[aria-current="page"\]\) \{ background: var\(--tab-thumb\)/);
 });
 
 test('viewport cobre o notch e o tema vale antes da primeira pintura', () => {
@@ -61,6 +75,7 @@ test('contraste dos pares de cor usados pelo celular, claro e escuro', () => {
     ['light', 'accent-300', 'bg', 4.5], ['light', 'accent-300', 'accent-900', 4.5], ['dark', 'accent-300', 'accent-900', 4.5], ['dark', 'accent-300', 'surface', 4.5],
     ['light', 'danger-ink', 'bg', 4.5], ['light', 'danger-ink', 'surface', 4.5], ['dark', 'danger-ink', 'bg', 4.5], ['dark', 'danger-ink', 'surface', 4.5],
     ['light', 'tab-ink', 'bg', 4.5], ['dark', 'tab-ink', 'bg', 4.5],
+    ['light', 'tab-active', 'bg', 4.5], ['dark', 'tab-active', 'bg', 4.5],
   ];
   for (const [theme, fg, bg, min] of pares) {
     const t = theme === 'light' ? light : dark;

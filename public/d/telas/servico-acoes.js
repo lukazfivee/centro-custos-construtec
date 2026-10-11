@@ -134,23 +134,24 @@
 
   // Relatorio: o HTML do servidor num quadro (blob), com Imprimir / PDF.
   S.relatorio = async (sv) => {
-    let url;
+    let html;
     try {
-      const html = await (await S.baixar(`/api/servicos/${sv.id}/relatorio`)).text();
-      url = URL.createObjectURL(new Blob([html], { type: 'text/html' }));
+      html = await (await S.baixar(`/api/servicos/${sv.id}/relatorio`)).text();
     } catch (error) {
       CC.toast(S.erro(error, 'O relatório precisa da conexão.'), 'warning');
       return;
     }
     const ctl = await D.painel.abrir({
       icone: 'file-text', titulo: 'Relatório do serviço', sub: `${sv.codigo} · PDF de 1 página para o cliente`,
-      corpo: `<iframe class="quadro-rel" title="Relatório do serviço ${esc(sv.codigo)}" src="${url}"></iframe>
+      corpo: `<iframe class="quadro-rel" title="Relatório do serviço ${esc(sv.codigo)}"></iframe>
         <span class="muted">O relatório mostra o que foi feito, as fotos, o valor e o aceite. Gastos, resultado e margem não aparecem.</span>`,
       rodape: `<button type="button" class="btn btn-s" data-fechar>Fechar</button><button type="button" class="btn btn-p" data-imprimir>${D.ic('printer')}Imprimir / PDF</button>`,
-      aoFechar: () => URL.revokeObjectURL(url),
     });
-    if (!ctl) { URL.revokeObjectURL(url); return; }
+    if (!ctl) return;
     ctl.raiz.classList.add('largo');
+    // srcdoc depois de o painel estar na tela: o quadro pinta na hora (blob carregado durante a animacao ficava branco ate imprimir).
+    const quadro = CC.$('iframe', ctl.corpo);
+    requestAnimationFrame(() => { if (quadro.isConnected) quadro.srcdoc = html; });
     CC.$('[data-imprimir]', ctl.rodape).addEventListener('click', () => { const q = CC.$('iframe', ctl.corpo); if (q && q.contentWindow) q.contentWindow.print(); });
   };
 })(window.CC);

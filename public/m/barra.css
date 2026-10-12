@@ -36,6 +36,10 @@ body.no-tabs .toast { bottom: calc(24px + var(--sab)); }
 .ia-fab .ico { color: inherit; }
 body.no-tabs .ia-fab { bottom: calc(16px + var(--sab) + var(--fab-lift, 0px)); }
 body:has(input:focus, textarea:focus, select:focus) .ia-fab { opacity: 0; pointer-events: none; }
+/* O botao do assistente flutua sobre o fim da tela: reserva o espaco para o ultimo conteudo nao ficar embaixo dele. */
+body:has(.ia-fab:not([hidden])):not(:has(.actions)) { padding-bottom: calc(var(--barra-topo) + 74px); }
+body.no-tabs:has(.ia-fab:not([hidden])):not(:has(.actions)) { padding-bottom: calc(var(--sab) + 76px); }
+body:has(.ia-fab:not([hidden])) .actions { margin-top: 52px; }
 
 /* Botoes: texto nunca estoura nem quebra feio */
 .btn, .btn2, .chip-act, .suite-pill, .seg button { text-align: center; line-height: 1.2; }

@@ -4,7 +4,7 @@ html[data-theme="escuro"] { --up: #5fd39a; --up-soft: #0f3a2b; --down: #ff8f75; 
 .up { color: var(--up); } .down { color: var(--down); } .wn { color: var(--warn); }
 
 /* Lista */
-.sv-novo { flex: none; min-height: 44px; padding: 0 12px; border: 0; border-radius: 22px; background: #12a9d1; color: #fefefe; font-size: 13px; font-weight: 600; display: inline-flex; align-items: center; gap: 4px; }
+.sv-novo { flex: none; width: 44px; min-height: 44px; padding: 0; justify-content: center; border: 0; border-radius: 22px; background: #12a9d1; color: #fefefe; font-size: 13px; font-weight: 600; display: inline-flex; align-items: center; gap: 4px; }
 .sv-novo:active { transform: scale(.96); }
 .sv-totais { grid-template-columns: repeat(3, minmax(0, 1fr)); cursor: default; }
 .sv-totais span { min-width: 0; }

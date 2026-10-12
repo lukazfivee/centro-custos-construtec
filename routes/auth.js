@@ -223,7 +223,8 @@ router.get('/me', autenticar, asyncRoute(async (req, res) => res.json({
   instancia: getInstanceIdentity(),
 })));
 
-// Código de uso único para abrir o Orçamentos já logado, dentro do app Suíte do Windows (uma janela, duas telas).
+// Código de uso único para abrir o Orçamentos já logado: no navegador (public/entrar-orcamentos.js, que o Orçamentos
+// sem sessão chama) e no app Suíte do Windows (uma janela, duas telas, ver abaixo).
 // Só contas corporativas têm sessão central; as locais entram pela tela de login do Orçamentos.
 router.post('/suite-handoff', autenticar, asyncRoute(async (req, res) => {
   const target = String(req.body?.target || '');

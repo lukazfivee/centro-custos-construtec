@@ -20,8 +20,8 @@ jobs:
       # Unico lugar que muda a cada pre-lancamento: o numero da RC. O versionCode do
       # Android sai dele (3.1.0-rc.N -> 31000+N; ver versionCodeFor no Worker) e o app
       # instalado so oferece a atualizacao quando o codigo da release for maior.
-      RC_NUMBER: '28'
-      APP_NOTES: 'Corrige a prévia em branco do relatório do serviço, que só aparecia ao tocar em Imprimir ou PDF. Traz também a nova tela de entrar do desktop e o botão do assistente de IA.'
+      RC_NUMBER: '29'
+      APP_NOTES: 'Nova barra de abas no estilo do iPhone: vidro transparente, lente que arrasta de uma aba para outra e ícone preenchido na aba ativa. Traz também cadastros, administração e obra técnica no celular, como no desktop.'
     steps:
       - name: Baixar codigo
         uses: actions/checkout@v7
@@ -99,10 +99,9 @@ jobs:
           body: |
             Pre-lancamento RC${{ env.RC_NUMBER }} da V3.1 para validacao interna.
 
-            Novidades da RC28:
-            - relatorio do servico: a previa deixa de abrir em branco (desktop e celular);
-            - nova tela de entrar do Centro de Custos no desktop;
-            - botao flutuante do assistente de IA em todas as telas;
+            Novidades da RC29:
+            - barra de abas no estilo do iPhone (iOS 26): vidro transparente, lente que arrasta de uma aba para outra e icone preenchido na aba ativa;
+            - celular: cadastros, administracao e obra tecnica como no desktop;
 
             Melhorias desta versao:
             - atualizacao do aplicativo por dentro do app (Menu > Atualizacao do aplicativo): o app avisa quando ha versao nova, baixa, confere o hash e abre o instalador do Android. Esta e a ultima vez que o APK precisa ser instalado a mao;

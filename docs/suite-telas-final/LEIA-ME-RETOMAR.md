@@ -4,7 +4,8 @@ Escrito em 12/10/2026 para outra conta do Claude, em outro notebook, continuar s
 
 - Centro: `lukazfivee/centro-custos-construtec-v3`
 - Orçamentos: `lukazfivee/construtec-orcamentos`
-- **Issue de acompanhamento:** `lukazfivee/construtec-orcamentos`, título "Suíte: finalizar as telas (acompanhamento e retomada)". Confira os checkboxes ali antes de agir.
+- **Issue de acompanhamento: `lukazfivee/construtec-orcamentos#194`** ("Suíte: finalizar as telas (acompanhamento e retomada)"). Confira os checkboxes ali antes de agir e mantenha-o atualizado.
+- **PRs de integração (rascunho):** Centro `lukazfivee/centro-custos-construtec-v3#140`, Orçamentos `lukazfivee/construtec-orcamentos#193`, ambos da branch `feat/suite-telas-final`.
 - Entrega da Suíte: **30/10/2026**. Telas conferidas até **27/10**. Congelamento 28/10.
 - Pessoa responsável: Lucas (comercial@rcconstrutec.com.br). Fala português do Brasil.
 

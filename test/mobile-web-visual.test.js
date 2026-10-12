@@ -50,7 +50,23 @@ test('barra de abas no estilo do iPhone: capsula de vidro e pilula na aba ativa'
   assert.match(m, /\.tabs-refraction \{[^}]*backdrop-filter: blur\(\d+px\) saturate/);
   assert.match(m, /\.tabs::before \{[^}]*width: calc\(\(100% - 8px\) \/ var\(--tabs-n\)\)[^}]*border-radius: 28px/);
   assert.doesNotMatch(`${m}\n${read('index.html')}`, /cc-glass-distortion|feDisplacementMap/, 'sem a distorcao SVG antiga');
-  assert.match(m, /\.tab:active:not\(\[aria-current="page"\]\) \{ background: var\(--tab-thumb\)/);
+});
+
+test('barra de abas: a pilula vira lente ao tocar e da para arrastar de uma aba para outra', () => {
+  const m = read('m.css');
+  assert.match(m.match(/\.tabs \{[^}]*\}/)[0], /touch-action: none/, 'o arrasto nao pode virar rolagem da pagina');
+  assert.match(m, /\.tabs\.is-pressed::before \{[^}]*translateX\(var\(--drag-x, 0px\)\) scale\(1\.25\)/);
+  assert.match(m, /\.tabs\.is-pressed, \.tabs\.is-settling \{ overflow: visible; \}/, 'a lente cresce alem da barra');
+  assert.match(m, /\.tabs\.is-pressed \.tab\.is-lens \{ color: var\(--tab-active\)/);
+  const html = read('index.html');
+  assert.ok(html.indexOf('abas-arrastar.js') > 0 && html.indexOf('abas-arrastar.js') < html.indexOf('app.js'), 'abas-arrastar.js carrega antes do app.js');
+  assert.match(read('sw.js'), /'abas-arrastar\.js'/);
+  assert.match(read('app.js'), /window\.arrastarAbas\(nav, pickTab\)/);
+  const js = read('abas-arrastar.js');
+  assert.match(js, /setPointerCapture/);
+  assert.match(js, /pointercancel/);
+  assert.match(js, /Math\.round\(x \/ cell\)/, 'solta na aba mais proxima');
+  assert.match(js, /swallowUntil/, 'o clique depois do arrasto nao abre outra aba');
 });
 
 test('viewport cobre o notch e o tema vale antes da primeira pintura', () => {

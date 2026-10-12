@@ -10,7 +10,7 @@
   --accent: #12a9d1; --accent-300: #0a7896; --accent-600: #0d7f9f; --accent-700: #0b4a5c; --accent-900: #e8f8fc;
   --shadow: 0 0 0 1px #d6e4e9;
   --warn: #8a5200; --warn-bar: #e0a33a; --warn-soft: #fff5d9; --warn-text: #6b4200;
-  --tab: rgba(255, 255, 255, .55); --tab-ink: #3b5360; --tab-active: #08647f; --tab-thumb: rgba(11, 37, 48, .09); --tab-rim: rgba(255, 255, 255, .9); --tab-edge: rgba(11, 37, 48, .1); --tab-shadow: rgba(2, 24, 32, .16);
+  --tab: rgba(255, 255, 255, .55); --tab-ink: #3b5360; --tab-active: #08647f; --tab-thumb: rgba(11, 37, 48, .09); --tab-rim: rgba(255, 255, 255, .9); --tab-edge: rgba(11, 37, 48, .1); --tab-shadow: rgba(2, 24, 32, .16); --tab-lens: rgba(255, 255, 255, .55);
   --danger: #b8452c; --danger-ink: #b8452c; --fill: #0b7a98;
   --font: 'IBM Plex Sans', 'Segoe UI', system-ui, sans-serif;
   --sat: env(safe-area-inset-top, 0px); --sab: env(safe-area-inset-bottom, 0px);
@@ -22,7 +22,7 @@ html[data-theme="escuro"] {
   --accent-300: #5fd0ee; --accent-700: #0b5a70; --accent-900: #0a3a48;
   --shadow: 0 0 0 1px #164656;
   --danger-ink: #ff8e72; --warn: #f2b544; --warn-soft: #3a2a0c; --warn-text: #f2b544;
-  --tab: rgba(22, 50, 60, .5); --tab-ink: #c5d8de; --tab-active: #5fd0ee; --tab-thumb: rgba(255, 255, 255, .17); --tab-rim: rgba(255, 255, 255, .28); --tab-edge: rgba(255, 255, 255, .12); --tab-shadow: rgba(0, 8, 13, .5);
+  --tab: rgba(22, 50, 60, .5); --tab-ink: #c5d8de; --tab-active: #5fd0ee; --tab-thumb: rgba(255, 255, 255, .17); --tab-rim: rgba(255, 255, 255, .28); --tab-edge: rgba(255, 255, 255, .12); --tab-shadow: rgba(0, 8, 13, .5); --tab-lens: rgba(255, 255, 255, .1);
   color-scheme: dark;
 }
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -126,12 +126,18 @@ body.no-tabs .actions { bottom: var(--sab); padding-bottom: 28px; }
 .actions > * { flex: 1; }
 
 /* Barra de abas no estilo do iPhone (iOS 26): capsula de vidro flutuante e pilula sobre a aba ativa. */
-.tabs { --tabs-n: 5; position: fixed; left: 14px; right: 14px; bottom: calc(12px + var(--sab)); z-index: 20; height: 64px; padding: 4px; border-radius: 32px; background: transparent; box-shadow: 0 12px 32px var(--tab-shadow), 0 0 0 .5px var(--tab-edge), inset 0 1px 0 var(--tab-rim); display: grid; grid-template-columns: repeat(var(--tabs-n), minmax(0, 1fr)); isolation: isolate; overflow: hidden; }
+.tabs { --tabs-n: 5; position: fixed; left: 14px; right: 14px; bottom: calc(12px + var(--sab)); z-index: 20; height: 64px; padding: 4px; border-radius: 32px; background: transparent; box-shadow: 0 12px 32px var(--tab-shadow), 0 0 0 .5px var(--tab-edge), inset 0 1px 0 var(--tab-rim); display: grid; grid-template-columns: repeat(var(--tabs-n), minmax(0, 1fr)); isolation: isolate; overflow: hidden; touch-action: none; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
 .tabs-refraction { position: absolute; inset: 0; z-index: 0; border-radius: inherit; backdrop-filter: blur(22px) saturate(1.8); -webkit-backdrop-filter: blur(22px) saturate(1.8); pointer-events: none; }
 .tabs::after { content: ''; position: absolute; inset: 0; z-index: 1; border-radius: inherit; background: var(--tab); pointer-events: none; }
 .tabs::before { content: ''; position: absolute; z-index: 2; top: 4px; bottom: 4px; left: 4px; width: calc((100% - 8px) / var(--tabs-n)); border-radius: 28px; background: var(--tab-thumb); box-shadow: inset 0 1px 0 var(--tab-rim); transform: translateX(var(--active-x, 0%)); pointer-events: none; }
-.tabs.is-ready::before { transition: transform .42s cubic-bezier(.34, 1.15, .64, 1); }
+.tabs.is-ready::before { transition: transform .42s cubic-bezier(.34, 1.15, .64, 1), background-color .25s, box-shadow .25s; }
 .tabs.is-moving::before { transform: translateX(var(--active-x, 0%)) scale(1.06, .95); }
+/* Lente ao tocar e arrastar (abas-arrastar.js): cresce alem da barra, segue o dedo e encaixa na aba mais proxima ao soltar. */
+.tabs.is-pressed, .tabs.is-settling { overflow: visible; }
+.tabs.is-pressed::before { transform: translateX(var(--drag-x, 0px)) scale(1.25); background: var(--tab-lens); box-shadow: inset 0 0 0 1px var(--tab-rim), 0 8px 22px var(--tab-shadow); transition: transform .24s cubic-bezier(.2, .9, .3, 1.25), background-color .2s, box-shadow .2s; }
+.tabs.is-dragging::before { transition: transform .1s cubic-bezier(.2, .8, .3, 1), background-color .2s, box-shadow .2s; }
+.tabs.is-dragging .tab[aria-current="page"]:not(.is-lens) { color: var(--tab-ink); }
+.tabs.is-pressed .tab.is-lens { color: var(--tab-active); transform: scale(1.12); }
 body.no-tabs .tabs { display: none; }
 
 .suite-pill { flex: none; min-height: 44px; padding: 0 14px; border: 1px solid var(--divider); border-radius: 22px; background: var(--surface); display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; transition: transform .12s; }
@@ -186,8 +192,7 @@ body.no-tabs .tabs { display: none; }
 .pref { justify-content: space-between; }
 .pref input { width: 22px; height: 22px; accent-color: var(--accent); }
 #teste { width: 100%; margin-top: 12px; }
-.tab { position: relative; z-index: 3; min-width: 0; border: 0; border-radius: 28px; background: transparent; color: var(--tab-ink); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; font-size: 10px; font-weight: 500; transition: transform .12s, color .2s, background-color .12s; }
-.tab:active:not([aria-current="page"]) { background: var(--tab-thumb); }
+.tab { position: relative; z-index: 3; min-width: 0; border: 0; border-radius: 28px; background: transparent; color: var(--tab-ink); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; font-size: 10px; font-weight: 500; transition: transform .24s cubic-bezier(.2, .9, .3, 1.25), color .2s; }
 .tab[aria-current="page"] { color: var(--tab-active); font-weight: 600; }
 .tab[aria-current="page"] .ico { color: inherit; }
 .tab:focus-visible { outline: 2px solid var(--accent); outline-offset: -4px; }

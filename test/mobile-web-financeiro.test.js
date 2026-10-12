@@ -20,7 +20,8 @@ test('celular: telas novas carregadas, no cache e donas da aba Menu', () => {
   }
   for (const s of ['cobrancas', 'cobranca', 'recorrentes', 'recorrente', 'fornecedores', 'fornecedor', 'categorias', 'categoria']) assert.ok(app.includes(`'${s}'`), s);
   // Detalhes e formularios precisam dos dados da lista: nao abrem direto pelo endereco.
-  assert.match(app, /'obra-editar',\s*'cobranca', 'cobranca-dados', 'cobranca-email', 'recorrente', 'fornecedor', 'categoria'\]\.includes\(first\)/);
+  const hidden = (app.match(/!\[([^\]]*)\]\.includes\(first\)/) || [])[1] || '';
+  for (const s of ['cobranca', 'cobranca-dados', 'cobranca-email', 'recorrente', 'fornecedor', 'categoria']) assert.ok(hidden.includes(`'${s}'`), `${s} abre direto pelo endereco`);
   assert.match(read('screen-misc.js'), /CC\.fin\.menu\(CC\.\$\('#m-fin', el\)\)/);
 });
 

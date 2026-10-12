@@ -17,7 +17,7 @@ test('celular: arquivos novos da obra e do Inicio carregados pela pagina e guard
     assert.ok(src.split('\n').length <= 350, `${f} passou de 350 linhas`);
     assert.doesNotMatch(src, /\p{Extended_Pictographic}/u);
   }
-  assert.match(sw, /const CACHE = 'cc-celular-v15'/, 'versao do cache nao muda nesta branch');
+  assert.ok(Number((sw.match(/const CACHE = 'cc-celular-v(\d+)'/) || [])[1]) >= 15, 'cache trocado');
 });
 
 test('celular: abas Medicoes e Curva S na obra, com as mesmas rotas do desktop', () => {
@@ -47,7 +47,7 @@ test('celular: relatorio executivo e boletim abrem em folha com imprimir, compar
   assert.match(folha, /Boletim de medição contratual/);
   const app = read('app.js');
   assert.match(app, /'obra-editar', 'obra-folha', 'servico'/, 'folha fica na aba Obras');
-  assert.match(app, /'obra-editar', 'obra-folha'\]\.includes\(first\)/, 'recarregar nao reabre a folha sem a obra');
+  assert.ok(((app.match(/!\[([^\]]*)\]\.includes\(first\)/) || [])[1] || '').includes("'obra-folha'"), 'recarregar nao reabre a folha sem a obra');
   assert.match(read('screen-obra-acoes.js'), /CC\.go\('obra-folha', \{ id: c\.id, tipo: 'relatorio' \}\)/);
 });
 

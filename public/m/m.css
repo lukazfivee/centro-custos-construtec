@@ -10,11 +10,12 @@
   --accent: #12a9d1; --accent-300: #0a7896; --accent-600: #0d7f9f; --accent-700: #0b4a5c; --accent-900: #e8f8fc;
   --shadow: 0 0 0 1px #d6e4e9;
   --warn: #8a5200; --warn-bar: #e0a33a; --warn-soft: #fff5d9; --warn-text: #6b4200;
-  --tab-ink: #1c2a31; --tab-active: #08647f; --tab-thumb: rgba(0, 0, 0, .08); --tab-halo: rgba(255, 255, 255, .7); --tab-rim: rgba(255, 255, 255, .8); --tab-edge: rgba(0, 0, 0, .07); --tab-shadow: rgba(2, 24, 32, .14);
-  --vidro-tinta: linear-gradient(rgba(255, 255, 255, .22), rgba(255, 255, 255, .08)); --vidro-toque: rgba(255, 255, 255, .3); --brilho-forca: 1; --lente-tinta: rgba(255, 255, 255, .03); --lente-luz: rgba(255, 255, 255, .22); --lente-sombra: rgba(2, 24, 32, .16);
+  --tab-ink: #1a1d1f; --tab-active: #1a1d1f; --tab-thumb: rgba(118, 118, 128, .16); --tab-rim: rgba(255, 255, 255, .8); --tab-edge: rgba(0, 0, 0, .07); --tab-shadow: rgba(2, 24, 32, .14);
+  --vidro-tinta: linear-gradient(rgba(247, 249, 250, .47), rgba(247, 249, 250, .47)); --vidro-toque: rgba(255, 255, 255, .3); --brilho-forca: 1; --lente-tinta: rgba(255, 255, 255, .12); --lente-luz: rgba(255, 255, 255, .22); --lente-sombra: rgba(2, 24, 32, .16); --lente-borda: rgba(0, 0, 0, .2);
   --danger: #b8452c; --danger-ink: #b8452c; --fill: #0b7a98;
   --font: 'IBM Plex Sans', 'Segoe UI', system-ui, sans-serif;
   --sat: env(safe-area-inset-top, 0px); --sab: env(safe-area-inset-bottom, 0px);
+  --barra-topo: calc(max(12px, calc(var(--sab) - 19px)) + 58px); /* topo da barra de abas (15px da borda no iPhone, 12px no Android) */
   color-scheme: light;
 }
 html[data-theme="escuro"] {
@@ -23,14 +24,14 @@ html[data-theme="escuro"] {
   --accent-300: #5fd0ee; --accent-700: #0b5a70; --accent-900: #0a3a48;
   --shadow: 0 0 0 1px #164656;
   --danger-ink: #ff8e72; --warn: #f2b544; --warn-soft: #3a2a0c; --warn-text: #f2b544;
-  --tab-ink: #eef4f6; --tab-active: #5fd0ee; --tab-thumb: rgba(255, 255, 255, .14); --tab-halo: rgba(1, 14, 20, .6); --tab-rim: rgba(255, 255, 255, .35); --tab-edge: rgba(255, 255, 255, .1); --tab-shadow: rgba(0, 8, 13, .45);
-  --vidro-tinta: linear-gradient(rgba(22, 50, 60, .3), rgba(22, 50, 60, .18)); --vidro-toque: rgba(255, 255, 255, .14); --brilho-forca: .75; --lente-tinta: rgba(255, 255, 255, .05); --lente-luz: rgba(255, 255, 255, .12); --lente-sombra: rgba(0, 8, 13, .4);
+  --tab-ink: #f2f5f6; --tab-active: #f2f5f6; --tab-thumb: rgba(255, 255, 255, .16); --tab-rim: rgba(255, 255, 255, .35); --tab-edge: rgba(255, 255, 255, .1); --tab-shadow: rgba(0, 8, 13, .45);
+  --vidro-tinta: linear-gradient(rgba(14, 38, 48, .5), rgba(14, 38, 48, .5)); --vidro-toque: rgba(255, 255, 255, .14); --brilho-forca: .75; --lente-tinta: rgba(255, 255, 255, .05); --lente-luz: rgba(255, 255, 255, .12); --lente-sombra: rgba(0, 8, 13, .4); --lente-borda: rgba(255, 255, 255, .2);
   color-scheme: dark;
 }
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 html, body { margin: 0; min-height: 100%; background: var(--bg); color: var(--text); font: 15px/1.45 var(--font); font-variant-numeric: tabular-nums; }
 html { overflow-x: clip; }
-body { padding-bottom: calc(96px + var(--sab)); overflow-x: clip; }
+body { padding-bottom: calc(var(--barra-topo) + 26px); overflow-x: clip; }
 ::placeholder { color: var(--n300); opacity: 1; }
 body.no-tabs { padding-bottom: var(--sab); }
 button, input, select, textarea { font: inherit; color: inherit; }
@@ -123,40 +124,47 @@ button { cursor: pointer; }
 .btn2 { min-height: 48px; border: 0; border-radius: 10px; background: var(--surface); box-shadow: inset 0 0 0 1px var(--divider); font-size: 14px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 8px; transition: transform .12s; }
 .btn:active, .btn2:active, .chip-act:active, .tab:active { transform: scale(.96); }
 .btn[disabled] { opacity: .6; }
-.actions { position: sticky; bottom: calc(96px + var(--sab)); margin: 0 -20px -24px; padding: 10px 20px 12px; background: var(--bg); box-shadow: 0 -1px 0 var(--divider); display: flex; gap: 10px; }
+.actions { position: sticky; bottom: calc(var(--barra-topo) + 26px); margin: 0 -20px -24px; padding: 10px 20px 12px; background: var(--bg); box-shadow: 0 -1px 0 var(--divider); display: flex; gap: 10px; }
 body.no-tabs .actions { bottom: var(--sab); padding-bottom: 28px; }
 .actions > * { flex: 1; }
 
-/* Barra de abas Liquid Glass (iOS 26): capsula de vidro sem fundo leitoso. O vidro (.tabs-refraction) desfoca pouco e,
-   no Chromium, refrata so no bisel da borda; ::after e o aro de luz; ::before e a pilula cinza (repouso) e a lente (toque).
+/* Barra de abas Liquid Glass (iOS 26), medida no video do iPhone: capsula de 58px a 15px da borda (12px no Android), vidro
+   com veu claro de ~47% e desfoque leve (o conteudo continua reconhecivel), refracao no bisel (Chromium); ::after e o aro de
+   luz; ::before e a pilula cinza (repouso) e a lente (toque).
    Nunca por filter, opacity < 1, mask, clip-path, backdrop-filter nem will-change de opacity/filter na .tabs: ela vira
    raiz de backdrop e o vidro deixa de ver a pagina. */
-.tabs { --tabs-n: 5; position: fixed; left: 14px; right: 14px; bottom: calc(12px + var(--sab)); z-index: 20; height: 64px; padding: 4px; border-radius: 32px; background: transparent; box-shadow: 0 0 0 .5px var(--tab-edge), 0 8px 28px var(--tab-shadow); display: grid; grid-template-columns: repeat(var(--tabs-n), minmax(0, 1fr)); isolation: isolate; overflow: hidden; touch-action: none; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
-.tabs-refraction { position: absolute; inset: 0; z-index: 0; border-radius: inherit; background: var(--vidro-tinta); -webkit-backdrop-filter: blur(5px) saturate(1.6) brightness(1.06); backdrop-filter: blur(5px) saturate(1.6) brightness(1.06); pointer-events: none; }
-html[data-theme="escuro"] .tabs-refraction { -webkit-backdrop-filter: blur(5px) saturate(1.4) brightness(.95); backdrop-filter: blur(5px) saturate(1.4) brightness(.95); }
+.tabs { --tabs-n: 5; position: fixed; left: 14px; right: 14px; bottom: max(12px, calc(var(--sab) - 19px)); z-index: 20; height: 58px; padding: 4px; border-radius: 29px; background: transparent; box-shadow: 0 0 0 .5px var(--tab-edge), 0 8px 28px var(--tab-shadow); display: grid; grid-template-columns: repeat(var(--tabs-n), minmax(0, 1fr)); isolation: isolate; overflow: hidden; touch-action: none; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
+.tabs-refraction { position: absolute; inset: 0; z-index: 0; border-radius: inherit; background: var(--vidro-tinta); -webkit-backdrop-filter: blur(2px) saturate(1.5); backdrop-filter: blur(2px) saturate(1.5); pointer-events: none; }
+html[data-theme="escuro"] .tabs-refraction { -webkit-backdrop-filter: blur(2px) saturate(1.4); backdrop-filter: blur(2px) saturate(1.4); }
 /* Chromium (app Android): refracao no bisel (filtro #vidro-barra, gerado por abas-arrastar.js). O url() so existe nesta
    classe, que o JS poe apenas no Chromium: no Safari um url() na lista apaga o backdrop-filter inteiro. */
-.tabs.refrata .tabs-refraction { backdrop-filter: blur(3px) url(#vidro-barra) saturate(1.6) brightness(1.06); }
-html[data-theme="escuro"] .tabs.refrata .tabs-refraction { backdrop-filter: blur(3px) url(#vidro-barra) saturate(1.4) brightness(.95); }
+.tabs.refrata .tabs-refraction { backdrop-filter: blur(2px) url(#vidro-barra) saturate(1.5); }
+html[data-theme="escuro"] .tabs.refrata .tabs-refraction { backdrop-filter: blur(2px) url(#vidro-barra) saturate(1.4); }
 .tabs::after { content: ''; position: absolute; inset: 0; z-index: 1; border-radius: inherit; background: var(--vidro-brilho, none) center / 100% 100% no-repeat; opacity: var(--brilho-forca); pointer-events: none; }
 .tabs:not(.tem-brilho)::after { box-shadow: inset 0 1px 0 var(--tab-rim), inset 0 0 0 .5px var(--tab-rim); }
 .tabs.is-pressed::after { background-image: radial-gradient(96px 72px at calc(4px + var(--drag-x, 0px) + (100% - 8px) / var(--tabs-n) / 2) 50%, var(--vidro-toque), transparent), var(--vidro-brilho, none); background-size: 100% 100%; }
-.tabs::before { content: ''; position: absolute; z-index: 2; top: 4px; bottom: 4px; left: 4px; width: calc((100% - 8px) / var(--tabs-n)); border-radius: 28px; background: var(--tab-thumb); transform: translateX(var(--active-x, 0%)); pointer-events: none; }
+.tabs::before { content: ''; position: absolute; z-index: 2; top: 4px; bottom: 4px; left: 4px; width: calc((100% - 8px) / var(--tabs-n)); border-radius: 25px; background: var(--tab-thumb); transform: translateX(var(--active-x, 0%)); pointer-events: none; }
 .tabs.is-ready::before { transition: transform .42s cubic-bezier(.34, 1.15, .64, 1), background-color .25s, box-shadow .25s; }
 .tabs.is-moving::before { transform: translateX(var(--active-x, 0%)) scale(1.06, .95); }
-/* Lente ao tocar e arrastar (abas-arrastar.js): vidro claro com aro de luz por cima dos icones; a aba de baixo cresce na
-   cor de destaque. Segurando, 1,15x; arrastando, 1,35x e esticando com a velocidade (passa da altura da barra). */
+/* Lente ao tocar e arrastar (abas-arrastar.js): vidro claro com aro de luz e contorno fino por cima dos icones; o icone
+   de baixo fica preenchido e maior. Como no video: 1,25x a largura da aba e 1,38x a altura, passando da barra; arrastando,
+   estica com a velocidade. */
 .tabs.is-pressed, .tabs.is-settling { overflow: visible; }
-.tabs.is-pressed::before { z-index: 4; transform: translateX(var(--drag-x, 0px)) scale(1.15); background: var(--lente-brilho, none) center / 100% 100% no-repeat, radial-gradient(closest-side, transparent 65%, var(--lente-luz)) center / 100% 100% no-repeat, var(--lente-tinta); box-shadow: 0 6px 18px var(--lente-sombra); -webkit-backdrop-filter: saturate(1.3) brightness(1.04); backdrop-filter: saturate(1.3) brightness(1.04); transition: transform .24s cubic-bezier(.2, .9, .3, 1.25), box-shadow .2s; }
+.tabs.is-pressed::before { z-index: 4; transform: translateX(var(--drag-x, 0px)) scale(1.25, 1.38); background: var(--lente-brilho, none) center / 100% 100% no-repeat, radial-gradient(closest-side, transparent 65%, var(--lente-luz)) center / 100% 100% no-repeat, var(--lente-tinta); box-shadow: 0 0 0 1px var(--lente-borda), 0 6px 18px var(--lente-sombra); -webkit-backdrop-filter: saturate(1.3) brightness(1.04); backdrop-filter: saturate(1.3) brightness(1.04); transition: transform .18s cubic-bezier(.2, .9, .3, 1.25), box-shadow .2s; }
 .tabs.is-pressed:not(.tem-brilho)::before { box-shadow: inset 0 0 0 1px var(--tab-rim), inset 0 2px 3px var(--tab-rim), 0 6px 18px var(--lente-sombra); }
 html[data-theme="escuro"] .tabs.is-pressed::before { -webkit-backdrop-filter: saturate(1.3) brightness(1.12); backdrop-filter: saturate(1.3) brightness(1.12); }
 /* Refracao da lente (so Chromium): entorta e separa as cores, na borda, do que esta embaixo (icones e vidro da barra). */
 .tabs.refrata.is-pressed::before { backdrop-filter: url(#abas-lente) saturate(1.3) brightness(1.04); }
 html[data-theme="escuro"] .tabs.refrata.is-pressed::before { backdrop-filter: url(#abas-lente) saturate(1.3) brightness(1.12); }
-.tabs.is-dragging::before { transform: translateX(var(--drag-x, 0px)) scale(calc(1.35 + var(--stretch, 0) * 1.4), calc(1.35 - var(--stretch, 0) * .5)); transition: transform .08s linear, box-shadow .2s; }
-.tabs.is-dragging .tab[aria-current="page"]:not(.is-lens) { color: var(--tab-ink); }
-.tabs.is-pressed .tab.is-lens { color: var(--tab-active); transform: scale(1.15); }
-.tabs.is-dragging .tab.is-lens { transform: scale(1.3); }
+.tabs.is-dragging::before { transform: translateX(var(--drag-x, 0px)) scale(calc(1.25 + var(--stretch, 0) * 1.4), calc(1.38 - var(--stretch, 0) * .5)); transition: transform .08s linear, box-shadow .2s; }
+.tabs.is-pressed .tab[aria-current="page"]:not(.is-lens) { color: var(--tab-ink); }
+.tabs.is-pressed .tab.is-lens { color: var(--tab-active); transform: scale(1.18); }
+.tabs.is-dragging .tab.is-lens { transform: scale(1.22); }
+/* Sob a lente o vidro da barra abre (como no video): a lente mostra o conteudo limpo, sem o veu, so com a propria
+   refracao. A janela segue o dedo (--drag-x) e tem as bordas suaves, cobertas pelo aro da lente. */
+.tabs.is-pressed .tabs-refraction { --lente-cx: calc(4px + var(--drag-x, 0px) + (100% - 8px) / var(--tabs-n) / 2); --lente-r: calc((100% - 8px) / var(--tabs-n) * .6);
+  -webkit-mask-image: linear-gradient(to right, #000 calc(var(--lente-cx) - var(--lente-r) - 6px), transparent calc(var(--lente-cx) - var(--lente-r) + 8px), transparent calc(var(--lente-cx) + var(--lente-r) - 8px), #000 calc(var(--lente-cx) + var(--lente-r) + 6px));
+  mask-image: linear-gradient(to right, #000 calc(var(--lente-cx) - var(--lente-r) - 6px), transparent calc(var(--lente-cx) - var(--lente-r) + 8px), transparent calc(var(--lente-cx) + var(--lente-r) - 8px), #000 calc(var(--lente-cx) + var(--lente-r) + 6px)); }
 body.no-tabs .tabs { display: none; }
 
 .suite-pill { flex: none; min-height: 44px; padding: 0 14px; border: 1px solid var(--divider); border-radius: 22px; background: var(--surface); display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; transition: transform .12s; }
@@ -211,18 +219,19 @@ body.no-tabs .tabs { display: none; }
 .pref { justify-content: space-between; }
 .pref input { width: 22px; height: 22px; accent-color: var(--accent); }
 #teste { width: 100%; margin-top: 12px; }
-.tab { position: relative; z-index: 3; min-width: 0; border: 0; border-radius: 28px; background: transparent; color: var(--tab-ink); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; font-size: 10px; font-weight: 600; transition: transform .24s cubic-bezier(.2, .9, .3, 1.25), color .2s; }
-.tab > span { text-shadow: 0 0 6px var(--tab-halo), 0 0 1px var(--tab-halo); }
-.tab .ico { filter: drop-shadow(0 0 3px var(--tab-halo)); }
+.tab { position: relative; z-index: 3; min-width: 0; border: 0; border-radius: 25px; background: transparent; color: var(--tab-ink); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; font-size: 10px; font-weight: 600; transition: transform .24s cubic-bezier(.2, .9, .3, 1.25), color .2s; }
 .tab[aria-current="page"] { color: var(--tab-active); }
 .tab[aria-current="page"] .ico { color: inherit; }
+.tab .ico-on, .tab[aria-current="page"] .ico-off, .tabs.is-pressed .tab.is-lens .ico-off { display: none; }
+.tab[aria-current="page"] .ico-on, .tabs.is-pressed .tab.is-lens .ico-on { display: block; }
+.tabs.is-pressed .tab[aria-current="page"]:not(.is-lens) .ico-on { display: none; }
+.tabs.is-pressed .tab[aria-current="page"]:not(.is-lens) .ico-off { display: block; }
 .tab:focus-visible { outline: 2px solid var(--accent); outline-offset: -4px; }
-/* Tinta adaptativa (abas-arrastar.js): sobre bloco solido escuro ou colorido a barra usa a tinta do tema escuro, e vice-versa. */
-.tabs.sobre-escuro { --tab-ink: #eef4f6; --tab-active: #5fd0ee; --tab-thumb: rgba(255, 255, 255, .14); --tab-halo: rgba(1, 14, 20, .6); --vidro-tinta: linear-gradient(rgba(3, 31, 41, .3), rgba(3, 31, 41, .3)); --vidro-toque: rgba(255, 255, 255, .14); --brilho-forca: .75; }
-.tabs.sobre-claro { --tab-ink: #1c2a31; --tab-active: #08647f; --tab-thumb: rgba(0, 0, 0, .08); --tab-halo: rgba(255, 255, 255, .7); --vidro-tinta: linear-gradient(rgba(255, 255, 255, .22), rgba(255, 255, 255, .08)); --vidro-toque: rgba(255, 255, 255, .3); --brilho-forca: 1; }
+/* Tinta adaptativa (abas-arrastar.js): no tema escuro, sobre bloco solido claro, a barra usa o vidro claro (como o nativo). */
+.tabs.sobre-claro { --tab-ink: #1a1d1f; --tab-active: #1a1d1f; --tab-thumb: rgba(118, 118, 128, .16); --vidro-tinta: linear-gradient(rgba(247, 249, 250, .47), rgba(247, 249, 250, .47)); --vidro-toque: rgba(255, 255, 255, .3); --brilho-forca: 1; }
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) { .tabs { background: rgba(250, 252, 253, .94); } html[data-theme="escuro"] .tabs { background: rgba(14, 40, 50, .94); } }
-/* Aumentar contraste (iPhone) ou reduzir transparencia: vidro quase opaco, borda visivel e sem halo. */
-@media (prefers-contrast: more), (prefers-reduced-transparency: reduce) { .tabs-refraction { background: rgba(250, 252, 253, .92); } html[data-theme="escuro"] .tabs-refraction { background: rgba(14, 40, 50, .92); } .tabs { box-shadow: 0 0 0 1px var(--n300), 0 8px 28px var(--tab-shadow); } .tab > span { text-shadow: none; } .tab .ico { filter: none; } }
+/* Aumentar contraste (iPhone) ou reduzir transparencia: vidro quase opaco e borda visivel. */
+@media (prefers-contrast: more), (prefers-reduced-transparency: reduce) { .tabs-refraction { background: rgba(250, 252, 253, .92); } html[data-theme="escuro"] .tabs-refraction { background: rgba(14, 40, 50, .92); } .tabs { box-shadow: 0 0 0 1px var(--n300), 0 8px 28px var(--tab-shadow); } }
 
 .menu-item { width: 100%; min-height: 56px; padding: 0 4px; border: 0; border-top: 1px solid var(--divider); background: transparent; display: flex; align-items: center; gap: 12px; text-align: left; font-size: 15px; }
 .menu-item .ico { color: var(--accent-300); }

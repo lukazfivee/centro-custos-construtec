@@ -25,7 +25,7 @@ body.has-netbar .screen { padding-top: 12px; }
 .note.off { background: var(--warn-soft); color: var(--warn-text); box-shadow: inset 0 0 0 1px var(--warn-bar); }
 .note.ok { background: var(--accent-900); color: var(--accent-300); }
 
-.toast { position: fixed; left: 20px; right: 20px; bottom: calc(96px + var(--sab)); z-index: 40; padding: 12px 14px; border-radius: 10px; background: #031f29; color: #fefefe; font-size: 12.5px; font-weight: 600; display: flex; gap: 8px; align-items: center; animation: fadeIn .2s ease; }
+.toast { position: fixed; left: 20px; right: 20px; bottom: calc(var(--barra-topo) + 26px); z-index: 40; padding: 12px 14px; border-radius: 10px; background: #031f29; color: #fefefe; font-size: 12.5px; font-weight: 600; display: flex; gap: 8px; align-items: center; animation: fadeIn .2s ease; }
 body.no-tabs .toast { bottom: calc(100px + var(--sab)); }
 .toast .ico { color: #12a9d1; }
 .skeleton { height: 64px; border-radius: 12px; background: linear-gradient(90deg, var(--n800), var(--surface), var(--n800)); background-size: 200% 100%; animation: shimmer 1.2s linear infinite; }

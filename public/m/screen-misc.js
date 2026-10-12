@@ -19,7 +19,7 @@
         ${inApp ? `<button class="menu-item" type="button" id="m-tour">${icon('arrow-right', 22)}<span>Rever o tour<small>As quatro telas de boas-vindas da Suíte</small></span></button>` : ''}
         <div id="m-fin"></div>
         <button class="menu-item" type="button" id="m-senha">${icon('key', 22)}<span>Alterar senha<small>Troque a senha de entrada da Suíte</small></span></button>
-        <a class="menu-item" href="/d/" id="m-web" style="color:inherit;text-decoration:none">${icon('desktop', 22)}<span>Versão completa<small>Fechamento, cobranças, cadastros e usuários (tela de computador)</small></span></a>
+        <a class="menu-item" href="/d/" id="m-web" style="color:inherit;text-decoration:none">${icon('desktop', 22)}<span>Versão completa<small>Abrir o sistema na tela de computador</small></span></a>
         <button class="menu-item danger" type="button" id="m-sair">${icon('sign-out', 22)}<span>Sair</span></button>
       </div>`, false, params);
     CC.$('#m-senha', el).addEventListener('click', () => CC.senhaSheet());

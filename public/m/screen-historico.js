@@ -110,7 +110,7 @@
     const topo = A.top('Histórico', 'Quem mudou o quê, quando e de onde', `<button class="back" type="button" id="hs-csv" aria-label="Exportar CSV">${icon('download-simple', 22)}</button>`);
     const filtros = `<label class="field busca"><span class="sr">Buscar</span>${icon('magnifying-glass', 18)}<input id="hs-busca" type="search" enterkeyhint="search" autocomplete="off" value="${esc(f.busca)}" placeholder="Registro, detalhe ou usuário"></label>
       <div class="chips" role="group" aria-label="Tipo de registro">${TIPOS.map(([k, l]) => `<button class="chip-act" type="button" data-t="${k}" aria-pressed="${k === f.tipo}">${l}</button>`).join('')}</div>
-      <div class="grid2">${sel('hs-pessoa', [['', 'Todas as pessoas'], ...pessoas.map((p) => [String(p.id), p.nome || 'Sem nome'])], f.usuario, 'Pessoa')}${sel('hs-periodo', PERIODOS, f.periodo, 'Período')}</div>
+      <div class="grid2">${sel('hs-pessoa', [['', 'Todas'], ...pessoas.map((p) => [String(p.id), p.nome || 'Sem nome'])], f.usuario, 'Pessoa')}${sel('hs-periodo', PERIODOS, f.periodo, 'Período')}</div>
       ${f.periodo === 'custom' ? `<div class="grid2"><label class="field"><span>De</span><input type="date" id="hs-de" value="${esc(f.de)}"></label><label class="field"><span>Até</span><input type="date" id="hs-ate" value="${esc(f.ate)}"></label></div>` : ''}`;
     const wire = (el) => {
       A.voltar(el);

@@ -165,6 +165,10 @@ function createApp({ orcamentosApp } = {}) {
 
   const publicDir = path.join(__dirname, 'public');
   const indexPath = path.join(publicDir, 'index.html');
+  const setStaticHeaders = (res, filePath) => {
+    if (/\.(?:woff2?|png|jpe?g|gif|svg|ico)$/i.test(filePath)) res.setHeader('Cache-Control', 'public, max-age=604800');
+    else if (/\.(?:js|css|html)$/i.test(filePath)) res.setHeader('Cache-Control', 'no-cache');
+  };
   const sendIndex = (req, res) => {
     res.setHeader('Cache-Control', 'no-cache');
     res.sendFile(indexPath);
@@ -178,6 +182,11 @@ function createApp({ orcamentosApp } = {}) {
     if (/Android|iPhone|iPad|iPod|Mobile/i.test(req.get('user-agent') || '')) return res.redirect(302, '/m/');
     return res.redirect(302, '/d/');
   });
+  // Versao classica: a interface antiga em /classico/ durante o periodo de transicao (ate cerca de 26/11/2026,
+  // quando vira redirecionamento para /). Os arquivos relativos da pagina (style-base.css, app.js, assets/...)
+  // resolvem sob /classico/, entao a mesma pasta public/ e servida ali. /?antiga=1 e /?entrar=1 seguem funcionando.
+  app.get(['/classico', '/classico/'], (req, res) => (req.path === '/classico' ? res.redirect(301, '/classico/') : sendIndex(req, res)));
+  app.use('/classico', express.static(publicDir, { etag:true, index:false, setHeaders:setStaticHeaders }));
   // Centro de Custos no celular (Fase 2 mobile): public/m/.
   app.get(['/m', '/m/'], (req, res) => {
     if (req.path === '/m') return res.redirect(301, '/m/');
@@ -190,13 +199,7 @@ function createApp({ orcamentosApp } = {}) {
     res.setHeader('Cache-Control', 'no-cache');
     return res.sendFile(path.join(publicDir, 'd', 'index.html'));
   });
-  app.use(express.static(publicDir, {
-    etag:true,index:false,
-    setHeaders(res, filePath) {
-      if (/\.(?:woff2?|png|jpe?g|gif|svg|ico)$/i.test(filePath)) res.setHeader('Cache-Control', 'public, max-age=604800');
-      else if (/\.(?:js|css|html)$/i.test(filePath)) res.setHeader('Cache-Control', 'no-cache');
-    },
-  }));
+  app.use(express.static(publicDir, { etag:true, index:false, setHeaders:setStaticHeaders }));
 
   // Embedded Orçamentos uses relative /api URLs; proxy only requests coming from that renderer.
   app.use('/api', (req, res) => {

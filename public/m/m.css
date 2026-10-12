@@ -24,8 +24,8 @@ html[data-theme="escuro"] {
   --accent-300: #5fd0ee; --accent-700: #0b5a70; --accent-900: #0a3a48;
   --shadow: 0 0 0 1px #164656;
   --danger-ink: #ff8e72; --warn: #f2b544; --warn-soft: #3a2a0c; --warn-text: #f2b544;
-  --tab-ink: #f2f5f6; --tab-active: #f2f5f6; --tab-thumb: rgba(255, 255, 255, .16); --tab-rim: rgba(255, 255, 255, .35); --tab-edge: rgba(255, 255, 255, .1); --tab-shadow: rgba(0, 8, 13, .45);
-  --vidro-tinta: linear-gradient(rgba(14, 38, 48, .5), rgba(14, 38, 48, .5)); --vidro-toque: rgba(255, 255, 255, .14); --brilho-forca: .75; --lente-tinta: rgba(255, 255, 255, .05); --lente-luz: rgba(255, 255, 255, .12); --lente-sombra: rgba(0, 8, 13, .4); --lente-borda: rgba(255, 255, 255, .2);
+  --tab-ink: #f2f5f6; --tab-active: #f2f5f6; --tab-thumb: rgba(255, 255, 255, .16); --tab-rim: rgba(255, 255, 255, .14); --tab-edge: rgba(255, 255, 255, .06); --tab-shadow: rgba(0, 8, 13, .45);
+  --vidro-tinta: linear-gradient(rgba(14, 38, 48, .5), rgba(14, 38, 48, .5)); --vidro-toque: rgba(255, 255, 255, .14); --brilho-forca: .3; --lente-tinta: rgba(255, 255, 255, .05); --lente-luz: rgba(255, 255, 255, .12); --lente-sombra: rgba(0, 8, 13, .4); --lente-borda: rgba(255, 255, 255, .12);
   color-scheme: dark;
 }
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }

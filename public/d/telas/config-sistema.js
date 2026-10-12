@@ -73,6 +73,9 @@
       <section class="card cfg-card" aria-labelledby="cfg-rep-t"><h2 id="cfg-rep-t">Reports</h2>
         <span class="cfg-nota">Algo não funcionou? Envie um report com o diagnóstico. A equipe responde por lá.</span>
         <div class="cfg-botoes"><a class="btn btn-s" href="#/reports">${D.ic('list')}Ver reports</a></div></section>
+      <section class="card cfg-card" aria-labelledby="cfg-cla-t"><h2 id="cfg-cla-t">Interface anterior</h2>
+        <span class="cfg-nota">Precisa conferir algo como era antes? A versão clássica fica disponível até cerca de 26/11/2026. Depois dessa data, este link passa a abrir a versão atual.</span>
+        <div class="cfg-botoes"><a class="btn btn-s" href="/classico/">${D.ic('clock-counter-clockwise')}Versão clássica</a></div></section>
       <section class="card cfg-card" aria-labelledby="cfg-cel-t" data-cel hidden><div class="cfg-topo-sis"><h2 id="cfg-cel-t">Acesso pelo celular</h2>
         <label class="cfg-chave"><input type="checkbox" data-cel-chave aria-label="Permitir acesso pelo celular"><span>Permitir</span></label></div>
         <div data-cel-corpo>${U.carregando('Lendo os endereços…')}</div></section></div></div>`;

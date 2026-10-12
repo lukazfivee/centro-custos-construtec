@@ -1,13 +1,13 @@
 /* Barra de abas, bordas seguras e acabamentos (QA visual do celular).
    Regra: o conteudo aparece pelo vidro da barra inferior (Liquid Glass); html e body ja usam --bg (m.css). */
-:root { --tabs-h: 64px; --tabs-gap: 12px; --side: max(20px, env(safe-area-inset-left, 0px), env(safe-area-inset-right, 0px)); }
+:root { --tabs-h: 58px; --tabs-base: max(12px, calc(var(--sab) - 19px)); --side: max(20px, env(safe-area-inset-left, 0px), env(safe-area-inset-right, 0px)); }
 
 /* Esmaecido sob a barra (borda de rolagem do iOS 26): forte so abaixo dela (home indicator) e sumindo nos primeiros
    24px por dentro; o resto do vidro fica limpo. A mascara controla a opacidade da cor de fundo em cada altura. */
 body::after { content: ''; position: fixed; left: 0; right: 0; bottom: 0; z-index: 19; pointer-events: none;
-  height: calc(var(--tabs-gap) + var(--sab) + 24px); background: var(--bg);
-  -webkit-mask-image: linear-gradient(to top, rgba(0, 0, 0, .9) 0, rgba(0, 0, 0, .3) calc(var(--tabs-gap) + var(--sab)), transparent 100%);
-  mask-image: linear-gradient(to top, rgba(0, 0, 0, .9) 0, rgba(0, 0, 0, .3) calc(var(--tabs-gap) + var(--sab)), transparent 100%); }
+  height: calc(var(--tabs-base) + 24px); background: var(--bg);
+  -webkit-mask-image: linear-gradient(to top, rgba(0, 0, 0, .9) 0, rgba(0, 0, 0, .3) var(--tabs-base), transparent 100%);
+  mask-image: linear-gradient(to top, rgba(0, 0, 0, .9) 0, rgba(0, 0, 0, .3) var(--tabs-base), transparent 100%); }
 body.no-tabs::after { display: none; }
 .tabs { left: max(14px, env(safe-area-inset-left, 0px)); right: max(14px, env(safe-area-inset-right, 0px)); }
 .tabs-refraction { overflow: hidden; }
@@ -30,7 +30,7 @@ body.no-tabs .toast { bottom: calc(24px + var(--sab)); }
 
 /* Botao flutuante do assistente (ia-chat.js): acima da barra de abas, em todas as telas.
    --fab-lift sobe o botao quando a tela tem barra de acoes fixa; some enquanto o teclado esta aberto. */
-.ia-fab { position: fixed; right: max(16px, env(safe-area-inset-right, 0px)); bottom: calc(var(--tabs-gap) + var(--tabs-h) + var(--sab) + 14px + var(--fab-lift, 0px)); z-index: 21; width: 52px; height: 52px; border: 0; border-radius: 26px; background: var(--fill); color: #fff; display: grid; place-items: center; box-shadow: 0 6px 18px rgba(2, 24, 32, .28), inset 0 0 0 1px rgba(255, 255, 255, .18); transition: transform .12s, opacity .15s; }
+.ia-fab { position: fixed; right: max(16px, env(safe-area-inset-right, 0px)); bottom: calc(var(--tabs-base) + var(--tabs-h) + 14px + var(--fab-lift, 0px)); z-index: 21; width: 52px; height: 52px; border: 0; border-radius: 26px; background: var(--fill); color: #fff; display: grid; place-items: center; box-shadow: 0 6px 18px rgba(2, 24, 32, .28), inset 0 0 0 1px rgba(255, 255, 255, .18); transition: transform .12s, opacity .15s; }
 .ia-fab[hidden] { display: none; }
 .ia-fab:active { transform: scale(.94); }
 .ia-fab .ico { color: inherit; }

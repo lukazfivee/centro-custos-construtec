@@ -26,7 +26,7 @@
     nav.style.setProperty('--active-x', `${Math.max(0, activeIndex) * 100}%`);
     nav.innerHTML = '<span class="tabs-refraction" aria-hidden="true"></span>' + TABS.map(([key, label, ic, owns]) => {
       const on = owns.includes(current);
-      return `<button class="tab" type="button" data-go="${key}"${on ? ' aria-current="page"' : ''}>${icon(on ? `${ic}-fill` : ic, 22)}<span>${label}</span></button>`;
+      return `<button class="tab" type="button" data-go="${key}"${on ? ' aria-current="page"' : ''}>${icon(ic, 22, 'ico-off')}${icon(`${ic}-fill`, 22, 'ico-on')}<span>${label}</span></button>`;
     }).join('');
     CC.$$('[data-go]', nav).forEach((b) => b.addEventListener('click', () => pickTab(b.dataset.go)));
     if (!nav.dataset.drag && window.arrastarAbas) { nav.dataset.drag = '1'; window.arrastarAbas(nav, pickTab); }

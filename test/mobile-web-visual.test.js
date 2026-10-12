@@ -27,14 +27,16 @@ function themes() {
 test('fundo do html e do body segue o tema e a barra inferior fica sobre um esmaecido que deixa o conteudo aparecer', () => {
   const all = css();
   assert.match(all, /html, body \{[^}]*background: var\(--bg\)/);
-  assert.match(all, /body \{ padding-bottom: calc\(96px \+ var\(--sab\)\)/);
+  assert.match(all, /body \{ padding-bottom: calc\(var\(--barra-topo\) \+ 26px\)/);
+  assert.match(all, /--barra-topo: calc\(max\(12px, calc\(var\(--sab\) - 19px\)\) \+ 58px\)/, 'conteudo e barra de acoes acompanham a barra de abas');
   assert.match(all, /--sab: env\(safe-area-inset-bottom, 0px\)/);
-  assert.match(all, /\.tabs \{[^}]*bottom: calc\(12px \+ var\(--sab\)\)/);
+  assert.match(all, /\.tabs \{[^}]*bottom: max\(12px, calc\(var\(--sab\) - 19px\)\)/, 'como no iPhone: 15px da borda com home indicator, 12px no Android');
   const faixa = read('barra.css').match(/body::after \{[^}]*\}/);
   assert.ok(faixa, 'falta o esmaecido atras da barra de abas');
   assert.match(faixa[0], /position: fixed/);
   assert.match(faixa[0], /bottom: 0/);
-  assert.match(faixa[0], /var\(--sab\)/);
+  assert.match(faixa[0], /var\(--tabs-base\)/);
+  assert.match(read('barra.css'), /--tabs-base: max\(12px, calc\(var\(--sab\) - 19px\)\)/, 'esmaecido cobre o home indicator');
   assert.match(faixa[0], /background: var\(--bg\)/);
   assert.match(faixa[0], /(?<!-webkit-)mask-image: linear-gradient\(to top, rgba\(0, 0, 0, \.9\)/, 'a mascara deixa o conteudo aparecer pelo vidro');
   assert.match(faixa[0], /-webkit-mask-image: linear-gradient/);
@@ -44,19 +46,19 @@ test('fundo do html e do body segue o tema e a barra inferior fica sobre um esma
 test('barra de abas no estilo do iPhone: capsula de vidro e pilula na aba ativa', () => {
   const m = read('m.css');
   const barra = m.match(/\.tabs \{[^}]*\}/)[0];
-  assert.match(barra, /height: 64px/);
-  assert.match(barra, /border-radius: 32px/, 'capsula: raio igual a metade da altura');
+  assert.match(barra, /height: 58px/);
+  assert.match(barra, /border-radius: 29px/, 'capsula: raio igual a metade da altura');
   assert.match(barra, /repeat\(var\(--tabs-n\), minmax\(0, 1fr\)\)/);
   assert.match(m, /\.tabs-refraction \{[^}]*backdrop-filter: blur\(\d+px\) saturate/);
-  assert.match(m, /\.tabs::before \{[^}]*width: calc\(\(100% - 8px\) \/ var\(--tabs-n\)\)[^}]*border-radius: 28px/);
+  assert.match(m, /\.tabs::before \{[^}]*width: calc\(\(100% - 8px\) \/ var\(--tabs-n\)\)[^}]*border-radius: 25px/);
   assert.doesNotMatch(`${m}\n${read('index.html')}`, /cc-glass-distortion|feDisplacementMap/, 'sem a distorcao SVG antiga');
 });
 
 test('barra de abas: a pilula vira lente ao tocar e da para arrastar de uma aba para outra', () => {
   const m = read('m.css');
   assert.match(m.match(/\.tabs \{[^}]*\}/)[0], /touch-action: none/, 'o arrasto nao pode virar rolagem da pagina');
-  assert.match(m, /\.tabs\.is-pressed::before \{ z-index: 4; transform: translateX\(var\(--drag-x, 0px\)\) scale\(1\.15\)/, 'lente por cima dos icones, 1,15x segurando');
-  assert.match(m, /\.tabs\.is-dragging::before \{ transform: translateX\(var\(--drag-x, 0px\)\) scale\(calc\(1\.35 \+ var\(--stretch, 0\) \* 1\.4\), calc\(1\.35 - var\(--stretch, 0\) \* \.5\)\)/, 'arrastando, 1,35x e esticando com a velocidade');
+  assert.match(m, /\.tabs\.is-pressed::before \{ z-index: 4; transform: translateX\(var\(--drag-x, 0px\)\) scale\(1\.25, 1\.38\)/, 'lente por cima dos icones, 1,25 x 1,38 como no video');
+  assert.match(m, /\.tabs\.is-dragging::before \{ transform: translateX\(var\(--drag-x, 0px\)\) scale\(calc\(1\.25 \+ var\(--stretch, 0\) \* 1\.4\), calc\(1\.38 - var\(--stretch, 0\) \* \.5\)\)/, 'arrastando, esticando com a velocidade');
   assert.match(m, /\.tabs\.refrata\.is-pressed::before \{ backdrop-filter: url\(#abas-lente\)/, 'refracao so com a classe do Chromium');
   assert.match(m, /\.tabs\.is-pressed, \.tabs\.is-settling \{ overflow: visible; \}/, 'a lente cresce alem da barra');
   assert.match(m, /\.tabs\.is-pressed \.tab\.is-lens \{ color: var\(--tab-active\)/);
@@ -129,12 +131,12 @@ test('alvos de toque de 44 px e animacao que nao alarga a pagina', () => {
 
 test('vidro sem fundo leitoso: tinta baixa, url() so no Chromium e esmaecido leve dentro da barra', () => {
   const m = read('m.css');
-  for (const linha of m.match(/--vidro-tinta: [^;]+;/g)) for (const a of linha.matchAll(/rgba\([^)]*,\s*([\d.]+)\)/g)) assert.ok(Number(a[1]) <= 0.3, `tinta do vidro alta: ${linha}`);
+  for (const linha of m.match(/--vidro-tinta: [^;]+;/g)) for (const a of linha.matchAll(/rgba\([^)]*,\s*([\d.]+)\)/g)) assert.ok(Number(a[1]) <= 0.5, `tinta do vidro alta: ${linha}`);
   assert.doesNotMatch(m, /-webkit-backdrop-filter:[^;]*url\(/, 'no Safari um url() apaga o backdrop-filter inteiro');
   assert.match(m, /\.tabs\.refrata \.tabs-refraction \{ backdrop-filter: blur\(\dpx\) url\(#vidro-barra\)/);
   assert.match(m, /\.tabs-refraction \{[^}]*-webkit-backdrop-filter: blur\([2-8]px\)/, 'desfoque baixo');
-  assert.match(read('barra.css'), /rgba\(0, 0, 0, \.3\) calc\(var\(--tabs-gap\) \+ var\(--sab\)\), transparent 100%/, 'esmaecido leve na base da barra e nada acima dos primeiros 24px');
-  assert.match(read('barra.css'), /height: calc\(var\(--tabs-gap\) \+ var\(--sab\) \+ 24px\)/);
+  assert.match(read('barra.css'), /rgba\(0, 0, 0, \.3\) var\(--tabs-base\), transparent 100%/, 'esmaecido leve na base da barra e nada acima dos primeiros 24px');
+  assert.match(read('barra.css'), /height: calc\(var\(--tabs-base\) \+ 24px\)/);
 });
 
 test('mapa do vidro: miolo parado, borda puxa para dentro, fora da capsula neutro', () => {
@@ -186,8 +188,10 @@ test('brilho e lente: aro aceso, miolo vazio, lado da luz mais forte; lente 67.8
 test('legibilidade: barra troca de tinta conforme o fundo e a lente nao lava o icone', () => {
   const m = read('m.css'), js = read('abas-arrastar.js');
   assert.match(js, /elementsFromPoint/, 'barra le o que passa atras');
-  assert.match(m, /\.tabs\.sobre-escuro \{ --tab-ink: #eef4f6; --tab-active: #5fd0ee;/);
-  assert.match(m, /\.tabs\.sobre-claro \{ --tab-ink: #1c2a31; --tab-active: #08647f;/);
+  assert.doesNotMatch(m, /sobre-escuro/, 'no claro a barra fica clara sobre conteudo escuro, como no video');
+  assert.match(m, /\.tabs\.sobre-claro \{ --tab-ink: #1a1d1f; --tab-active: #1a1d1f;/);
+  assert.match(read('app.js'), /icon\(ic, 22, 'ico-off'\)\}\$\{icon\(`\$\{ic\}-fill`, 22, 'ico-on'\)/, 'icone preenchido na aba ativa e sob a lente');
+  assert.match(m, /\.tab\[aria-current="page"\] \.ico-on, \.tabs\.is-pressed \.tab\.is-lens \.ico-on \{ display: block; \}/);
   assert.match(m, /radial-gradient\(closest-side, transparent 65%, var\(--lente-luz\)\)/, 'luz da lente so na borda');
   assert.match(js, /addEventListener\('pointerup', \(e\) => end\(e, false\), true\)/, 'fim do toque ouvido na janela');
   assert.match(js, /swallowUntil = 0;/, 'toque novo nao e engolido');

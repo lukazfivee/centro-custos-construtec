@@ -28,9 +28,11 @@
       const on = owns.includes(current);
       return `<button class="tab" type="button" data-go="${key}"${on ? ' aria-current="page"' : ''}>${icon(on ? `${ic}-fill` : ic, 22)}<span>${label}</span></button>`;
     }).join('');
-    CC.$$('[data-go]', nav).forEach((b) => b.addEventListener('click', () => CC.go(b.dataset.go, b.dataset.go === 'lancar' ? { novo: true, from: [current] } : undefined)));
+    CC.$$('[data-go]', nav).forEach((b) => b.addEventListener('click', () => pickTab(b.dataset.go)));
+    if (!nav.dataset.drag && window.arrastarAbas) { nav.dataset.drag = '1'; window.arrastarAbas(nav, pickTab); }
     if (!nav.classList.contains('is-ready')) requestAnimationFrame(() => nav.classList.add('is-ready'));
   }
+  function pickTab(key) { CC.go(key, key === 'lancar' ? { novo: true, from: [current] } : undefined); }
 
   CC.go = function (name, params) {
     const screen = CC.screens[name];

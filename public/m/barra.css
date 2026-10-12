@@ -1,11 +1,13 @@
 /* Barra de abas, bordas seguras e acabamentos (QA visual do celular).
-   Regra: nada aparece atras da barra inferior; html e body ja usam --bg (m.css). */
+   Regra: o conteudo aparece pelo vidro da barra inferior (Liquid Glass); html e body ja usam --bg (m.css). */
 :root { --tabs-h: 64px; --tabs-gap: 12px; --side: max(20px, env(safe-area-inset-left, 0px), env(safe-area-inset-right, 0px)); }
 
-/* Faixa opaca atras da barra e do home indicator, com esmaecido em cima: o conteudo some antes de chegar nela. */
+/* Esmaecido sob a barra (borda de rolagem do iOS 26): forte so abaixo dela (home indicator) e sumindo nos primeiros
+   24px por dentro; o resto do vidro fica limpo. A mascara controla a opacidade da cor de fundo em cada altura. */
 body::after { content: ''; position: fixed; left: 0; right: 0; bottom: 0; z-index: 19; pointer-events: none;
-  height: calc(var(--tabs-gap) + var(--tabs-h) + var(--sab) + 28px);
-  background: linear-gradient(to top, var(--bg) 0, var(--bg) calc(var(--tabs-gap) + var(--tabs-h) + var(--sab) + 6px), transparent 100%); }
+  height: calc(var(--tabs-gap) + var(--sab) + 24px); background: var(--bg);
+  -webkit-mask-image: linear-gradient(to top, rgba(0, 0, 0, .9) 0, rgba(0, 0, 0, .3) calc(var(--tabs-gap) + var(--sab)), transparent 100%);
+  mask-image: linear-gradient(to top, rgba(0, 0, 0, .9) 0, rgba(0, 0, 0, .3) calc(var(--tabs-gap) + var(--sab)), transparent 100%); }
 body.no-tabs::after { display: none; }
 .tabs { left: max(14px, env(safe-area-inset-left, 0px)); right: max(14px, env(safe-area-inset-right, 0px)); }
 .tabs-refraction { overflow: hidden; }

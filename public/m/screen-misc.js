@@ -13,10 +13,11 @@
         <button class="menu-item" type="button" id="m-bug">${icon('bug', 22)}<span>Reportar problema<small>Conte o que aconteceu e o assistente monta o relato</small></span></button>` : ''}
         <button class="menu-item" type="button" id="m-tema">${icon(dark ? 'sun' : 'moon', 22)}<span>${dark ? 'Modo claro' : 'Modo escuro'}</span></button>
         ${inApp ? `<button class="menu-item" type="button" id="m-seg">${icon('shield-check', 22)}<span>Segurança<small>PIN, digital, bloqueio automático e aparelhos</small></span></button>` : ''}
-        ${CC.isAdmin && CC.isAdmin() ? `<button class="menu-item" type="button" id="m-pedidos">${icon('user-plus', 22)}<span>Pedidos de acesso<small>Aprovar cadastros, convidar por e-mail e código da empresa</small></span></button>` : ''}
+        ${CC.adm ? CC.adm.menuHtml() : ''}
         ${CC.isAdmin && CC.isAdmin() && CC.screens.descartadas ? `<button class="menu-item" type="button" id="m-desc">${icon('archive', 22)}<span>Obras descartadas<small id="m-desc-n">Recuperar obras guardadas</small></span></button>` : ''}
         ${inApp && CC.screens.atualizacao ? `<button class="menu-item" type="button" id="m-upd">${icon('arrow-counter-clockwise', 22)}<span>Atualização do aplicativo<small>Ver a versão instalada e instalar a mais nova</small></span></button>` : ''}
         ${inApp ? `<button class="menu-item" type="button" id="m-tour">${icon('arrow-right', 22)}<span>Rever o tour<small>As quatro telas de boas-vindas da Suíte</small></span></button>` : ''}
+        <div id="m-fin"></div>
         <button class="menu-item" type="button" id="m-senha">${icon('key', 22)}<span>Alterar senha<small>Troque a senha de entrada da Suíte</small></span></button>
         <a class="menu-item" href="/d/" id="m-web" style="color:inherit;text-decoration:none">${icon('desktop', 22)}<span>Versão completa<small>Fechamento, cobranças, cadastros e usuários (tela de computador)</small></span></a>
         <button class="menu-item danger" type="button" id="m-sair">${icon('sign-out', 22)}<span>Sair</span></button>
@@ -24,6 +25,7 @@
     CC.$('#m-senha', el).addEventListener('click', () => CC.senhaSheet());
     CC.$('#m-tema', el).addEventListener('click', () => { CC.theme.toggle(); CC.screens.menu(); });
     CC.$('#m-perfil', el).addEventListener('click', () => CC.go('perfil'));
+    if (CC.fin) CC.fin.menu(CC.$('#m-fin', el));
     // A foto chega depois (uma vez por abertura do site) e entra no lugar das iniciais.
     if (CC.perfilFoto === undefined) {
       CC.perfilFoto = null;
@@ -37,8 +39,7 @@
     if (ia) ia.addEventListener('click', () => CC.ia.open());
     const bug = CC.$('#m-bug', el);
     if (bug) bug.addEventListener('click', () => CC.ia.open('Quero reportar um problema no app.'));
-    const pedidos = CC.$('#m-pedidos', el);
-    if (pedidos) pedidos.addEventListener('click', () => CC.go('pedidos'));
+    if (CC.adm) CC.adm.wireMenu(el); // Administracao (screen-adm.js); pedidos de acesso ficam em Usuarios
     const desc = CC.$('#m-desc', el);
     if (desc) {
       desc.addEventListener('click', () => CC.go('descartadas'));

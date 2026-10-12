@@ -26,7 +26,7 @@
 
   CC.screens.pedidos = async function (params) {
     const top = `<div class="top"><button class="back" type="button" id="voltar" aria-label="Voltar">${icon('caret-left', 20)}</button><h1>Pedidos de acesso</h1></div>`;
-    const back = (el) => CC.$('#voltar', el).addEventListener('click', () => CC.go('menu'));
+    const back = (el) => CC.$('#voltar', el).addEventListener('click', () => CC.go(params.from || 'menu'));
     back(CC.render(`${top}<div class="skeleton"></div><div class="skeleton"></div>`, true, params));
     let data;
     try { data = (params.data) || (await CC.api('/cadastros')).data; } catch (error) {

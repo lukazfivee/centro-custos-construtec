@@ -1,0 +1,82 @@
+/* Administracao no celular: fechamento, historico, reports, usuarios, papeis e sistema (screen-adm.js e vizinhos). */
+.adm-sec { margin: 14px 0 4px; font-size: 11px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--n300); }
+.adm-menu { display: flex; flex-direction: column; }
+.adm-nota { margin: 8px 0 0; font-size: 12.5px; line-height: 1.45; color: var(--n300); display: flex; gap: 6px; align-items: flex-start; }
+.adm-nota .ico { margin-top: 2px; }
+.adm-sub { margin: 0; }
+.adm-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 4px; }
+.adm-mes { font-size: 16px; font-weight: 600; }
+.adm-reab { display: block; margin-top: 2px; font-size: 11.5px; color: var(--warn); overflow-wrap: anywhere; }
+.tag .ico { margin-right: 4px; }
+
+/* Indicadores em linha (sem grade 2x2). */
+.adm-kpis { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 8px; }
+.adm-kpi { min-width: 0; padding: 10px 8px; border-radius: 12px; background: var(--surface); box-shadow: var(--shadow); text-align: center; }
+.adm-kpi b { display: block; font-size: 20px; font-weight: 600; line-height: 1.2; }
+.adm-kpi b.ok { color: var(--accent-300); } .adm-kpi b.warn { color: var(--warn); }
+.adm-kpi small { display: block; font-size: 10.5px; line-height: 1.25; color: var(--n300); }
+
+/* Linhas tocaveis das listas. */
+.adm-lista { display: flex; flex-direction: column; padding-top: 0; padding-bottom: 0; }
+.adm-lista.solta { padding: 0; }
+.adm-row { width: 100%; min-height: 56px; padding: 10px 0; border: 0; border-top: 1px solid var(--divider); background: transparent; color: inherit; font: inherit; text-align: left; display: flex; align-items: center; gap: 10px; }
+.adm-lista > .adm-row:first-child, .adm-lista > .group + .adm-row { border-top: 0; }
+button.adm-row:active { background: var(--accent-900); }
+.adm-row .grow { flex: 1; min-width: 0; display: grid; gap: 1px; }
+.adm-row b { font-size: 13.5px; font-weight: 600; overflow-wrap: anywhere; }
+.adm-row small { font-size: 11.5px; color: var(--n300); overflow-wrap: anywhere; }
+.adm-row .adm-det { color: var(--text); opacity: .8; }
+.adm-row.sel { box-shadow: inset 3px 0 0 var(--accent); padding-left: 10px; background: var(--accent-900); }
+.adm-row.off b { color: var(--n300); }
+.adm-row-end { display: grid; justify-items: end; gap: 4px; flex: none; }
+.adm-row-end small { font-weight: 600; color: var(--text); }
+.adm-ic, .adm-av { flex: none; width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; background: var(--accent-900); color: var(--accent-300); font-size: 12px; font-weight: 700; }
+.adm-ic { border-radius: 8px; }
+.adm-lista .group { padding-top: 6px; }
+
+/* Checklist do fechamento. */
+.adm-ck { list-style: none; margin: 0; padding: 0; }
+.adm-ck-item { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-top: 1px solid var(--divider); }
+.adm-ck-item:first-child { border-top: 0; }
+.adm-ck-item .grow { flex: 1; min-width: 0; display: grid; gap: 2px; }
+.adm-ck-item b { font-size: 13.5px; font-weight: 600; }
+.adm-ck-item small { font-size: 12px; color: var(--n300); }
+.adm-ck-ic { flex: none; width: 30px; height: 30px; border-radius: 8px; display: grid; place-items: center; background: var(--accent-900); color: var(--accent-300); }
+.adm-ck-ic.warn { background: var(--warn-soft); color: var(--warn); }
+.adm-ck-ic.mudo { background: var(--n800); color: var(--n300); }
+
+/* Historico: antes -> depois. */
+.adm-diff { display: grid; gap: 0; }
+.adm-diff-row { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; padding: 8px 0; border-top: 1px solid var(--divider); font-size: 13.5px; }
+.adm-diff-row:first-child { border-top: 0; }
+.adm-diff-row .label { flex: 1 0 100%; }
+.adm-diff-row b { font-weight: 600; overflow-wrap: anywhere; }
+.adm-antes { color: var(--n300); text-decoration: line-through; overflow-wrap: anywhere; }
+.adm-acoes summary { min-height: 44px; display: flex; align-items: center; font-size: 13.5px; font-weight: 600; cursor: pointer; }
+.adm-acoes ol { margin: 4px 0 0; padding-left: 20px; font-size: 12.5px; color: var(--n300); }
+
+/* Usuarios: apps e obras como botoes de ligar, o que o papel pode, senha provisoria e chave da matriz. */
+.adm-toggles { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
+.adm-toggles.col { flex-direction: column; }
+.adm-toggles .chip-act { justify-content: flex-start; text-align: left; background: var(--surface); color: var(--n300); box-shadow: inset 0 0 0 1px var(--divider); }
+.adm-toggles .chip-act .ico { opacity: 0; }
+.adm-toggles .chip-act[aria-pressed="true"] { background: var(--accent-900); color: var(--accent-300); box-shadow: inset 0 0 0 1.5px var(--accent); }
+.adm-toggles .chip-act[aria-pressed="true"] .ico { opacity: 1; }
+.adm-pode { list-style: none; margin: 6px 0 0; padding: 0; display: grid; gap: 6px; font-size: 13px; }
+.adm-pode li { display: flex; gap: 8px; align-items: center; }
+.adm-pode li.sim .ico { color: var(--accent-300); }
+.adm-pode li.nao { color: var(--n300); }
+.adm-senha { display: block; margin-top: 6px; font-size: 20px; letter-spacing: .06em; overflow-wrap: anywhere; user-select: all; }
+.adm-sw { flex: none; position: relative; width: 52px; height: 44px; border: 0; background: transparent; padding: 0; display: grid; place-items: center; }
+.adm-sw span { position: relative; width: 44px; height: 26px; border-radius: 13px; background: var(--n600); transition: background .15s; }
+.adm-sw span::after { content: ''; position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; border-radius: 50%; background: #fff; box-shadow: 0 1px 2px rgba(0,0,0,.25); transition: transform .15s; }
+.adm-sw.on span { background: var(--fill); }
+.adm-sw.on span::after { transform: translateX(18px); }
+.adm-sw[disabled] { opacity: .5; }
+.adm-sw.fixo { color: var(--n300); }
+
+/* Faixa do "Ver o sistema como", acima da barra de abas. */
+.adm-como { position: fixed; left: 14px; right: 14px; bottom: calc(84px + var(--sab)); z-index: 25; min-height: 44px; padding: 4px 6px 4px 14px; border-radius: 14px; background: var(--warn-soft); color: var(--warn-text); box-shadow: inset 0 0 0 1px var(--warn-bar), 0 6px 18px rgba(2, 24, 32, .14); display: flex; align-items: center; gap: 8px; font-size: 12.5px; }
+.adm-como span { flex: 1; min-width: 0; }
+.adm-como button { min-height: 44px; padding: 0 14px; border: 0; border-radius: 10px; background: var(--surface); color: var(--text); font-weight: 600; }
+body.no-tabs .adm-como { bottom: calc(12px + var(--sab)); }

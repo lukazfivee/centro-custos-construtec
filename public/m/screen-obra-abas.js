@@ -45,8 +45,11 @@
       return;
     }
     const pdf = prop ? `<button class="btn2 orc-pdf" type="button" id="orc-pdf">${icon('file-pdf', 18)}Proposta aprovada (PDF)</button>` : '';
+    const gerir = !!(CC.obraImportar && CC.sv && CC.sv.can('p5')); // importar, atualizar revisao e vincular: p5 no servidor
+    const recarregar = () => CC.obraOrcado(slot, c, filtro);
     if (!cmp.hasBudget) {
-      slot.innerHTML = `<div class="empty">${icon('file-text', 28)}Esta obra ainda não tem orçamento importado.<small>Importe a proposta aprovada pelo computador (Obras › Importar orçamento) para ver a planilha e o consumo.</small></div>${pdf}`;
+      slot.innerHTML = `<div class="empty">${icon('file-text', 28)}Esta obra ainda não tem orçamento importado.<small>${gerir ? 'Importe o arquivo .json da proposta aprovada, exportado do Orçamentos, para ver a planilha e o consumo.' : 'Peça a quem cuida dos orçamentos para importar a proposta aprovada.'}</small></div>
+        ${gerir ? `<button class="btn" type="button" id="orc-importar">${icon('file-arrow-down', 18)}Importar orçamento</button>` : ''}${pdf}`;
     } else {
       const s = cmp.summary || {}, ct = cmp.contract || {};
       const p = s.baseCost > 0 ? s.realizedCost / s.baseCost : 0;
@@ -63,15 +66,22 @@
           ${h.planned ? `<div class="kv"><span>Horas da equipe</span><b>${Math.round(h.consumed || 0)} / ${Math.round(h.planned)} h</b></div>` : ''}
           ${ct.number ? `<div class="kv"><span>Contrato nº</span><b>${esc([ct.number, ct.baselineVersion != null ? `REV ${String(ct.baselineVersion).padStart(2, '0')}` : ''].filter(Boolean).join(' '))}</b></div>` : ''}</div>
         <div class="card"><span class="label">Por tipo</span>${porTipo('Material', soma('material'), ct.materialsCost)}${porTipo('Mão de obra', soma('labor'), ct.laborCost)}</div>
-        ${sem.count ? `<div class="note off">${icon('warning-circle', 18)}<span><b>${sem.count} gasto${sem.count === 1 ? '' : 's'} sem vínculo · ${esc(money(sem.totalCost))}</b> Lançamentos que ainda não estão ligados a um insumo. Vincule pelo computador para o consumo ficar certo.</span></div>` : ''}
-        ${pdf}
+        ${sem.count ? `<div class="note off">${icon('warning-circle', 18)}<span><b>${sem.count} gasto${sem.count === 1 ? '' : 's'} sem vínculo · ${esc(money(sem.totalCost))}</b> Lançamentos que ainda não estão ligados a um insumo. Vincule para o consumo ficar certo.</span></div>
+          ${gerir ? `<button class="btn2" type="button" id="orc-vincular">${icon('paperclip', 18)}Vincular a insumos</button>` : ''}` : ''}
+        ${pdf}<div class="grid2 orc-acts"><button class="btn2" type="button" id="orc-rel">${icon('printer', 18)}Relatório executivo</button>
+          ${gerir ? `<button class="btn2" type="button" id="orc-rev">${icon('arrow-clockwise', 18)}Atualizar revisão</button>` : ''}</div>
         <div class="seg" role="group" aria-label="Tipo de item">${[['', 'Todos'], ['material', 'Materiais'], ['labor', 'Mão de obra']].map(([k, l]) => `<button type="button" data-kind="${k}" aria-pressed="${k === (filtro || '')}">${l}</button>`).join('')}</div>
         <span class="label">Itens orçados · maior desvio primeiro</span>
         <div class="orc-itens">${itens.map(itemRow).join('') || `<div class="empty">${icon('list-bullets', 24)}Nenhum item neste filtro.</div>`}</div>
         <button class="btn2" type="button" id="orc-csv">${icon('download-simple', 18)}Planilha em CSV</button>`;
       CC.$$('[data-kind]', slot).forEach((b) => b.addEventListener('click', () => CC.obraOrcado(slot, c, b.dataset.kind)));
       CC.$('#orc-csv', slot).addEventListener('click', () => CC.abrirArquivo(`/centros-custo/${c.id}/orcado-realizado/csv`, `orcado-vs-realizado-${c.codigo || c.id}.csv`));
+      CC.$('#orc-rel', slot).addEventListener('click', () => CC.go('obra-folha', { id: c.id, tipo: 'relatorio' }));
+      const vinc = CC.$('#orc-vincular', slot);
+      if (vinc) vinc.addEventListener('click', () => CC.obraVincular(c, cmp, recarregar));
     }
+    const imp = CC.$('#orc-importar', slot) || CC.$('#orc-rev', slot);
+    if (imp) imp.addEventListener('click', () => CC.obraImportar(c, recarregar));
     const b = CC.$('#orc-pdf', slot);
     if (b) b.addEventListener('click', () => CC.abrirArquivo(`/centros-custo/${c.id}/proposta/arquivo`, (prop && prop.nome) || 'proposta.pdf'));
   };

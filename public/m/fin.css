@@ -1,0 +1,47 @@
+/* Cadastros e financeiro no celular: Cobrancas, Recorrentes, Fornecedores e Categorias (fin-base.js, screen-cobranca*.js etc.). */
+.fin-sec { display: block; padding: 18px 4px 8px; border-top: 1px solid var(--divider); }
+.fin-sec + .menu-item { border-top: 0; }
+.fin-row { color: inherit; font: inherit; }
+.fin-row[disabled] { cursor: default; } .fin-row[disabled]:active { background: transparent; }
+.fin-row .foot b, .fin-val { font-size: 13.5px; font-weight: 600; color: var(--text); white-space: nowrap; }
+.fin-open { width: 100%; padding: 0; border: 0; background: transparent; color: inherit; font: inherit; text-align: left; display: flex; flex-direction: column; gap: 6px; }
+.fin-open[disabled] { cursor: default; }
+.fin-pausar { align-self: flex-start; }
+.fin-rodape, .fin-nota { margin: 6px 0 0; }
+.fin-num { display: block; margin-top: 2px; font-size: 18px; font-weight: 600; }
+.tag.fin-ok { background: #f0f9f2; color: #176d39; box-shadow: inset 0 0 0 1px #94d3a8; }
+.tag.fin-warn { background: var(--warn-soft); color: var(--warn); box-shadow: inset 0 0 0 1px var(--warn-bar); }
+.tag.fin-err { background: var(--warn-soft); color: var(--danger-ink); box-shadow: inset 0 0 0 1px var(--danger); }
+html[data-theme="escuro"] .tag.fin-ok { background: #0f3a26; color: #8fe0b0; box-shadow: inset 0 0 0 1px #2c6e4a; }
+
+/* Indicadores das cobrancas: o total a receber e tres numeros numa linha. */
+.fin-kpi .big { display: block; margin: 2px 0 10px; }
+.fin-kpi3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; padding-top: 10px; border-top: 1px solid var(--divider); }
+.fin-kpi3 > span { display: grid; gap: 1px; min-width: 0; }
+.fin-kpi3 small { font-size: 11px; color: var(--n300); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.fin-kpi3 b { font-size: 13.5px; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* Andamento em 4 passos. */
+.fin-passos { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
+.fin-passos li { position: relative; display: flex; gap: 12px; padding: 0 0 14px; }
+.fin-passos li:not(:last-child)::before { content: ''; position: absolute; left: 11px; top: 24px; bottom: 0; width: 2px; background: var(--divider); }
+.fin-passos li.feito:not(:last-child)::before { background: var(--accent); }
+.fin-passos .dot { flex: none; width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; background: var(--surface); box-shadow: inset 0 0 0 2px var(--divider); color: #fff; }
+.fin-passos li.feito .dot { background: var(--fill); box-shadow: none; }
+.fin-passos li.atual .dot { box-shadow: inset 0 0 0 2px var(--accent), 0 0 0 4px var(--accent-900); }
+.fin-passos li.vencido .dot { box-shadow: inset 0 0 0 2px var(--danger); }
+.fin-passos li > span:last-child { display: grid; gap: 1px; min-width: 0; padding-top: 2px; }
+.fin-passos b { font-size: 14px; font-weight: 600; } .fin-passos small { font-size: 12px; color: var(--n300); }
+.fin-passos li.vencido small { color: var(--danger-ink); font-weight: 600; }
+.fin-prox { display: flex; flex-direction: column; gap: 8px; } .fin-prox > b { font-size: 14px; font-weight: 600; }
+
+/* Proximas geracoes dos recorrentes: dia do mes em destaque. */
+.fin-dia { flex: none; width: 36px; display: grid; justify-items: center; align-content: center; }
+.fin-dia b { font-size: 16px; font-weight: 700; line-height: 1; } .fin-dia small { font-size: 10px; text-transform: uppercase; }
+
+/* Categorias: bolinha da cor e paleta do formulario. */
+.fin-cor { flex: none; width: 12px; height: 12px; border-radius: 50%; background: var(--n600); }
+.fin-paleta { display: flex; flex-wrap: wrap; gap: 10px; }
+.fin-paleta button { width: 44px; height: 44px; border: 0; border-radius: 50%; box-shadow: inset 0 0 0 2px rgba(255, 255, 255, .35); }
+.fin-paleta button[aria-pressed="true"] { box-shadow: 0 0 0 3px var(--bg), 0 0 0 5px var(--text); }
+.fin-del { color: var(--danger-ink); }

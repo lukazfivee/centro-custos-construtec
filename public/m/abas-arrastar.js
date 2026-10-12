@@ -116,7 +116,7 @@
     const canal = (de, k, out) => `<feColorMatrix in="${de}" type="matrix" values="${[0, 1, 2, 3].map((r) => [0, 1, 2, 3, 4].map((c) => (r === c && (r === k || r === 3) ? 1 : 0)).join(' ')).join(' ')}" result="${out}"/>`;
     svg.innerHTML = `<filter id="vidro-barra" ${area(b)} color-interpolation-filters="sRGB">${mapa(b)}${desvio(b.scale, 'v')}</filter>`
       + `<filter id="abas-lente" ${area(l)} color-interpolation-filters="sRGB">${mapa(l)}`
-      + `${desvio(l.scale * 0.94, 'dr')}${desvio(l.scale, 'dg')}${desvio(l.scale * 1.06, 'db')}`
+      + `${desvio(l.scale * 0.9, 'dr')}${desvio(l.scale, 'dg')}${desvio(l.scale * 1.1, 'db')}`
       + `${canal('dr', 0, 'r')}${canal('dg', 1, 'g')}${canal('db', 2, 'b')}`
       + '<feBlend in="r" in2="g" mode="screen" result="rg"/><feBlend in="rg" in2="b" mode="screen"/></filter>';
   }
@@ -170,7 +170,7 @@
   }
 
   // Tinta adaptativa (como o nativo): le a cor solida atras da linha dos rotulos e, quando o contraste pede, poe na
-  // barra os tokens do outro tema. Foto e gradiente nao dao para ler: vale o que esta embaixo. Ao rolar (~8x/s), ao
+  // barra o vidro claro (so no tema escuro, como o nativo). Foto e gradiente nao dao para ler: vale o que esta embaixo. Ao rolar (~8x/s), ao
   // redimensionar e ao trocar o tema; parado, nao custa nada.
   function tintaAdaptativa(nav) {
     const alto = window.matchMedia ? matchMedia('(prefers-contrast: more), (prefers-reduced-transparency: reduce)') : { matches: false };
@@ -194,11 +194,10 @@
       const l = ls.length ? ls.reduce((a, b) => a + b) / ls.length : null;
       const escuro = document.documentElement.dataset.theme === 'escuro';
       // 0,21: luminancia em que a tinta clara e a escura dao o mesmo contraste.
-      const modo = alto.matches || l === null ? '' : l < 0.21 ? (escuro ? '' : 'sobre-escuro') : (escuro ? 'sobre-claro' : '');
+      const modo = alto.matches || l === null || !escuro || l < 0.21 ? '' : 'sobre-claro'; // claro: o veu ja garante a leitura
       vezes = modo === visto ? vezes + 1 : 1;
       visto = modo;
       if (vezes === 1) return pedir(); // histerese: so troca com 2 leituras iguais seguidas
-      nav.classList.toggle('sobre-escuro', modo === 'sobre-escuro');
       nav.classList.toggle('sobre-claro', modo === 'sobre-claro');
     };
     const pedir = () => { if (!espera) espera = setTimeout(() => requestAnimationFrame(medir), 120); };

@@ -10,7 +10,7 @@
   --accent: #12a9d1; --accent-300: #0a7896; --accent-600: #0d7f9f; --accent-700: #0b4a5c; --accent-900: #e8f8fc;
   --shadow: 0 0 0 1px #d6e4e9;
   --warn: #8a5200; --warn-bar: #e0a33a; --warn-soft: #fff5d9; --warn-text: #6b4200;
-  --tab: rgba(255, 255, 255, .55); --tab-ink: #3b5360; --tab-active: #08647f; --tab-thumb: rgba(11, 37, 48, .09); --tab-rim: rgba(255, 255, 255, .9); --tab-edge: rgba(11, 37, 48, .1); --tab-shadow: rgba(2, 24, 32, .16); --tab-lens: rgba(255, 255, 255, .55);
+  --tab: rgba(255, 255, 255, .55); --tab-ink: #3b5360; --tab-active: #08647f; --tab-thumb: rgba(11, 37, 48, .09); --tab-rim: rgba(255, 255, 255, .9); --tab-edge: rgba(11, 37, 48, .1); --tab-shadow: rgba(2, 24, 32, .16); --tab-lens: rgba(255, 255, 255, .14);
   --danger: #b8452c; --danger-ink: #b8452c; --fill: #0b7a98;
   --font: 'IBM Plex Sans', 'Segoe UI', system-ui, sans-serif;
   --sat: env(safe-area-inset-top, 0px); --sab: env(safe-area-inset-bottom, 0px);
@@ -22,7 +22,7 @@ html[data-theme="escuro"] {
   --accent-300: #5fd0ee; --accent-700: #0b5a70; --accent-900: #0a3a48;
   --shadow: 0 0 0 1px #164656;
   --danger-ink: #ff8e72; --warn: #f2b544; --warn-soft: #3a2a0c; --warn-text: #f2b544;
-  --tab: rgba(22, 50, 60, .5); --tab-ink: #c5d8de; --tab-active: #5fd0ee; --tab-thumb: rgba(255, 255, 255, .17); --tab-rim: rgba(255, 255, 255, .28); --tab-edge: rgba(255, 255, 255, .12); --tab-shadow: rgba(0, 8, 13, .5); --tab-lens: rgba(255, 255, 255, .1);
+  --tab: rgba(22, 50, 60, .5); --tab-ink: #c5d8de; --tab-active: #5fd0ee; --tab-thumb: rgba(255, 255, 255, .17); --tab-rim: rgba(255, 255, 255, .28); --tab-edge: rgba(255, 255, 255, .12); --tab-shadow: rgba(0, 8, 13, .5); --tab-lens: rgba(255, 255, 255, .05);
   color-scheme: dark;
 }
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -134,8 +134,10 @@ body.no-tabs .actions { bottom: var(--sab); padding-bottom: 28px; }
 .tabs.is-moving::before { transform: translateX(var(--active-x, 0%)) scale(1.06, .95); }
 /* Lente ao tocar e arrastar (abas-arrastar.js): cresce alem da barra, segue o dedo e encaixa na aba mais proxima ao soltar. */
 .tabs.is-pressed, .tabs.is-settling { overflow: visible; }
-.tabs.is-pressed::before { transform: translateX(var(--drag-x, 0px)) scale(1.25); background: var(--tab-lens); box-shadow: inset 0 0 0 1px var(--tab-rim), 0 8px 22px var(--tab-shadow); transition: transform .24s cubic-bezier(.2, .9, .3, 1.25), background-color .2s, box-shadow .2s; }
-.tabs.is-dragging::before { transition: transform .1s cubic-bezier(.2, .8, .3, 1), background-color .2s, box-shadow .2s; }
+.tabs.is-pressed::before { z-index: 4; transform: translateX(var(--drag-x, 0px)) scale(calc(1.25 + var(--stretch, 0) * 1.25), calc(1.25 - var(--stretch, 0) * .7)); background: var(--tab-lens); box-shadow: inset 0 0 0 1px var(--tab-rim), inset 0 2px 3px var(--tab-rim), inset 0 -2px 6px var(--tab-edge), 0 8px 22px var(--tab-shadow); -webkit-backdrop-filter: saturate(1.5) brightness(1.05); backdrop-filter: saturate(1.5) brightness(1.05); transition: transform .24s cubic-bezier(.2, .9, .3, 1.25), background-color .2s, box-shadow .2s; }
+/* Refracao: a lente fica por cima dos icones e entorta o que esta embaixo (filtro de abas-arrastar.js, so Chromium). */
+.tabs.refrata.is-pressed::before { backdrop-filter: url(#abas-lente) saturate(1.5) brightness(1.05); }
+.tabs.is-dragging::before { transition: transform .06s linear, background-color .2s, box-shadow .2s; }
 .tabs.is-dragging .tab[aria-current="page"]:not(.is-lens) { color: var(--tab-ink); }
 .tabs.is-pressed .tab.is-lens { color: var(--tab-active); transform: scale(1.12); }
 body.no-tabs .tabs { display: none; }

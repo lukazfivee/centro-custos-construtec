@@ -122,3 +122,16 @@ test('celular: regras das cobrancas (situacao, 4 passos, filtros e indicadores e
   assert.equal(B.corpo(itens[1], { financialStatus: 'pago' }).invoiceNumber, '2199');
   assert.match(B.csv(itens), /^\ufeff"Obra";"Cliente"/);
 });
+
+test('celular: Menu abre painel lateral com Webmail Pro e e-mail de cobranca abre no app de e-mail', () => {
+  const menu = read('screen-misc.js');
+  assert.match(menu, /CC\.menuLateral\.painel\(/);
+  assert.match(menu, /href="\$\{WEBMAIL\}"[^>]*id="m-webmail"/);
+  assert.match(menu, /webmailpro\.uol\.com\.br/);
+  assert.match(read('app.js'), /CC\.menuLateral\.aberto\(\) \? CC\.menuLateral\.fechar\(\) : CC\.screens\.menu\(\)/);
+  for (const f of ['index.html', 'sw.js']) assert.match(read(f), /menu-lateral\.js/, f);
+  const email = read('screen-cobranca-email.js');
+  assert.match(email, /id="ce-app"/);
+  assert.match(email, /navigator\.share\(\{ files: \[file\]/); // com a NF, o compartilhar do sistema anexa o PDF
+  assert.match(email, /a\.href = `mailto:/); // sem NF, o mailto: preenche a mensagem
+});

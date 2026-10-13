@@ -40,6 +40,8 @@ html[data-theme="escuro"] { --up: #5fd39a; --up-soft: #0f3a2b; --down: #ff8f75; 
 .sv-grp, .sv-gasto { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-top: 1px solid var(--divider); }
 .sv-head + .sv-grp { margin-top: 8px; }
 .sv-list > .sv-gasto:first-child { border-top: 0; }
+button.sv-gasto { width: 100%; background: none; border: 0; border-top: 1px solid var(--divider); font: inherit; color: inherit; text-align: left; cursor: pointer; min-height: 52px; }
+.sv-list > button.sv-gasto:first-child { border-top: 0; }
 .sv-grp.off { opacity: .55; }
 .sv-grp .ic, .sv-gasto .ic { width: 36px; height: 36px; flex: none; border-radius: 10px; display: grid; place-items: center; background: var(--accent-900); color: var(--accent-300); }
 .sv-grp .grow, .sv-gasto .grow { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }

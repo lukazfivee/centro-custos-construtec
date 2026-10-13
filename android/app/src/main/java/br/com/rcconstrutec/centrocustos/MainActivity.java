@@ -162,7 +162,7 @@ public final class MainActivity extends Activity implements AuthController.Shell
     @Override public void openSecurity() { showAuth("security", null); }
     @Override public void openTour() { showAuth("tour", null); }
     private void sessionRejected() {
-        auth.sessionRevoked();
+        auth.sessionEnded();
         dropApp();
         showAuth("start", "Sua sessão terminou. Entre com e-mail e senha.");
     }

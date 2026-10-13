@@ -24,7 +24,13 @@
       const obras = (await CC.api('/centros-custo')).data || [];
       const obra = obras.find((o) => String(o.codigo).toLowerCase() === String(item.code).toLowerCase());
       if (!obra) return [];
-      return ((await CC.api(`/centros-custo/${obra.id}/notas-fiscais?tipo=cliente`)).data || []).filter((n) => n.temArquivo);
+      const lista = ((await CC.api(`/centros-custo/${obra.id}/notas-fiscais?tipo=cliente`)).data || []).filter((n) => n.temArquivo);
+      // NFS-e anexada ao faturar o servico (cost_center_invoices): tambem pode ir no e-mail.
+      try {
+        const nfse = ((await CC.api(`/notas-fiscais-centro/${obra.id}`)).data || {}).notaFiscal;
+        if (nfse && nfse.nome) lista.unshift({ id: 'nfse', nomeArquivo: nfse.nome, observacao: 'NFS-e do serviço', valor: null, url: `/api/notas-fiscais-centro/${obra.id}/arquivo` });
+      } catch { /* sem NFS-e do faturamento */ }
+      return lista;
     } catch { return []; }
   }
 
@@ -37,7 +43,7 @@
       blob = f; nome = f.name;
     } else if (escolha.startsWith('nf:')) {
       const nf = nfs.find((n) => String(n.id) === escolha.slice(3));
-      const r = await fetch(`/api/centros-custo/notas-fiscais/${nf.id}/arquivo`, { headers: { Authorization: `Bearer ${CC.session.token()}` }, cache: 'no-store' });
+      const r = await fetch(nf.url || `/api/centros-custo/notas-fiscais/${nf.id}/arquivo`, { headers: { Authorization: `Bearer ${CC.session.token()}` }, cache: 'no-store' });
       if (!r.ok) throw new Error('Não foi possível ler o PDF da nota fiscal.');
       blob = await r.blob(); nome = nf.nomeArquivo || `nota-fiscal-${nf.id}.pdf`;
     } else return [];
@@ -81,10 +87,10 @@
       ${F.campo('Assunto', 'ce-assunto', d.subject, ' maxlength="300"')}
       <label class="field"><span>Mensagem</span><textarea id="ce-msg" rows="9">${esc(d.bodyText || '')}</textarea></label>
       ${envia ? `<label class="field"><span>Anexo · nota fiscal em PDF</span><select id="ce-anexo">
-          ${nfs.map((n) => `<option value="nf:${esc(n.id)}">${esc(`${n.nomeArquivo || 'nota.pdf'} · ${n.observacao || 'NF'} · ${CC.money(n.valor)}`)}</option>`).join('')}
+          ${nfs.map((n) => `<option value="nf:${esc(n.id)}">${esc(`${n.nomeArquivo || 'nota.pdf'} · ${n.observacao || 'NF'}${n.valor == null ? '' : ` · ${CC.money(n.valor)}`}`)}</option>`).join('')}
           <option value="vinculada">Usar a NF vinculada à obra (cadastro antigo)</option><option value="arquivo">Outro PDF do celular</option></select></label>
         <input id="ce-arq" type="file" accept="application/pdf,.pdf" hidden>
-        <p class="sub fin-nota">${nfs.length ? 'Uma NF em PDF por envio, até 5 MB.' : 'Nenhuma NF em PDF lançada para o cliente nesta obra. Lance na obra (aba Notas fiscais) ou escolha um PDF.'}</p>
+        <p class="sub fin-nota">${nfs.length ? 'Uma NF em PDF por envio, até 5 MB.' : 'Nenhuma NF em PDF lançada para o cliente nesta obra. Lance na obra ou no serviço (Notas fiscais) ou escolha um PDF.'}</p>
         <label class="menu-item pref"><span>Autorizo o envio deste e-mail ao cliente</span><input type="checkbox" id="ce-ok"></label>`
         : `<div class="note ok">${icon('info', 18)}<span>Você pode salvar o rascunho. Autorizar e enviar fica para quem tem a permissão de autorizar envios.</span></div>`}
       <p class="alert" role="alert" id="err"></p>

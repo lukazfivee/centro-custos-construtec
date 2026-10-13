@@ -64,7 +64,7 @@
 .bloco-sv .tbl .duas-l b { font-size: calc(13px * var(--fs, 1)); font-weight: 600; }
 .bloco-sv .tbl .duas-l span { font-size: calc(12px * var(--fs, 1)); color: var(--color-neutral-300); }
 .vazio-sv { padding: 28px; display: flex; flex-direction: column; align-items: center; gap: 8px; color: var(--color-neutral-300); font-size: calc(13.5px * var(--fs, 1)); border-top: 1px solid var(--color-divider); }
-.lista-anexos > div { display: flex; align-items: center; gap: 12px; padding: 9px 0; border-top: 1px solid var(--color-divider); }
+.lista-anexos > div, .lista-anexos > button { display: flex; align-items: center; gap: 12px; padding: 9px 0; border-top: 1px solid var(--color-divider); }
 .lista-anexos .ph { color: var(--color-accent-300); flex: none; }
 .lista-anexos b { font-size: calc(13px * var(--fs, 1)); font-weight: 600; }
 .lista-anexos .duas-l span { font-size: calc(12px * var(--fs, 1)); color: var(--color-neutral-300); }
@@ -134,3 +134,7 @@
 @media (max-width: 1100px) {
   .grade-sv { grid-template-columns: minmax(0, 1fr); }
 }
+
+.lista-anexos > button { width: 100%; background: none; border: 0; border-top: 1px solid var(--color-divider); color: inherit; font: inherit; text-align: left; cursor: pointer; }
+.nf-servico { margin-top: 14px; }
+.nf-servico .grade-nf { grid-template-columns: minmax(0, 1fr); }

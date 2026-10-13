@@ -180,7 +180,9 @@ t('D6', 'emails-externos', { rota: 'usuarios', ref: 'ext', async preparar(c) { a
 t('D6', 'ver-como-tecnico', { rota: 'usuarios', ref: 'comoTec', async preparar(c) {
   await c.digitar('[data-como]', 'tecnico'); await c.dormir(1500);
   await c.esperar("document.querySelector('.como-faixa')", 6000); await c.dormir(800);
-} });
+},
+// A simulacao fica no sessionStorage da aba e esconde menus e botoes de admin nas capturas seguintes.
+async limpar(c) { await c.avaliar("(() => { try { sessionStorage.removeItem('cc_d_como'); } catch (e) {} return true; })()"); } });
 
 // D7 · Fechamento, Historico, Reports e Configuracoes ----------------------------------------
 const mesFechadoNum = (c) => Number(c.s.mesFechado.slice(5, 7));
@@ -200,8 +202,8 @@ t('D7', 'config-senha-erro', { rota: 'config', ref: 'cfgSenhaErr', async prepara
   await c.avaliar("(() => { const i = [...document.querySelectorAll('#conteudo input[type=password]')]; const set = (e, v) => { Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value').set.call(e, v); e.dispatchEvent(new Event('input', { bubbles: true })); }; set(i[0], 'senha-errada-123'); set(i[1], 'nova-senha-1234'); set(i[2], 'outra-senha-1234'); })()");
   await c.tocar('[data-trocar]'); await c.dormir(900);
 } });
-t('D7', 'config-backup', { rota: 'config', ref: 'cfgBackup', async preparar(c) { await c.tocar('[data-aba="backup"]'); await c.dormir(1200); } });
-t('D7', 'config-restaurar', { rota: 'config', ref: 'cfgRestore', async preparar(c) { await c.tocar('[data-aba="backup"]'); await c.dormir(1200); await c.tocar('[data-restaurar]'); await c.dormir(900); } });
+t('D7', 'config-backup', { rota: 'config', ref: 'cfgBackup', async preparar(c) { await c.api('/backup/copias', 'POST', {}, 'admin', 201); await c.tocar('[data-aba="backup"]'); await c.dormir(1200); } });
+t('D7', 'config-restaurar', { rota: 'config', ref: 'cfgRestore', async preparar(c) { await c.api('/backup/copias', 'POST', {}, 'admin', 201); await c.tocar('[data-aba="backup"]'); await c.dormir(1200); await c.tocar('[data-restaurar]'); await c.dormir(900); } });
 t('D7', 'config-sistema', { rota: 'config', ref: 'cfgSis', async preparar(c) { await c.tocar('[data-aba="sistema"]'); await c.dormir(1500); } });
 
 // Entrar (Rodada 29: o prototipo desta tela nao esta em docs/suite-desktop/prototipo) -----------

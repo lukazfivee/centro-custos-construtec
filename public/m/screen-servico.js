@@ -81,7 +81,7 @@
     const n = gastos.length + fila.length;
     const docs = [];
     const f = s.faturamento;
-    if (f && (f.nfseNumero || f.nfseArquivo)) docs.push(['receipt', f.nfseNumero || 'NFS-e', `${f.nfseArquivo ? 'PDF na nota vinculada · ' : ''}faturado em ${CC.dateFull(String(f.faturadoEm || '').slice(0, 10))}`]);
+    if (f && (f.nfseNumero || f.nfseArquivo)) docs.push(['receipt', f.nfseNumero || 'NFS-e', `${f.nfseArquivo ? 'Toque para abrir o PDF · ' : ''}faturado em ${CC.dateFull(String(f.faturadoEm || '').slice(0, 10))}`, f.nfseArquivo ? 'nfse' : '']);
     const recibos = gastos.reduce((a, x) => a + (Number(x.anexos) || 0), 0);
     if (recibos) docs.push(['image', plural(recibos, 'recibo anexado', 'recibos anexados'), 'Fotos dos recibos, nos lançamentos']);
     if (s.aceite) docs.push(['signature', 'Aceite do cliente', `${s.aceite.nome} · ${dataHora(s.aceite.dataHora)}`]);
@@ -90,8 +90,8 @@
       : `<div class="empty sv-empty">${icon('receipt', 26)}<b>Nenhuma despesa ainda</b>Lance o Uber, o combustível e a miscelânea na hora, com a foto do recibo.
         <button class="btn2" type="button" data-gasto>${icon('plus', 18)}Lançar despesa</button></div>`}
       <span class="label">Notas fiscais e anexos</span>
-      ${docs.length ? `<div class="card sv-list">${docs.map(([ic, t, sub]) => `<div class="sv-gasto"><span class="ic">${icon(ic, 18)}</span><span class="grow"><b>${esc(t)}</b><small>${esc(sub)}</small></span></div>`).join('')}</div>`
-        : `<div class="sv-note">${icon('paperclip', 16)}<span>Sem notas nem anexos. A NFS-e entra aqui quando o serviço for faturado.</span></div>`}`;
+      ${docs.length ? `<div class="card sv-list">${docs.map(([ic, t, sub, acao]) => `<${acao ? 'button type="button" data-abrir-nfse' : 'div'} class="sv-gasto"><span class="ic">${icon(ic, 18)}</span><span class="grow"><b>${esc(t)}</b><small>${esc(sub)}</small></span>${acao ? icon('file-pdf', 20) : ''}</${acao ? 'button' : 'div'}>`).join('')}</div>` : ''}
+      <div id="sv-nf"></div>`;
   }
 
   // Botao do rodape ao lado de Lancar despesa, conforme a situacao.
@@ -157,6 +157,12 @@
     if (cob) cob.addEventListener('click', () => (s.situacao === 'concluido' && CC.sv.can('p6') ? CC.sv.faturar(s)
       : CC.toast(s.faturamento ? cobranca(s) : 'Conclua o serviço para faturar', 'receipt')));
     if (tab === 'exec') CC.sv.bindExec(s, page);
+    if (tab === 'lanc') {
+      // Mesmas notas fiscais da obra (fornecedor e cliente): o servico e um centro de custo.
+      CC.obraNf(CC.$('#sv-nf', page), { id: s.id });
+      const nfse = CC.$('[data-abrir-nfse]', page);
+      if (nfse) nfse.addEventListener('click', () => CC.abrirArquivo(`/notas-fiscais-centro/${s.id}/arquivo`, `nfse-${s.codigo || s.id}.pdf`));
+    }
     const hl = CC.$('.sv-gasto.hl', page);
     if (hl) hl.scrollIntoView({ block: 'center' });
     return undefined;

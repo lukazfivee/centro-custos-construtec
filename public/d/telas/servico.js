@@ -65,6 +65,12 @@
       <div class="grade-sv"><div class="principal">${B.kpis(sv, fila)}${B.porTipo(sv)}${B.lancamentos(sv, fila)}${B.anexos(sv)}</div>
         <div class="lado">${B.feito(sv)}${B.fotos(sv)}${B.aceite(sv)}${B.cobranca(sv)}</div></div></div>`;
     ligar(el, sv, recarregar);
+    // Mesmas notas fiscais da obra: o servico e um centro de custo.
+    D.obras.abas.nf(CC.$('[data-nf-servico]', el), { id: sv.id, nome: sv.nome }, vivo).catch((error) => {
+      const slot = CC.$('[data-nf-servico]', el);
+      if (slot && vivo()) slot.innerHTML = `<p class="muted">${esc(error.status === 0 ? 'Sem internet e sem notas salvas.' : error.message)}</p>`;
+    });
+    CC.$$('[data-baixar-nfse]', el).forEach((b) => b.addEventListener('click', () => D.obras.baixar(`/notas-fiscais-centro/${sv.id}/arquivo`, `nfse-${sv.codigo || sv.id}.pdf`)));
     if (D.tem('p2')) S.guardarCategorias();
     carregarImagens(el, vivo);
   };

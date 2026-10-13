@@ -494,13 +494,21 @@ function validatePdfAttachments(value) {
   return { attachments: [{ filename, contentBase64, contentType: 'application/pdf' }] };
 }
 
-async function sendClientEmail(env, draft, attachments, idempotencyKey) {
-  if (!env.RESEND_API_KEY || !env.CLIENT_EMAIL_FROM) throw new Error('Envio de cobrancas ainda nao configurado no Worker.');
+// Remetente: a conta corporativa de quem envia (nome e e-mail); CLIENT_EMAIL_FROM so entra se faltar e-mail valido.
+function remetente(env, user) {
+  const email = text(user?.email).toLowerCase();
+  if (!validCorporateEmail(email)) return env.CLIENT_EMAIL_FROM || '';
+  const nome = text(user?.name).replace(/[<>",;\r\n]/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 80);
+  return nome ? `${nome} <${email}>` : email;
+}
+
+async function sendClientEmail(env, draft, attachments, idempotencyKey, from) {
+  if (!env.RESEND_API_KEY || !from) throw new Error('Envio de cobrancas ainda nao configurado no Worker.');
   const to = parseJson(draft.to_json, []);
   const cc = parseJson(draft.cc_json, []);
   if (!to.length) throw new Error('Destinatario ausente.');
   const html = `<!doctype html><html><body style="font-family:Arial,Helvetica,sans-serif;background:#f5f7f8;color:#18323d;padding:24px"><div style="max-width:680px;margin:auto;background:#fff;border-radius:12px;overflow:hidden"><div style="background:#021d26;color:#fff;padding:20px;font-size:20px;font-weight:700">Construtec Engenharia</div><div style="padding:24px;white-space:pre-wrap;line-height:1.6">${esc(draft.body_text)}</div></div></body></html>`;
-  const payload = { from: env.CLIENT_EMAIL_FROM, to, subject: draft.subject, text: draft.body_text, html };
+  const payload = { from, to, subject: draft.subject, text: draft.body_text, html };
   if (cc.length) payload.cc = cc;
   if (attachments.length) payload.attachments = attachments.map((a) => ({ filename: a.filename, content: a.contentBase64 }));
   const response = await fetch('https://api.resend.com/emails', { method: 'POST', headers: { authorization: `Bearer ${env.RESEND_API_KEY}`, 'content-type': 'application/json', 'Idempotency-Key': idempotencyKey }, body: JSON.stringify(payload) });
@@ -522,7 +530,8 @@ async function handleSendDraft(request, env) {
     return json({ ok: false, error: 'O envio ficou sem confirmacao por mais de 23 horas. Confira com o suporte antes de tentar novamente.' }, 409);
   if (draft.status === 'sending' && Date.now() - Date.parse(draft.updated_at) < 60 * 1000)
     return json({ ok: false, error: 'Este envio ja esta em andamento. Aguarde um minuto antes de tentar novamente.' }, 409);
-  if (!env.RESEND_API_KEY || !env.CLIENT_EMAIL_FROM) return json({ ok: false, error: 'Envio de cobrancas ainda nao configurado no Worker.' }, 503);
+  const from = remetente(env, auth.user);
+  if (!env.RESEND_API_KEY || !from) return json({ ok: false, error: 'Envio de cobrancas ainda nao configurado no Worker.' }, 503);
   if (!parseJson(draft.to_json, []).length) return json({ ok: false, error: 'Destinatario ausente.' }, 400);
   const checked = validatePdfAttachments(body.attachments);
   if (checked.error) return json({ ok: false, error: checked.error }, checked.status);
@@ -536,7 +545,7 @@ async function handleSendDraft(request, env) {
   const idempotencyKey = `billing/${auth.user.org_id}/${publicId}/${draft.authorized_at || draft.updated_at}`;
   let emailId;
   try {
-    emailId = await sendClientEmail(env, draft, attachments, idempotencyKey);
+    emailId = await sendClientEmail(env, draft, attachments, idempotencyKey, from);
   } catch (error) {
     if (error.resendRejected) await env.DB.prepare("UPDATE client_email_drafts SET status='failed',last_error=?,updated_at=? WHERE org_id=? AND cost_center_public_id=? AND status='sending'")
       .bind(String(error.message || error).slice(0, 1000), now, auth.user.org_id, publicId).run();

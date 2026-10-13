@@ -30,6 +30,7 @@ test('cobranca sai do dominio verificado com o nome de quem envia e Reply-To na 
   assert.equal(response.status, 200);
   assert.equal(payload.from, 'Maria Silva <cobranca@reports.rcconstrutec.com.br>');
   assert.equal(payload.reply_to, 'pcm@rcconstrutec.com.br');
+  assert.match(payload.html, /<img src="https:\/\/[^"]+\/assets\/construtec-logo\.png" alt="Construtec Engenharia"/);
 });
 
 test('CLIENT_EMAIL_ADDRESS troca o endereco e conta sem nome usa Construtec', async () => {

@@ -120,4 +120,19 @@ test('descartar e recuperar obra vinda de orcamento aprovado, sem movimento', as
   const pendingM = (await call('GET', '/centros-custo/descartadas', admin)).data.find((row) => !row.restored_at);
   assert.equal((await call('POST', `/centros-custo/descartadas/${pendingM.id}/restaurar`, admin)).status, 200);
   assert.equal(await measures(), measuredBefore, 'medicoes voltam com a obra');
+
+  // Excluir de vez: sem ids nao faz nada; a lapide fica, o registro some e a obra nao volta. Registro ja restaurado tambem sai.
+  assert.equal((await call('POST', '/centros-custo/descartadas/excluir', admin, { ids: [] })).status, 400);
+  assert.equal((await call('POST', '/centros-custo/descartadas/excluir', admin, {})).status, 400);
+  assert.equal((await call('POST', '/centros-custo/descartadas/excluir', admin, { ids: [999999] })).data.excluidas, 0);
+  assert.equal((await call('POST', `/centros-custo/${costCenterId}/descartar`, admin, { confirmar: code })).status, 200);
+  const all = (await call('GET', '/centros-custo/descartadas', admin)).data;
+  assert.ok(all.some((row) => row.restored_at) && all.some((row) => !row.restored_at));
+  const removed = await call('POST', '/centros-custo/descartadas/excluir', admin, { ids: all.map((row) => row.id) });
+  assert.deepEqual([removed.status, removed.data.excluidas], [200, all.length]);
+  assert.equal((await call('GET', '/centros-custo/descartadas', admin)).data.length, 0);
+  assert.equal((await call('POST', `/centros-custo/descartadas/${all[0].id}/restaurar`, admin)).status, 404, 'registro excluido nao volta');
+  assert.equal((await db.query('SELECT COUNT(*)::int AS n FROM cost_center_tombstones')).rows[0].n, 1, 'a lapide fica para a sincronizacao nao recriar a obra');
+  assert.equal((await db.query("SELECT COUNT(*)::int AS n FROM cost_centers WHERE id=$1", [costCenterId])).rows[0].n, 0);
+  assert.ok((await db.query("SELECT 1 FROM audit_log WHERE action='descarte_excluido'")).rows.length);
 });

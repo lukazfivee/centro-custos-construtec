@@ -28,8 +28,13 @@
       const obras = (await CC.api('/centros-custo')).data || [];
       const obra = obras.find((o) => String(o.codigo).toLowerCase() === String(item.code).toLowerCase());
       if (!obra) return [];
-      const nfs = (await CC.api(`/centros-custo/${obra.id}/notas-fiscais?tipo=cliente`)).data || [];
-      return nfs.filter((n) => n.temArquivo);
+      const lista = ((await CC.api(`/centros-custo/${obra.id}/notas-fiscais?tipo=cliente`)).data || []).filter((n) => n.temArquivo);
+      // NFS-e anexada ao faturar o servico (cost_center_invoices): tambem pode ir no e-mail.
+      try {
+        const nfse = ((await CC.api(`/notas-fiscais-centro/${obra.id}`)).data || {}).notaFiscal;
+        if (nfse && nfse.nome) lista.unshift({ id: 'nfse', nomeArquivo: nfse.nome, observacao: 'NFS-e do serviço', valor: null, url: `/api/notas-fiscais-centro/${obra.id}/arquivo` });
+      } catch { /* sem NFS-e do faturamento */ }
+      return lista;
     } catch { return []; }
   }
 
@@ -42,7 +47,7 @@
       blob = f; nome = f.name;
     } else if (escolha.startsWith('nf:')) {
       const nf = nfs.find((n) => String(n.id) === escolha.slice(3));
-      const r = await fetch(`/api/centros-custo/notas-fiscais/${nf.id}/arquivo`, { headers: { Authorization: `Bearer ${CC.session.token()}` }, cache: 'no-store' });
+      const r = await fetch(nf.url || `/api/centros-custo/notas-fiscais/${nf.id}/arquivo`, { headers: { Authorization: `Bearer ${CC.session.token()}` }, cache: 'no-store' });
       if (!r.ok) throw new Error('Não foi possível ler o PDF da nota fiscal.');
       blob = await r.blob(); nome = nf.nomeArquivo || `nota-fiscal-${nf.id}.pdf`;
     } else return [];
@@ -70,7 +75,7 @@
         : (d.status === 'failed' ? U.faixa('err', 'warning-circle', `O último envio falhou: ${d.lastError || 'erro desconhecido'}`)
         : (d.status === 'authorized' ? U.faixa('info', 'seal-check', `Autorizado por ${d.authorizedByEmail || 'gestor'} em ${dataHora(d.authorizedAt)}`) : '')));
     const somenteLer = pode ? '' : ' disabled';
-    const opcoesAnexo = [...nfs.map((n) => `<option value="nf:${esc(n.id)}">${esc(`${n.nomeArquivo || 'nota.pdf'} · ${n.observacao || 'NF'} · ${CC.money(n.valor)}`)}</option>`), '<option value="vinculada">Usar a NF vinculada à obra (cadastro antigo)</option>', '<option value="arquivo">Outro PDF do computador…</option>'].join('');
+    const opcoesAnexo = [...nfs.map((n) => `<option value="nf:${esc(n.id)}">${esc(`${n.nomeArquivo || 'nota.pdf'} · ${n.observacao || 'NF'}${n.valor == null ? '' : ` · ${CC.money(n.valor)}`}`)}</option>`), '<option value="vinculada">Usar a NF vinculada à obra (cadastro antigo)</option>', '<option value="arquivo">Outro PDF do computador…</option>'].join('');
     ctl.desenhar(`${banner}<form class="form-lanc" novalidate>
       ${U.campo({ rotulo: 'Para', name: 'to', valor: (d.to || []).join(', '), placeholder: 'cliente@empresa.com.br' }).replace('<input ', `<input${somenteLer} `)}
       <div class="fld"><span>Cópia</span><input class="inp" name="cc" value="${esc(extras.join(', '))}" placeholder="Opcional"${somenteLer}>
@@ -79,7 +84,7 @@
       ${U.campo({ rotulo: 'Mensagem', name: 'bodyText', tipo: 'textarea', valor: d.bodyText }).replace('<textarea ', `<textarea${somenteLer} rows="9" `)}
       ${pode ? `<div class="fld"><span>Anexo · nota fiscal em PDF</span><select class="inp" name="anexo">${opcoesAnexo}</select>
         <input class="inp" type="file" name="arquivo" accept="application/pdf,.pdf" hidden>
-        <small class="muted" data-aviso-anexo>${nfs.length ? 'Uma NF em PDF por envio, até 5 MB.' : 'Nenhuma NF em PDF lançada para o cliente nesta obra. Lance na obra (aba Notas fiscais) ou escolha um PDF.'}</small></div>
+        <small class="muted" data-aviso-anexo>${nfs.length ? 'Uma NF em PDF por envio, até 5 MB.' : 'Nenhuma NF em PDF lançada para o cliente nesta obra. Lance na obra ou no serviço (Notas fiscais) ou escolha um PDF.'}</small></div>
         <label class="check autorizo"><input type="checkbox" name="autorizo"> Autorizo o envio deste e-mail ao cliente</label>` : ''}</form>`);
     const corpo = ctl.corpo;
     if (!pode) { ctl.botoes('<button type="button" class="btn btn-s" data-fechar>Fechar</button>'); return; }

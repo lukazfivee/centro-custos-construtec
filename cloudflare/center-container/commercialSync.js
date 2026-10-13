@@ -494,9 +494,9 @@ function validatePdfAttachments(value) {
   return { attachments: [{ filename, contentBase64, contentType: 'application/pdf' }] };
 }
 
-// O Resend so envia de dominio verificado (hoje, relatorios.rcconstrutec.com.br): o nome mostrado e o de quem envia
+// O Resend so envia de dominio verificado (hoje, reports.rcconstrutec.com.br): o nome mostrado e o de quem envia
 // e as respostas do cliente vao para o e-mail corporativo dele (Reply-To). CLIENT_EMAIL_ADDRESS troca o endereco.
-const ENDERECO_COBRANCA = 'cobranca@relatorios.rcconstrutec.com.br';
+const ENDERECO_COBRANCA = 'cobranca@reports.rcconstrutec.com.br';
 function remetente(env, user) {
   const nome = text(user?.name).replace(/[<>",;\r\n]/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 80) || 'Construtec';
   const email = text(user?.email).toLowerCase();

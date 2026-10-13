@@ -188,4 +188,14 @@ async function restoreCostCenter(db, discardId, user) {
   });
 }
 
-module.exports = { discardCostCenter, restoreCostCenter, listDiscarded, movementCount, movements, movementSummary };
+// Exclusao permanente de registros descartados (selecionados ou todos): o conteudo guardado some e a obra nao pode
+// mais ser recuperada. A lapide (cost_center_tombstones) fica, para a sincronizacao nao recriar a obra.
+async function deleteDiscarded(db, ids) {
+  const clean = [...new Set((Array.isArray(ids) ? ids : []).map(Number).filter((n) => Number.isInteger(n) && n > 0))];
+  if (!clean.length) throw httpError(400, 'Escolha ao menos uma obra descartada.');
+  if (clean.length > 500) throw httpError(400, 'Escolha até 500 obras de cada vez.');
+  const { rows } = await db.query('DELETE FROM discarded_cost_centers WHERE id = ANY($1::int[]) RETURNING id, code, name, restored_at', [clean]);
+  return rows;
+}
+
+module.exports = { discardCostCenter, restoreCostCenter, listDiscarded, deleteDiscarded, movementCount, movements, movementSummary };

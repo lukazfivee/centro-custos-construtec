@@ -28,13 +28,14 @@ async function enviar(usuario, extraEnv = {}) {
 test('cobranca sai do dominio verificado com o nome de quem envia e Reply-To na conta logada', async () => {
   const { response, payload } = await enviar({ org_id:'org', email:'PCM@rcconstrutec.com.br', name:'Maria <Silva>', role:'gestor' });
   assert.equal(response.status, 200);
-  assert.equal(payload.from, 'Maria Silva <cobranca@relatorios.rcconstrutec.com.br>');
+  assert.equal(payload.from, 'Maria Silva <cobranca@reports.rcconstrutec.com.br>');
   assert.equal(payload.reply_to, 'pcm@rcconstrutec.com.br');
+  assert.match(payload.html, /<img src="https:\/\/[^"]+\/assets\/construtec-logo\.png" alt="Construtec Engenharia"/);
 });
 
 test('CLIENT_EMAIL_ADDRESS troca o endereco e conta sem nome usa Construtec', async () => {
-  const { payload } = await enviar({ org_id:'org', email:'pcm@rcconstrutec.com.br', name:'', role:'gestor' }, { CLIENT_EMAIL_ADDRESS:'financeiro@relatorios.rcconstrutec.com.br' });
-  assert.equal(payload.from, 'Construtec <financeiro@relatorios.rcconstrutec.com.br>');
+  const { payload } = await enviar({ org_id:'org', email:'pcm@rcconstrutec.com.br', name:'', role:'gestor' }, { CLIENT_EMAIL_ADDRESS:'financeiro@reports.rcconstrutec.com.br' });
+  assert.equal(payload.from, 'Construtec <financeiro@reports.rcconstrutec.com.br>');
 });
 
 test('recusa do Resend volta como 422 com o motivo (o app mostra a mensagem)', async () => {

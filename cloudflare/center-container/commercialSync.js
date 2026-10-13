@@ -494,9 +494,11 @@ function validatePdfAttachments(value) {
   return { attachments: [{ filename, contentBase64, contentType: 'application/pdf' }] };
 }
 
-// O Resend so envia de dominio verificado (hoje, relatorios.rcconstrutec.com.br): o nome mostrado e o de quem envia
+// O Resend so envia de dominio verificado (hoje, reports.rcconstrutec.com.br): o nome mostrado e o de quem envia
 // e as respostas do cliente vao para o e-mail corporativo dele (Reply-To). CLIENT_EMAIL_ADDRESS troca o endereco.
-const ENDERECO_COBRANCA = 'cobranca@relatorios.rcconstrutec.com.br';
+const ENDERECO_COBRANCA = 'cobranca@reports.rcconstrutec.com.br';
+// Logo do cabecalho do e-mail: servida pelo proprio Worker (public/assets), fundo escuro do cabecalho.
+const LOGO_EMAIL = 'https://centro-custos-api.construtec-reports.workers.dev/assets/construtec-logo.png';
 function remetente(env, user) {
   const nome = text(user?.name).replace(/[<>",;\r\n]/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 80) || 'Construtec';
   const email = text(user?.email).toLowerCase();
@@ -508,7 +510,7 @@ async function sendClientEmail(env, draft, attachments, idempotencyKey, { from, 
   const to = parseJson(draft.to_json, []);
   const cc = parseJson(draft.cc_json, []);
   if (!to.length) throw new Error('Destinatario ausente.');
-  const html = `<!doctype html><html><body style="font-family:Arial,Helvetica,sans-serif;background:#f5f7f8;color:#18323d;padding:24px"><div style="max-width:680px;margin:auto;background:#fff;border-radius:12px;overflow:hidden"><div style="background:#021d26;color:#fff;padding:20px;font-size:20px;font-weight:700">Construtec Engenharia</div><div style="padding:24px;white-space:pre-wrap;line-height:1.6">${esc(draft.body_text)}</div></div></body></html>`;
+  const html = `<!doctype html><html><body style="font-family:Arial,Helvetica,sans-serif;background:#f5f7f8;color:#18323d;padding:24px"><div style="max-width:680px;margin:auto;background:#fff;border-radius:12px;overflow:hidden"><div style="background:#021d26;padding:20px 24px;text-align:center"><img src="${LOGO_EMAIL}" alt="Construtec Engenharia" width="200" style="display:inline-block;width:200px;max-width:100%;height:auto;border:0"></div><div style="padding:24px;white-space:pre-wrap;line-height:1.6">${esc(draft.body_text)}</div></div></body></html>`;
   const payload = { from, to, subject: draft.subject, text: draft.body_text, html };
   if (cc.length) payload.cc = cc;
   if (replyTo) payload.reply_to = replyTo;

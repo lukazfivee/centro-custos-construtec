@@ -9,6 +9,7 @@
   ];
 
   const ACOES = {
+    create: ['Criou', 'plus', 'ok'], update: ['Editou', 'pencil-simple', 'info'], delete: ['Excluiu', 'trash', 'err'], confirmed: ['Confirmou', 'check', 'ok'],
     criado: ['Criou', 'plus', 'ok'], criada: ['Criou', 'plus', 'ok'], atualizado: ['Editou', 'pencil-simple', 'info'], atualizada: ['Editou', 'pencil-simple', 'info'],
     alterada: ['Editou', 'pencil-simple', 'info'], excluido: ['Excluiu', 'trash', 'err'], excluida: ['Excluiu', 'trash', 'err'],
     estornado: ['Estornou', 'arrow-u-up-left', 'warn'], fechado: ['Fechou', 'lock-simple', 'ok'], reaberto: ['Reabriu', 'lock-simple-open', 'warn'],
@@ -26,7 +27,7 @@
   const ORIGENS = { computador: ['Computador', 'desktop'], celular: ['Celular', 'device-mobile'], fila: ['Fila do celular', 'device-mobile'] };
   H.origem = (o) => { const x = ORIGENS[o] || ORIGENS.computador; return { rotulo: x[0], icone: x[1] }; };
 
-  const TIPO_NOME = { lancamento: 'lançamento', categoria: 'categoria', fornecedor: 'fornecedor', obra: 'obra', usuario: 'usuário', fechamento: 'fechamento', recorrente: 'recorrente', permissao: 'permissão', backup: 'backup' };
+  const TIPO_NOME = { lancamento: 'lançamento', categoria: 'categoria', fornecedor: 'fornecedor', obra: 'obra', usuario: 'usuário', fechamento: 'fechamento', recorrente: 'recorrente', permissao: 'permissão', backup: 'backup', bug_report: 'report' };
   H.tipoNome = (t) => TIPO_NOME[t] || String(t || '').replace(/_/g, ' ');
 
   const CAMPOS = {
@@ -34,12 +35,16 @@
     amount: 'Valor', date: 'Competência', notes: 'Observação', dueDate: 'Vencimento', settlementDate: 'Liquidação', financialStatus: 'Situação',
     documentNumber: 'Documento', paymentMethod: 'Forma de pagamento', name: 'Nome', email: 'E-mail', role: 'Perfil', active: 'Ativo',
     motivo: 'Motivo', year: 'Ano', month: 'Mês', valor: 'Valor', dataEstorno: 'Data do estorno', color: 'Cor', revision: 'Revisão', id: 'Código',
+    closed_at: 'Fechado em', closed_by: 'Fechado por (código interno)', pendencias: 'Pendências registradas',
   };
   const VALORES = { despesa: 'Despesa', receita: 'Receita', pendente: 'Pendente', liquidado: 'Liquidado', admin: 'Administrador', gestor: 'Gestor', supervisor: 'Supervisor' };
   const campoNome = (k) => CAMPOS[k] || (String(k).replace(/_/g, ' ').replace(/^./, (c) => c.toUpperCase()));
 
   H.valor = (chave, v) => {
     if (v == null || v === '') return '—';
+    if (chave === 'pendencias' && Array.isArray(v) && v.every((p) => p && typeof p.titulo === 'string')) {
+      return v.length ? v.map((p) => `${p.titulo}${p.valor != null && Number.isFinite(Number(p.valor)) ? ` (${CC.money(Number(p.valor))})` : ''}${p.detalhe ? ` · ${p.detalhe}` : ''}`).join('; ') : 'Nenhuma';
+    }
     if (['amount', 'valor'].includes(chave) && Number.isFinite(Number(v))) return CC.money(Number(v));
     if (typeof v === 'boolean') return v ? 'Sim' : 'Não';
     if (typeof v === 'object') return JSON.stringify(v).slice(0, 160);
@@ -54,7 +59,9 @@
     const antes = item.antes && typeof item.antes === 'object' ? item.antes : null;
     const ignorar = new Set(['id', 'revision']);
     const chaves = antes ? [...new Set([...Object.keys(antes), ...Object.keys(depois)])] : Object.keys(depois);
-    return chaves.filter((k) => !ignorar.has(k)).map((k) => ({ chave: k, campo: campoNome(k), antes: antes ? H.valor(k, antes[k]) : '—', depois: H.valor(k, depois[k]), igual: antes && String(H.valor(k, antes[k])) === String(H.valor(k, depois[k])) }))
+    const igual = (k) => (typeof antes[k] === 'object' || typeof depois[k] === 'object'
+      ? JSON.stringify(antes[k]) === JSON.stringify(depois[k]) : String(H.valor(k, antes[k])) === String(H.valor(k, depois[k])));
+    return chaves.filter((k) => !ignorar.has(k)).map((k) => ({ chave: k, campo: campoNome(k), antes: antes ? H.valor(k, antes[k]) : '—', depois: H.valor(k, depois[k]), igual: antes && igual(k) }))
       .filter((m) => !m.igual && !(m.antes === '—' && m.depois === '—'));
   };
 

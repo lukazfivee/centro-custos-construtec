@@ -77,6 +77,12 @@ Plugins esperados: `mattpocock-skills` (usa `tdd`, `code-review`, `implement-spe
 5. **Ao terminar tudo:** `/code-review` na integração, correções num único implementador, PR rascunho vira "pronto", **pedir o OK do Lucas**, mesclar e publicar.
 6. **Ao mesclar um ticket na integração, enviar a branch e marcar o issue.** Branches de ticket locais não sobrevivem a trocar de notebook; envie `feat/telas-<id>` e a integração com `git push`.
 
+## Atualização em 14/10/2026
+
+- C1 concluído e mesclado na integração pelo PR #153, commit `6eb503e`. C2 a C7 estão liberados; os parágrafos de C1 incompleto abaixo são históricos.
+- C2 (#133), Fechamento e Histórico: implementação e conferência local em `C:\cc-t-c2`, branch `feat/telas-c2`; validado: matriz de 42 capturas limpa, check e 3 regressões verdes; suíte 516/517 e o único teste de latência passou isolado (1/1). Integração e envio nesta entrega; publicação depende do PR final. Evidências e roteiro em `docs/suite-desktop/validacao/C2/README.md`.
+- Corrigidos: checklist que herdava o estilo de Serviços, ano cortado, composição em 1280 px, cor de Reabrir, ações em inglês e pendências em JSON no Histórico.
+- A `main` avançou em outra sessão; atualizar a integração com `origin/main` antes do PR final, preservando o trabalho das duas máquinas. Nada deste C2 foi para a `main` ou produção.
 ## Estado em 12/10/2026 (quando este arquivo foi escrito)
 
 - Criados: 20 tickets, branches de integração, este documento.

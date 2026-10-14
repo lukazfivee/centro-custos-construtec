@@ -109,7 +109,7 @@
       let destaque = '';
       if (m.fechado) destaque = `<span class="selo-fechado">${D.ic('lock-simple')}${esc(`${F.mesNome(ano, m.mes)} fechado · por ${m.fechado_por} em ${quando(m.fechado_em)}`)}</span>`;
       else if (!futuro) destaque = `<button type="button" class="btn btn-p" data-fechar="${m.mes}">${D.ic('lock-simple')}Fechar ${esc(F.nome(ano, m.mes))}</button>`;
-      acoes.innerHTML = `<select class="inp" data-ano aria-label="Ano" style="width:100px">${anos}</select>${destaque}`;
+      acoes.innerHTML = `<select class="inp fech-ano" data-ano aria-label="Ano">${anos}</select>${destaque}`;
       const fechados = meses.filter((x) => x.fechado).length;
       const aberto = ano === anoHoje ? `${F.mesNome(ano, mesHoje).toLowerCase()} aberto` : 'ano anterior';
       corpo.innerHTML = `<div class="fech-kpis">${kpis(m)}</div>

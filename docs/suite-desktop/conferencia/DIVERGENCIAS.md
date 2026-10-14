@@ -12,3 +12,7 @@ Gerado em 13/10/2026 com o kit do C1 (`npm run conferir`), 4 capturas por tela. 
 | Demais telas D6 e D7 | vários | Sem divergência automática (nenhuma rolagem horizontal ou aninhada). Visual ainda não comparado | C2 a C4 |
 
 Nota: os dados de exemplo do kit diferem dos da Referência (valores, meses fechados), então números diferentes não contam como divergência.
+
+## C2 — conferência de 14/10/2026
+
+Os cortes do checklist e do ano descritos acima foram corrigidos em feat/telas-c2. Fechamento e Histórico conferidos em 1280x720, 1280x800 e 1440x900, claro e escuro, com sondas limpas. Cor de Reabrir e rótulos/detalhes do Histórico também alinhados. Evidências e limites em ../validacao/C2/README.md. O sino da Referência continua fora deste escopo; igualdade global fica para X1. Main e publicação dependem do fluxo final.

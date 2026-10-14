@@ -66,7 +66,7 @@
     if (!vivo()) return null;
     const n = lista.total_pendencias;
     lado.innerHTML = `<div class="topo"><b>Antes de fechar ${esc(nome)}</b>${U.chip(n ? `${n} pendência(s)` : 'Tudo certo', n ? 'warn' : 'ok')}</div>
-      <ul class="ck">${lista.itens.map(linha).join('')}</ul><p class="nota">${esc(NOTA)}</p>`;
+      <ul class="fech-checklist">${lista.itens.map(linha).join('')}</ul><p class="fech-nota">${esc(NOTA)}</p>`;
     ligarVer(lado, ano, mes);
     return lista;
   };
@@ -78,7 +78,7 @@
       ? lista.map((p) => linha({ chave: p.chave, situacao: 'pendente', titulo: p.titulo, detalhe: p.detalhe })).join('')
       : linha({ chave: 'nenhuma', situacao: 'ok', titulo: 'Fechado sem pendências registradas', detalhe: 'Nada ficou em aberto no checklist quando o mês foi fechado.' });
     lado.innerHTML = `<div class="topo"><b>Registrado no fechamento</b>${lista.length ? U.chip(`${lista.length} pendência(s)`, 'warn') : ''}</div>
-      <ul class="ck">${itens}</ul><p class="nota">${esc(NOTA)}</p>`;
+      <ul class="fech-checklist">${itens}</ul><p class="fech-nota">${esc(NOTA)}</p>`;
     ligarVer(lado, mes.ano, mes.mes);
   };
 })(window.CC);

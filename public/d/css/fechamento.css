@@ -11,11 +11,12 @@
 .acoes-fech { display: inline-flex; justify-content: flex-end; }
 .selo-fechado { display: inline-flex; align-items: center; gap: 8px; padding: 10px 14px; border-radius: 12px; background: var(--c-ok-soft); color: var(--c-ok); font-size: calc(13px * var(--fs, 1)); font-weight: 600; }
 .selo-fechado .ph { font-size: calc(17px * var(--fs, 1)); }
+.fechamento .fech-ano { width: 112px; flex: none; }
 
 .fech-lado { padding: 18px; display: flex; flex-direction: column; gap: 4px; }
 .fech-lado .topo { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding-bottom: 10px; }
 .fech-lado .topo b { font-size: calc(15px * var(--fs, 1)); }
-.ck { list-style: none; margin: 0; padding: 0; }
+.fech-checklist { display: block; list-style: none; margin: 0; padding: 0; }
 .ck-item { display: grid; grid-template-columns: 34px minmax(0, 1fr) auto; gap: 12px; align-items: start; padding: 12px 0; border-top: 1px solid var(--color-divider); }
 .ck-item .dois-tx b { font-size: calc(13.5px * var(--fs, 1)); font-weight: 600; }
 .ck-item .dois-tx span { font-size: calc(12px * var(--fs, 1)); color: var(--color-neutral-300); text-wrap: pretty; }
@@ -24,13 +25,16 @@
 .ck-ic.warn { background: var(--c-warn-soft); color: var(--c-warn); }
 .ck-ic.ok { background: var(--c-ok-soft); color: var(--c-ok); }
 .ck-ic.info { background: var(--color-accent-900); color: var(--color-accent-300); }
-.fech-lado .nota { margin: 6px 0 0; padding-top: 12px; border-top: 1px solid var(--color-divider); font-size: calc(12px * var(--fs, 1)); color: var(--color-neutral-300); text-wrap: pretty; }
+.fech-nota { margin: 6px 0 0; padding-top: 12px; border-top: 1px solid var(--color-divider); font-size: calc(12px * var(--fs, 1)); color: var(--color-neutral-300); text-wrap: pretty; }
 
 .dialogo.lista .fld textarea.inp { height: auto; min-height: 84px; resize: vertical; }
 .dialogo.lista .fld { display: flex; flex-direction: column; gap: 6px; }
 .dialogo.lista .fld > span:first-child { font-size: calc(12px * var(--fs, 1)); font-weight: 600; color: var(--color-neutral-300); }
+/* A reabertura usa o âmbar da Referência nos dois temas, com texto branco legível. */
+.dialogo[aria-labelledby="reab-tit"] .btn-p { background: #8a5200; color: #fefefe; box-shadow: none; }
+.dialogo[aria-labelledby="reab-tit"] .btn-p:hover { filter: brightness(.9); }
 
-@media (max-width: 1300px) {
+@media (max-width: 1100px) {
   .fech-grade { grid-template-columns: 1fr; }
 }
 @media (max-width: 900px) {

@@ -1,0 +1,563 @@
+[
+  {
+    "tela": "fechamento",
+    "tamanho": "1280x800",
+    "tema": "claro",
+    "layout": {
+      "anoLegivel": true,
+      "checklistVertical": true,
+      "checklistDentro": true,
+      "tabelasSemRolagemHorizontal": true,
+      "painelSemCorteHorizontal": true
+    },
+    "ok": true
+  },
+  {
+    "tela": "fechamento",
+    "tamanho": "1280x800",
+    "tema": "escuro",
+    "layout": {
+      "anoLegivel": true,
+      "checklistVertical": true,
+      "checklistDentro": true,
+      "tabelasSemRolagemHorizontal": true,
+      "painelSemCorteHorizontal": true
+    },
+    "ok": true
+  },
+  {
+    "tela": "fechamento",
+    "tamanho": "1440x900",
+    "tema": "claro",
+    "layout": {
+      "anoLegivel": true,
+      "checklistVertical": true,
+      "checklistDentro": true,
+      "tabelasSemRolagemHorizontal": true,
+      "painelSemCorteHorizontal": true
+    },
+    "ok": true
+  },
+  {
+    "tela": "fechamento",
+    "tamanho": "1440x900",
+    "tema": "escuro",
+    "layout": {
+      "anoLegivel": true,
+      "checklistVertical": true,
+      "checklistDentro": true,
+      "tabelasSemRolagemHorizontal": true,
+      "painelSemCorteHorizontal": true
+    },
+    "ok": true
+  },
+  {
+    "tela": "fechar-com-pendencias",
+    "tamanho": "1280x720",
+    "tema": "claro",
+    "layout": {
+      "anoLegivel": true,
+      "checklistVertical": true,
+      "checklistDentro": true,
+      "tabelasSemRolagemHorizontal": true,
+      "painelSemCorteHorizontal": true
+    },
+    "ok": true
+  },
+  {
+    "tela": "fechar-com-pendencias",
+    "tamanho": "1280x720",
+    "tema": "escuro",
+    "layout": {
+      "anoLegivel": true,
+      "checklistVertical": true,
+      "checklistDentro": true,
+      "tabelasSemRolagemHorizontal": true,
+      "painelSemCorteHorizontal": true
+    },
+    "ok": true
+  },
+  {
+    "tela": "fechar-com-pendencias",
+    "tamanho": "1280x800",
+    "tema": "claro",
+    "layout": {
+      "anoLegivel": true,
+      "checklistVertical": true,
+      "checklistDentro": true,
+      "tabelasSemRolagemHorizontal": true,
+      "painelSemCorteHorizontal": true
+    },
+    "ok": true
+  },
+  {
+    "tela": "fechar-com-pendencias",
+    "tamanho": "1280x800",
+    "tema": "escuro",
+    "layout": {
+      "anoLegivel": true,
+      "checklistVertical": true,
+      "checklistDentro": true,
+      "tabelasSemRolagemHorizontal": true,
+      "painelSemCorteHorizontal": true
+    },
+    "ok": true
+  },
+  {
+    "tela": "fechar-com-pendencias",
+    "tamanho": "1440x900",
+    "tema": "claro",
+    "layout": {
+      "anoLegivel": true,
+      "checklistVertical": true,
+      "checklistDentro": true,
+      "tabelasSemRolagemHorizontal": true,
+      "painelSemCorteHorizontal": true
+    },
+    "ok": true
+  },
+  {
+    "tela": "fechar-com-pendencias",
+    "tamanho": "1440x900",
+    "tema": "escuro",
+    "layout": {
+      "anoLegivel": true,
+      "checklistVertical": true,
+      "checklistDentro": true,
+      "tabelasSemRolagemHorizontal": true,
+      "painelSemCorteHorizontal": true
+    },
+    "ok": true
+  },
+  {
+    "tela": "mes-fechado",
+    "tamanho": "1280x720",
+    "tema": "claro",
+    "layout": {
+      "anoLegivel": true,
+      "checklistVertical": true,
+      "checklistDentro": true,
+      "tabelasSemRolagemHorizontal": true,
+      "painelSemCorteHorizontal": true
+    },
+    "ok": true
+  },
+  {
+    "tela": "mes-fechado",
+    "tamanho": "1280x720",
+    "tema": "escuro",
+    "layout": {
+      "anoLegivel": true,
+      "checklistVertical": true,
+      "checklistDentro": true,
+      "tabelasSemRolagemHorizontal": true,
+      "painelSemCorteHorizontal": true
+    },
+    "ok": true
+  },
+  {
+    "tela": "mes-fechado",
+    "tamanho": "1280x800",
+    "tema": "claro",
+    "layout": {
+      "anoLegivel": true,
+      "checklistVertical": true,
+      "checklistDentro": true,
+      "tabelasSemRolagemHorizontal": true,
+      "painelSemCorteHorizontal": true
+    },
+    "ok": true
+  },
+  {
+    "tela": "mes-fechado",
+    "tamanho": "1280x800",
+    "tema": "escuro",
+    "layout": {
+      "anoLegivel": true,
+      "checklistVertical": true,
+      "checklistDentro": true,
+      "tabelasSemRolagemHorizontal": true,
+      "painelSemCorteHorizontal": true
+    },
+    "ok": true
+  },
+  {
+    "tela": "mes-fechado",
+    "tamanho": "1440x900",
+    "tema": "claro",
+    "layout": {
+      "anoLegivel": true,
+      "checklistVertical": true,
+      "checklistDentro": true,
+      "tabelasSemRolagemHorizontal": true,
+      "painelSemCorteHorizontal": true
+    },
+    "ok": true
+  },
+  {
+    "tela": "mes-fechado",
+    "tamanho": "1440x900",
+    "tema": "escuro",
+    "layout": {
+      "anoLegivel": true,
+      "checklistVertical": true,
+      "checklistDentro": true,
+      "tabelasSemRolagemHorizontal": true,
+      "painelSemCorteHorizontal": true
+    },
+    "ok": true
+  },
+  {
+    "tela": "reabrir-com-motivo",
+    "tamanho": "1280x720",
+    "tema": "claro",
+    "layout": {
+      "anoLegivel": true,
+      "checklistVertical": true,
+      "checklistDentro": true,
+      "tabelasSemRolagemHorizontal": true,
+      "painelSemCorteHorizontal": true
+    },
+    "ok": true
+  },
+  {
+    "tela": "reabrir-com-motivo",
+    "tamanho": "1280x720",
+    "tema": "escuro",
+    "layout": {
+      "anoLegivel": true,
+      "checklistVertical": true,
+      "checklistDentro": true,
+      "tabelasSemRolagemHorizontal": true,
+      "painelSemCorteHorizontal": true
+    },
+    "ok": true
+  },
+  {
+    "tela": "reabrir-com-motivo",
+    "tamanho": "1280x800",
+    "tema": "claro",
+    "layout": {
+      "anoLegivel": true,
+      "checklistVertical": true,
+      "checklistDentro": true,
+      "tabelasSemRolagemHorizontal": true,
+      "painelSemCorteHorizontal": true
+    },
+    "ok": true
+  },
+  {
+    "tela": "reabrir-com-motivo",
+    "tamanho": "1280x800",
+    "tema": "escuro",
+    "layout": {
+      "anoLegivel": true,
+      "checklistVertical": true,
+      "checklistDentro": true,
+      "tabelasSemRolagemHorizontal": true,
+      "painelSemCorteHorizontal": true
+    },
+    "ok": true
+  },
+  {
+    "tela": "reabrir-com-motivo",
+    "tamanho": "1440x900",
+    "tema": "claro",
+    "layout": {
+      "anoLegivel": true,
+      "checklistVertical": true,
+      "checklistDentro": true,
+      "tabelasSemRolagemHorizontal": true,
+      "painelSemCorteHorizontal": true
+    },
+    "ok": true
+  },
+  {
+    "tela": "reabrir-com-motivo",
+    "tamanho": "1440x900",
+    "tema": "escuro",
+    "layout": {
+      "anoLegivel": true,
+      "checklistVertical": true,
+      "checklistDentro": true,
+      "tabelasSemRolagemHorizontal": true,
+      "painelSemCorteHorizontal": true
+    },
+    "ok": true
+  },
+  {
+    "tela": "historico",
+    "tamanho": "1280x720",
+    "tema": "claro",
+    "layout": {
+      "anoLegivel": true,
+      "checklistVertical": true,
+      "checklistDentro": true,
+      "tabelasSemRolagemHorizontal": true,
+      "painelSemCorteHorizontal": true
+    },
+    "fluxo": {
+      "datasSemCorte": true,
+      "csvComRegistros": true,
+      "estadoVazio": true
+    },
+    "ok": true
+  },
+  {
+    "tela": "historico",
+    "tamanho": "1280x720",
+    "tema": "escuro",
+    "layout": {
+      "anoLegivel": true,
+      "checklistVertical": true,
+      "checklistDentro": true,
+      "tabelasSemRolagemHorizontal": true,
+      "painelSemCorteHorizontal": true
+    },
+    "fluxo": {
+      "datasSemCorte": true,
+      "csvComRegistros": true,
+      "estadoVazio": true
+    },
+    "ok": true
+  },
+  {
+    "tela": "historico",
+    "tamanho": "1280x800",
+    "tema": "claro",
+    "layout": {
+      "anoLegivel": true,
+      "checklistVertical": true,
+      "checklistDentro": true,
+      "tabelasSemRolagemHorizontal": true,
+      "painelSemCorteHorizontal": true
+    },
+    "ok": true
+  },
+  {
+    "tela": "historico",
+    "tamanho": "1280x800",
+    "tema": "escuro",
+    "layout": {
+      "anoLegivel": true,
+      "checklistVertical": true,
+      "checklistDentro": true,
+      "tabelasSemRolagemHorizontal": true,
+      "painelSemCorteHorizontal": true
+    },
+    "ok": true
+  },
+  {
+    "tela": "historico",
+    "tamanho": "1440x900",
+    "tema": "claro",
+    "layout": {
+      "anoLegivel": true,
+      "checklistVertical": true,
+      "checklistDentro": true,
+      "tabelasSemRolagemHorizontal": true,
+      "painelSemCorteHorizontal": true
+    },
+    "ok": true
+  },
+  {
+    "tela": "historico",
+    "tamanho": "1440x900",
+    "tema": "escuro",
+    "layout": {
+      "anoLegivel": true,
+      "checklistVertical": true,
+      "checklistDentro": true,
+      "tabelasSemRolagemHorizontal": true,
+      "painelSemCorteHorizontal": true
+    },
+    "ok": true
+  },
+  {
+    "tela": "historico-fechamentos",
+    "tamanho": "1280x720",
+    "tema": "claro",
+    "layout": {
+      "anoLegivel": true,
+      "checklistVertical": true,
+      "checklistDentro": true,
+      "tabelasSemRolagemHorizontal": true,
+      "painelSemCorteHorizontal": true
+    },
+    "ok": true
+  },
+  {
+    "tela": "historico-fechamentos",
+    "tamanho": "1280x720",
+    "tema": "escuro",
+    "layout": {
+      "anoLegivel": true,
+      "checklistVertical": true,
+      "checklistDentro": true,
+      "tabelasSemRolagemHorizontal": true,
+      "painelSemCorteHorizontal": true
+    },
+    "ok": true
+  },
+  {
+    "tela": "historico-fechamentos",
+    "tamanho": "1280x800",
+    "tema": "claro",
+    "layout": {
+      "anoLegivel": true,
+      "checklistVertical": true,
+      "checklistDentro": true,
+      "tabelasSemRolagemHorizontal": true,
+      "painelSemCorteHorizontal": true
+    },
+    "ok": true
+  },
+  {
+    "tela": "historico-fechamentos",
+    "tamanho": "1280x800",
+    "tema": "escuro",
+    "layout": {
+      "anoLegivel": true,
+      "checklistVertical": true,
+      "checklistDentro": true,
+      "tabelasSemRolagemHorizontal": true,
+      "painelSemCorteHorizontal": true
+    },
+    "ok": true
+  },
+  {
+    "tela": "historico-fechamentos",
+    "tamanho": "1440x900",
+    "tema": "claro",
+    "layout": {
+      "anoLegivel": true,
+      "checklistVertical": true,
+      "checklistDentro": true,
+      "tabelasSemRolagemHorizontal": true,
+      "painelSemCorteHorizontal": true
+    },
+    "ok": true
+  },
+  {
+    "tela": "historico-fechamentos",
+    "tamanho": "1440x900",
+    "tema": "escuro",
+    "layout": {
+      "anoLegivel": true,
+      "checklistVertical": true,
+      "checklistDentro": true,
+      "tabelasSemRolagemHorizontal": true,
+      "painelSemCorteHorizontal": true
+    },
+    "ok": true
+  },
+  {
+    "tela": "historico-detalhe",
+    "tamanho": "1280x800",
+    "tema": "claro",
+    "layout": {
+      "anoLegivel": true,
+      "checklistVertical": true,
+      "checklistDentro": true,
+      "tabelasSemRolagemHorizontal": true,
+      "painelSemCorteHorizontal": true
+    },
+    "ok": true
+  },
+  {
+    "tela": "historico-detalhe",
+    "tamanho": "1280x800",
+    "tema": "escuro",
+    "layout": {
+      "anoLegivel": true,
+      "checklistVertical": true,
+      "checklistDentro": true,
+      "tabelasSemRolagemHorizontal": true,
+      "painelSemCorteHorizontal": true
+    },
+    "ok": true
+  },
+  {
+    "tela": "historico-detalhe",
+    "tamanho": "1440x900",
+    "tema": "claro",
+    "layout": {
+      "anoLegivel": true,
+      "checklistVertical": true,
+      "checklistDentro": true,
+      "tabelasSemRolagemHorizontal": true,
+      "painelSemCorteHorizontal": true
+    },
+    "ok": true
+  },
+  {
+    "tela": "historico-detalhe",
+    "tamanho": "1440x900",
+    "tema": "escuro",
+    "layout": {
+      "anoLegivel": true,
+      "checklistVertical": true,
+      "checklistDentro": true,
+      "tabelasSemRolagemHorizontal": true,
+      "painelSemCorteHorizontal": true
+    },
+    "ok": true
+  },
+  {
+    "tela": "fechamento",
+    "tamanho": "1280x720",
+    "tema": "claro",
+    "layout": {
+      "anoLegivel": true,
+      "checklistVertical": true,
+      "checklistDentro": true,
+      "tabelasSemRolagemHorizontal": true,
+      "painelSemCorteHorizontal": true
+    },
+    "fluxo": {
+      "fechouComPendencias": true,
+      "recusouMotivoVazio": true,
+      "reabriuComMotivoAuditado": true
+    },
+    "ok": true
+  },
+  {
+    "tela": "fechamento",
+    "tamanho": "1280x720",
+    "tema": "escuro",
+    "layout": {
+      "anoLegivel": true,
+      "checklistVertical": true,
+      "checklistDentro": true,
+      "tabelasSemRolagemHorizontal": true,
+      "painelSemCorteHorizontal": true
+    },
+    "ok": true
+  },
+  {
+    "tela": "historico-detalhe",
+    "tamanho": "1280x720",
+    "tema": "claro",
+    "layout": {
+      "anoLegivel": true,
+      "checklistVertical": true,
+      "checklistDentro": true,
+      "tabelasSemRolagemHorizontal": true,
+      "painelSemCorteHorizontal": true
+    },
+    "ok": true
+  },
+  {
+    "tela": "historico-detalhe",
+    "tamanho": "1280x720",
+    "tema": "escuro",
+    "layout": {
+      "anoLegivel": true,
+      "checklistVertical": true,
+      "checklistDentro": true,
+      "tabelasSemRolagemHorizontal": true,
+      "painelSemCorteHorizontal": true
+    },
+    "ok": true
+  }
+]

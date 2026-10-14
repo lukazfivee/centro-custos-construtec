@@ -1,14 +1,17 @@
 /* D7: Configuracoes (prints 90 a 95). Reaproveita as abas do .usu-abas e os cartoes do desktop. */
-.cfg-grade { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px; align-items: start; }
-.cfg-card { padding: 20px; display: flex; flex-direction: column; gap: 16px; }
+.cfg-grade { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 14px; align-items: start; }
+.cfg-card { padding: 18px 20px; display: flex; flex-direction: column; gap: 12px; }
 .cfg-card h2 { margin: 0; font: 600 calc(16px * var(--fs, 1)) var(--font-heading); }
 .cfg-card .muted, .cfg-nota { font-size: calc(12px * var(--fs, 1)); color: var(--color-neutral-300); }
 .cfg-duas { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 14px; }
 .cfg-rodape { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
 .cfg-rodape .cfg-nota { flex: 1; }
-.cfg-foto { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
-.cfg-foto .avatar { width: 88px; height: 88px; font-size: calc(30px * var(--fs, 1)); box-shadow: 0 0 0 3px var(--color-surface), 0 0 0 4px var(--color-divider); }
-.cfg-foto .cfg-nota { flex-basis: 100%; }
+.cfg-foto { display: flex; align-items: center; gap: 18px; }
+.cfg-foto .avatar { flex: none; width: 88px; height: 88px; font-size: calc(30px * var(--fs, 1)); box-shadow: 0 0 0 3px var(--color-surface), 0 0 0 4px var(--color-divider); }
+.cfg-foto-dados { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.cfg-card [data-erro-topo]:empty { display: none; }
+.cfg-abas { gap: 26px; margin-bottom: 0; }
+.cfg-abas button[aria-selected="true"] { color: var(--color-accent-300); }
 .cfg-foto input[type="file"] { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
 .cfg-link { border: 0; background: none; padding: 6px 4px; color: var(--color-accent-300); font: 600 calc(13px * var(--fs, 1)) var(--font-body); cursor: pointer; }
 .cfg-link:hover { text-decoration: underline; }

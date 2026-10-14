@@ -15,7 +15,7 @@
     const abas = ABAS.filter((a) => a[2]());
     const atual = (abas.find((a) => a[0] === rota.id) || abas[0])[0];
     el.innerHTML = `<div class="pagina">${U.cabecalho({ grupo: 'Administração', titulo: 'Configurações', sub: 'Seu perfil, cópias de segurança e informações do sistema' })}
-      <div class="usu-abas" role="tablist">${abas.map(([k, rotulo]) => `<button type="button" role="tab" data-aba="${k}" aria-selected="${k === atual}">${esc(rotulo)}</button>`).join('')}</div>
+      <div class="usu-abas cfg-abas" role="tablist">${abas.map(([k, rotulo]) => `<button type="button" role="tab" data-aba="${k}" aria-selected="${k === atual}">${esc(rotulo)}</button>`).join('')}</div>
       <div data-corpo></div></div>`;
     CC.$$('[data-aba]', el).forEach((b) => b.addEventListener('click', () => {
       if (b.dataset.aba !== atual) D.ir(b.dataset.aba === 'perfil' ? 'config' : `config/${b.dataset.aba}`);

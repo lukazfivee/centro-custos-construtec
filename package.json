@@ -16,6 +16,7 @@
     "test:e2e": "node --test --test-concurrency=1 --test-reporter=spec test/e2e/*.e2e.js",
     "test:coverage": "node --test --experimental-test-coverage",
     "verify": "npm run check && npm run test:ci",
+    "conferir": "node scripts/conferencia/conferir.js",
     "electron": "npm run suite:prepare && electron desktop/main-unified.js",
     "prebuild": "npm run suite:prepare",
     "build": "electron-builder --win --publish never && node scripts/fix-latest-yml.js",

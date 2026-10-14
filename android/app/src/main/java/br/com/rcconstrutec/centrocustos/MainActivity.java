@@ -1,7 +1,6 @@
 package br.com.rcconstrutec.centrocustos;
 
 import android.app.Activity;
-import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -29,7 +28,6 @@ import java.util.concurrent.Executors;
 
 /** Shell da Suite: telas de entrada locais (AuthWebView) por cima do app web (WebView remota, sem ponte). */
 public final class MainActivity extends Activity implements AuthController.Shell {
-    private static final int FILE_CHOOSER_REQUEST = 42;
     private static final String PREFS = "centro_custos_android";
     private static final String SERVER_URL = "server_url";
     private static final String MODE = "mode";
@@ -42,7 +40,7 @@ public final class MainActivity extends Activity implements AuthController.Shell
     private AuthBridge bridge;
     private AuthController auth;
     private AppUpdater updater;
-    private ValueCallback<Uri[]> fileCallback;
+    private final FileChooser chooser = new FileChooser(this);
     private SharedPreferences preferences;
     private ConnectivityManager.NetworkCallback networkCallback;
     private long backgroundAt;
@@ -257,11 +255,8 @@ public final class MainActivity extends Activity implements AuthController.Shell
         settings.setMediaPlaybackRequiresUserGesture(true); settings.setBuiltInZoomControls(false); settings.setDisplayZoomControls(false);
         AppWebView.attach(this, webView, frame, url, SuiteViews.ORCAMENTOS.equals(app) ? "Orçamentos" : "Centro de Custos", new AppWebView.Host() {
             @Override public boolean openFileChooser(ValueCallback<Uri[]> callback, WebChromeClient.FileChooserParams params) {
-                if (fileCallback != null) fileCallback.onReceiveValue(null);
-                fileCallback = callback;
                 suppressLock = true;
-                try { startActivityForResult(params.createIntent(), FILE_CHOOSER_REQUEST); }
-                catch (ActivityNotFoundException error) { fileCallback = null; suppressLock = false; toast("Nenhum seletor de arquivos disponível."); }
+                if (!chooser.open(callback, params)) { suppressLock = false; toast("Nenhum seletor de arquivos disponível."); }
                 return true;
             }
             @Override public void loadFailed(String message) {
@@ -283,8 +278,7 @@ public final class MainActivity extends Activity implements AuthController.Shell
     @Override protected void onResume() { super.onResume(); updater.resume(); barColors.start(); }
     @Override protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode != FILE_CHOOSER_REQUEST || fileCallback == null) return;
-        fileCallback.onReceiveValue(WebChromeClient.FileChooserParams.parseResult(resultCode, data)); fileCallback = null;
+        chooser.result(requestCode, resultCode, data);
     }
 
     // ---- Bloqueio automatico, voltar e rede ----

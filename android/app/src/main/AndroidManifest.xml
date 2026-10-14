@@ -41,6 +41,12 @@
             android:authorities="${applicationId}.update"
             android:exported="false"
             android:grantUriPermissions="true" />
+        <!-- Foto do botao Camera das paginas: o app de camera grava aqui e a WebView le (CameraFileProvider). -->
+        <provider
+            android:name=".CameraFileProvider"
+            android:authorities="${applicationId}.camera"
+            android:exported="false"
+            android:grantUriPermissions="true" />
         <!-- Notificacoes da Suite (Fase 4): Firebase Cloud Messaging -->
         <service android:name=".SuitePush" android:exported="false">
             <intent-filter>

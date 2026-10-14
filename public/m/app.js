@@ -32,12 +32,17 @@
     if (!nav.dataset.drag && window.arrastarAbas) { nav.dataset.drag = '1'; window.arrastarAbas(nav, pickTab); }
     if (!nav.classList.contains('is-ready')) requestAnimationFrame(() => nav.classList.add('is-ready'));
   }
-  function pickTab(key) { CC.go(key, key === 'lancar' ? { novo: true, from: [current] } : undefined); }
+  // "Menu" nao troca de tela: desliza o painel lateral sobre a tela aberta (menu-lateral.js).
+  function pickTab(key) {
+    if (key === 'menu') return CC.menuLateral.aberto() ? CC.menuLateral.fechar() : CC.screens.menu();
+    return CC.go(key, key === 'lancar' ? { novo: true, from: [current] } : undefined);
+  }
 
   CC.go = function (name, params) {
     const screen = CC.screens[name];
     if (!screen) return;
     current = name;
+    if (CC.menuLateral) CC.menuLateral.fechar();
     if (CC.suite) CC.suite.context = null;
     currentParams = { ...(params || {}) };
     delete currentParams.__nav;

@@ -1,7 +1,7 @@
 // Navegacao, barra de abas, entrada pelo app (handoff) e modo offline do site do celular.
 (function (CC) {
   const { esc, icon } = CC;
-  const campo = new Set(['home', 'obras', 'obra', 'servico', 'menu', 'perfil', 'atualizacao', 'report-novo']);
+  const campo = new Set(['home', 'meu-dia', 'atividade-dia', 'meus-trabalhos', 'obras', 'obra', 'servico', 'menu', 'perfil', 'atualizacao', 'report-novo']);
   const permitido = (name) => !CC.sv || CC.sv.role() !== 'tecnico' || campo.has(name);
   // Protege tambem chamadas diretas feitas por historico antigo ou pelo assistente.
   CC.screens = new Proxy(CC.screens || {}, {
@@ -11,11 +11,11 @@
     },
   });
   const TABS = [
-    ['home', 'Início', 'squares-four', ['home']],
+    ['home', 'Início', 'squares-four', ['home', 'meu-dia', 'atividade-dia', 'meus-trabalhos']],
     ['obras', 'Obras', 'buildings', ['obras', 'obra', 'obra-editar', 'obra-folha', 'servico', 'servico-rel']],
     ['lancar', 'Lançar', 'plus-circle', ['lancar', 'ok']],
     ['lancamentos', 'Lançamentos', 'list-bullets', ['lancamentos', 'lanc']],
-    ['menu', 'Menu', 'list', ['menu', 'cobrancas', 'cobranca', 'cobranca-dados', 'cobranca-email', 'recorrentes', 'recorrente', 'fornecedores', 'fornecedor', 'categorias', 'categoria', 'pedidos', 'perfil', 'fechamento', 'historico', 'reports', 'report', 'report-novo', 'usuarios', 'usuario-form', 'papeis', 'emails-ext', 'sistema', 'descartadas', 'descartada', 'atualizacao']],
+    ['menu', 'Menu', 'list', ['menu', 'programacao', 'cobrancas', 'cobranca', 'cobranca-dados', 'cobranca-email', 'recorrentes', 'recorrente', 'fornecedores', 'fornecedor', 'categorias', 'categoria', 'pedidos', 'perfil', 'fechamento', 'historico', 'reports', 'report', 'report-novo', 'usuarios', 'usuario-form', 'papeis', 'emails-ext', 'sistema', 'descartadas', 'descartada', 'atualizacao']],
   ];
   let current = 'home', currentParams = {};
   let lensTimer;
@@ -82,7 +82,10 @@
       <a class="btn" href="suite://entrar" style="padding:0 22px;text-decoration:none">Entrar</a></div>`);
   }
   CC.onUnauthorized = () => { if (CC.ia && CC.ia.reset) CC.ia.reset(); signedOut('Sua sessão terminou'); };
-  CC.onQueueSent = () => { if (['home', 'lancamentos', 'obra', 'servico'].includes(current)) CC.go(current, currentParams); };
+  CC.onQueueSent = () => {
+    if (current === 'atividade-dia' && CC.programacaoSync) return CC.programacaoSync();
+    if (['home', 'meu-dia', 'meus-trabalhos', 'lancamentos', 'obra', 'servico'].includes(current)) CC.go(current, currentParams);
+  };
 
   async function consumeHandoff(code) {
     history.replaceState(null, '', location.pathname + location.search);
@@ -131,7 +134,7 @@
     if (obra > 0) return CC.go('obra', { id: obra });
     if (pedidos && permitido('pedidos')) return CC.go('pedidos');
     const first = location.hash.slice(1);
-    CC.go(CC.screens[first] && permitido(first) && !['ok', 'obra', 'login', 'descartada', 'servico', 'servico-rel', 'lanc', 'obra-editar', 'obra-folha', 'cobranca', 'cobranca-dados', 'cobranca-email', 'recorrente', 'fornecedor', 'categoria', 'report', 'usuario-form'].includes(first) ? first : 'home');
+    CC.go(CC.screens[first] && permitido(first) && !['ok', 'obra', 'atividade-dia', 'login', 'descartada', 'servico', 'servico-rel', 'lanc', 'obra-editar', 'obra-folha', 'cobranca', 'cobranca-dados', 'cobranca-email', 'recorrente', 'fornecedor', 'categoria', 'report', 'usuario-form'].includes(first) ? first : 'home');
   }
 
   document.addEventListener('DOMContentLoaded', boot);

@@ -77,6 +77,8 @@ test('técnico: atribuição pelo gestor, escopo, execução e menu sem financei
     await (await find('input[type=email]')).sendKeys('tecnico@teste.local');
     await (await find('input[type=password]')).sendKeys('Tecnico@123456');
     await (await find('button[type=submit]')).click();
+    await wait('#pg-trabalhos');
+    await click('#pg-trabalhos');
     await wait('[data-exec]');
     assert.equal((await driver.findElements(By.css('[data-exec]'))).length, 1, 'serviço independente sem atribuição fica oculto');
     assert.doesNotMatch(await (await find('#view')).getText(), /Resultado|Margem|Contratado/);
@@ -105,6 +107,8 @@ test('técnico: atribuição pelo gestor, escopo, execução e menu sem financei
     await (await find('#sr-texto')).sendKeys(relato);
     await driver.wait(async () => (await (await find('#sr-status')).getText()).includes('Rascunho salvo'), 5000);
     await driver.navigate().refresh();
+    await wait('#pg-trabalhos');
+    await click('#pg-trabalhos');
     await wait('[data-exec]');
     await (await find('[data-exec]')).click();
     await wait('#sv-relato');
@@ -140,7 +144,12 @@ test('técnico: atribuição pelo gestor, escopo, execução e menu sem financei
     // Entrada pelo desktop também conduz à interface operacional.
     await driver.get(ctx.baseUrl + '/d/');
     await driver.wait(until.urlContains('/m/'), 10000);
+    await wait('#pg-trabalhos');
+    await click('#pg-trabalhos');
     await wait('[data-exec]');
+  } catch (error) {
+    if (driver) console.error('Tela ao falhar:', await driver.findElement(By.css('#view')).getText().catch(() => 'indisponível'));
+    throw error;
   } finally {
     await stopDriver(driver);
     if (ctx) await stopServer(ctx);

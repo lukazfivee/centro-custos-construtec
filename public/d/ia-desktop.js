@@ -24,6 +24,7 @@
   Object.keys(IA.telas).forEach((k) => { delete IA.telas[k]; delete IA.nomes[k]; });
   Object.assign(IA.telas, {
     inicio: tela('inicio'),
+    programacao: tela('programacao'),
     lancamentos: tela('lancamentos'),
     nova_despesa: tela('lancamentos', 'lancamentos?novo=1'),
     obras: tela('obras'),
@@ -45,7 +46,7 @@
   Object.assign(IA.nomes, { inicio: 'Início', lancamentos: 'Lançamentos', nova_despesa: 'Novo lançamento', obras: 'Obras', obra: 'a obra', cobrancas: 'Cobranças', categorias: 'Categorias',
     fornecedores: 'Fornecedores', recorrentes: 'Recorrentes', fechamento: 'Fechamento mensal', usuarios: 'Usuários', historico: 'Histórico', reports: 'Reports', configuracoes: 'Configurações',
     orcamentos: 'Orçamentos', proposta: 'a proposta' });
-  Object.assign(IA.nomes, { servicos: 'Serviços', servico: 'o serviço' });
+  Object.assign(IA.nomes, { servicos: 'Serviços', servico: 'o serviço', programacao: 'Programação' });
 
   if (IA.sugestoes) {
     IA.sugestoes.splice(0, IA.sugestoes.length, 'Quais obras estão acima do orçado?', 'Quanto tenho a pagar este mês?', 'Como crio um novo lançamento?', 'Resumo das propostas enviadas', 'Quero reportar um problema');

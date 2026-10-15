@@ -51,6 +51,12 @@
     D.upd.iniciar();
     if (D.cobr && D.cobr.atualizarContador) D.cobr.atualizarContador();
     D.tema.sincronizar();
+    const query = new URLSearchParams(location.search);
+    if (query.get('programacao') === '1') {
+      query.delete('programacao');
+      const search = query.toString();
+      history.replaceState(null, '', location.pathname + (search ? `?${search}` : '') + '#/programacao');
+    }
     D.iniciarRotas();
   }
 

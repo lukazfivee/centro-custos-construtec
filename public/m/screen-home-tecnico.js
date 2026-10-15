@@ -39,7 +39,7 @@
     try {
       [servicos, obras, fila] = await Promise.all([CC.cached('servicos', '/servicos?ativo=true'),
         CC.cached('obras', `/centros-custo?mes=${CC.month()}`).catch((error) => { if (error.status === 401) throw error; return { error }; }),
-        CC.queue.ops()]);
+        CC.queue.ops().then((items) => items.filter((i) => i.op !== 'programacao'))]);
     } catch (error) { if (error.status === 401 || (params && params.__nav !== CC.nav)) return; return CC.errorScreen(el, error, () => CC.go('home')); }
     if (!CC.session.token() || (params && params.__nav !== CC.nav)) return;
     const hoje = CC.today(), lista = servicos.data || [], ativos = lista.filter((s) => s.ativo !== false && aberto(s));

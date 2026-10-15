@@ -29,8 +29,11 @@ function headersFor(user) {
     'x-app-version':pkg.version,
     'x-platform':`${process.platform} ${os.release()}`,
   };
-  if (user.cloud_session_token) headers.Authorization = `Bearer ${user.cloud_session_token}`;
-  else if (process.env.SYNC_SHARED_KEY) headers['x-sync-key'] = process.env.SYNC_SHARED_KEY;
+  if (user.cloud_session_token) {
+    headers.Authorization = `Bearer ${user.cloud_session_token}`;
+    // Sessao entregue pelo app (hash:...): o Worker so a aceita junto da chave compartilhada.
+    if (String(user.cloud_session_token).startsWith('hash:') && process.env.SYNC_SHARED_KEY) headers['x-sync-key'] = process.env.SYNC_SHARED_KEY;
+  } else if (process.env.SYNC_SHARED_KEY) headers['x-sync-key'] = process.env.SYNC_SHARED_KEY;
   return headers;
 }
 
@@ -38,7 +41,7 @@ async function request(path, options, user) {
   if (!configured()) throw requestError(503,'Sincronização em nuvem ainda não configurada nesta instalação.');
   if (!corporateEmail(user?.email)) throw requestError(403,'A sincronização compartilhada exige uma conta @rcconstrutec.com.br.');
   if (!user?.cloud_session_token && !process.env.SYNC_SHARED_KEY) {
-    throw requestError(401,'Entre novamente com sua conta corporativa para sincronizar.');
+    throw requestError(409,'Entre novamente com sua conta corporativa para sincronizar.');
   }
   const base = String(process.env.SYNC_API_URL || DEFAULT_API_URL).replace(/\/+$/, '');
   const controller = new AbortController();
@@ -53,7 +56,8 @@ async function request(path, options, user) {
     const data = await response.json().catch(() => ({}));
     if (!response.ok) {
       const error = new Error(data.error || `Cloud Sync HTTP ${response.status}`);
-      error.statusCode = response.status >= 500 ? 502 : response.status;
+      // 401 da nuvem nao e a sessao do app: com 401 o celular e o desktop encerram a sessao local.
+      error.statusCode = response.status >= 500 ? 502 : response.status === 401 ? 409 : response.status;
       error.publicMessage = response.status >= 500
         ? 'O serviço corporativo não conseguiu concluir a operação. Tente novamente em instantes.'
         : error.message;

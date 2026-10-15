@@ -24,12 +24,19 @@
       const obras = (await CC.api('/centros-custo')).data || [];
       const obra = obras.find((o) => String(o.codigo).toLowerCase() === String(item.code).toLowerCase());
       if (!obra) return [];
-      return ((await CC.api(`/centros-custo/${obra.id}/notas-fiscais?tipo=cliente`)).data || []).filter((n) => n.temArquivo);
+      const lista = ((await CC.api(`/centros-custo/${obra.id}/notas-fiscais?tipo=cliente`)).data || []).filter((n) => n.temArquivo);
+      // NFS-e anexada ao faturar o servico (cost_center_invoices): tambem pode ir no e-mail.
+      try {
+        const nfse = ((await CC.api(`/notas-fiscais-centro/${obra.id}`)).data || {}).notaFiscal;
+        if (nfse && nfse.nome) lista.unshift({ id: 'nfse', nomeArquivo: nfse.nome, observacao: 'NFS-e do serviço', valor: null, url: `/api/notas-fiscais-centro/${obra.id}/arquivo` });
+      } catch { /* sem NFS-e do faturamento */ }
+      return lista;
     } catch { return []; }
   }
 
-  async function anexo(page, nfs) {
-    const escolha = CC.$('#ce-anexo', page).value;
+  // Arquivo escolhido em "Anexo" ({ blob, nome }), ou null quando a opcao e a NF vinculada ao cadastro.
+  async function arquivoAnexo(page, nfs) {
+    const escolha = CC.$('#ce-anexo', page) ? CC.$('#ce-anexo', page).value : '';
     let blob, nome;
     if (escolha === 'arquivo') {
       const f = CC.$('#ce-arq', page).files[0];
@@ -37,12 +44,38 @@
       blob = f; nome = f.name;
     } else if (escolha.startsWith('nf:')) {
       const nf = nfs.find((n) => String(n.id) === escolha.slice(3));
-      const r = await fetch(`/api/centros-custo/notas-fiscais/${nf.id}/arquivo`, { headers: { Authorization: `Bearer ${CC.session.token()}` }, cache: 'no-store' });
+      const r = await fetch(nf.url || `/api/centros-custo/notas-fiscais/${nf.id}/arquivo`, { headers: { Authorization: `Bearer ${CC.session.token()}` }, cache: 'no-store' });
       if (!r.ok) throw new Error('Não foi possível ler o PDF da nota fiscal.');
       blob = await r.blob(); nome = nf.nomeArquivo || `nota-fiscal-${nf.id}.pdf`;
-    } else return [];
+    } else return null;
     if (blob.size > 5 * 1024 * 1024) throw new Error('A nota fiscal em PDF deve ter no máximo 5 MB.');
-    return [{ filename: nome, contentType: 'application/pdf', contentBase64: await lerBase64(blob) }];
+    return { blob, nome };
+  }
+
+  async function anexo(page, nfs) {
+    const arq = await arquivoAnexo(page, nfs);
+    return arq ? [{ filename: arq.nome, contentType: 'application/pdf', contentBase64: await lerBase64(arq.blob) }] : [];
+  }
+
+  // Abre o e-mail pronto no app do celular (Webmail Pro ou o app de e-mail padrao), sem passar pelo servico da Suite.
+  // Com NF em PDF usa o compartilhar do sistema (o app de e-mail recebe o PDF anexado); sem ele, o link mailto: preenche
+  // Para, Copia, Assunto e Mensagem (mailto nao leva anexo).
+  async function abrirNoApp(v, arq) {
+    if (arq) {
+      const file = new File([arq.blob], arq.nome, { type: 'application/pdf' });
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        try {
+          await navigator.share({ files: [file], title: v.subject, text: v.bodyText });
+          CC.toast(`Escolha o Webmail Pro e envie para ${v.to.join(', ')}`, 'envelope-simple');
+          return;
+        } catch (error) { if (error && error.name === 'AbortError') return; }
+      }
+      CC.toast('Este celular não anexa a NF sozinho: anexe o PDF no app de e-mail.', 'warning-circle');
+    }
+    const q = [v.cc.length ? `cc=${encodeURIComponent(v.cc.join(','))}` : '', `subject=${encodeURIComponent(v.subject)}`, `body=${encodeURIComponent(v.bodyText)}`].filter(Boolean).join('&');
+    const a = document.createElement('a');
+    a.href = `mailto:${v.to.map(encodeURIComponent).join(',')}?${q}`;
+    document.body.appendChild(a); a.click(); a.remove();
   }
 
   function faixa(d) {
@@ -81,12 +114,14 @@
       ${F.campo('Assunto', 'ce-assunto', d.subject, ' maxlength="300"')}
       <label class="field"><span>Mensagem</span><textarea id="ce-msg" rows="9">${esc(d.bodyText || '')}</textarea></label>
       ${envia ? `<label class="field"><span>Anexo · nota fiscal em PDF</span><select id="ce-anexo">
-          ${nfs.map((n) => `<option value="nf:${esc(n.id)}">${esc(`${n.nomeArquivo || 'nota.pdf'} · ${n.observacao || 'NF'} · ${CC.money(n.valor)}`)}</option>`).join('')}
+          ${nfs.map((n) => `<option value="nf:${esc(n.id)}">${esc(`${n.nomeArquivo || 'nota.pdf'} · ${n.observacao || 'NF'}${n.valor == null ? '' : ` · ${CC.money(n.valor)}`}`)}</option>`).join('')}
           <option value="vinculada">Usar a NF vinculada à obra (cadastro antigo)</option><option value="arquivo">Outro PDF do celular</option></select></label>
         <input id="ce-arq" type="file" accept="application/pdf,.pdf" hidden>
-        <p class="sub fin-nota">${nfs.length ? 'Uma NF em PDF por envio, até 5 MB.' : 'Nenhuma NF em PDF lançada para o cliente nesta obra. Lance na obra (aba Notas fiscais) ou escolha um PDF.'}</p>
+        <p class="sub fin-nota">${nfs.length ? 'Uma NF em PDF por envio, até 5 MB.' : 'Nenhuma NF em PDF lançada para o cliente nesta obra. Lance na obra ou no serviço (Notas fiscais) ou escolha um PDF.'}</p>
         <label class="menu-item pref"><span>Autorizo o envio deste e-mail ao cliente</span><input type="checkbox" id="ce-ok"></label>`
         : `<div class="note ok">${icon('info', 18)}<span>Você pode salvar o rascunho. Autorizar e enviar fica para quem tem a permissão de autorizar envios.</span></div>`}
+      <button class="btn2 ce-app" type="button" id="ce-app">${icon('envelope-simple', 18)}Abrir no app de e-mail</button>
+      <p class="sub fin-nota">Abre a mensagem pronta no Webmail Pro do celular, com a NF anexada quando o aparelho permitir. Esse envio não passa pela Suíte e não muda a situação da cobrança.</p>
       <p class="alert" role="alert" id="err"></p>
       <div class="actions"><button class="btn2" type="button" id="ce-salvar"${pendente ? ' disabled' : ''}>Salvar rascunho</button>
         ${envia ? `<button class="btn" type="button" id="ce-enviar" disabled>${icon('paper-plane-right', 18)}${esc(rotEnviar)}</button>` : ''}</div>`, true, params);
@@ -103,6 +138,15 @@
       if (v.bodyText.length < 5) return 'Escreva a mensagem.';
       return '';
     };
+    const bApp = CC.$('#ce-app', page);
+    bApp.addEventListener('click', async () => {
+      const v = ler();
+      const msg = validar(v);
+      if (msg) return F.erro(page, msg);
+      F.erro(page, '');
+      try { await abrirNoApp(v, await arquivoAnexo(page, nfs)); } catch (error) { F.erro(page, error); }
+      return undefined;
+    });
     const bSalvar = CC.$('#ce-salvar', page);
     bSalvar.addEventListener('click', async () => {
       const v = ler();

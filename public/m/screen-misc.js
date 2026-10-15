@@ -1,27 +1,33 @@
 // Menu do site do celular. Prototipo: sCcMenu. A lista de lancamentos fica em screen-lancamentos.js.
 (function (CC) {
   const { esc, icon } = CC;
+  const WEBMAIL = 'https://webmailpro.uol.com.br/';
 
   CC.screens.menu = function (params) {
     const inApp = /SuiteConstrutec/.test(navigator.userAgent) || new URLSearchParams(location.search).has('app');
     const dark = CC.theme.get() === 'escuro';
     const user = CC.session.user() || {};
-    const el = CC.render(`${CC.header('Menu')}
-      <div class="rows">
-        <button class="menu-item" type="button" id="m-perfil">${CC.avatar(CC.perfilFoto, user.nome, 40)}<span>${esc(user.nome || 'Meu perfil')}<small>${esc(user.email || '')} · Meu perfil</small></span></button>
-        ${CC.ia && CC.ia.ready() ? `<button class="menu-item" type="button" id="m-ia">${icon('sparkle', 22)}<span>Assistente<small>Tire dúvidas sobre obras, custos e propostas e vá direto a qualquer tela</small></span></button>
-        <button class="menu-item" type="button" id="m-bug">${icon('bug', 22)}<span>Reportar problema<small>Conte o que aconteceu e o assistente monta o relato</small></span></button>` : ''}
-        <button class="menu-item" type="button" id="m-tema">${icon(dark ? 'sun' : 'moon', 22)}<span>${dark ? 'Modo claro' : 'Modo escuro'}</span></button>
-        ${inApp ? `<button class="menu-item" type="button" id="m-seg">${icon('shield-check', 22)}<span>Segurança<small>PIN, digital, bloqueio automático e aparelhos</small></span></button>` : ''}
+    const roles = { admin: 'Administrador', gestor: 'Gestor', supervisor: 'Supervisor', tecnico: 'Técnico' };
+    const quem = [roles[user.role] || '', user.email || ''].filter(Boolean).join(' · ');
+    // Mesma organizacao do Menu do Orcamentos: titulo, cartao do perfil e uma lista agrupada (titulo, linha de apoio e seta).
+    const el = CC.render(`${CC.header('')}
+      <h1 class="title">Menu</h1>
+      <button class="card who" type="button" id="m-perfil">${CC.avatar(CC.perfilFoto, user.nome, 44)}<span class="grow"><b>${esc(user.nome || 'Meu perfil')}</b><small>${esc(quem)}</small></span></button>
+      <div class="card menu-card">
+        <div id="m-fin"></div>
         ${CC.adm ? CC.adm.menuHtml() : ''}
         ${CC.isAdmin && CC.isAdmin() && CC.screens.descartadas ? `<button class="menu-item" type="button" id="m-desc">${icon('archive', 22)}<span>Obras descartadas<small id="m-desc-n">Recuperar obras guardadas</small></span></button>` : ''}
+        ${inApp ? `<button class="menu-item" type="button" id="m-seg">${icon('shield-check', 22)}<span>Segurança<small>PIN, digital, bloqueio automático e aparelhos</small></span></button>` : ''}
         ${inApp && CC.screens.atualizacao ? `<button class="menu-item" type="button" id="m-upd">${icon('arrow-counter-clockwise', 22)}<span>Atualização do aplicativo<small>Ver a versão instalada e instalar a mais nova</small></span></button>` : ''}
         ${inApp ? `<button class="menu-item" type="button" id="m-tour">${icon('arrow-right', 22)}<span>Rever o tour<small>As quatro telas de boas-vindas da Suíte</small></span></button>` : ''}
-        <div id="m-fin"></div>
+        <button class="menu-item" type="button" id="m-tema">${icon(dark ? 'moon' : 'sun', 22)}<span>Tema<small>${dark ? 'Escuro' : 'Claro'}</small></span></button>
         <button class="menu-item" type="button" id="m-senha">${icon('key', 22)}<span>Alterar senha<small>Troque a senha de entrada da Suíte</small></span></button>
-        <a class="menu-item" href="/d/" id="m-web" style="color:inherit;text-decoration:none">${icon('desktop', 22)}<span>Versão completa<small>Abrir o sistema na tela de computador</small></span></a>
-        <button class="menu-item danger" type="button" id="m-sair">${icon('sign-out', 22)}<span>Sair</span></button>
-      </div>`, false, params);
+        ${CC.ia && CC.ia.ready() ? `<button class="menu-item" type="button" id="m-ia">${icon('sparkle', 22)}<span>Assistente<small>Tire dúvidas sobre obras, custos e propostas e vá direto a qualquer tela</small></span></button>
+        <button class="menu-item" type="button" id="m-bug">${icon('bug', 22)}<span>Reportar problema<small>Conte o que aconteceu e o assistente monta o relato</small></span></button>` : ''}
+        <a class="menu-item" href="${WEBMAIL}" target="_blank" rel="noopener" id="m-webmail">${icon('envelope-simple', 22)}<span>Webmail Pro<small>E-mail corporativo UOL</small></span></a>
+        <a class="menu-item" href="/d/" id="m-web">${icon('desktop', 22)}<span>Versão completa<small>Abrir o sistema na tela de computador</small></span></a>
+      </div>
+      <button class="btn2 danger-btn" type="button" id="m-sair">${icon('sign-out', 20)}<span>Sair</span></button>`, false, params);
     CC.$('#m-senha', el).addEventListener('click', () => CC.senhaSheet());
     CC.$('#m-tema', el).addEventListener('click', () => { CC.theme.toggle(); CC.screens.menu(); });
     CC.$('#m-perfil', el).addEventListener('click', () => CC.go('perfil'));

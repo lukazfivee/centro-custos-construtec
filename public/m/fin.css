@@ -45,3 +45,6 @@ html[data-theme="escuro"] .tag.fin-ok { background: #0f3a26; color: #8fe0b0; box
 .fin-paleta button { width: 44px; height: 44px; border: 0; border-radius: 50%; box-shadow: inset 0 0 0 2px rgba(255, 255, 255, .35); }
 .fin-paleta button[aria-pressed="true"] { box-shadow: 0 0 0 3px var(--bg), 0 0 0 5px var(--text); }
 .fin-del { color: var(--danger-ink); }
+
+/* E-mail da cobranca: botao que abre a mensagem no app de e-mail do celular. */
+.ce-app { width: 100%; margin-top: 4px; }

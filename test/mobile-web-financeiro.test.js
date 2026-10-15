@@ -122,3 +122,11 @@ test('celular: regras das cobrancas (situacao, 4 passos, filtros e indicadores e
   assert.equal(B.corpo(itens[1], { financialStatus: 'pago' }).invoiceNumber, '2199');
   assert.match(B.csv(itens), /^\ufeff"Obra";"Cliente"/);
 });
+
+test('celular: Menu lista o Webmail Pro e e-mail de cobranca abre no app de e-mail', () => {
+  assert.match(read('screen-misc.js'), /href="\$\{WEBMAIL\}"[^>]*id="m-webmail"/);
+  const email = read('screen-cobranca-email.js');
+  assert.match(email, /id="ce-app"/);
+  assert.match(email, /navigator\.share\(\{ files: \[file\]/);
+  assert.match(email, /a\.href = `mailto:/);
+});

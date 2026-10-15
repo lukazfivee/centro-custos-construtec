@@ -17,13 +17,15 @@ function load({ electron } = {}) {
   const D = {
     lerRota: () => ({ nome: 'obras' }), ir: (caminho) => went.push(caminho),
     podeTela: (chave) => chave !== 'usuarios', papelNome: () => 'Gestor',
+    papelSuite: () => 'gestor', tem: (p) => ['p1', 'p2', 'p5', 'p6', 'p10', 'p12'].includes(p),
   };
   const CC = {
     d: D, cents: (v) => Math.round(v * 100) / 100, api: async () => ({ data: {} }), month: () => '2026-10', go: () => {},
-    session: { user: () => ({ nome: 'Ana Teste', role: 'gestor' }) }, suite: { orcLink: () => '' },
+    session: { token: () => 'session-gestor', user: () => ({ id: 2, nome: 'Ana Teste', role: 'gestor', suiteRole: 'gestor' }) }, suite: { orcLink: () => '' },
   };
   const window = { CC, open: (...a) => opened.push(a), ...(electron ? { electronAPI: { suiteSwitch: (...a) => switched.push(a) } } : {}) };
   const context = { window, navigator: { userAgent: 'Mozilla' }, location, URLSearchParams, JSON, Number, String, Object, Math, encodeURIComponent };
+  vm.runInNewContext(read('m/ia-config.js'), context);
   vm.runInNewContext(read('m/ia-tools.js'), context);
   vm.runInNewContext(read('d/ia-desktop.js'), context);
   return { CC, went, opened, switched };
@@ -56,8 +58,8 @@ test('desktop: destinos de tela são os do desktop e respeitam o papel', async (
   const { CC, went, opened } = load();
   const S = new Proxy({}, { get: (_, kind) => (spec) => ({ kind, ...spec }) });
   const enumTela = CC.ia.declarations(S)[0].functionDeclarations.find((d) => d.name === 'abrir_tela').parameters.properties.tela.enum;
-  assert.deepEqual([...enumTela].sort(), ['categorias', 'cobrancas', 'configuracoes', 'fechamento', 'fornecedores', 'historico', 'inicio', 'lancamentos', 'nova_despesa', 'obra', 'obras',
-    'orcamentos', 'proposta', 'recorrentes', 'reports', 'usuarios'].sort());
+  assert.deepEqual([...enumTela].sort(), ['categorias', 'cobrancas', 'configuracoes', 'fornecedores', 'inicio', 'lancamentos', 'nova_despesa', 'obra', 'obras',
+    'orcamentos', 'proposta', 'recorrentes', 'reports', 'servico', 'servicos'].sort());
 
   assert.equal((await CC.ia.run({ name: 'abrir_tela', args: { tela: 'obra', obra_id: 7 } })).ok, true);
   assert.equal(went.length, 0, 'nada muda antes da resposta');

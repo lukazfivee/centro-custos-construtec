@@ -4,7 +4,7 @@ const express = require('express');
 const { getDb } = require('../db');
 const { autenticar } = require('../middleware/auth');
 const { paramObra, obrasPermitidas, restringir } = require('../services/obraScope');
-const { exigirPermissao, can } = require('../services/permissions');
+const { exigirPermissao, exigirExecucao, can, suiteRoleOf } = require('../services/permissions');
 const { asyncRoute, httpError, positiveId } = require('../lib/http');
 const { validDate } = require('../lib/dates');
 const { roundDecimal } = require('../lib/decimal');
@@ -70,6 +70,7 @@ router.get('/', asyncRoute(async (req, res) => {
       responsavel: r.responsible || '', situacao: r.status, ativo: r.active, gastos: s.gastos,
       execucao: { itens: (r.checklist || []).length, feitos: (r.checklist || []).filter((i) => i.feito).length,
         fotosAntes: r.fotos_antes, fotosDepois: r.fotos_depois, aceite: r.has_signature } };
+    if (suiteRoleOf(req.usuario) === 'tecnico') delete item.gastos;
     return money ? { ...item, valor: s.cobrado, resultado: s.resultado, margem: s.margem } : item;
   }));
 }));
@@ -116,8 +117,8 @@ router.put('/:id', exigirPermissao('p5'), asyncRoute(async (req, res) => {
   res.json(await core.serviceDetail(db, id, req.usuario));
 }));
 
-// Agendado <-> em andamento (p2). Reabrir um concluido (volta a em andamento) exige p5. Faturado nao volta.
-router.put('/:id/situacao', exigirPermissao('p2'), asyncRoute(async (req, res) => {
+// Agendado <-> em andamento: execução de campo. Reabrir concluído exige p5. Faturado não volta.
+router.put('/:id/situacao', exigirExecucao, asyncRoute(async (req, res) => {
   const id = positiveId(req.params.id);
   const target = String(req.body?.situacao || '');
   if (!['agendado', 'em_andamento'].includes(target)) throw httpError(400, 'Situação inválida. Use agendado ou em_andamento; para concluir ou faturar use as ações próprias.');
@@ -156,7 +157,7 @@ router.post('/:id/gastos', exigirPermissao('p2'), asyncRoute(async (req, res) =>
   res.status(out.status).json(out.body);
 }));
 
-router.post('/:id/concluir', exigirPermissao('p2'), asyncRoute(async (req, res) => {
+router.post('/:id/concluir', exigirExecucao, asyncRoute(async (req, res) => {
   res.json(await completeService(positiveId(req.params.id), req.body || {}, req.usuario));
 }));
 

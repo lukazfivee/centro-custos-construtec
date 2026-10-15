@@ -65,6 +65,7 @@
   F.menu = async (slot) => {
     if (!slot) return;
     await F.perms();
+    if (CC.sv && CC.sv.role() === 'tecnico') { slot.innerHTML = ''; return; }
     if (!document.body.contains(slot)) return;
     const item = (id, ic, t, s) => `<button class="menu-item" type="button" data-fin="${id}">${icon(ic, 22)}<span>${esc(t)}<small>${esc(s)}</small></span></button>`;
     const itens = [

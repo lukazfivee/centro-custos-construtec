@@ -29,6 +29,9 @@ function readAccess(body, { required = false } = {}) {
     out.apps = apps;
   }
   if (body.obras !== undefined) {
+    if (body.obras === 'todas' && suiteRoleOf({ role: body.role, suite_role: body.suiteRole }) === 'tecnico') {
+      throw httpError(400, 'Técnicos precisam de obras ou serviços atribuídos explicitamente.');
+    }
     if (body.obras === 'todas') out.obras = 'todas';
     else if (Array.isArray(body.obras) && body.obras.every((id) => Number.isInteger(id) && id > 0)) out.obras = [...new Set(body.obras)];
     else throw httpError(400, 'Obras inválidas. Use "todas" ou uma lista de identificadores.');
@@ -56,6 +59,8 @@ async function applySuite(db, remoteList, newEmails = []) {
 // Define as obras de um usuario: 'todas' ou uma lista (so vale para engenharia e tecnico).
 async function setObras(db, userId, obras) {
   if (obras === 'todas') {
+    const user = (await db.query('SELECT role,suite_role FROM users WHERE id=$1', [userId])).rows[0];
+    if (suiteRoleOf(user) === 'tecnico') throw httpError(400, 'Técnicos precisam de obras ou serviços atribuídos explicitamente.');
     await db.query('UPDATE users SET all_cost_centers=TRUE WHERE id=$1', [userId]);
     await db.query('DELETE FROM user_cost_centers WHERE user_id=$1', [userId]);
     return;
@@ -85,7 +90,7 @@ async function decorate(db, users, remoteByEmail = new Map()) {
     const remote = remoteByEmail.get(String(u.email || '').toLowerCase());
     const suiteRole = suiteRoleOf(r);
     return {
-      ...u, suiteRole, apps: parseApps(r.apps), todasObras: r.all_cost_centers !== false,
+      ...u, suiteRole, apps: parseApps(r.apps), todasObras: suiteRole !== 'tecnico' && r.all_cost_centers !== false,
       obras: byUser.get(u.id) || [], ultimoAcesso: remote?.lastLoginAt || null,
     };
   });

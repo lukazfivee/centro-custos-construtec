@@ -75,9 +75,20 @@
     try {
       [result] = await Promise.all([CC.cached(`obra-${id}`, `/centros-custo/${id}/detalhes?mes=${CC.month()}`), CC.sv ? CC.sv.loadPerms() : null]);
     } catch (error) {
+      if (params && params.__nav && params.__nav !== CC.nav) return;
       return CC.errorScreen(el, error, () => CC.screens.obra(params));
     }
+    if (!CC.session.token() || (params && params.__nav && params.__nav !== CC.nav)) return;
     const c = result.data.centro, list = result.data.lancamentos || [];
+    if (CC.sv && CC.sv.role() === 'tecnico') {
+      const situacoes = { planejamento: 'Planejamento', execucao: 'Em execução', pausado: 'Pausada', concluido: 'Concluída' };
+      CC.render(`<div class="top obra-top"><button class="back" type="button" id="voltar" aria-label="Voltar">${icon('caret-left', 20)}</button><h1>${esc(c.nome)}</h1></div>${CC.staleNote(result)}
+        <div class="card">${[['Código', c.codigo], ['Cliente', c.cliente], ['Local', c.local], ['Situação', situacoes[c.situacao] || c.situacao]]
+          .map(([k, v]) => `<div class="kv"><span>${k}</span><b>${esc(v || '—')}</b></div>`).join('')}</div>
+        <div class="card"><span class="label">Descrição</span><p class="tc-relato">${esc(c.descricao || 'Sem descrição registrada.')}</p></div>`, true, params);
+      CC.$('#voltar').addEventListener('click', () => CC.go('obras'));
+      return;
+    }
     if (CC.suite) CC.suite.context = { proposta: c.proposta_origem || null };
     const queued = tab === 'lanc' ? await CC.queuedRows((i) => Number(i.payload.cost_center_id) === id) : '';
     const body = tab === 'resumo' ? resumo(c, list)
@@ -90,6 +101,7 @@
       ${CC.staleNote(result)}
       <div class="chips obra-abas" role="group" aria-label="Seções da obra">${TABS.map(([k, label]) => `<button class="chip-act" type="button" data-tab="${k}" aria-pressed="${k === tab}">${label}</button>`).join('')}</div>
       ${body}
+      ${CC.sv && CC.sv.can('p5') ? '<div id="obra-tecnicos"></div>' : ''}
       <div class="actions"><button class="btn" type="button" id="lancar">${icon('camera', 18)}Lançar despesa</button></div>`, true, params);
     CC.$('#voltar').addEventListener('click', () => CC.go('obras'));
     CC.$$('[data-tab]').forEach((b) => b.addEventListener('click', () => CC.screens.obra({ id, tab: b.dataset.tab })));
@@ -101,5 +113,6 @@
     const mais = CC.$('#obra-mais');
     if (mais) mais.addEventListener('click', () => CC.obraMenu(c));
     CC.$('#lancar').addEventListener('click', () => CC.go('lancar', { obraId: id, from: ['obra', { id, tab: 'lanc' }] }));
+    if (CC.sv && CC.sv.can('p5') && CC.tecnicos) CC.tecnicos.panel(CC.$('#obra-tecnicos'), id);
   };
 })(window.CC = window.CC || {});

@@ -57,6 +57,7 @@ test('Servicos curtos: cadastro, gastos por tipo, campo, concluir, relatorio e t
     const s = await request('/servicos', 'POST', { cliente: 'Condominio Sol', valor: 1200, local: 'Rua A, 10', data: '2026-10-02',
       responsavel: 'Carlos', descricao: 'Instalar 2 cameras na portaria' }, 201);
     id = s.id;
+    await db.query("INSERT INTO user_cost_centers(user_id,cost_center_id) SELECT id,$1 FROM users WHERE email='tec@teste.local'", [id]);
     assert.equal(s.codigo, 'SV-1014');
     assert.equal(s.situacao, 'agendado');
     assert.equal(s.local, 'Rua A, 10');
@@ -82,9 +83,9 @@ test('Servicos curtos: cadastro, gastos por tipo, campo, concluir, relatorio e t
 
   await context.test('lancamento rapido com recibo e resumo com gastos por tipo', async () => {
     const g1 = await request(`/servicos/${id}/gastos`, 'POST', { tipo: 'deslocamento', valor: 42.5, descricao: 'Uber ida e volta',
-      recibo: { nome: 'uber.jpg', tipo: 'image/jpeg', conteudoBase64: jpg('uber') } }, 201, tec);
+      recibo: { nome: 'uber.jpg', tipo: 'image/jpeg', conteudoBase64: jpg('uber') } }, 201);
     assert.ok(g1.anexoId);
-    await request(`/servicos/${id}/gastos`, 'POST', { tipo: 'material', valor: 157.5 }, 201, tec);
+    await request(`/servicos/${id}/gastos`, 'POST', { tipo: 'material', valor: 157.5 }, 201);
     await request(`/servicos/${id}/gastos`, 'POST', { tipo: 'combustivel', valor: 50, data: '2026-10-03' }, 201);
     await request(`/servicos/${id}/gastos`, 'POST', { tipo: 'viagem', valor: 1 }, 400);
     await request(`/servicos/${id}/gastos`, 'POST', { tipo: 'outros', valor: 0 }, 400);
@@ -113,19 +114,17 @@ test('Servicos curtos: cadastro, gastos por tipo, campo, concluir, relatorio e t
     const d = await request(`/servicos/${id}`, 'GET', undefined, 200, tec);
     assert.equal(d.veValores, false);
     assert.equal(d.valor, undefined);
-    assert.equal(d.resumo.cobrado, undefined);
-    assert.equal(d.resumo.resultado, undefined);
-    assert.equal(d.resumo.margem, undefined);
-    assert.equal(d.resumo.gastos, 350);
-    const r = await request(`/servicos/${id}/resumo`, 'GET', undefined, 200, tec);
-    assert.equal(r.margem, undefined);
+    assert.equal(d.resumo, undefined);
+    assert.equal(d.gastos, undefined);
+    assert.equal(d.faturamento, undefined);
+    await request(`/servicos/${id}/resumo`, 'GET', undefined, 403, tec);
     const l = (await request('/servicos', 'GET', undefined, 200, tec)).find((x) => x.id === id);
     assert.equal(l.valor, undefined);
     assert.equal(l.margem, undefined);
     const html = await request(`/servicos/${id}/relatorio`, 'GET', undefined, 200, tec);
     assert.doesNotMatch(html, /1\.500,00/);
     // Escopo por obra: tecnico sem a obra atribuida nao entra.
-    await db.query("UPDATE users SET all_cost_centers=FALSE WHERE email='tec@teste.local'");
+    await db.query("DELETE FROM user_cost_centers WHERE user_id=(SELECT id FROM users WHERE email='tec@teste.local')");
     await request(`/servicos/${id}`, 'GET', undefined, 403, tec);
     await request(`/servicos/${id}/gastos`, 'POST', { tipo: 'outros', valor: 1 }, 403, tec);
     await request(`/servicos/${id}/observacoes`, 'PUT', { descricao: 'Sem acesso', anterior: '' }, 403, tec);
@@ -135,7 +134,7 @@ test('Servicos curtos: cadastro, gastos por tipo, campo, concluir, relatorio e t
     await request(`/servicos/${id}`, 'GET', undefined, 200, tec);
   });
 
-  await context.test('relato do tecnico: permissao p2, validacao, repeticao segura e conflito sem perda', async () => {
+  await context.test('relato do tecnico: execução sem p2, validacao, repeticao segura e conflito sem perda', async () => {
     const antes = (await request(`/servicos/${id}`)).descricao;
     await request(`/servicos/${id}`, 'PUT', { descricao: 'Cadastro bloqueado' }, 403, tec);
     await request(`/servicos/${id}/observacoes`, 'PUT', { descricao: 'Sem versao anterior' }, 400, tec);
@@ -197,6 +196,7 @@ test('Servicos curtos: cadastro, gastos por tipo, campo, concluir, relatorio e t
 
   await context.test('concluir com pendencias exige flag explicita e guarda o que faltava', async () => {
     const s2 = await request('/servicos', 'POST', { cliente: 'Loja Y', valor: 300 }, 201);
+    await db.query("INSERT INTO user_cost_centers(user_id,cost_center_id) SELECT id,$1 FROM users WHERE email='tec@teste.local'", [s2.id]);
     const done = await request(`/servicos/${s2.id}/concluir`, 'POST', { comPendencias: true });
     assert.equal(done.pendencias.length, 3);
     const d = await request(`/servicos/${s2.id}`);

@@ -168,5 +168,8 @@
     pintar();
   }
 
-  D.tela('obras', { render: (el, rota, vivo) => (rota.id ? O.detalhe(el, rota, vivo) : render(el, rota, vivo)) });
+  D.tela('obras', { render: (el, rota, vivo) => {
+    if (TIPOS.some((t) => t.valor === rota.query?.tipo)) { tipo = rota.query.tipo; guardarTipo(tipo); }
+    return rota.id ? O.detalhe(el, rota, vivo) : render(el, rota, vivo);
+  } });
 })(window.CC);

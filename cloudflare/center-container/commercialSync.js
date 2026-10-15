@@ -10,6 +10,7 @@ import {
   json, text, validCorporateEmail, bytesToBase64, base64ToBytes,
   sha256Text, consumeRate, sessionUser, requireSession,
 } from './centralAuth.js';
+import { effectiveSuiteRole } from './suiteRoles.js';
 
 const ORG_ID = 'rcconstrutec.com.br';
 const MAX_NF_BYTES = 5 * 1024 * 1024;
@@ -578,6 +579,8 @@ async function handleSendDraft(request, env) {
 // Cobrancas parecer "sem dados" em vez de mostrar um erro real).
 export async function handleCommercialSync(request, env) {
   const url = new URL(request.url);
+  const user = await sessionUser(request, env);
+  if (user && effectiveSuiteRole(user) === 'tecnico') return json({ ok: false, error: 'Sem permissão para esta ação.' }, 403);
   const ip = request.headers.get('cf-connecting-ip') || 'unknown';
   const allowed = await consumeRate(env.DB, ip, 'api', 5000);
   if (!allowed) return json({ ok: false, error: 'Limite temporario de requisicoes atingido.' }, 429);

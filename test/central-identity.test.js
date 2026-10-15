@@ -198,7 +198,7 @@ maybe('matriz de permissoes: padrao, ajuste, admin travado e restaurar', async (
   const base = await call('GET', '/v1/permissions', { token: gestorToken });
   assert.equal(base.status, 200);
   assert.equal(base.data.permissions.length, 12);
-  assert.equal(base.data.matrix.tecnico.p2, true);
+  assert.equal(base.data.matrix.tecnico.p2, false);
   assert.equal(base.data.matrix.tecnico.p3, false);
   assert.equal(base.data.matrix.financeiro.p4, true);
   assert.equal(base.data.matrix.comercial.p11, true);

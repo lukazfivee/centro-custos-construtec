@@ -2,6 +2,7 @@ const jwt = require('jsonwebtoken');
 const { getDb } = require('../db');
 const { cloudSessionAlive } = require('../services/cloudSessionCheck');
 const { appAllowed, APP_DENIED_MESSAGE } = require('../services/appAccess');
+const { technicianRequestAllowed } = require('../services/technicianAccess');
 
 async function autenticar(req, res, next) {
   const header = req.headers.authorization || '';
@@ -28,6 +29,7 @@ async function autenticar(req, res, next) {
       if (handoffHash) rows[0].cloud_session_token = `hash:${handoffHash}`;
     }
     req.usuario = rows[0];
+    if (!technicianRequestAllowed(req)) return res.status(403).json({ erro: 'Você não tem permissão para esta ação.' });
     return next();
   } catch (error) {
     if (error.name === 'JsonWebTokenError' || error.name === 'TokenExpiredError') {

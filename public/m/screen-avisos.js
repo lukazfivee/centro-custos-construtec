@@ -8,6 +8,7 @@
 
   CC.notif = { unread: 0 };
   CC.bellBtn = () => {
+    if (CC.sv && CC.sv.role() === 'tecnico') return '';
     const n = CC.notif.unread;
     return `<button class="bell-btn" type="button" data-avisos aria-label="Notificações${n ? `, ${n} ${n === 1 ? 'nova' : 'novas'}` : ''}">${icon('bell', 22)}<span class="bell-count"${n ? '' : ' hidden'}>${n > 99 ? '99+' : n}</span></button>`;
   };
@@ -17,6 +18,7 @@
     CC.$$('.bell-btn').forEach((el) => el.setAttribute('aria-label', `Notificações${n ? `, ${n} ${n === 1 ? 'nova' : 'novas'}` : ''}`));
   }
   CC.notif.refresh = async function () {
+    if (CC.sv && CC.sv.role() === 'tecnico') { CC.notif.unread = 0; return; }
     try { CC.notif.unread = Number((await CC.api('/notificacoes?limite=1')).data.unread) || 0; } catch { /* sem central: o sino fica sem número */ }
     paintBell();
   };

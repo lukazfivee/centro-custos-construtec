@@ -1,0 +1,11 @@
+.tc-equipe { margin-block: 16px; }
+.tc-equipe summary { cursor: pointer; padding-block: 6px; }
+.tc-equipe summary small { display: block; margin-top: 6px; overflow-wrap: anywhere; }
+.tc-equipe fieldset { min-width: 0; margin-block: 16px; padding: 8px; border: 1px solid var(--line, #888); border-radius: 8px; max-height: 280px; overflow: auto; }
+.tc-equipe legend { padding-inline: 6px; font-weight: 500; }
+.tc-equipe .tc-pessoa { display: flex; align-items: center; gap: 12px; min-height: 44px; padding: 6px; cursor: pointer; }
+.tc-pessoa input { width: 20px; height: 20px; flex-shrink: 0; accent-color: var(--ac, #238358); }
+.tc-pessoa span { overflow-wrap: anywhere; }
+.tc-equipe form > .btn, .tc-equipe form > .btn2 { margin-block: 6px; }
+.tc-equipe [data-tc-status] { min-height: 1.5em; margin-block: 12px; }
+.tc-equipe [hidden] { display: none !important; }

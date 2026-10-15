@@ -16,9 +16,9 @@
       `<button type="button" class="usu-app" data-app="${esc(a.valor)}" aria-pressed="${apps.includes(a.valor)}">${D.ic(a.icone)}${esc(a.rotulo)}${D.ic('check')}</button>`).join('')}</div></div>`;
   }
 
-  function blocoObras(todas, ids, obras) {
-    return `<div class="fld" data-bloco-obras><span>Obras que pode ver</span>
-      ${U.seg('obras', [{ valor: 'todas', rotulo: 'Todas as obras' }, { valor: 'algumas', rotulo: 'Só algumas' }], todas ? 'todas' : 'algumas', 'Obras')}
+  function blocoObras(todas, ids, obras, tecnico) {
+    return `<div class="fld" data-bloco-obras><span>Obras e serviços que pode ver</span>
+      ${tecnico ? '<small class="muted">O técnico acessa somente os itens designados. Você também pode designá-lo dentro da obra ou serviço.</small>' : U.seg('obras', [{ valor: 'todas', rotulo: 'Todas as obras' }, { valor: 'algumas', rotulo: 'Só algumas' }], todas ? 'todas' : 'algumas', 'Obras')}
       <div class="usu-obras" data-lista-obras${todas ? ' hidden' : ''}>${obras.length ? obras.map((o) =>
         `<button type="button" class="usu-obra" data-obra="${esc(o.id)}" aria-pressed="${ids.includes(Number(o.id))}">${esc(o.codigo)} · ${esc(o.nome)}</button>`).join('') : '<span class="muted">Nenhuma obra cadastrada.</span>'}</div>
       <small class="muted" data-aviso-obras></small></div>`;
@@ -26,7 +26,7 @@
 
   function oQuePode(papel, dados) {
     const linhas = X.GRUPOS.flatMap(([, itens]) => itens).map(([id, nome]) => {
-      const ok = !!dados.matriz[papel]?.[id];
+      const ok = papel === 'tecnico' && id !== 'p12' ? false : !!dados.matriz[papel]?.[id];
       return `<li class="${ok ? 'sim' : 'nao'}">${D.ic(ok ? 'check-circle' : 'minus-circle')}${esc(nome)}</li>`;
     }).join('');
     return `<div class="usu-pode"><span class="eyebrow">O que ${esc(X.nomePapel(papel))} pode fazer</span><ul>${linhas}</ul></div>`;
@@ -65,10 +65,11 @@
 
     const pintar = () => {
       const escopado = X.ESCOPADOS.includes(papel());
+      if (papel() === 'tecnico') estado.todas = false;
       const wrap = CC.$('[data-obras-wrap]', form);
       // Convite novo nao leva obras: a conta ainda nao existe (entra sem obras ate o admin atribuir).
       wrap.innerHTML = (escopado && (editando || estado.metodo === 'senha'))
-        ? blocoObras(estado.todas, estado.obras, obras)
+        ? blocoObras(estado.todas, estado.obras, obras, papel() === 'tecnico')
         : (escopado ? '<small class="muted">Quem entra por convite começa sem obras. Atribua as obras depois que a conta for criada.</small>'
           : '<small class="muted">Este papel vê todas as obras.</small>');
       CC.$('[data-pode]', form).innerHTML = oQuePode(papel(), dados);

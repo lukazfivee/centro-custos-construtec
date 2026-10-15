@@ -43,7 +43,7 @@ function ambiente() {
   let uuid = 0;
   const CC = {
     esc: (v) => String(v), icon: () => '', owner: () => 'u1', toast: () => {}, $: () => null,
-    uuid: () => `id-${(uuid += 1)}`, session: { token: () => 'tok' }, sv: {},
+    uuid: () => `id-${(uuid += 1)}`, session: { token: () => 'tok' }, sv: { role: () => 'tecnico' },
     offline: () => CC.estado.offline, estado: { offline: false },
     api: async (rota, opts = {}) => {
       if (CC.estado.offline) throw Object.assign(new Error('Sem internet'), { status: 0 });

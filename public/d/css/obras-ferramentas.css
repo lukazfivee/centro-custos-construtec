@@ -57,10 +57,13 @@
   .folha { width: auto; margin: 0; padding: 0; box-shadow: none; border-radius: 0; }
 }
 
+/* 1280: formulario e historico de medicoes continuam lado a lado, como na Referencia; empilha so abaixo de 1100. */
 @media (max-width: 1379px) {
-  .grade-med { grid-template-columns: minmax(0, 1fr); }
+  .grade-med { grid-template-columns: 300px minmax(0, 1fr); }
+  .grade-med form .duas { grid-template-columns: minmax(0, 1fr); } /* datas uma embaixo da outra, sem cortar o ano */
   .folha-id { grid-template-columns: 120px minmax(0, 1fr); }
 }
+@media (max-width: 1099px) { .grade-med { grid-template-columns: minmax(0, 1fr); } }
 .grafico.curva .ponto-medido { fill: var(--graf-ok); }
 .grafico.curva .ponto-realizado { fill: var(--graf-desp); }
 .grafico.curva .ponto-previsto { fill: var(--graf-prev); }

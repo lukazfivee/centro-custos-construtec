@@ -5,7 +5,7 @@ const path = require('node:path');
 const vm = require('node:vm');
 const dir = path.join(__dirname, '../public/m');
 const activity = (id = 7, dia = '2026-10-15') => ({ id, dia, ordem: id, orientacao: 'Revisar instalação', revision: 1,
-  centro: { id: id + 10, tipo: id === 7 ? 'obra' : 'servico', nome: `Destino ${id}`, codigo: `D${id}` },
+  centro: { id: id + 10, tipo: id === 7 ? 'obra' : 'servico', nome: `Destino ${id}`, codigo: `D${id}`, cliente: 'CEMED <Ondina>' },
   participantes: [{ id: 1, nome: 'Ana', estado: 'pendente', revision: 0, ativo: true },
     { id: 2, nome: 'Beto', estado: 'concluido', revision: 3, ativo: true }],
   eventos: [{ id: 1, usuarioId: 2, nome: 'Beto', estado: 'concluido', observacao: 'Tudo testado', criadoEm: '2026-10-15T12:00:00Z', tipo: 'andamento' }] });
@@ -72,6 +72,7 @@ test('Meu dia lista destinos independentes, progresso individual e mantém traba
   await m.CC.homeTecnico({ __nav: 1 });
   assert.match(m.html(), /Meu dia/);
   assert.match(m.html(), /Destino 7/); assert.match(m.html(), /Destino 8/);
+  assert.match(m.html(), /CEMED &lt;Ondina&gt;/);
   assert.match(m.html(), /Obra/); assert.match(m.html(), /Serviço/);
   assert.match(m.html(), /Ana/); assert.match(m.html(), /Beto/);
   assert.match(m.html(), /1 de 2/); assert.match(m.html(), /Minhas obras e serviços/);

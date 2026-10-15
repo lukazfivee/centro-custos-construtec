@@ -16,7 +16,7 @@ function load(user = { id: 1, role: 'gestor', permissoes: ['p5'] }) {
   return { CC, P: CC.programacaoEscritorio, changeSession: () => { token = 'conta-2'; } };
 }
 const activity = { id: 19, revision: 7, dia: '2026-10-15', ordem: 2, orientacao: 'Revisar quadro',
-  centro: { id: 12, nome: 'Loja <Sul>', tipo: 'servico', codigo: 'SV-12' },
+  centro: { id: 12, nome: 'Loja <Sul>', tipo: 'servico', codigo: 'SV-12', cliente: 'CEMED <Ondina>' },
   participantes: [{ id: 3, nome: 'Ana', ativo: true, estado: 'pausado' }, { id: 4, nome: 'Beto', ativo: false, estado: 'concluido' }] };
 const values = { dia: '2026-10-16', centroId: '99', orientacao: ' Verificar circuito ', ordem: '3', tecnicos: ['3', '5'] };
 const plain = (x) => JSON.parse(JSON.stringify(x));
@@ -54,6 +54,7 @@ test('cartão mostra tipo independente, progresso somente da equipe ativa e esca
   const html = P.card(activity);
   assert.ok(html.includes('Serviço'));
   assert.ok(html.includes('Loja &lt;Sul&gt;'));
+  assert.ok(html.includes('CEMED &lt;Ondina&gt;'));
   assert.ok(html.includes('Ana') && html.includes('Pausado'));
   assert.ok(html.includes('0 de 1'));
   assert.ok(!html.includes('Beto'));

@@ -7,7 +7,7 @@
     return `<p class="pg-count">${active.filter((p) => p.estado === 'concluido').length} de ${active.length} concluídos</p>
       <ul class="pg-equipe">${active.map((p) => `<li><span>${esc(p.nome)}${String(p.id) === String((CC.session.user() || {}).id) ? ' (você)' : ''}</span><b>${esc(F.estados[p.estado] || p.estado)}${p.pendente ? ' · no celular' : ''}</b></li>`).join('')}</ul>`;
   };
-  F.destino = (a) => `<small class="pg-tipo">${icon(a.centro.tipo === 'servico' ? 'wrench' : 'buildings', 16)}${a.centro.tipo === 'servico' ? 'Serviço' : 'Obra'} · ${esc(a.centro.codigo)}</small><h2>${esc(a.centro.nome)}</h2>`;
+  F.destino = (a) => `<small class="pg-tipo">${icon(a.centro.tipo === 'servico' ? 'wrench' : 'buildings', 16)}${a.centro.tipo === 'servico' ? 'Serviço' : 'Obra'} · ${esc(a.centro.codigo)}</small><h2>${esc(a.centro.nome)}</h2>${a.centro.cliente ? `<p class="sub">${esc(a.centro.cliente)}</p>` : ''}`;
   F.execucao = (a) => CC.go(a.centro.tipo === 'servico' ? 'servico' : 'obra', { id: Number(a.centro.id), ...(a.centro.tipo === 'servico' ? { tab: 'exec' } : {}) });
   F.aviso = (a) => {
     const ops = a.filaOps || [], errors = ops.filter((i) => i.estado === 'erro');

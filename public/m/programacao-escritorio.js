@@ -16,7 +16,7 @@
   };
   P.errorText = (error) => error.status === 409 ? 'A programação mudou em outro aparelho. Seus campos foram mantidos. Carregue a revisão atual e confira antes de tentar novamente.'
     : error.status === 0 ? 'Sem conexão. Seus campos foram mantidos; tente novamente quando a internet voltar.' : error.message || 'Não foi possível concluir agora.';
-  P.destination = (c) => `${c.tipo === 'servico' ? 'Serviço' : 'Obra'} · ${[c.codigo, c.nome].filter(Boolean).join(' — ')}`;
+  P.destination = (c) => `${c.tipo === 'servico' ? 'Serviço' : 'Obra'} · ${[c.codigo, c.cliente, c.nome].filter(Boolean).join(' — ')}`;
   P.team = (a) => `<ul class="pe-team">${a.participantes.filter((p) => p.ativo).map((p) => `<li><span>${esc(p.nome)}</span><b class="pe-state" data-state="${esc(p.estado)}">${esc(STATES[p.estado] || p.estado)}</b></li>`).join('')}</ul>`;
   P.card = (a) => {
     const active = a.participantes.filter((p) => p.ativo);

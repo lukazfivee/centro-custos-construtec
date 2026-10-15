@@ -57,11 +57,11 @@
   B.anexos = (sv) => {
     const f = sv.faturamento;
     const itens = [];
-    if (f && (f.nfseNumero || f.nfseArquivo)) itens.push(['receipt', `${f.nfseNumero || 'NFS-e'}${f.valor != null ? ` · ${CC.money(f.valor)}` : ''}`, `Emitida em ${D.data(String(f.faturadoEm || '').slice(0, 10))}${f.nfseArquivo || f.nfseNumero ? ' · NF vinculada do serviço' : ''}`]);
+    if (f && (f.nfseNumero || f.nfseArquivo)) itens.push(['receipt', `${f.nfseNumero || 'NFS-e'}${f.valor != null ? ` · ${CC.money(f.valor)}` : ''}`, `Emitida em ${D.data(String(f.faturadoEm || '').slice(0, 10))}${f.nfseArquivo || f.nfseNumero ? ' · NF vinculada do serviço' : ''}`, Boolean(f.nfseArquivo)]);
     (sv.gastos || []).filter((g) => Number(g.anexos) > 0).forEach((g) => itens.push(['image', `Recibo · ${g.descricao}`, `${D.data(g.data)} · ${qtd(Number(g.anexos), 'anexo', 'anexos')}`]));
-    const lista = itens.length ? `<div class="lista-anexos">${itens.map(([ic, t, s]) => `<div>${D.ic(ic, 19)}<span class="duas-l"><b>${esc(t)}</b><span>${esc(s)}</span></span></div>`).join('')}</div>`
-      : '<span class="muted">Sem notas nem anexos. A NFS-e entra aqui quando o serviço for faturado.</span>';
-    return `<section class="card bloco-sv"><div class="bcab-sv"><b>Notas fiscais e anexos</b><button type="button" class="btn btn-s" data-relatorio>${D.ic('file-text')}Relatório</button></div>${lista}</section>`;
+    const lista = itens.length ? `<div class="lista-anexos">${itens.map(([ic, t, s, nfse]) => `<${nfse ? 'button type="button" data-baixar-nfse' : 'div'}>${D.ic(ic, 19)}<span class="duas-l"><b>${esc(t)}</b><span>${esc(s)}</span></span>${nfse ? D.ic('download-simple', 18) : ''}</${nfse ? 'button' : 'div'}>`).join('')}</div>` : '';
+    return `<section class="card bloco-sv"><div class="bcab-sv"><b>Notas fiscais e anexos</b><button type="button" class="btn btn-s" data-relatorio>${D.ic('file-text')}Relatório</button></div>${lista}</section>
+      <div class="nf-servico" data-nf-servico></div>`;
   };
 
   B.feito = (sv) => {

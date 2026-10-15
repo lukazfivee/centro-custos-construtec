@@ -74,12 +74,13 @@
   O.descartadas = async function (depois) {
     const { data } = await CC.api('/centros-custo/descartadas');
     const lista = Array.isArray(data) ? data : [];
-    const linha = (d) => `<div class="usu-email"><span><b>${esc(d.code)}</b> · ${esc(d.name)}<br><small class="muted">${d.restored_at ? `Restaurada em ${esc(D.data(d.restored_at))}` : `Descartada em ${esc(D.data(d.discarded_at))} por ${esc(d.discarded_by_name || '')}`}${d.reason ? ` · ${esc(d.reason)}` : ''}</small></span>
+    const linha = (d) => `<div class="usu-email" style="align-items:center;gap:12px"><input type="checkbox" data-sel="${esc(d.id)}" aria-label="Selecionar ${esc(d.code)}"><span style="flex:1"><b>${esc(d.code)}</b> · ${esc(d.name)}<br><small class="muted">${d.restored_at ? `Restaurada em ${esc(D.data(d.restored_at))}` : `Descartada em ${esc(D.data(d.discarded_at))} por ${esc(d.discarded_by_name || '')}`}${d.reason ? ` · ${esc(d.reason)}` : ''}</small></span>
       ${d.restored_at ? U.chip('Restaurada', 'ok') : `<button type="button" class="btn btn-s" data-restaurar="${esc(d.id)}">Restaurar</button>`}</div>`;
+    const topo = `<div class="usu-email" style="align-items:center;gap:12px"><label style="display:flex;align-items:center;gap:10px;flex:1"><input type="checkbox" data-todas aria-label="Selecionar todas"><b data-contagem>Selecionar todas</b></label></div>`;
     const ctl = await D.painel.abrir({
-      icone: 'arrow-counter-clockwise', titulo: 'Obras descartadas', sub: 'Restaurar devolve a obra, o contrato e a base de custo.',
-      corpo: lista.length ? `<div class="card usu-emails">${lista.map(linha).join('')}</div>` : U.vazio('buildings', 'Nenhuma obra descartada.'),
-      rodape: '<button type="button" class="btn btn-p" data-fechar>Fechar</button>',
+      icone: 'arrow-counter-clockwise', titulo: 'Obras descartadas', sub: 'Restaurar devolve a obra, o contrato e a base de custo. Excluir permanentemente apaga o registro de vez.',
+      corpo: lista.length ? `<div class="card usu-emails">${topo}${lista.map(linha).join('')}</div>` : U.vazio('buildings', 'Nenhuma obra descartada.'),
+      rodape: `<button type="button" class="btn btn-s" data-fechar>Fechar</button>${lista.length ? `<button type="button" class="btn btn-d" data-excluir-sel disabled>${D.ic('trash')}Excluir selecionadas</button><button type="button" class="btn btn-d" data-excluir-todas>${D.ic('trash')}Excluir todas</button>` : ''}`,
     });
     if (!ctl) return;
     CC.$$('[data-restaurar]', ctl.corpo).forEach((b) => b.addEventListener('click', async () => {
@@ -93,5 +94,36 @@
         await depois();
       } catch (error) { voltar(); ctl.erro(error.message); }
     }));
+    if (!lista.length) return;
+    const caixas = CC.$$('[data-sel]', ctl.corpo);
+    const todas = CC.$('[data-todas]', ctl.corpo);
+    const botaoSel = CC.$('[data-excluir-sel]', ctl.rodape);
+    const marcadas = () => caixas.filter((c) => c.checked).map((c) => Number(c.dataset.sel));
+    const atualizar = () => {
+      const n = marcadas().length;
+      todas.checked = n === caixas.length;
+      CC.$('[data-contagem]', ctl.corpo).textContent = n ? `${n} selecionada${n > 1 ? 's' : ''}` : 'Selecionar todas';
+      botaoSel.disabled = !n;
+    };
+    todas.addEventListener('change', () => { caixas.forEach((c) => { c.checked = todas.checked; }); atualizar(); });
+    caixas.forEach((c) => c.addEventListener('change', atualizar));
+    const excluir = async (ids) => {
+      const varias = ids.length > 1;
+      const sim = await D.confirmar({
+        titulo: varias ? `Excluir ${ids.length} obras descartadas?` : 'Excluir esta obra descartada?',
+        texto: `${varias ? 'Os registros guardados somem' : 'O registro guardado some'} para sempre e a obra não poderá mais ser restaurada. Não é possível desfazer.`,
+        ok: 'Excluir permanentemente', tom: 'perigo', icone: 'trash',
+      });
+      if (!sim) return;
+      try {
+        const { data } = await CC.api('/centros-custo/descartadas/excluir', { method: 'POST', body: { ids } });
+        ctl.marcarSalvo();
+        ctl.fechar(true);
+        CC.toast(data.excluidas === 1 ? 'Obra descartada excluída para sempre.' : `${data.excluidas} obras descartadas excluídas para sempre.`);
+        await O.descartadas(depois);
+      } catch (error) { ctl.erro(error.message); }
+    };
+    botaoSel.addEventListener('click', () => excluir(marcadas()));
+    CC.$('[data-excluir-todas]', ctl.rodape).addEventListener('click', () => excluir(caixas.map((c) => Number(c.dataset.sel))));
   };
 })(window.CC);

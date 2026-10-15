@@ -89,6 +89,7 @@ test('Servicos curtos: faturar (cobranca na nuvem e NFS-e) e descarte/restauraca
     assert.equal(nf.original_name, 'nfse-77.pdf');
     await request(`/servicos/${s.id}/faturar`, 'POST', { forma: 'pix' }, 409, gestor);
     await request(`/servicos/${s.id}/checklist`, 'PUT', { itens: [{ texto: 'x' }] }, 409, gestor);
+    await request(`/servicos/${s.id}/observacoes`, 'PUT', { descricao: 'Alteracao apos faturar', anterior: '' }, 409, tec);
     await request(`/servicos/${s.id}/situacao`, 'PUT', { situacao: 'em_andamento' }, 409, gestor);
     const d = await request(`/servicos/${s.id}`, 'GET', undefined, 200, gestor);
     assert.equal(d.faturamento.cobrancaSincronizada, true);

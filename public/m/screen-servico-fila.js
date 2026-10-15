@@ -25,6 +25,8 @@
       else if (item.op === 'checklist') await CC.api(`${base}/checklist/${encodeURIComponent(b.item)}`, { method: 'PATCH', body: { feito: b.feito } });
       else if (item.op === 'foto') await CC.api(`${base}/fotos`, { method: 'POST', body: b });
       else if (item.op === 'aceite') await CC.api(`${base}/aceite`, { method: 'PUT', body: b });
+      else if (item.op === 'observacoes') await CC.api(`${base}/observacoes`, { method: 'PUT', body: b });
+      else throw Object.assign(new Error('Operação de campo desconhecida.'), { status: 400 });
     } catch (error) {
       const jaFeito = (item.op === 'checklist' && error.status === 404) // item removido por outra pessoa
         || (item.op === 'foto' && error.status === 409 && /mesma foto/i.test(error.message || ''));
@@ -40,7 +42,7 @@
   // Poe por cima do servico guardado o que ainda nao subiu, para a tela mostrar o que a pessoa acabou de fazer.
   CC.sv.overlay = async function (s) {
     const fila = (await CC.queue.ops()).filter(doServico(s.id)).sort((a, b) => a.criado_em - b.criado_em);
-    s.filaOps = fila;
+    s = { ...s, filaOps: fila };
     if (!fila.length) return s;
     s.checklist = (s.checklist || []).map((c) => ({ ...c }));
     s.fotos = (s.fotos || []).slice();
@@ -52,12 +54,25 @@
         const c = s.checklist.find((x) => x.id === b.item);
         if (c) { c.feito = b.feito; c.pendente = true; }
       } else if (i.op === 'foto') {
-        s.fotos.push({ id: i.client_id, fase: b.fase, nome: b.nome, local: dataUrl(b.conteudoBase64, b.tipo || 'image/jpeg'), pendente: true });
+        s.fotos.push({ id: i.client_id, fase: b.fase, nome: b.nome, legenda: b.legenda || '', local: dataUrl(b.conteudoBase64, b.tipo || 'image/jpeg'), pendente: true });
       } else if (i.op === 'aceite') {
         s.aceite = { nome: b.nome, cargo: b.cargo, dataHora: b.dataHora, local: dataUrl(b.assinatura && b.assinatura.conteudoBase64, 'image/png'), pendente: true };
+      } else if (i.op === 'observacoes') {
+        s.descricaoServidor = s.descricao || '';
+        s.descricaoBase = b.anterior;
+        s.descricao = b.descricao;
+        s.relatoPendente = true;
       }
     }
+    s.pendencias = CC.sv.pendencias ? CC.sv.pendencias(s) : s.pendencias;
     return s;
+  };
+
+  CC.sv.salvarObservacao = async function (s, descricao) {
+    const anterior = s.descricaoBase !== undefined ? s.descricaoBase : (s.descricao || '');
+    const body = { descricao: descricao.trim(), anterior };
+    return CC.sv.enviar(s, { client_id: `obs-${s.id}`, op: 'observacoes', rotulo: 'Relato de campo', body },
+      () => CC.api(`/servicos/${s.id}/observacoes`, { method: 'PUT', body }));
   };
 
   function linha(i, aviso) {

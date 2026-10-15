@@ -36,6 +36,26 @@ async function saveChecklist(tx, id, list) {
   await tx.query('UPDATE service_jobs SET checklist=$2::jsonb,updated_at=NOW() WHERE cost_center_id=$1', [id, JSON.stringify(list)]);
 }
 
+// Relato de campo: p2 permite atualizar a descricao, sem liberar cadastro ou valores ao tecnico.
+// O valor anterior evita sobrescrever o relato de um colega; repetir o mesmo envio e inofensivo.
+router.put('/:id/observacoes', exigirPermissao('p2'), asyncRoute(async (req, res) => {
+  const id = positiveId(req.params.id), body = req.body || {};
+  if (typeof body.descricao !== 'string' || typeof body.anterior !== 'string') throw httpError(400, 'Informe a descrição e o texto anterior.');
+  if (body.descricao.length > 5000 || body.anterior.length > 5000) throw httpError(400, 'O relato aceita até 5.000 caracteres.');
+  const descricao = body.descricao.trim();
+  await getDb().transaction(async (tx) => {
+    const { center, job } = await core.loadService(tx, id, { lock: true });
+    assertEditable(job);
+    if ((center.description || '') === descricao) return;
+    if ((center.description || '') !== body.anterior) throw httpError(409, 'O relato foi alterado por outra pessoa. Seu texto continua salvo; confira a versão atual antes de substituir.');
+    await tx.query('UPDATE cost_centers SET description=$2,revision=revision+1,updated_at=NOW() WHERE id=$1', [id, descricao || null]);
+    await core.touch(tx, id);
+    await recordAudit({ entityType: 'servico', entityId: center.public_id, action: 'relato_atualizado', client: tx,
+      summary: `Relato de campo do serviço ${center.code} atualizado`, data: { descricao }, user: req.usuario });
+  });
+  res.json({ descricao });
+}));
+
 // Substitui a lista inteira (incluir, remover, reordenar, renomear).
 router.put('/:id/checklist', exigirPermissao('p2'), asyncRoute(async (req, res) => {
   const id = positiveId(req.params.id);

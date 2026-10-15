@@ -38,6 +38,7 @@
   };
 
   CC.sv.concluir = function abrir(s, error) {
+    if ((s.filaOps || []).length) return CC.toast('Envie os registros no celular antes de concluir o serviço.', 'cloud-arrow-up');
     const itens = s.checklist || [], feitos = itens.filter((c) => c.feito).length, fotos = s.fotos || [];
     const chkOk = feitos === itens.length, aceOk = !!s.aceite;
     const nA = fotos.filter((f) => f.fase === 'antes').length, nD = fotos.filter((f) => f.fase === 'depois').length;

@@ -128,10 +128,26 @@ test('Servicos curtos: cadastro, gastos por tipo, campo, concluir, relatorio e t
     await db.query("UPDATE users SET all_cost_centers=FALSE WHERE email='tec@teste.local'");
     await request(`/servicos/${id}`, 'GET', undefined, 403, tec);
     await request(`/servicos/${id}/gastos`, 'POST', { tipo: 'outros', valor: 1 }, 403, tec);
+    await request(`/servicos/${id}/observacoes`, 'PUT', { descricao: 'Sem acesso', anterior: '' }, 403, tec);
     assert.equal((await request('/servicos', 'GET', undefined, 200, tec)).length, 0);
     const uid = (await db.query("SELECT id FROM users WHERE email='tec@teste.local'")).rows[0].id;
     await db.query('INSERT INTO user_cost_centers (user_id,cost_center_id) VALUES ($1,$2)', [uid, id]);
     await request(`/servicos/${id}`, 'GET', undefined, 200, tec);
+  });
+
+  await context.test('relato do tecnico: permissao p2, validacao, repeticao segura e conflito sem perda', async () => {
+    const antes = (await request(`/servicos/${id}`)).descricao;
+    await request(`/servicos/${id}`, 'PUT', { descricao: 'Cadastro bloqueado' }, 403, tec);
+    await request(`/servicos/${id}/observacoes`, 'PUT', { descricao: 'Sem versao anterior' }, 400, tec);
+    await request(`/servicos/${id}/observacoes`, 'PUT', { descricao: 'x'.repeat(5001), anterior: antes }, 400, tec);
+    const body = { descricao: 'Central testada\nSensores revisados.', anterior: antes };
+    assert.equal((await request(`/servicos/${id}/observacoes`, 'PUT', body, 200, tec)).descricao, body.descricao);
+    await request(`/servicos/${id}/observacoes`, 'PUT', body, 200, tec);
+    await request(`/servicos/${id}/observacoes`, 'PUT', { descricao: 'Versao antiga', anterior: antes }, 409, tec);
+    assert.equal((await request(`/servicos/${id}`)).descricao, body.descricao);
+    assert.equal((await db.query("SELECT COUNT(*)::int AS n FROM audit_log WHERE entity_type='servico' AND action='relato_atualizado'")).rows[0].n, 1);
+    const html = await request(`/servicos/${id}/relatorio`, 'GET', undefined, 200, tec);
+    assert.match(html, /Sensores revisados/);
   });
 
   await context.test('concluir responde pendencias; checklist, fotos e aceite', async () => {
@@ -143,8 +159,9 @@ test('Servicos curtos: cadastro, gastos por tipo, campo, concluir, relatorio e t
     assert.equal(blocked.codigo, 'pendencias');
     assert.deepEqual(blocked.pendencias.map((x) => x.codigo), ['checklist_incompleto', 'sem_foto_antes', 'sem_foto_depois', 'sem_aceite']);
     await request(`/servicos/${id}/checklist/${c.itens[0].id}`, 'PATCH', { feito: true }, 200, tec);
-    const antes = await request(`/servicos/${id}/fotos`, 'POST', { fase: 'antes', nome: 'antes.jpg', tipo: 'image/jpeg', conteudoBase64: jpg('antes') }, 201, tec);
+    const antes = await request(`/servicos/${id}/fotos`, 'POST', { fase: 'antes', nome: 'antes.jpg', legenda: 'Central antes do reparo', tipo: 'image/jpeg', conteudoBase64: jpg('antes') }, 201, tec);
     assert.equal(antes.fase, 'antes');
+    assert.equal(antes.legenda, 'Central antes do reparo');
     await request(`/servicos/${id}/fotos`, 'POST', { fase: 'antes', nome: 'antes.jpg', conteudoBase64: jpg('antes') }, 409, tec);
     await request(`/servicos/${id}/fotos`, 'POST', { fase: 'meio', conteudoBase64: jpg('x') }, 400, tec);
     await request(`/servicos/${id}/fotos`, 'POST', { fase: 'depois', nome: 'depois.jpg', conteudoBase64: jpg('depois') }, 201, tec);
@@ -156,6 +173,8 @@ test('Servicos curtos: cadastro, gastos por tipo, campo, concluir, relatorio e t
     assert.equal(a.nome, 'Sindico Joao');
     assert.equal(new Date(a.dataHora).toISOString(), '2026-10-03T18:30:00.000Z');
     assert.equal((await request(`/servicos/${id}/pendencias`)).pendencias.length, 0);
+    const resumo = (await request('/servicos?ativo=true', 'GET', undefined, 200, tec)).find((s) => s.id === id);
+    assert.deepEqual(resumo.execucao, { itens: 2, feitos: 2, fotosAntes: 1, fotosDepois: 1, aceite: true });
     const ok = await request(`/servicos/${id}/concluir`, 'POST', {}, 200, tec);
     assert.equal(ok.situacao, 'concluido');
     await request(`/servicos/${id}/concluir`, 'POST', {}, 409, tec);

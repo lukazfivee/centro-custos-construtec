@@ -34,7 +34,7 @@
       k({ rotulo: tipo === 'servico' ? 'Serviços na carteira' : tipo === 'todos' ? 'Obras e serviços' : 'Obras na carteira', valor: String(p.totalCenters != null ? p.totalCenters : obras.length), det: `${exec} em execução`, icone: 'buildings', tom: 'info' }),
       k({ rotulo: 'Valor contratual', valor: CC.moneyShort(p.totalContractValue), det: 'soma dos contratos', icone: 'handshake', tom: 'info' }),
       k({ rotulo: 'Realizado', valor: CC.moneyShort(p.totalRealizedCost), det: `${n(p.burnRatePercent)}% do orçado total`, icone: 'arrow-up-right', tom: 'saida' }),
-      k({ rotulo: 'Saldo da carteira', valor: CC.moneyShort(p.totalBalance), det: 'orçado − realizado', icone: 'scales', tom: p.totalBalance < 0 ? 'err' : 'ok', tomValor: p.totalBalance < 0 ? 'err' : '' }),
+      k({ rotulo: 'Saldo da carteira', valor: `${p.totalBalance < 0 ? '−' : ''}${CC.moneyShort(p.totalBalance)}`, det: 'orçado − realizado', icone: 'scales', tom: p.totalBalance < 0 ? 'err' : 'ok', tomValor: p.totalBalance < 0 ? 'err' : '' }),
       k({ rotulo: 'Horas medidas', valor: `${n(horas.consumed)} h`, det: `de ${n(horas.planned)} h planejadas`, icone: 'clock', tom: 'info' }),
       k({ rotulo: 'Faturado', valor: CC.moneyShort(fat.totalBilled), det: p.totalContractValue > 0 ? `${n((fat.totalBilled / p.totalContractValue) * 100)}% do contratado` : 'sem contrato importado', icone: 'receipt', tom: 'ok' }),
     ].join('');

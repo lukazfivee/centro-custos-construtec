@@ -90,7 +90,7 @@
       </div>
       <div class="linha">
         ${opcoes.obraFixa ? '' : `<select class="inp" data-f="obra" aria-label="Obra" style="width:240px">${opc(a.obras.map((o) => ({ valor: o.id, rotulo: [o.codigo, o.nome].filter(Boolean).join(' · ') })), f.obra, 'Todas as obras')}</select>`}
-        <select class="inp" data-f="mes" aria-label="Competência" style="width:200px">${opc(listaMeses.map((m) => ({ valor: m, rotulo: D.mesAno(m) })), f.mes, 'Todos os meses')}</select>
+        <select class="inp" data-f="mes" aria-label="Competência" style="width:calc(200px * var(--fs, 1))">${opc(listaMeses.map((m) => ({ valor: m, rotulo: D.mesAno(m) })), f.mes, 'Todos os meses')}</select>
         <button type="button" class="btn btn-g" data-mais aria-expanded="${f.mais ? 'true' : 'false'}">${D.ic('sliders-horizontal')}Mais filtros</button>
         ${alterado(f, opcoes.obraFixa) ? `<button type="button" class="btn btn-g" data-limpar>${D.ic('x')}Limpar filtros</button>` : ''}
       </div>

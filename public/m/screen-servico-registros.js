@@ -25,10 +25,16 @@
         <label><input id="sr-conflito" type="checkbox"> Revisei e quero substituir pelo meu texto.</label></span></div>` : ''}
       <div id="sr-erro" role="alert"></div><button class="btn sv-full" type="button" id="sr-salvar">${icon('check', 18)}Salvar relato</button>`);
     const texto = CC.$('#sr-texto', sh.el), status = CC.$('#sr-status', sh.el), btn = CC.$('#sr-salvar', sh.el);
-    let gravacao = Promise.resolve();
+    let gravacao = Promise.resolve(), revisao = 0;
     texto.addEventListener('input', () => {
+      const atual = ++revisao;
+      status.textContent = 'Salvando rascunho…';
       const draft = { key, texto: texto.value, anterior: base, at: Date.now() };
-      gravacao = CC.store.put('cache', draft).then(() => { status.textContent = 'Rascunho salvo neste celular.'; }, () => { status.textContent = 'Não foi possível guardar o rascunho. Mantenha esta janela aberta.'; });
+      gravacao = CC.store.put('cache', draft).then(() => {
+        if (atual === revisao) status.textContent = 'Rascunho salvo neste celular.';
+      }, () => {
+        if (atual === revisao) status.textContent = 'Não foi possível guardar o rascunho. Mantenha esta janela aberta.';
+      });
     });
     btn.addEventListener('click', async () => {
       if (owner !== CC.owner()) return;

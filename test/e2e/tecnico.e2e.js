@@ -35,7 +35,13 @@ test('celular do tecnico: agenda, filtros, relato, rascunho e checklist no naveg
       fs.writeFileSync(path.join(dir, name + '.png'), await driver.takeScreenshot(), 'base64');
     };
     const find = (selector) => driver.findElement(By.css(selector));
-    const wait = (selector) => driver.wait(until.elementLocated(By.css(selector)), 15000);
+    const wait = async (selector) => {
+      const el = await driver.wait(until.elementLocated(By.css(selector)), 15000);
+      await driver.wait(until.elementIsVisible(el), 10000);
+      await driver.wait(until.elementIsEnabled(el), 10000);
+      await driver.wait(() => driver.executeScript("const sheet = arguments[0].closest('.sheet'); return !sheet || sheet.getAnimations().every(a => a.playState !== 'running');", el), 5000);
+      return el;
+    };
     await driver.get(ctx.baseUrl + '/m/');
     await wait('input[type=email]');
     await (await find('input[type=email]')).sendKeys('tecnico@teste.local');

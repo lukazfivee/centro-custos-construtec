@@ -5,6 +5,12 @@
   const C = D.cad;
   const U = D.ui;
   let busca = '';
+  // So exibicao: 10 ou 11 digitos viram (11) 3333-4444 / (11) 98765-4321; o resto aparece como foi gravado.
+  const fone = (t) => {
+    const d = String(t || '').replace(/\D/g, '');
+    if (d.length !== 10 && d.length !== 11) return t || '—';
+    return `(${d.slice(0, 2)}) ${d.slice(2, d.length - 4)}-${d.slice(-4)}`;
+  };
 
   const linha = (f) => ({
     id: f.id, clicavel: C.pode(),
@@ -12,8 +18,8 @@
       `<div class="dois-tx"><b>${esc(f.nome)}${f.ativo === false ? ' (inativo)' : ''}</b>${f.documento ? `<span>${esc(f.documento)}</span>` : ''}</div>`,
       esc(f.contato || '—'),
       f.email ? `<a class="link" href="mailto:${esc(f.email)}" data-email>${esc(f.email)}</a>` : '—',
-      esc(f.telefone || '—'),
-      esc(Number(f.gasto_mes) ? CC.money(f.gasto_mes) : '—'),
+      esc(fone(f.telefone)),
+      Number(f.gasto_mes) ? `<b class="cad-valor">${esc(CC.money(f.gasto_mes))}</b>` : '—',
       esc(String(Number(f.lancamentos_mes) || 0)),
       C.pode() ? `<button type="button" class="ibtn" data-editar="${esc(f.id)}" aria-label="Editar ${esc(f.nome)}">${D.ic('pencil-simple')}</button>` : '',
     ],

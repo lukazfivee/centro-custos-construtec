@@ -20,7 +20,7 @@
         `<div class="cat-nome"><span class="cor" style="${cat.cor ? `background:${esc(cat.cor)}` : ''}"></span><div class="dois-tx"><b>${esc(cat.nome)}</b>${cat.descricao ? `<span>${esc(cat.descricao)}</span>` : ''}</div></div>`,
         U.chip(rotulo, tom, icone),
         esc(String(Number(cat.lancamentos_mes) || 0)),
-        esc(dinheiro(cat.total_mes)),
+        `<b class="cad-valor">${esc(dinheiro(cat.total_mes))}</b>`,
         cat.ativo === false ? U.chip('Inativa', 'neutro') : U.chip('Ativa', 'ok'),
         C.pode() ? `<button type="button" class="ibtn" data-editar="${esc(cat.id)}" aria-label="Editar ${esc(cat.nome)}">${D.ic('pencil-simple')}</button>` : '',
       ],

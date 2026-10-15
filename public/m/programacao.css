@@ -3,6 +3,7 @@
 .pg-data input { min-width: 0; padding: 0 8px; }
 .pg-lista { display: grid; gap: 14px; margin-top: 18px; }
 .pg-card h2, .pg-editor h2, .pg-envios h2, .pg-timeline h2 { margin: 8px 0; font-size: 18px; overflow-wrap: anywhere; }
+.pg-card > .sub { margin: 8px 0; }
 .pg-tipo { display: flex; gap: 6px; align-items: center; color: var(--accent-300); }
 .pg-orientacao { white-space: pre-wrap; overflow-wrap: anywhere; margin: 12px 0; }
 .pg-count { font-size: 12px; color: var(--n400); margin: 12px 0 6px; }

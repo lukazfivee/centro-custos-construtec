@@ -7,12 +7,58 @@
   const n = (v) => (Number.isFinite(Number(v)) ? CC.cents(Number(v)) : null);
   const pct = (part, whole) => (Number(whole) > 0 ? Math.round((Number(part) / Number(whole)) * 100) : null);
   const plain = (v) => String(v || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+  const ROLES = ['admin', 'gestor', 'financeiro', 'engenharia', 'tecnico', 'comercial'];
+  IA.role = () => {
+    const u = CC.session.user() || {}, raw = u.suiteRole || u.role;
+    if (!CC.session.token() || ![...ROLES, 'supervisor'].includes(raw)) return '';
+    const role = CC.d ? CC.d.papelSuite() : (CC.sv ? CC.sv.role() : (raw === 'supervisor' ? 'tecnico' : raw));
+    return ROLES.includes(role) ? role : '';
+  };
+  const can = (p) => Boolean(IA.role() && (CC.d ? CC.d.tem(p) : CC.sv && CC.sv.can(p)));
+  const operational = () => IA.role() === 'tecnico' || !can('p1');
+  IA.contextKey = () => JSON.stringify([CC.session.token(), (CC.session.user() || {}).id, IA.role(),
+    ...['p1', 'p2', 'p5', 'p6', 'p8', 'p9', 'p10'].map(can)]);
+  IA.prepare = async () => {
+    const token = CC.session.token();
+    if (!token) return false;
+    if (!CC.d && CC.sv) await CC.sv.loadPerms();
+    return token === CC.session.token() && Boolean(IA.role());
+  };
+  const TOOL_PERM = { orcado_realizado: 'p1', resumo_geral: 'p1', buscar_lancamentos: 'p1', listar_categorias: 'p1', listar_propostas: 'p10', ver_proposta: 'p10' };
+  const OPERATIONS = ['abrir_tela', 'listar_obras', 'ver_obra', 'listar_servicos', 'ver_servico', 'preparar_reporte'];
+  const allowed = (name) => Boolean(IA.role() && (OPERATIONS.includes(name) || (IA.role() !== 'tecnico' && TOOL_PERM[name] && can(TOOL_PERM[name]))));
+  const SAFE_TELAS = ['inicio', 'obras', 'obra', 'servicos', 'servico', 'menu', 'perfil', 'seguranca', 'reports'];
+  const navAllowed = (name) => {
+    if (!IA.role()) return false;
+    const desktopScreen = ({ configuracoes: 'config', nova_despesa: 'lancamentos', obra: 'obras', servico: 'servicos' })[name] || name;
+    if (CC.d && !CC.d.podeTela(desktopScreen)) return false;
+    if (SAFE_TELAS.includes(name)) return true;
+    if (IA.role() === 'tecnico') return false;
+    if (name === 'nova_despesa') return can('p2');
+    if (['orcamentos', 'proposta'].includes(name)) return can('p10');
+    if (name === 'pedidos_acesso' || ['usuarios', 'historico'].includes(name)) return can('p9');
+    if (name === 'recorrentes') return can('p5');
+    if (name === 'fechamento') return can('p8');
+    if (name === 'cobrancas') return can('p6');
+    return can('p1');
+  };
+  const pick = (obj, fields) => Object.fromEntries(fields.filter((key) => obj && obj[key] !== undefined).map((key) => [key, obj[key]]));
+  const metadata = (c) => pick(c, ['id', 'codigo', 'nome', 'cliente', 'tipo', 'situacao', 'ativo', 'local', 'responsavel', 'descricao', 'data', 'data_inicio', 'data_fim']);
+  function serviceMetadata(s) {
+    return { ...metadata(s), execucao: pick(s.execucao, ['itens', 'feitos', 'fotosAntes', 'fotosDepois', 'aceite']),
+      checklist: (s.checklist || []).map((i) => pick(i, ['id', 'texto', 'feito'])),
+      fotos: (s.fotos || []).map((f) => pick(f, ['id', 'fase', 'nome', 'legenda', 'enviadoPor', 'criadoEm'])),
+      aceite: s.aceite ? pick(s.aceite, ['nome', 'cargo', 'dataHora', 'registradoPor']) : null,
+      conclusao: s.conclusao ? pick(s.conclusao, ['concluidoEm', 'concluidoPor']) : null };
+  }
 
   // Destinos que a IA pode abrir. Cada um devolve a acao feita depois da resposta.
   const TELAS = {
     inicio: () => () => CC.go('home'),
     obras: () => () => CC.go('obras'),
     obra: (a) => (a.obra_id > 0 ? () => CC.go('obra', { id: Number(a.obra_id) }) : 'Informe obra_id (use listar_obras).'),
+    servicos: () => () => CC.go('obras', { tipo: 'servico' }),
+    servico: (a) => (a.servico_id > 0 ? () => CC.go('servico', { id: Number(a.servico_id) }) : 'Informe servico_id (use listar_servicos).'),
     nova_despesa: (a) => () => CC.go('lancar', { novo: true, obraId: Number(a.obra_id) || undefined, from: ['home'] }),
     lancamentos: () => () => CC.go('lancamentos'),
     lancamentos_em_aberto: () => () => CC.go('lancamentos', { situacao: 'pendente' }),
@@ -31,6 +77,7 @@
     lancamentos_vencidos: 'Lançamentos vencidos', notificacoes: 'Notificações', menu: 'Menu', perfil: 'Meu perfil', pedidos_acesso: 'Pedidos de acesso',
     seguranca: 'Segurança', orcamentos: 'Orçamentos', proposta: 'a proposta', versao_completa: 'Versão completa' };
   IA.telas = TELAS; IA.nomes = NOMES; // o desktop troca os destinos (public/d/ia-desktop.js); as ferramentas de dados são as mesmas
+  Object.assign(NOMES, { servicos: 'Serviços', servico: 'o serviço' });
 
   function obraResumo(c) {
     const orcado = Number(c.orcamento) || 0, gasto = Number(c.total_comprometido) || 0;
@@ -48,22 +95,25 @@
 
   const RUN = {
     async abrir_tela(a) {
+      if (!navAllowed(a.tela)) return { erro: 'Seu perfil não acessa essa tela.' };
       const make = TELAS[a.tela];
       if (!make) return { erro: 'Tela desconhecida.' };
       const action = make(a);
       if (typeof action === 'string') return { erro: action };
-      IA.pendingNav = action;
+      const owner = IA.contextKey();
+      IA.pendingNav = () => { if (owner === IA.contextKey() && navAllowed(a.tela)) action(); };
       IA.pendingLabel = NOMES[a.tela] || 'a tela';
       return { ok: true, aviso: 'A tela abre quando você terminar de responder.' };
     },
     async listar_obras(a) {
-      const list = (await CC.api(`/centros-custo?mes=${CC.month()}`)).data || [];
+      const list = (await CC.api(`/centros-custo?mes=${CC.month()}&kind=obra`)).data || [];
       const term = plain(a.busca).trim();
-      const found = list.filter((c) => !term || plain(`${c.codigo} ${c.nome} ${c.cliente || ''}`).includes(term)).map(obraResumo);
+      const found = list.filter((c) => c.tipo !== 'servico' && (!term || plain(`${c.codigo} ${c.nome} ${c.cliente || ''}`).includes(term))).map(operational() ? metadata : obraResumo);
       return { total: found.length, obras: found.slice(0, 40) };
     },
     async ver_obra(a) {
       const { centro: c, lancamentos: list = [] } = (await CC.api(`/centros-custo/${Number(a.obra_id)}/detalhes?mes=${CC.month()}`)).data;
+      if (operational()) return metadata(c);
       const vencidas = list.filter((t) => t.situacao === 'vencido');
       const pagar = list.filter((t) => t.status_financeiro === 'pendente' && t.tipo === 'despesa' && t.situacao !== 'vencido');
       const receber = list.filter((t) => t.status_financeiro === 'pendente' && t.tipo === 'receita');
@@ -73,6 +123,15 @@
         contas_vencidas: { quantidade: vencidas.length, total: sum(vencidas) }, contas_a_pagar: { quantidade: pagar.length, total: sum(pagar) },
         a_receber: { quantidade: receber.length, total: sum(receber) }, lancamentos_do_mes: list.length, ultimos_lancamentos: list.slice(0, 12).map(lanc),
       };
+    },
+    async listar_servicos(a) {
+      const list = (await CC.api('/servicos?ativo=true')).data || [];
+      const term = plain(a.busca).trim();
+      const found = list.filter((s) => !term || plain(`${s.codigo} ${s.nome} ${s.cliente || ''}`).includes(term));
+      return { total: found.length, servicos: found.slice(0, 40).map(serviceMetadata) };
+    },
+    async ver_servico(a) {
+      return serviceMetadata((await CC.api(`/servicos/${Number(a.servico_id)}`)).data);
     },
     async orcado_realizado(a) {
       const d = (await CC.api(`/centros-custo/${Number(a.obra_id)}/orcado-realizado`)).data || {};
@@ -140,7 +199,10 @@
     const fn = RUN[call.name];
     if (!fn) return { erro: 'Ferramenta desconhecida.' };
     try {
+      if (!await IA.prepare() || !allowed(call.name)) return { erro: 'Seu perfil não permite esta consulta.' };
+      const owner = IA.contextKey();
       const out = await fn(call.args || {});
+      if (owner !== IA.contextKey()) return { erro: 'A sessão mudou. Abra uma nova conversa.' };
       const text = JSON.stringify(out);
       return text.length > 14000 ? { aviso: 'Resultado cortado por tamanho.', parcial: text.slice(0, 14000) } : out;
     } catch (error) {
@@ -152,13 +214,17 @@
   IA.declarations = (S) => [{ functionDeclarations: [
     { name: 'abrir_tela', description: 'Abre uma tela do app para a pessoa. Use quando ela pedir para ir, abrir ou ver uma parte do app.',
       parameters: S.object({ properties: {
-        tela: S.enumString({ enum: Object.keys(TELAS), description: 'obra e proposta pedem o id; nova_despesa aceita obra_id; orcamentos e proposta abrem o app Orçamentos.' }),
-        obra_id: S.integer({ description: 'id da obra (centro de custo)' }), proposta_id: S.string({ description: 'id da proposta no Orçamentos' }),
-      }, optionalProperties: ['obra_id', 'proposta_id'] }) },
-    { name: 'listar_obras', description: 'Lista as obras (centros de custo) com orçado, gasto comprometido, % do orçado, pago e recebido. Use para achar o id pelo nome.',
+        tela: S.enumString({ enum: Object.keys(TELAS).filter(navAllowed), description: 'Destino autorizado; detalhes pedem o id correspondente.' }),
+        obra_id: S.integer({ description: 'id da obra' }), servico_id: S.integer({ description: 'id do serviço independente' }), proposta_id: S.string({ description: 'id da proposta no Orçamentos' }),
+      }, optionalProperties: ['obra_id', 'servico_id', 'proposta_id'] }) },
+    { name: 'listar_obras', description: operational() ? 'Lista identificação e situação das obras atribuídas; use para achar o id pelo nome.' : 'Lista obras com orçado, gasto, pago e recebido.',
       parameters: S.object({ properties: { busca: S.string({ description: 'parte do nome, código ou cliente' }) }, optionalProperties: ['busca'] }) },
-    { name: 'ver_obra', description: 'Detalhe de uma obra: resultado, contas vencidas, a pagar, a receber, proposta de origem e últimos lançamentos do mês.',
+    { name: 'ver_obra', description: operational() ? 'Identificação, descrição, local e situação da obra atribuída.' : 'Detalhe financeiro da obra, contas e últimos lançamentos.',
       parameters: S.object({ properties: { obra_id: S.integer({}) } }) },
+    { name: 'listar_servicos', description: 'Lista serviços independentes atribuídos e progresso da execução.',
+      parameters: S.object({ properties: { busca: S.string({}) }, optionalProperties: ['busca'] }) },
+    { name: 'ver_servico', description: 'Detalhe operacional de um serviço independente: local, relato, checklist, fotos e aceite.',
+      parameters: S.object({ properties: { servico_id: S.integer({}) } }) },
     { name: 'orcado_realizado', description: 'Orçado x realizado da obra pelo orçamento aprovado no Orçamentos: por categoria e itens acima do orçado.',
       parameters: S.object({ properties: { obra_id: S.integer({}) } }) },
     { name: 'resumo_geral', description: 'Resumo financeiro de todas as obras num mês: receitas, despesas, a pagar, vencidos, por obra e por categoria.',
@@ -180,5 +246,5 @@
         titulo: S.string({ description: 'curto, 3 a 120 caracteres' }), descricao: S.string({ description: 'o que a pessoa fez, o que esperava, o que aconteceu, em que tela' }),
         tipo: S.enumString({ enum: ['bug', 'melhoria', 'sugestao'] }), severidade: S.enumString({ enum: ['baixa', 'media', 'alta', 'critica'] }),
       } }) },
-  ] }];
+  ].filter((tool) => allowed(tool.name)) }];
 })(window.CC = window.CC || {});

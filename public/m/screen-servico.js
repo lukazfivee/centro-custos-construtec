@@ -4,7 +4,7 @@
   const { esc, icon, money } = CC;
   const role = () => ((CC.session.user() || {}).role || '');
   // Matriz padrao do servidor (services/permissions.js). O servidor sempre confere de novo.
-  const PERM = { p1: ['admin', 'gestor', 'financeiro', 'engenharia'], p2: ['admin', 'gestor', 'financeiro', 'engenharia', 'tecnico'],
+  const PERM = { p1: ['admin', 'gestor', 'financeiro', 'engenharia'], p2: ['admin', 'gestor', 'financeiro', 'engenharia'],
     p3: ['admin', 'gestor', 'financeiro'], p4: ['admin', 'gestor', 'financeiro'], p5: ['admin', 'gestor'], p6: ['admin', 'gestor', 'financeiro'] };
   const ST = {
     agendado: ['Agendado', 'calendar-blank', 'ac'], em_andamento: ['Em andamento', 'play-circle', 'wn'],
@@ -20,14 +20,25 @@
   const dataHora = (iso) => (iso ? new Date(iso).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }).replace(',', ' às') : '');
 
   // Permissoes reais vem de /auth/me (o login so traz o papel antigo); sem resposta, vale a matriz padrao.
-  let perms = null, permsDono = '', profile = null;
+  let perms = null, permsDono = '', permsToken = '', profile = null;
+  const perfilAtual = () => permsDono === CC.owner() && permsToken === CC.session.token();
   CC.sv = {
     ST, TIPOS, plural, pct, dataHora,
-    role: () => (permsDono === CC.owner() && profile ? profile.suiteRole : ((CC.session.user() || {}).suiteRole || (['admin', 'gestor'].includes(role()) ? role() : 'tecnico'))),
-    can: (p) => (perms && permsDono === CC.owner() ? perms.includes(p) : (PERM[p] || []).includes(role())),
+    role: () => (perfilAtual() && profile ? profile.suiteRole : ((CC.session.user() || {}).suiteRole || (role() === 'supervisor' ? 'tecnico' : role()))),
+    can: (p) => CC.sv.role() !== 'tecnico' && (perms && perfilAtual() ? perms.includes(p) : (PERM[p] || []).includes(CC.sv.role())),
+    campo: () => CC.sv.role() === 'tecnico' || CC.sv.can('p2'),
     async loadPerms() {
-      if (perms && permsDono === CC.owner()) return;
-      try { const { data } = await CC.cached('me', '/auth/me'); perms = data.permissoes || null; profile = data; permsDono = CC.owner(); } catch { /* fica a matriz padrao */ }
+      if (perms && perfilAtual()) return;
+      const owner = CC.owner(), token = CC.session.token();
+      if (!token) return;
+      try {
+        // O cache por conta pode conter o papel de outro login; offline vale o papel salvo na sessão atual.
+        const { data } = await CC.api('/auth/me');
+        if (owner !== CC.owner() || token !== CC.session.token()) return;
+        perms = data.permissoes || null; profile = data; permsDono = owner; permsToken = token;
+        const user = CC.session.user();
+        if (user && data.suiteRole) localStorage.setItem('cc_usuario', JSON.stringify({ ...user, suiteRole: data.suiteRole }));
+      } catch { /* fica a matriz padrao */ }
     },
     badge: (sit) => { const s = ST[sit] || ST.agendado; return `<span class="sv-st ${s[2]}">${icon(s[1], 12)}${s[0]}</span>`; },
     reload: (id, tab, extra) => CC.go('servico', { id, tab, ...(extra || {}) }),
@@ -51,6 +62,9 @@
   }
 
   function resumo(s) {
+    if (CC.sv.role() === 'tecnico') return `<div class="card">${[['Cliente', s.cliente], ['Local', s.local], ['Data', CC.dateFull(s.data)], ['Responsável', s.responsavel]]
+      .map(([k, v]) => `<div class="kv"><span>${k}</span><b>${esc(v || '—')}</b></div>`).join('')}</div>
+      <div class="card"><span class="label">Descrição / relato de campo</span><p class="tc-relato">${esc(s.descricao || 'Sem observações registradas.')}</p></div>`;
     const g = s.resumo || {}, tipos = g.gastosPorTipo || [], total = Number(g.gastos) || 0;
     const grupos = (s.gastos || []).length
       ? tipos.map((t) => { const ic = (TIPOS[t.tipo] || TIPOS.outros)[1], w = total > 0 ? Math.max(0, Math.round((t.total / total) * 100)) : 0;
@@ -97,6 +111,7 @@
 
   // Botao do rodape ao lado de Lancar despesa, conforme a situacao.
   function secundario(s) {
+    if (CC.sv.role() === 'tecnico' && !['agendado', 'em_andamento'].includes(s.situacao)) return ['Execução', 'list-checks', 'execucao'];
     if (s.situacao === 'agendado') return ['Iniciar serviço', 'play', 'iniciar'];
     if (s.situacao === 'em_andamento') return ['Concluir', 'check-circle', 'concluir'];
     if (s.situacao === 'concluido' && CC.sv.can('p6')) return ['Faturar', 'receipt', 'faturar'];
@@ -116,8 +131,11 @@
 
   function erro(el, error, params) {
     const off = error && error.status === 0;
+    const offlineMsg = CC.sv.role() === 'tecnico'
+      ? 'O celular está sem internet e este serviço ainda não foi salvo no aparelho. Abra um serviço já consultado para registrar a execução sem internet.'
+      : 'O celular está sem internet e este serviço ainda não foi salvo no aparelho. Dá para lançar despesas em outro serviço já aberto; elas entram na fila.';
     el.innerHTML = `${topo('Serviço', '', false)}<div class="empty sv-empty" style="padding-top:48px">${icon(off ? 'cloud-slash' : 'warning-circle', 30)}
-      <b>Não deu para abrir o serviço</b>${esc(off ? 'O celular está sem internet e este serviço ainda não foi salvo no aparelho. Dá para lançar despesas em outro serviço já aberto; elas entram na fila.' : (error && error.message) || 'Tente de novo.')}
+      <b>Não deu para abrir o serviço</b>${esc(off ? offlineMsg : (error && error.message) || 'Tente de novo.')}
       <button class="btn" type="button" id="sv-retry" style="padding:0 22px">${icon('arrow-clockwise', 18)}Tentar de novo</button>
       <button class="btn2" type="button" id="sv-obras" style="padding:0 22px">Voltar para Obras</button></div>`;
     CC.$('#voltar', el).addEventListener('click', () => CC.go('obras'));
@@ -127,7 +145,7 @@
 
   CC.screens.servico = async function (params) {
     const id = Number(params && params.id);
-    const tab = (params && params.tab) || 'resumo';
+    let tab = (params && params.tab) || 'resumo';
     const el = CC.render(carregando(), true, params);
     CC.$('#voltar', el).addEventListener('click', () => CC.go('obras'));
     let result;
@@ -137,16 +155,20 @@
       if (params.__nav && params.__nav !== CC.nav) return undefined;
       return erro(el, error, { id, tab });
     }
+    const tecnico = CC.sv.role() === 'tecnico';
+    if (tecnico && !['resumo', 'exec'].includes(tab)) tab = 'exec';
     const s = await CC.sv.overlay(result.data); // soma o que ainda esta na fila do celular
+    if (!CC.session.token() || (params && params.__nav && params.__nav !== CC.nav)) return;
     CC.sv.atual = s;
     const body = tab === 'resumo' ? resumo(s) : tab === 'exec' ? CC.sv.execucao(s) : await lancamentos(s, params);
     const [secL, secI, secK] = secundario(s);
     const sub = `<div class="sv-sub"><span class="tag">${esc(s.codigo)} · Serviço</span>${CC.sv.badge(s.situacao)}<span>${esc([CC.dateFull(s.data), s.responsavel].filter(Boolean).join(' · '))}</span></div>`;
     const page = CC.render(`${topo(s.nome, sub, true)}${CC.staleNote(result)}
-      <div class="seg" role="group" aria-label="Seções do serviço">${TABS.map(([k, label]) => `<button type="button" data-tab="${k}" aria-pressed="${k === tab}">${label}</button>`).join('')}</div>
+      <div class="seg" role="group" aria-label="Seções do serviço">${TABS.filter(([k]) => !tecnico || k !== 'lanc').map(([k, label]) => `<button type="button" data-tab="${k}" aria-pressed="${k === tab}">${label}</button>`).join('')}</div>
       ${body}
+      ${CC.sv.can('p5') ? '<div id="sv-tecnicos"></div>' : ''}
       <div class="actions sv-actions"><button class="btn2" type="button" id="sv-sec" data-acao="${secK}">${icon(secI, 18)}${esc(secL)}</button>
-        <button class="btn" type="button" data-gasto>${icon('plus', 18)}Lançar despesa</button></div>`, true, params);
+        ${CC.sv.can('p2') ? `<button class="btn" type="button" data-gasto>${icon('plus', 18)}Lançar despesa</button>` : ''}</div>`, true, params);
     CC.$('#voltar', page).addEventListener('click', () => CC.go('obras'));
     CC.$$('[data-tab]', page).forEach((b) => b.addEventListener('click', () => CC.sv.reload(id, b.dataset.tab)));
     CC.$$('[data-gasto]', page).forEach((b) => b.addEventListener('click', () => CC.sv.gasto(s)));
@@ -158,6 +180,7 @@
     if (cob) cob.addEventListener('click', () => (s.situacao === 'concluido' && CC.sv.can('p6') ? CC.sv.faturar(s)
       : CC.toast(s.faturamento ? cobranca(s) : 'Conclua o serviço para faturar', 'receipt')));
     if (tab === 'exec') CC.sv.bindExec(s, page);
+    if (CC.sv.can('p5') && CC.tecnicos) CC.tecnicos.panel(CC.$('#sv-tecnicos', page), id);
     if (tab === 'lanc') {
       // Mesmas notas fiscais da obra (fornecedor e cliente): o servico e um centro de custo.
       CC.obraNf(CC.$('#sv-nf', page), { id: s.id });

@@ -11,9 +11,9 @@
     const item = (id, ic, t, sub) => `<button type="button" class="suite-item om-item" id="${id}">${icon(ic, 22)}<span><b>${esc(t)}</b><small>${esc(sub)}</small></span></button>`;
     const sh = CC.sheet('sv-sheet', `${CC.sheetHead('wrench', s.codigo)}<p class="muted od-sub">${esc(s.nome)}</p><div style="height:10px"></div>
       ${CC.sv.can('p5') ? item('sm-edit', 'pencil-simple', 'Editar serviço', 'Dados, valor cobrado ou mudar para obra') : ''}
-      ${item('sm-rel', 'file-text', 'Relatório do serviço', '1 página para o cliente')}
-      ${s.situacao === 'agendado' ? item('sm-ini', 'play', 'Iniciar serviço', 'Passa para Em andamento') : ''}
-      ${s.situacao === 'em_andamento' ? item('sm-conc', 'check-circle', 'Concluir serviço', 'Confere checklist, fotos e aceite') : ''}
+      ${CC.sv.role() === 'tecnico' ? '' : item('sm-rel', 'file-text', 'Relatório do serviço', '1 página para o cliente')}
+      ${CC.sv.campo() && s.situacao === 'agendado' ? item('sm-ini', 'play', 'Iniciar serviço', 'Passa para Em andamento') : ''}
+      ${CC.sv.campo() && s.situacao === 'em_andamento' ? item('sm-conc', 'check-circle', 'Concluir serviço', 'Confere checklist, fotos e aceite') : ''}
       ${s.situacao === 'concluido' && CC.sv.can('p6') ? item('sm-fat', 'receipt', 'Faturar · cobrança', s.veValores ? `Gera a cobrança de ${money(s.valor)}` : 'Gera a cobrança') : ''}`);
     const on = (id, fn) => { const b = CC.$(`#${id}`, sh.el); if (b) b.addEventListener('click', () => { sh.close(); fn(); }); };
     on('sm-edit', () => CC.sv.form({ servico: s }));
@@ -24,9 +24,11 @@
   };
 
   CC.sv.acao = async function (s, acao, btn) {
+    if (acao === 'execucao') return CC.sv.reload(s.id, 'exec');
     if (acao === 'concluir') return CC.sv.concluir(s);
     if (acao === 'faturar') return CC.sv.faturar(s);
     if (acao === 'relatorio') return CC.go('servico-rel', { id: s.id });
+    if (!CC.sv.campo()) return CC.toast('Sem permissão para executar o serviço.', 'shield-check');
     if (btn) CC.busy(btn, 'Iniciando…');
     try {
       await CC.api(`/servicos/${s.id}/situacao`, { method: 'PUT', body: { situacao: 'em_andamento' } });
@@ -38,6 +40,7 @@
   };
 
   CC.sv.concluir = function abrir(s, error) {
+    if (!CC.sv.campo()) return CC.toast('Sem permissão para executar o serviço.', 'shield-check');
     if ((s.filaOps || []).length) return CC.toast('Envie os registros no celular antes de concluir o serviço.', 'cloud-arrow-up');
     const itens = s.checklist || [], feitos = itens.filter((c) => c.feito).length, fotos = s.fotos || [];
     const chkOk = feitos === itens.length, aceOk = !!s.aceite;
@@ -67,6 +70,7 @@
   };
 
   CC.sv.faturar = function abrir(s, error, prev) {
+    if (!CC.sv.can('p6')) return CC.toast('Sem permissão para faturar.', 'shield-check');
     const f = prev || { valor: s.valor != null ? CC.money(s.valor).replace(/^R\$\s*/, '') : '', venc: 15, forma: 'pix', nfse: '', pdf: null };
     const sh = CC.sheet('sv-sheet', `${CC.sheetHead('receipt', 'Faturar serviço')}<p class="muted od-sub">${esc(s.codigo)} · ${esc(s.nome)}</p>
       ${errBox(error)}

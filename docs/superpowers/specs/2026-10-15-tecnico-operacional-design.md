@@ -1,0 +1,13 @@
+# Acesso operacional do técnico
+
+O técnico trabalha somente nas obras e serviços atribuídos a ele. Obras e serviços são centros independentes; serviço é a alternativa mais simples à obra, nunca um filho dela. A atribuição deve ser administrada dentro do detalhe de cada item por quem tem p5 (admin/gestor), com seleção de uma ou várias contas ativas de técnico e remoção explícita. Reutilizar user_cost_centers; não criar relacionamento entre obra e serviço.
+
+O técnico pode consultar identificação, local, descrição, situação, checklist, fotos e registros de execução dos itens atribuídos. Não pode consultar nem lançar despesas, fornecedores, receitas, orçamento, comparação orçado/realizado, contratos comerciais, cobranças, propostas ou indicadores financeiros. Essa restrição deve valer no servidor, inclusive acesso direto a URLs e ferramentas da IA, e para contas antigas com all_cost_centers=true. Administradores e demais perfis mantêm suas regras. Revogar atribuição bloqueia imediatamente novas requisições; dados previamente vistos offline não podem ser revogados remotamente de um aparelho desconectado.
+
+Separar autorização de execução da permissão p2 de lançamento financeiro. Preservar checklist, fotos, aceite, relato de campo e iniciar/concluir de serviços. Nas obras, apresentar visão operacional sem valores; aproveitar os recursos existentes, sem inventar um novo sistema de checklists de obra se inexistente.
+
+Menu deve usar o papel canônico Técnico e oferecer somente recursos compatíveis. IA deve apresentar sugestões operacionais e usar exclusivamente ferramentas autorizadas, com execução validada mesmo quando chamada diretamente ou por histórico antigo. Não confiar na instrução textual como proteção de acesso. Estado de conversa não deve misturar usuários.
+
+Decisões de implementação: reutilizar Node/Express/PGlite e JavaScript/CSS existentes, sem dependências novas; APIs de atribuição retornam apenas id/nome e seleção atual, acessíveis a p5, nunca diretório de usuários para técnicos. Atualizar tanto mobile quanto a atribuição no desktop administrativo. Atribuição é ao item inteiro, sem datas. Agenda diária, pausa e retomada planejadas ficam para solicitação futura; não transformar data inicial do serviço em agenda diária nesta mudança.
+
+Validar técnicos sem atribuição, conta antiga com acesso global, leitura e escrita fora do escopo, remoção, usuários inativos e não técnicos, manutenção de permissões de admin/gestor, IA sem chamada financeira, execução funcionando sem p2 e apresentação mobile. Respeitar MAX_LINES<=350, sem emojis e integridade financeira. Publicar pela Cloudflare com Docker já autorizado, após validação e revisão.

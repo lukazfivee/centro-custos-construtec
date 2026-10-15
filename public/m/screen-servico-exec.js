@@ -15,7 +15,7 @@
   CC.sv.blobUrl = blobUrl;
 
   CC.sv.execucao = function (s) {
-    const fechado = s.situacao === 'faturado' || !CC.sv.can('p2');
+    const fechado = s.situacao === 'faturado' || !CC.sv.campo();
     const itens = s.checklist || [];
     const feitos = itens.filter((c) => c.feito).length;
     const fotos = s.fotos || [];
@@ -114,7 +114,7 @@
     if (!f) return;
     const sh = CC.sheet('sv-sheet', `${CC.sheetHead('image', f.fase === 'antes' ? 'Foto · antes' : 'Foto · depois')}
       <img class="sv-foto-full" id="sv-ff" alt="${esc(f.legenda || f.nome)}">${f.legenda ? `<p class="tc-legenda">${esc(f.legenda)}</p>` : ''}<p class="muted od-sub">${f.pendente ? 'Aguardando internet para enviar' : esc([f.enviadoPor, CC.sv.dataHora(f.criadoEm)].filter(Boolean).join(' · '))}</p>
-      ${s.situacao === 'faturado' || !CC.sv.can('p2') ? '' : `<button class="btn2" type="button" id="sv-ff-rm">${icon('trash', 18)}${f.pendente ? 'Tirar da fila' : 'Remover foto'}</button>`}`);
+      ${s.situacao === 'faturado' || !CC.sv.campo() ? '' : `<button class="btn2" type="button" id="sv-ff-rm">${icon('trash', 18)}${f.pendente ? 'Tirar da fila' : 'Remover foto'}</button>`}`);
     if (f.pendente) CC.$('#sv-ff', sh.el).src = f.local;
     else blobUrl(f.url).then((url) => { CC.$('#sv-ff', sh.el).src = url; }).catch(() => {});
     const rm = CC.$('#sv-ff-rm', sh.el);

@@ -11,6 +11,7 @@
   }
 
   CC.sv.gasto = function abrir(s, prev, error) {
+    if (!CC.sv.can('p2')) return CC.toast('Seu perfil não tem permissão para lançar despesas.', 'shield-check');
     const g = prev || { tipo: 'deslocamento', valor: '', desc: '', recibo: null };
     const T = CC.sv.TIPOS;
     const val = CC.parseMoney(g.valor);

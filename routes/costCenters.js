@@ -4,7 +4,8 @@ const crypto = require('crypto');
 const { getDb } = require('../db');
 const { autenticar, exigirPapel } = require('../middleware/auth');
 const { obrasPermitidas, assertObra, bloquearEscopado } = require('../services/obraScope');
-const { exigirPermissao } = require('../services/permissions');
+const { exigirPermissao, suiteRoleOf } = require('../services/permissions');
+const { operationalCenters } = require('../services/costCenterOperational');
 const { asyncRoute, httpError, positiveId } = require('../lib/http');
 const { parsePagination, wantsPagination, paginationMeta } = require('../lib/pagination');
 const { csvLine, decimalBr } = require('../lib/csv');
@@ -40,6 +41,7 @@ const COST_CENTERS_SELECT = `
   FROM cost_centers cc LEFT JOIN ${allocatedTransactionsSql} t ON t.cost_center_id=cc.id AND t.deleted_at IS NULL`;
 
 router.get('/', asyncRoute(async (req, res) => {
+  if (suiteRoleOf(req.usuario) === 'tecnico') return operationalCenters(req, res, { kind: kindFilter(req.query.kind) });
   const { month, range } = reportMonth(req.query);
   const orderBy = 'cc.active DESC, cc.name';
   const ids = await obrasPermitidas(req);
@@ -81,6 +83,7 @@ router.get('/', asyncRoute(async (req, res) => {
 
 router.get('/:id/detalhes', asyncRoute(async (req, res) => {
   const id = positiveId(req.params.id);
+  if (suiteRoleOf(req.usuario) === 'tecnico') return operationalCenters(req, res, { id });
   await assertObra(req, id);
   const { month, range } = reportMonth(req.query);
   const db = getDb();

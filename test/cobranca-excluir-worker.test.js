@@ -82,11 +82,11 @@ maybe('Worker: excluir e restaurar cobranca e reversivel, protegido por papel e 
   // A obra espelhada continua intacta (so a cobranca foi marcada).
   assert.equal(raw.prepare("SELECT COUNT(*) AS n FROM sync_entities WHERE entity_type='obra'").get().n, 3);
 
-  // Sem papel de admin/gestor nao exclui nem restaura; a lista continua liberada para leitura.
+  // Técnico legado não exclui, restaura ou consulta cobranças.
   raw.prepare("UPDATE cloud_users SET role='supervisor'").run();
   assert.equal((await call('POST', `/v1/client-followups/${C}/delete`, {})).status, 403);
   assert.equal((await call('POST', `/v1/client-followups/${A}/restore`, {})).status, 403);
-  assert.equal((await call('GET', '/v1/client-followups')).status, 200);
+  assert.equal((await call('GET', '/v1/client-followups')).status, 403);
   assert.equal((await call('POST', `/v1/client-followups/${C}/delete`, {}, 'token-invalido')).status, 401);
   raw.prepare("UPDATE cloud_users SET role='gestor'").run();
 

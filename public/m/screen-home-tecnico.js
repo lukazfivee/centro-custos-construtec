@@ -39,7 +39,7 @@
     try {
       [servicos, obras, fila] = await Promise.all([CC.cached('servicos', '/servicos?ativo=true'),
         CC.cached('obras', `/centros-custo?mes=${CC.month()}`).catch((error) => { if (error.status === 401) throw error; return { error }; }),
-        Promise.all([CC.queue.ops(), CC.queue.mine()]).then(([a, b]) => a.concat(b))]);
+        CC.queue.ops()]);
     } catch (error) { if (error.status === 401 || (params && params.__nav !== CC.nav)) return; return CC.errorScreen(el, error, () => CC.go('home')); }
     if (!CC.session.token() || (params && params.__nav !== CC.nav)) return;
     const hoje = CC.today(), lista = servicos.data || [], ativos = lista.filter((s) => s.ativo !== false && aberto(s));
@@ -70,7 +70,7 @@
     }));
     CC.$$('[data-tc-obra]', view).forEach((b) => b.addEventListener('click', () => CC.go('obra', { id: Number(b.dataset.tcObra) })));
     const enviar = CC.$('#tc-fila', view);
-    if (enviar) enviar.addEventListener('click', () => CC.go('lancamentos'));
+    if (enviar) enviar.addEventListener('click', () => { const item = fila[0]; if (item) CC.go('servico', { id: Number(item.servicoId), tab: 'exec' }); });
     pintar();
   };
 })(window.CC = window.CC || {});

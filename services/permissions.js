@@ -8,7 +8,7 @@ const logger = require('../lib/logger');
 const SUITE_ROLES = ['admin', 'gestor', 'financeiro', 'engenharia', 'tecnico', 'comercial'];
 const MATRIX = {
   p1: ['admin', 'gestor', 'financeiro', 'engenharia'],
-  p2: ['admin', 'gestor', 'financeiro', 'engenharia', 'tecnico'],
+  p2: ['admin', 'gestor', 'financeiro', 'engenharia'],
   p3: ['admin', 'gestor', 'financeiro'],
   p4: ['admin', 'gestor', 'financeiro'],
   p5: ['admin', 'gestor'],
@@ -21,7 +21,7 @@ const MATRIX = {
   p12: ['admin', 'gestor', 'engenharia', 'tecnico'],
 };
 const PERMISSIONS = Object.keys(MATRIX);
-// Papeis que so veem as obras atribuidas (a menos que all_cost_centers seja TRUE).
+// Técnico sempre exige atribuição; engenharia pode receber all_cost_centers.
 const SCOPED_ROLES = ['engenharia', 'tecnico'];
 const CACHE_MS = 60 * 1000;
 
@@ -68,12 +68,13 @@ async function matrixFor(user) {
 async function accessInfo(user) {
   const role = suiteRoleOf(user);
   const matrix = role === 'admin' ? null : await matrixFor(user);
-  return { suiteRole: role, permissoes: PERMISSIONS.filter((p) => role === 'admin' || matrix[role]?.[p]) };
+  return { suiteRole: role, permissoes: PERMISSIONS.filter((p) => role === 'admin' || (role !== 'tecnico' || p === 'p12') && matrix[role]?.[p]) };
 }
 
 async function can(user, permission) {
   const role = suiteRoleOf(user);
   if (role === 'admin') return true;
+  if (role === 'tecnico' && permission !== 'p12') return false;
   const matrix = await matrixFor(user);
   return Boolean(matrix[role]?.[permission]);
 }
@@ -87,6 +88,13 @@ function exigirPermissao(...permissions) {
   };
 }
 
+async function exigirExecucao(req, res, next) {
+  try {
+    if (req.usuario && (suiteRoleOf(req.usuario) === 'tecnico' || await can(req.usuario, 'p2'))) return next();
+    return res.status(403).json({ erro: 'Você não tem permissão para esta ação.' });
+  } catch (error) { return next(error); }
+}
+
 module.exports = {
-  SUITE_ROLES, PERMISSIONS, SCOPED_ROLES, defaultMatrix, suiteRoleOf, matrixFor, accessInfo, can, exigirPermissao, resetPermissionsCache,
+  SUITE_ROLES, PERMISSIONS, SCOPED_ROLES, defaultMatrix, suiteRoleOf, matrixFor, accessInfo, can, exigirPermissao, exigirExecucao, resetPermissionsCache,
 };

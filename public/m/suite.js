@@ -24,6 +24,7 @@
   }
 
   CC.suite.open = function () {
+    if (CC.sv && CC.sv.role() === 'tecnico') return;
     close();
     const origem = CC.suite.context && CC.suite.context.proposta;
     const other = inApp() ? '' : ' target="_blank" rel="noopener"';

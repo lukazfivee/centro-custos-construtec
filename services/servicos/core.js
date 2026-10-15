@@ -2,7 +2,7 @@
 // Um servico e um cost_center com kind='servico' + uma linha em service_jobs (criada sob demanda).
 const { httpError } = require('../../lib/http');
 const { sumDecimal, roundDecimal } = require('../../lib/decimal');
-const { can } = require('../permissions');
+const { can, suiteRoleOf } = require('../permissions');
 
 const STATUSES = ['agendado', 'em_andamento', 'concluido', 'faturado'];
 const EXPENSE_KINDS = ['deslocamento', 'combustivel', 'material', 'mao_de_obra', 'outros'];
@@ -111,10 +111,11 @@ function billingOf(job) {
     cobrancaSincronizada: job.billing_cloud_synced === true };
 }
 
-// Detalhe completo. Sem p1, saem valor cobrado, resultado, margem e o valor faturado.
+// Técnico recebe somente execução; nos demais perfis, p1 controla os valores comerciais.
 async function serviceDetail(db, id, user) {
   const { center, job } = await loadService(db, id);
-  const [photos, expenses, money_] = [await photosOf(db, id), await expensesOf(db, id), await seesMoney(user)];
+  const operational = suiteRoleOf(user) === 'tecnico';
+  const [photos, expenses, money_] = [await photosOf(db, id), operational ? [] : await expensesOf(db, id), await seesMoney(user)];
   const summary = summarize(center.contract_amount, expenses);
   const out = {
     id: center.id, publicId: center.public_id, codigo: center.code, nome: center.name, cliente: center.client || '',
@@ -126,7 +127,9 @@ async function serviceDetail(db, id, user) {
     conclusao: job.completed_at ? { concluidoEm: job.completed_at, concluidoPor: job.completed_by_name || '', pendenciasNaConclusao: job.completed_pending || [] } : null,
     faturamento: billingOf(job), veValores: money_, atualizadoEm: job.updated_at,
   };
-  if (!money_) {
+  if (operational) {
+    delete out.gastos; delete out.resumo; delete out.faturamento;
+  } else if (!money_) {
     delete out.resumo.cobrado; delete out.resumo.resultado; delete out.resumo.margem;
     if (out.faturamento) delete out.faturamento.valor;
   } else out.valor = summary.cobrado;

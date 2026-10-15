@@ -44,7 +44,8 @@
     const obra = { ...c, revision: daLista ? daLista.revision : c.revision };
     el.innerHTML = `<div class="pagina obra">${topo(obra)}
       <div class="abas-pagina" role="tablist">${ABAS.map(([k, t]) => `<a class="tab" role="tab" href="#/obras/${esc(c.id)}${k === 'orcado' ? '' : `/${k}`}" aria-selected="${k === aba ? 'true' : 'false'}">${esc(t)}</a>`).join('')}</div>
-      <div data-aba-corpo></div></div>`;
+      ${D.tem('p5') ? '<div data-obra-tecnicos></div>' : ''}<div data-aba-corpo></div></div>`;
+    if (D.tem('p5')) CC.tecnicos.panel(CC.$('[data-obra-tecnicos]', el), c.id);
     const editar = CC.$('[data-editar-obra]', el);
     if (editar) editar.addEventListener('click', () => O.formulario(obra, () => D.ir(location.hash.replace(/^#\/?/, ''))));
     CC.$('[data-lancar]', el).addEventListener('click', () => D.lanc.formulario(null, null, c.id));

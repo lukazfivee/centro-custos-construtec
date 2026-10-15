@@ -21,6 +21,8 @@ test('matriz padrao do Centro e igual a do Worker central', async () => {
   assert.deepEqual(permissions.defaultMatrix(), worker.defaultMatrix());
   assert.deepEqual(permissions.SUITE_ROLES, worker.SUITE_ROLES);
   assert.deepEqual(permissions.PERMISSIONS, worker.PERMISSIONS);
+  assert.equal(permissions.defaultMatrix().tecnico.p2, false);
+  assert.equal(worker.defaultMatrix().tecnico.p2, false);
 });
 
 test('papel efetivo: papel novo, ou o mapeamento do legado (supervisor -> tecnico)', () => {
@@ -40,7 +42,7 @@ test('exigirPermissao: cada papel passa so onde a matriz permite', async () => {
     await permissions.exigirPermissao(...perms)({ usuario: { role: 'supervisor', suite_role: role } }, res, () => { nextCalled = true; });
     return nextCalled ? 200 : status;
   };
-  assert.equal(await run('tecnico', 'p2'), 200);
+  assert.equal(await run('tecnico', 'p2'), 403);
   assert.equal(await run('tecnico', 'p3'), 403);
   assert.equal(await run('financeiro', 'p4'), 200);
   assert.equal(await run('financeiro', 'p5'), 403);
@@ -52,6 +54,27 @@ test('exigirPermissao: cada papel passa so onde a matriz permite', async () => {
   const res = { status(code) { status = code; return this; }, json() { return this; } };
   await permissions.exigirPermissao('p1')({}, res, () => {});
   assert.equal(status, 403);
+});
+
+test('técnico recusa financeiro mesmo com matriz remota antiga permissiva', async () => {
+  const cloud = require('../services/cloudAuth');
+  const before = cloud.permissions;
+  const url = process.env.DATABASE_URL;
+  process.env.DATABASE_URL = 'remote-test';
+  cloud.permissions = async () => ({ matrix: { admin: {}, tecnico: Object.fromEntries(permissions.PERMISSIONS.map((p) => [p, true])) } });
+  permissions.resetPermissionsCache();
+  try {
+    const user = { suite_role: 'tecnico', cloud_managed: true, cloud_session_token: 'fixture-token' };
+    for (let i = 1; i <= 11; i++) assert.equal(await permissions.can(user, `p${i}`), false);
+    assert.deepEqual((await permissions.accessInfo(user)).permissoes, ['p12']);
+    let allowed = false;
+    await permissions.exigirExecucao({ usuario: user }, {}, () => { allowed = true; });
+    assert.equal(allowed, true);
+  } finally {
+    cloud.permissions = before;
+    if (url === undefined) delete process.env.DATABASE_URL; else process.env.DATABASE_URL = url;
+    permissions.resetPermissionsCache();
+  }
 });
 
 test('espelho grava o papel novo sem tocar no legado e escopa engenharia e tecnico novos', async (t) => {

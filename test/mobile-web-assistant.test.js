@@ -10,7 +10,9 @@ const read = (f) => fs.readFileSync(path.join(M, f), 'utf8');
 
 function loadTools(apiImpl) {
   const location = { href: '', search: '' };
-  const CC = { cents: (v) => Math.round(v * 100) / 100, month: () => '2026-09', api: apiImpl, go: (...a) => { CC.went = a; }, suite: { orcLink: (id) => `suite://app/orcamentos${id ? `?proposta=${id}` : ''}` } };
+  const CC = { session: { token: () => 'session-admin', user: () => ({ id: 1, role: 'admin', suiteRole: 'admin' }) },
+    sv: { role: () => 'admin', can: () => true, loadPerms: async () => {} }, isAdmin: () => true,
+    cents: (v) => Math.round(v * 100) / 100, month: () => '2026-09', api: apiImpl, go: (...a) => { CC.went = a; }, suite: { orcLink: (id) => `suite://app/orcamentos${id ? `?proposta=${id}` : ''}` } };
   const context = { window: { CC }, navigator: { userAgent: 'SuiteConstrutec/3.1.0' }, location, URLSearchParams, JSON, Number, String, Object, Math };
   vm.runInNewContext(read('ia-tools.js'), context);
   return { CC, location };
@@ -81,7 +83,7 @@ test('assistente: ferramentas resumem os dados e navegam depois da resposta', as
   CC.ia.pendingNav();
   assert.equal(JSON.stringify(CC.went), JSON.stringify(['obra', { id: 7 }]));
   assert.ok((await CC.ia.run({ name: 'abrir_tela', args: { tela: 'obra' } })).erro);
-  assert.ok((await CC.ia.run({ name: 'abrir_tela', args: { tela: 'pedidos_acesso' } })).erro, 'pedidos só para admin');
+  assert.equal((await CC.ia.run({ name: 'abrir_tela', args: { tela: 'pedidos_acesso' } })).ok, true, 'admin mantém acesso aos pedidos');
   await CC.ia.run({ name: 'abrir_tela', args: { tela: 'proposta', proposta_id: 'p1' } });
   CC.ia.pendingNav();
   assert.equal(location.href, 'suite://app/orcamentos?proposta=p1');

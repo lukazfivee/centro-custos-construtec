@@ -15,16 +15,23 @@
   CC.sv.blobUrl = blobUrl;
 
   CC.sv.execucao = function (s) {
-    const fechado = s.situacao === 'faturado';
+    const fechado = s.situacao === 'faturado' || !CC.sv.can('p2');
     const itens = s.checklist || [];
     const feitos = itens.filter((c) => c.feito).length;
     const fotos = s.fotos || [];
     const fase = (k) => fotos.filter((f) => f.fase === k);
     const strip = (k, label) => `<div class="sv-fase"><small>${label}</small><div class="sv-fotos">
       ${fase(k).map((f) => `<button type="button" class="sv-foto${f.pendente ? ' pend' : ''}" data-foto="${esc(f.id)}" aria-label="Foto ${esc(label)} · ${esc(f.nome)}${f.pendente ? ' · aguardando internet' : ''}"${f.pendente ? '' : ` data-src="${esc(f.url)}"`}>${icon(f.pendente ? 'cloud-arrow-up' : 'image', 20)}</button>`).join('')}
-      ${fechado ? '' : `<label class="sv-foto add" aria-label="Adicionar foto ${esc(label.toLowerCase())}">${icon('camera', 20)}<span>Foto</span><input class="sr" type="file" accept="image/jpeg,image/png,image/webp" data-fase="${k}"></label>`}</div></div>`;
+      </div>${fechado ? '' : `<div class="tc-foto-acoes"><label class="btn2">${icon('camera', 18)}Câmera<input class="sr" type="file" accept="image/*" capture="environment" data-fase="${k}" aria-label="Tirar foto ${esc(label.toLowerCase())}"></label>
+        <label class="btn2">${icon('image', 18)}Galeria<input class="sr" type="file" accept="image/jpeg,image/png,image/webp" data-fase="${k}" aria-label="Escolher foto ${esc(label.toLowerCase())}"></label></div>`}</div>`;
     const ace = s.aceite;
-    return `${CC.sv.avisoFila(s)}<div class="card"><span class="label">O que foi feito</span><p class="sv-desc${s.descricao ? '' : ' muted'}">${esc(s.descricao || 'Ainda sem descrição. Conte o que foi feito quando terminar.')}</p></div>
+    const pendencias = CC.sv.pendencias(s);
+    return `${CC.sv.avisoFila(s)}<div class="card tc-exec-progresso"><div class="sv-head"><span class="label">Progresso da execução</span><small>${itens.length ? `${feitos} de ${itens.length} itens` : 'Sem checklist'}</small></div>
+      <div class="bar" role="progressbar" aria-label="Checklist concluído" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${itens.length ? Math.round(feitos / itens.length * 100) : 0}"><span style="width:${itens.length ? Math.round(feitos / itens.length * 100) : 0}%"></span></div>
+      <p class="sub">${pendencias.length ? esc(pendencias.map((p) => p.mensagem).join(' ')) : 'Checklist, fotos e aceite em dia.'}</p></div>
+      <div class="card"><span class="label">O que foi feito</span><p class="sv-desc tc-relato${s.descricao ? '' : ' muted'}">${esc(s.descricao || 'Registre as atividades e observações durante a execução.')}</p>
+        ${s.relatoPendente ? '<small class="wn">Relato no celular · aguardando envio</small>' : ''}
+        ${fechado ? '' : `<button class="btn2 tc-relato-editar" type="button" id="sv-relato">${icon('pencil-simple', 18)}${s.descricao ? 'Editar relato' : 'Registrar observações'}</button>`}</div>
       <div class="card"><div class="sv-head"><span class="label">Checklist</span><small class="muted">${itens.length ? `${feitos} de ${itens.length}` : 'Sem itens'}</small></div>
         ${itens.map((c) => `<button type="button" class="sv-check" role="checkbox" aria-checked="${c.feito}" data-item="${esc(c.id)}"${fechado ? ' disabled' : ''}>
           <span class="box">${c.feito ? icon('check', 14) : ''}</span><span>${esc(c.texto)}</span>${c.pendente ? `<span class="sv-pend" title="Aguardando internet">${icon('cloud-arrow-up', 14)}</span>` : ''}</button>`).join('')}
@@ -62,6 +69,7 @@
       const item = b.dataset.item, texto = (b.querySelector('span:nth-child(2)') || {}).textContent || '';
       try {
         // Uma entrada por item: marcar e desmarcar sem internet deixa so o ultimo valor.
+        b.disabled = true;
         const via = await CC.sv.enviar(s, { client_id: `chk-${s.id}-${item}`, op: 'checklist', rotulo: `Checklist: ${texto}`, body: { item, feito } },
           () => CC.api(`/servicos/${s.id}/checklist/${encodeURIComponent(item)}`, { method: 'PATCH', body: { feito } }));
         if (via === 'fila') CC.toast(SALVO, 'cloud-slash');
@@ -75,25 +83,15 @@
       e.preventDefault();
       const texto = CC.$('#sv-add-txt', page).value.trim();
       if (!texto) return;
+      CC.$('button', add).disabled = true;
       incluirItem(s, texto);
     });
     CC.$$('[data-fase]', page).forEach((input) => input.addEventListener('change', async () => {
       const file = input.files && input.files[0];
       if (!file) return;
-      const label = input.closest('label');
-      label.classList.add('busy');
-      label.innerHTML = icon('circle-notch', 20, 'spin');
-      try {
-        const data = await CC.shrink(file);
-        const fase = input.dataset.fase, body = { fase, nome: `${fase}-${Date.now()}.jpg`, tipo: 'image/jpeg', conteudoBase64: data };
-        const via = await CC.sv.enviar(s, { client_id: CC.uuid(), op: 'foto', rotulo: `Foto (${fase})`, body },
-          () => CC.api(`/servicos/${s.id}/fotos`, { method: 'POST', body }));
-        if (via === 'fila') CC.toast('Sem internet · foto salva no celular, sobe sozinha', 'cloud-slash');
-        else CC.toast(`Foto adicionada em ${fase === 'antes' ? 'Antes' : 'Depois'}`);
-      } catch (error) {
-        CC.toast(error.message || 'Não foi possível ler a foto.', 'warning-circle');
-      }
-      CC.sv.reload(s.id, 'exec');
+      const fase = input.dataset.fase;
+      input.value = '';
+      await CC.sv.prepararFoto(s, file, fase);
     }));
     CC.$$('[data-foto]', page).forEach((b) => {
       const f = (s.fotos || []).find((x) => String(x.id) === b.dataset.foto);
@@ -108,13 +106,15 @@
     else if (img && s.aceite) blobUrl(s.aceite.assinaturaUrl).then((url) => { img.src = url; }).catch(() => {});
     const col = CC.$('#sv-coletar', page);
     if (col) col.addEventListener('click', () => aceite(s));
+    const relato = CC.$('#sv-relato', page);
+    if (relato) relato.addEventListener('click', () => CC.sv.relato(s));
   };
 
   function verFoto(s, f) {
     if (!f) return;
     const sh = CC.sheet('sv-sheet', `${CC.sheetHead('image', f.fase === 'antes' ? 'Foto · antes' : 'Foto · depois')}
-      <img class="sv-foto-full" id="sv-ff" alt="${esc(f.nome)}"><p class="muted od-sub">${f.pendente ? 'Aguardando internet para enviar' : esc([f.enviadoPor, CC.sv.dataHora(f.criadoEm)].filter(Boolean).join(' · '))}</p>
-      ${s.situacao === 'faturado' ? '' : `<button class="btn2" type="button" id="sv-ff-rm">${icon('trash', 18)}${f.pendente ? 'Tirar da fila' : 'Remover foto'}</button>`}`);
+      <img class="sv-foto-full" id="sv-ff" alt="${esc(f.legenda || f.nome)}">${f.legenda ? `<p class="tc-legenda">${esc(f.legenda)}</p>` : ''}<p class="muted od-sub">${f.pendente ? 'Aguardando internet para enviar' : esc([f.enviadoPor, CC.sv.dataHora(f.criadoEm)].filter(Boolean).join(' · '))}</p>
+      ${s.situacao === 'faturado' || !CC.sv.can('p2') ? '' : `<button class="btn2" type="button" id="sv-ff-rm">${icon('trash', 18)}${f.pendente ? 'Tirar da fila' : 'Remover foto'}</button>`}`);
     if (f.pendente) CC.$('#sv-ff', sh.el).src = f.local;
     else blobUrl(f.url).then((url) => { CC.$('#sv-ff', sh.el).src = url; }).catch(() => {});
     const rm = CC.$('#sv-ff-rm', sh.el);

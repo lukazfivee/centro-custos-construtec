@@ -20,13 +20,14 @@
   const dataHora = (iso) => (iso ? new Date(iso).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }).replace(',', ' às') : '');
 
   // Permissoes reais vem de /auth/me (o login so traz o papel antigo); sem resposta, vale a matriz padrao.
-  let perms = null, permsDono = '';
+  let perms = null, permsDono = '', profile = null;
   CC.sv = {
     ST, TIPOS, plural, pct, dataHora,
+    role: () => (permsDono === CC.owner() && profile ? profile.suiteRole : ((CC.session.user() || {}).suiteRole || (['admin', 'gestor'].includes(role()) ? role() : 'tecnico'))),
     can: (p) => (perms && permsDono === CC.owner() ? perms.includes(p) : (PERM[p] || []).includes(role())),
     async loadPerms() {
       if (perms && permsDono === CC.owner()) return;
-      try { const { data } = await CC.cached('me', '/auth/me'); perms = data.permissoes || null; permsDono = CC.owner(); } catch { /* fica a matriz padrao */ }
+      try { const { data } = await CC.cached('me', '/auth/me'); perms = data.permissoes || null; profile = data; permsDono = CC.owner(); } catch { /* fica a matriz padrao */ }
     },
     badge: (sit) => { const s = ST[sit] || ST.agendado; return `<span class="sv-st ${s[2]}">${icon(s[1], 12)}${s[0]}</span>`; },
     reload: (id, tab, extra) => CC.go('servico', { id, tab, ...(extra || {}) }),

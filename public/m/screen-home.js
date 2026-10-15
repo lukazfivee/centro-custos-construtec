@@ -46,6 +46,12 @@
   }
 
   CC.screens.home = async function (params) {
+    if (CC.homeTecnico && CC.sv) {
+      await CC.sv.loadPerms();
+      if (!CC.session.token()) return;
+      if (params && params.__nav && params.__nav !== CC.nav) return;
+      if (CC.sv.role() === 'tecnico') return CC.homeTecnico(params);
+    }
     const user = CC.session.user() || {};
     const first = String(user.nome || user.name || '').trim().split(/\s+/)[0];
     const el = CC.render(`${header('')}<p class="hello">${esc(CC.greeting())}${first ? `, ${esc(first)}` : ''}</p>

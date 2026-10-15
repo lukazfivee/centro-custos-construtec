@@ -1,4 +1,4 @@
 .tmp/
-depois/
-antes/
+/depois/
+/antes/
 *.log

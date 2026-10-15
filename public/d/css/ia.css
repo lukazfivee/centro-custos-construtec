@@ -58,3 +58,9 @@ body:has(.camada, .dialogo-camada, .impressao) .ia-fab { display: none; }
 @keyframes iaDot { 0%, 80%, 100% { transform: scale(.5); opacity: .4; } 40% { transform: none; opacity: 1; } }
 @media (max-width: 560px) { #ia-sheet { padding: 0; } #ia-sheet .sheet { width: 100%; height: min(86vh, 640px); border-radius: 18px 18px 0 0; } }
 @media (prefers-reduced-motion: reduce) { #ia-sheet .sheet, #ia-sheet .ia-dots i { animation: none; } }
+
+/* Janela larga (>= 1200 px): o Desktop roda a 75% de zoom; o botao compensa para ter 52 px na tela, igual ao Orcamentos. */
+@media screen and (min-width: 1200px) {
+  .ia-fab { right: 32px; bottom: 32px; width: 69px; height: 69px; border-radius: 35px; }
+  .ia-fab svg, .ia-fab .ph, .ia-fab .ph-fill { width: 32px; height: 32px; font-size: 32px; }
+}

@@ -1,5 +1,6 @@
 /* Inicio / Painel financeiro e lancamento rapido. */
 .inicio [data-corpo] { display: flex; flex-direction: column; gap: 14px; }
+.inicio [data-pu]:empty { display: none; }
 .kpis.seis { grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 14px; }
 .grade { display: grid; grid-template-columns: minmax(0, 1.75fr) minmax(0, 1fr); gap: 14px; }
 .bloco { padding: 18px 20px; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
@@ -84,7 +85,21 @@
 .ok-tela { flex: 0 0 auto; padding-top: 80px; }
 
 @media (max-width: 1379px) {
-  .kpis.seis { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .pu-passos { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .linha-obra { grid-template-columns: minmax(0, 1fr) 130px max-content; gap: 12px; }
+}
+/* C5: seis indicadores no desktop com escala; conteudo longo quebra sem corte. */
+.inicio .cab { flex-wrap: wrap; }
+.inicio .bcab, .inicio .legenda { flex-wrap: wrap; }
+.inicio .linha-rec { flex-wrap: wrap; }
+.inicio .linha-rec .tx { flex-basis: 120px; }
+.inicio .linha-rec .tx b, .inicio .linha-obra .tx b {
+  white-space: normal; overflow: visible; overflow-wrap: anywhere;
+}
+.inicio .linha-rec .v { margin-left: auto; }
+.inicio .linha-rec .tx span, .inicio .linha-cat .topo > span { overflow-wrap: anywhere; }
+.form-rapido { flex-shrink: 0; }
+.form-rapido .duas { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+@media (max-width: 1199px) {
+  .inicio .kpis.seis { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }

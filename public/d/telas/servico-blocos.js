@@ -73,7 +73,7 @@
       <div class="bcab-sv"><span class="lbl">Checklist</span><span class="muted">${itens.length ? `${feitos} de ${itens.length}` : 'Sem itens'}</span></div>
       <div class="checklist">${itens.map((i) => `<button type="button" class="ck" role="checkbox" aria-checked="${i.feito ? 'true' : 'false'}" data-ck="${esc(i.id)}"${pode ? '' : ' disabled'}>
         <span class="caixa">${i.feito ? D.ic('check', 13) : ''}</span>${esc(i.texto)}</button>`).join('')}</div>
-      ${pode ? '<form class="ck-novo" data-ck-novo><input class="inp" name="ck" maxlength="200" placeholder="Novo item do checklist" aria-label="Novo item do checklist"><button type="submit" class="btn btn-s">Incluir</button></form>' : ''}</section>`;
+      ${pode ? '<form class="ck-novo" data-ck-novo><input class="inp" name="ck" maxlength="200" placeholder="Novo item" aria-label="Novo item do checklist"><button type="submit" class="btn btn-s">Incluir</button></form>' : ''}</section>`;
   };
 
   B.fotos = (sv) => {

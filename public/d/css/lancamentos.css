@@ -69,8 +69,8 @@
 .lancamentos .tbl th:nth-child(6) { width: 14%; }
 .lancamentos .tbl th:nth-child(7) { width: 11%; }
 .lancamentos .tbl th { white-space: normal; overflow-wrap: anywhere; }
-.lancamentos .duas-l, .lancamentos .duas-l.desc { max-width: none; overflow-wrap: anywhere; }
-.lancamentos .duas-l.desc b, .lancamentos .duas-l.desc span { white-space: normal; overflow: visible; }
+.lancamentos .duas-l, .lancamentos .duas-l.desc, .obra .duas-l.desc { max-width: none; overflow-wrap: anywhere; }
+.lancamentos .duas-l.desc b, .lancamentos .duas-l.desc span, .obra .duas-l.desc b, .obra .duas-l.desc span { white-space: normal; overflow: visible; } /* aba Lancamentos da obra igual a tela Lancamentos (X1) */
 .lancamentos .rodape { flex-wrap: wrap; }
 .lancamentos .filtros .seg { flex-wrap: wrap; max-width: 100%; }
 .lancamentos .filtros .mini { flex-wrap: wrap; }

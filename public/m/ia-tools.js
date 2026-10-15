@@ -26,12 +26,14 @@
   };
   const TOOL_PERM = { orcado_realizado: 'p1', resumo_geral: 'p1', buscar_lancamentos: 'p1', listar_categorias: 'p1', listar_propostas: 'p10', ver_proposta: 'p10' };
   const OPERATIONS = ['abrir_tela', 'listar_obras', 'ver_obra', 'listar_servicos', 'ver_servico', 'preparar_reporte'];
-  const allowed = (name) => Boolean(IA.role() && (OPERATIONS.includes(name) || (IA.role() !== 'tecnico' && TOOL_PERM[name] && can(TOOL_PERM[name]))));
+  const agendaAllowed = () => IA.role() === 'tecnico' || can('p5');
+  const allowed = (name) => Boolean(IA.role() && (name === 'ver_programacao' ? agendaAllowed() : (OPERATIONS.includes(name) || (IA.role() !== 'tecnico' && TOOL_PERM[name] && can(TOOL_PERM[name])))));
   const SAFE_TELAS = ['inicio', 'obras', 'obra', 'servicos', 'servico', 'menu', 'perfil', 'seguranca', 'reports'];
   const navAllowed = (name) => {
     if (!IA.role()) return false;
     const desktopScreen = ({ configuracoes: 'config', nova_despesa: 'lancamentos', obra: 'obras', servico: 'servicos' })[name] || name;
     if (CC.d && !CC.d.podeTela(desktopScreen)) return false;
+    if (name === 'programacao') return agendaAllowed();
     if (SAFE_TELAS.includes(name)) return true;
     if (IA.role() === 'tecnico') return false;
     if (name === 'nova_despesa') return can('p2');
@@ -55,6 +57,7 @@
   // Destinos que a IA pode abrir. Cada um devolve a acao feita depois da resposta.
   const TELAS = {
     inicio: () => () => CC.go('home'),
+    programacao: () => () => CC.go(IA.role() === 'tecnico' ? 'meu-dia' : 'programacao'),
     obras: () => () => CC.go('obras'),
     obra: (a) => (a.obra_id > 0 ? () => CC.go('obra', { id: Number(a.obra_id) }) : 'Informe obra_id (use listar_obras).'),
     servicos: () => () => CC.go('obras', { tipo: 'servico' }),
@@ -77,7 +80,7 @@
     lancamentos_vencidos: 'Lançamentos vencidos', notificacoes: 'Notificações', menu: 'Menu', perfil: 'Meu perfil', pedidos_acesso: 'Pedidos de acesso',
     seguranca: 'Segurança', orcamentos: 'Orçamentos', proposta: 'a proposta', versao_completa: 'Versão completa' };
   IA.telas = TELAS; IA.nomes = NOMES; // o desktop troca os destinos (public/d/ia-desktop.js); as ferramentas de dados são as mesmas
-  Object.assign(NOMES, { servicos: 'Serviços', servico: 'o serviço' });
+  Object.assign(NOMES, { servicos: 'Serviços', servico: 'o serviço', programacao: 'a programação do dia' });
 
   function obraResumo(c) {
     const orcado = Number(c.orcamento) || 0, gasto = Number(c.total_comprometido) || 0;
@@ -94,6 +97,16 @@
   const sum = (list) => n(list.reduce((s, t) => s + (Number(t.valor) || 0), 0));
 
   const RUN = {
+    async ver_programacao(a) {
+      const dia = a.dia || CC.today();
+      const date = new Date(`${dia}T00:00:00Z`);
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(dia) || !Number.isFinite(date.valueOf()) || date.toISOString().slice(0, 10) !== dia) return { erro: 'Informe uma data válida no formato AAAA-MM-DD.' };
+      const { data } = await CC.api(`/programacao?dia=${dia}`);
+      return { dia, atividades: (data.atividades || []).map((item) => ({
+        ...pick(item, ['id', 'dia', 'ordem', 'orientacao', 'cancelada', 'origemId']), centro: metadata(item.centro),
+        participantes: (item.participantes || []).map((p) => pick(p, ['id', 'nome', 'estado', 'ativo'])),
+      })) };
+    },
     async abrir_tela(a) {
       if (!navAllowed(a.tela)) return { erro: 'Seu perfil não acessa essa tela.' };
       const make = TELAS[a.tela];
@@ -212,6 +225,8 @@
 
   // Declaracoes no formato do Firebase AI Logic (S = Schema do SDK).
   IA.declarations = (S) => [{ functionDeclarations: [
+    { name: 'ver_programacao', description: 'Consulta a programação operacional da data, destinos, orientações, equipe e andamento individual. Use para saber onde a pessoa irá hoje ou em outro dia; a data inicial do serviço não é a agenda diária.',
+      parameters: S.object({ properties: { dia: S.string({ description: 'AAAA-MM-DD; se omitida, usa hoje em Brasília' }) }, optionalProperties: ['dia'] }) },
     { name: 'abrir_tela', description: 'Abre uma tela do app para a pessoa. Use quando ela pedir para ir, abrir ou ver uma parte do app.',
       parameters: S.object({ properties: {
         tela: S.enumString({ enum: Object.keys(TELAS).filter(navAllowed), description: 'Destino autorizado; detalhes pedem o id correspondente.' }),

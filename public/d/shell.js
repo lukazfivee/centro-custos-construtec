@@ -9,6 +9,7 @@
     ['Operação', [
       ['lancamentos', 'receipt', 'Lançamentos', null, 'Lançamentos'],
       ['obras', 'buildings', 'Obras', null, 'Obras/centros'],
+      ['programacao', 'calendar-blank', 'Programação', 'programacao', null],
       ['cobrancas', 'envelope-simple', 'Cobranças', 'cobrancas', 'Cobranças'],
     ]],
     ['Cadastros', [

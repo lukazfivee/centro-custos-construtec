@@ -7,11 +7,11 @@
   const IA = CC.ia = CC.ia || {};
   const SUGESTOES = ['Quais obras estão acima do orçado?', 'Quanto tenho a pagar este mês?', 'Como lanço uma despesa com foto?', 'Resumo das propostas enviadas', 'Quero reportar um problema'];
   IA.sugestoes = SUGESTOES; // o desktop troca as sugestões do celular (public/d/ia-desktop.js)
-  const OPERACIONAIS = ['Quais são minhas obras e serviços?', 'Ver checklist dos meus serviços', 'Como registro fotos e observações?', 'Quero reportar um problema'];
+  const OPERACIONAIS = ['Qual é minha programação de hoje?', 'Quais são minhas obras e serviços?', 'Ver checklist dos meus serviços', 'Como registro fotos e observações?', 'Quero reportar um problema'];
   IA.getSuggestions = () => IA.role() === 'tecnico' ? OPERACIONAIS : (IA.role() ? SUGESTOES : []);
   const PASSOS = { listar_obras: 'Procurando as obras', ver_obra: 'Abrindo a obra', orcado_realizado: 'Comparando orçado e realizado', resumo_geral: 'Somando o mês',
     buscar_lancamentos: 'Procurando lançamentos', listar_categorias: 'Lendo as categorias', listar_propostas: 'Consultando o Orçamentos', ver_proposta: 'Abrindo a proposta',
-    abrir_tela: 'Preparando a tela', preparar_reporte: 'Montando o relato' };
+    ver_programacao: 'Consultando a programação', abrir_tela: 'Preparando a tela', preparar_reporte: 'Montando o relato' };
   const state = { chat: null, sdk: null, model: 0, busy: false, log: [], cards: [], live: '', screen: '', owner: '', epoch: 0 };
   const same = (owner) => owner === state.owner && owner === IA.contextKey();
   async function context() {

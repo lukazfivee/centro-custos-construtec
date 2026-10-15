@@ -46,7 +46,7 @@ for (const desktop of [false, true]) {
   test(`IA ${desktop ? 'desktop' : 'mobile'}: técnico não recebe ferramentas financeiras e chamadas diretas não consultam API`, async () => {
     const { CC, calls } = fixture({ desktop, permissions: ['p1', 'p2', 'p5', 'p11', 'p12'] });
     const names = declarations(CC).map((d) => d.name);
-    assert.deepEqual([...names].sort(), ['abrir_tela', 'listar_obras', 'listar_servicos', 'preparar_reporte', 'ver_obra', 'ver_servico'].sort());
+    assert.deepEqual([...names].sort(), ['abrir_tela', 'listar_obras', 'listar_servicos', 'preparar_reporte', 'ver_obra', 'ver_servico', 'ver_programacao'].sort());
     for (const name of ['resumo_geral', 'buscar_lancamentos', 'listar_categorias', 'orcado_realizado', 'listar_propostas', 'ver_proposta']) {
       assert.ok((await run(CC, name)).erro, name);
     }

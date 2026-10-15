@@ -18,6 +18,7 @@
       <button class="card who" type="button" id="m-perfil">${CC.avatar(CC.perfilFoto, user.nome, 44)}<span class="grow"><b>${esc(user.nome || 'Meu perfil')}</b><small>${esc(quem)}</small></span></button>
       <div class="card menu-card">
         <div id="m-fin"></div>
+        ${CC.programacaoEscritorio && CC.programacaoEscritorio.can() ? `<button class="menu-item" type="button" id="m-programacao">${icon('calendar-blank', 22)}<span>Programação diária<small>Planejar destinos e acompanhar as equipes</small></span></button>` : ''}
         ${CC.adm && !tecnico ? CC.adm.menuHtml() : ''}
         ${!tecnico && CC.isAdmin && CC.isAdmin() && CC.screens.descartadas ? `<button class="menu-item" type="button" id="m-desc">${icon('archive', 22)}<span>Obras descartadas<small id="m-desc-n">Recuperar obras guardadas</small></span></button>` : ''}
         ${inApp ? `<button class="menu-item" type="button" id="m-seg">${icon('shield-check', 22)}<span>Segurança<small>PIN, digital, bloqueio automático e aparelhos</small></span></button>` : ''}
@@ -34,6 +35,8 @@
     CC.$('#m-senha', el).addEventListener('click', () => CC.senhaSheet());
     CC.$('#m-tema', el).addEventListener('click', () => { CC.theme.toggle(); CC.screens.menu(); });
     CC.$('#m-perfil', el).addEventListener('click', () => CC.go('perfil'));
+    const programacao = CC.$('#m-programacao', el);
+    if (programacao) programacao.addEventListener('click', () => CC.go('programacao'));
     if (CC.fin && !tecnico) CC.fin.menu(CC.$('#m-fin', el));
     // A foto chega depois (uma vez por abertura do site) e entra no lugar das iniciais.
     if (CC.perfilFoto === undefined) {

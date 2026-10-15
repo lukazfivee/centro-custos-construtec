@@ -59,7 +59,7 @@ test('desktop: destinos de tela são os do desktop e respeitam o papel', async (
   const S = new Proxy({}, { get: (_, kind) => (spec) => ({ kind, ...spec }) });
   const enumTela = CC.ia.declarations(S)[0].functionDeclarations.find((d) => d.name === 'abrir_tela').parameters.properties.tela.enum;
   assert.deepEqual([...enumTela].sort(), ['categorias', 'cobrancas', 'configuracoes', 'fornecedores', 'inicio', 'lancamentos', 'nova_despesa', 'obra', 'obras',
-    'orcamentos', 'proposta', 'recorrentes', 'reports', 'servico', 'servicos'].sort());
+    'orcamentos', 'programacao', 'proposta', 'recorrentes', 'reports', 'servico', 'servicos'].sort());
 
   assert.equal((await CC.ia.run({ name: 'abrir_tela', args: { tela: 'obra', obra_id: 7 } })).ok, true);
   assert.equal(went.length, 0, 'nada muda antes da resposta');

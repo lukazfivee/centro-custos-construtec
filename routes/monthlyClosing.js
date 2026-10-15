@@ -1,7 +1,7 @@
 const express = require('express');
 const { getDb } = require('../db');
 const { autenticar } = require('../middleware/auth');
-const { exigirPermissao } = require('../services/permissions');
+const { exigirPermissao, can } = require('../services/permissions');
 const { asyncRoute, httpError } = require('../lib/http');
 const { recordAudit } = require('../services/audit');
 const { currentMonth } = require('../lib/dates');
@@ -54,7 +54,9 @@ router.get('/', asyncRoute(async (req, res) => {
     FROM monthly_closings mc JOIN users u ON u.id=mc.closed_by
     ORDER BY mc.year DESC,mc.month DESC
   `);
-  res.json(rows);
+  // Todos os papeis leem a lista para travar lancamentos em mes fechado; as pendencias (com valores) sao de quem fecha (p8).
+  if (await can(req.usuario, 'p8')) return res.json(rows);
+  res.json(rows.map(({ pendencias, ...linha }) => linha));
 }));
 
 // Totais, situacao, quem fechou e motivo da ultima reabertura de cada mes do ano.

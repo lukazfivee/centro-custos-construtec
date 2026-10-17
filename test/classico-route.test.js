@@ -58,6 +58,8 @@ test('/classico/ serve a interface antiga e / abre o Desktop novo', async (conte
   }
   const app = Buffer.from(await (await fetch(`${base}/classico/app.js`)).arrayBuffer());
   assert.deepEqual(app, fs.readFileSync(path.join(ROOT, 'public', 'app.js')));
+  // /m e /d reais nao ganham uma segunda copia (nem outro escopo de service worker) sob /classico.
+  for (const duplicado of ['m/sw.js', 'm/', 'd/index.html']) assert.equal((await fetch(`${base}/classico/${duplicado}`)).status, 404, duplicado);
 
   // Compatibilidade: ?antiga=1 e ?entrar=1 seguem abrindo a mesma pagina.
   for (const consulta of ['?antiga=1', '?entrar=1']) {

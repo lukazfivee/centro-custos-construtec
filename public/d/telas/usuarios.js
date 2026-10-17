@@ -63,9 +63,9 @@
     } catch (error) { CC.toast(error.message); }
   }
 
-  async function aba_usuarios(el, corpo, vivo, pedidos) {
+  async function aba_usuarios(el, corpo, vivo, pedidos, antecipado) {
     corpo.innerHTML = U.carregando('Carregando os usuários…');
-    const { data } = await CC.api('/usuarios');
+    const { data } = antecipado || await CC.api('/usuarios');
     if (!vivo() || aba !== 'usuarios') return;
     const todos = lista(data);
     const convites = Array.isArray(pedidos?.invites) ? pedidos.invites : [];
@@ -113,7 +113,10 @@
 
   async function render(el, rota, vivo) {
     if (!D.pode('usuarios')) return D.telaEmConstrucao(el, rota, vivo);
+    // /usuarios sai junto com /cadastros na primeira abertura; se falhar, a aba repete a chamada e mostra o erro de sempre.
+    const antecipado = aba === 'usuarios' ? CC.api('/usuarios').catch(() => null) : null;
     const pedidos = await CC.api('/cadastros').then((r) => r.data).catch(() => ({}));
+    let primeiros = await antecipado; // vale so na primeira desenhada da aba; depois cada abertura busca de novo
     if (!vivo()) return;
     X.convitesOk = Boolean(pedidos?.code); // convite por e-mail so com a conta corporativa
     const novo = `<button type="button" class="btn btn-p" data-novo>${D.ic('user-plus')}${X.convitesOk ? 'Convidar usuário' : 'Novo usuário'}</button>`;
@@ -132,7 +135,8 @@
         const usuarios = lista((await CC.api('/usuarios')).data);
         return X.abaPapeis(corpo, vivo, usuarios);
       }
-      return aba_usuarios(el, corpo, vivo, pedidos);
+      const pre = primeiros; primeiros = null;
+      return aba_usuarios(el, corpo, vivo, pedidos, pre);
     };
     CC.$$('[data-aba]', el).forEach((botao) => botao.addEventListener('click', async () => {
       aba = botao.dataset.aba;

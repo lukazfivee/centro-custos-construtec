@@ -190,7 +190,7 @@ function createApp({ orcamentosApp } = {}) {
   // quando vira redirecionamento para /). Os arquivos relativos da pagina (style-base.css, app.js, assets/...)
   // resolvem sob /classico/, entao a mesma pasta public/ e servida ali. /?antiga=1 e /?entrar=1 seguem funcionando.
   app.get(['/classico', '/classico/'], (req, res) => (req.path === '/classico' ? res.redirect(301, '/classico/') : sendIndex(req, res)));
-  app.use('/classico', express.static(publicDir, { etag:true, index:false, setHeaders:setStaticHeaders }));
+  app.use('/classico', (req, res, next) => (/^\/(?:m|d)(?:\/|$)/.test(req.path) ? res.status(404).end() : next()), express.static(publicDir, { etag:true, index:false, setHeaders:setStaticHeaders }));
   // Centro de Custos no celular (Fase 2 mobile): public/m/.
   app.get(['/m', '/m/'], (req, res) => {
     if (req.path === '/m') return res.redirect(301, '/m/');

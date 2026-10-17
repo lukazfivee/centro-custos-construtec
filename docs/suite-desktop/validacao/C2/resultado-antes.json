@@ -1,0 +1,652 @@
+[
+  {
+    "id": "fechamento",
+    "grupo": "D7",
+    "tamanho": "1280x720",
+    "tema": "claro",
+    "app": "D7/1280x720-claro-fechamento.jpg",
+    "ref": "D7/1280x720-claro-fechamento.jpg",
+    "avisos": [],
+    "erros": [],
+    "sonda": {
+      "rolagemHorizontal": false,
+      "rolagemAninhada": [],
+      "foraDaJanela": []
+    }
+  },
+  {
+    "id": "fechamento",
+    "grupo": "D7",
+    "tamanho": "1280x720",
+    "tema": "escuro",
+    "app": "D7/1280x720-escuro-fechamento.jpg",
+    "ref": "D7/1280x720-escuro-fechamento.jpg",
+    "avisos": [],
+    "erros": [],
+    "sonda": {
+      "rolagemHorizontal": false,
+      "rolagemAninhada": [],
+      "foraDaJanela": []
+    }
+  },
+  {
+    "id": "fechamento",
+    "grupo": "D7",
+    "tamanho": "1280x800",
+    "tema": "claro",
+    "app": "D7/1280x800-claro-fechamento.jpg",
+    "ref": "D7/1280x800-claro-fechamento.jpg",
+    "avisos": [],
+    "erros": [],
+    "sonda": {
+      "rolagemHorizontal": false,
+      "rolagemAninhada": [],
+      "foraDaJanela": []
+    }
+  },
+  {
+    "id": "fechamento",
+    "grupo": "D7",
+    "tamanho": "1280x800",
+    "tema": "escuro",
+    "app": "D7/1280x800-escuro-fechamento.jpg",
+    "ref": "D7/1280x800-escuro-fechamento.jpg",
+    "avisos": [],
+    "erros": [],
+    "sonda": {
+      "rolagemHorizontal": false,
+      "rolagemAninhada": [],
+      "foraDaJanela": []
+    }
+  },
+  {
+    "id": "fechamento",
+    "grupo": "D7",
+    "tamanho": "1440x900",
+    "tema": "claro",
+    "app": "D7/1440x900-claro-fechamento.jpg",
+    "ref": "D7/1440x900-claro-fechamento.jpg",
+    "avisos": [],
+    "erros": [],
+    "sonda": {
+      "rolagemHorizontal": false,
+      "rolagemAninhada": [],
+      "foraDaJanela": [
+        "b",
+        "li.ck-item",
+        "b",
+        "span"
+      ]
+    }
+  },
+  {
+    "id": "fechamento",
+    "grupo": "D7",
+    "tamanho": "1440x900",
+    "tema": "escuro",
+    "app": "D7/1440x900-escuro-fechamento.jpg",
+    "ref": "D7/1440x900-escuro-fechamento.jpg",
+    "avisos": [],
+    "erros": [],
+    "sonda": {
+      "rolagemHorizontal": false,
+      "rolagemAninhada": [],
+      "foraDaJanela": [
+        "b",
+        "li.ck-item",
+        "b",
+        "span"
+      ]
+    }
+  },
+  {
+    "id": "fechar-com-pendencias",
+    "grupo": "D7",
+    "tamanho": "1280x720",
+    "tema": "claro",
+    "app": "D7/1280x720-claro-fechar-com-pendencias.jpg",
+    "ref": "D7/1280x720-claro-fechar-com-pendencias.jpg",
+    "avisos": [],
+    "erros": [],
+    "sonda": {
+      "rolagemHorizontal": false,
+      "rolagemAninhada": [],
+      "foraDaJanela": []
+    }
+  },
+  {
+    "id": "fechar-com-pendencias",
+    "grupo": "D7",
+    "tamanho": "1280x720",
+    "tema": "escuro",
+    "app": "D7/1280x720-escuro-fechar-com-pendencias.jpg",
+    "ref": "D7/1280x720-escuro-fechar-com-pendencias.jpg",
+    "avisos": [],
+    "erros": [],
+    "sonda": {
+      "rolagemHorizontal": false,
+      "rolagemAninhada": [],
+      "foraDaJanela": []
+    }
+  },
+  {
+    "id": "fechar-com-pendencias",
+    "grupo": "D7",
+    "tamanho": "1280x800",
+    "tema": "claro",
+    "app": "D7/1280x800-claro-fechar-com-pendencias.jpg",
+    "ref": "D7/1280x800-claro-fechar-com-pendencias.jpg",
+    "avisos": [],
+    "erros": [],
+    "sonda": {
+      "rolagemHorizontal": false,
+      "rolagemAninhada": [],
+      "foraDaJanela": []
+    }
+  },
+  {
+    "id": "fechar-com-pendencias",
+    "grupo": "D7",
+    "tamanho": "1280x800",
+    "tema": "escuro",
+    "app": "D7/1280x800-escuro-fechar-com-pendencias.jpg",
+    "ref": "D7/1280x800-escuro-fechar-com-pendencias.jpg",
+    "avisos": [],
+    "erros": [],
+    "sonda": {
+      "rolagemHorizontal": false,
+      "rolagemAninhada": [],
+      "foraDaJanela": []
+    }
+  },
+  {
+    "id": "fechar-com-pendencias",
+    "grupo": "D7",
+    "tamanho": "1440x900",
+    "tema": "claro",
+    "app": "D7/1440x900-claro-fechar-com-pendencias.jpg",
+    "ref": "D7/1440x900-claro-fechar-com-pendencias.jpg",
+    "avisos": [],
+    "erros": [],
+    "sonda": {
+      "rolagemHorizontal": false,
+      "rolagemAninhada": [],
+      "foraDaJanela": [
+        "b",
+        "li.ck-item",
+        "b",
+        "span"
+      ]
+    }
+  },
+  {
+    "id": "fechar-com-pendencias",
+    "grupo": "D7",
+    "tamanho": "1440x900",
+    "tema": "escuro",
+    "app": "D7/1440x900-escuro-fechar-com-pendencias.jpg",
+    "ref": "D7/1440x900-escuro-fechar-com-pendencias.jpg",
+    "avisos": [],
+    "erros": [],
+    "sonda": {
+      "rolagemHorizontal": false,
+      "rolagemAninhada": [],
+      "foraDaJanela": [
+        "b",
+        "li.ck-item",
+        "b",
+        "span"
+      ]
+    }
+  },
+  {
+    "id": "mes-fechado",
+    "grupo": "D7",
+    "tamanho": "1280x720",
+    "tema": "claro",
+    "app": "D7/1280x720-claro-mes-fechado.jpg",
+    "ref": "D7/1280x720-claro-mes-fechado.jpg",
+    "avisos": [],
+    "erros": [],
+    "sonda": {
+      "rolagemHorizontal": false,
+      "rolagemAninhada": [],
+      "foraDaJanela": []
+    }
+  },
+  {
+    "id": "mes-fechado",
+    "grupo": "D7",
+    "tamanho": "1280x720",
+    "tema": "escuro",
+    "app": "D7/1280x720-escuro-mes-fechado.jpg",
+    "ref": "D7/1280x720-escuro-mes-fechado.jpg",
+    "avisos": [],
+    "erros": [],
+    "sonda": {
+      "rolagemHorizontal": false,
+      "rolagemAninhada": [],
+      "foraDaJanela": []
+    }
+  },
+  {
+    "id": "mes-fechado",
+    "grupo": "D7",
+    "tamanho": "1280x800",
+    "tema": "claro",
+    "app": "D7/1280x800-claro-mes-fechado.jpg",
+    "ref": "D7/1280x800-claro-mes-fechado.jpg",
+    "avisos": [],
+    "erros": [],
+    "sonda": {
+      "rolagemHorizontal": false,
+      "rolagemAninhada": [],
+      "foraDaJanela": []
+    }
+  },
+  {
+    "id": "mes-fechado",
+    "grupo": "D7",
+    "tamanho": "1280x800",
+    "tema": "escuro",
+    "app": "D7/1280x800-escuro-mes-fechado.jpg",
+    "ref": "D7/1280x800-escuro-mes-fechado.jpg",
+    "avisos": [],
+    "erros": [],
+    "sonda": {
+      "rolagemHorizontal": false,
+      "rolagemAninhada": [],
+      "foraDaJanela": []
+    }
+  },
+  {
+    "id": "mes-fechado",
+    "grupo": "D7",
+    "tamanho": "1440x900",
+    "tema": "claro",
+    "app": "D7/1440x900-claro-mes-fechado.jpg",
+    "ref": "D7/1440x900-claro-mes-fechado.jpg",
+    "avisos": [],
+    "erros": [],
+    "sonda": {
+      "rolagemHorizontal": false,
+      "rolagemAninhada": [],
+      "foraDaJanela": []
+    }
+  },
+  {
+    "id": "mes-fechado",
+    "grupo": "D7",
+    "tamanho": "1440x900",
+    "tema": "escuro",
+    "app": "D7/1440x900-escuro-mes-fechado.jpg",
+    "ref": "D7/1440x900-escuro-mes-fechado.jpg",
+    "avisos": [],
+    "erros": [],
+    "sonda": {
+      "rolagemHorizontal": false,
+      "rolagemAninhada": [],
+      "foraDaJanela": []
+    }
+  },
+  {
+    "id": "reabrir-com-motivo",
+    "grupo": "D7",
+    "tamanho": "1280x720",
+    "tema": "claro",
+    "app": "D7/1280x720-claro-reabrir-com-motivo.jpg",
+    "ref": "D7/1280x720-claro-reabrir-com-motivo.jpg",
+    "avisos": [],
+    "erros": [],
+    "sonda": {
+      "rolagemHorizontal": false,
+      "rolagemAninhada": [],
+      "foraDaJanela": []
+    }
+  },
+  {
+    "id": "reabrir-com-motivo",
+    "grupo": "D7",
+    "tamanho": "1280x720",
+    "tema": "escuro",
+    "app": "D7/1280x720-escuro-reabrir-com-motivo.jpg",
+    "ref": "D7/1280x720-escuro-reabrir-com-motivo.jpg",
+    "avisos": [],
+    "erros": [],
+    "sonda": {
+      "rolagemHorizontal": false,
+      "rolagemAninhada": [],
+      "foraDaJanela": []
+    }
+  },
+  {
+    "id": "reabrir-com-motivo",
+    "grupo": "D7",
+    "tamanho": "1280x800",
+    "tema": "claro",
+    "app": "D7/1280x800-claro-reabrir-com-motivo.jpg",
+    "ref": "D7/1280x800-claro-reabrir-com-motivo.jpg",
+    "avisos": [],
+    "erros": [],
+    "sonda": {
+      "rolagemHorizontal": false,
+      "rolagemAninhada": [],
+      "foraDaJanela": []
+    }
+  },
+  {
+    "id": "reabrir-com-motivo",
+    "grupo": "D7",
+    "tamanho": "1280x800",
+    "tema": "escuro",
+    "app": "D7/1280x800-escuro-reabrir-com-motivo.jpg",
+    "ref": "D7/1280x800-escuro-reabrir-com-motivo.jpg",
+    "avisos": [],
+    "erros": [],
+    "sonda": {
+      "rolagemHorizontal": false,
+      "rolagemAninhada": [],
+      "foraDaJanela": []
+    }
+  },
+  {
+    "id": "reabrir-com-motivo",
+    "grupo": "D7",
+    "tamanho": "1440x900",
+    "tema": "claro",
+    "app": "D7/1440x900-claro-reabrir-com-motivo.jpg",
+    "ref": "D7/1440x900-claro-reabrir-com-motivo.jpg",
+    "avisos": [],
+    "erros": [],
+    "sonda": {
+      "rolagemHorizontal": false,
+      "rolagemAninhada": [],
+      "foraDaJanela": []
+    }
+  },
+  {
+    "id": "reabrir-com-motivo",
+    "grupo": "D7",
+    "tamanho": "1440x900",
+    "tema": "escuro",
+    "app": "D7/1440x900-escuro-reabrir-com-motivo.jpg",
+    "ref": "D7/1440x900-escuro-reabrir-com-motivo.jpg",
+    "avisos": [],
+    "erros": [],
+    "sonda": {
+      "rolagemHorizontal": false,
+      "rolagemAninhada": [],
+      "foraDaJanela": []
+    }
+  },
+  {
+    "id": "historico",
+    "grupo": "D7",
+    "tamanho": "1280x720",
+    "tema": "claro",
+    "app": "D7/1280x720-claro-historico.jpg",
+    "ref": "D7/1280x720-claro-historico.jpg",
+    "avisos": [],
+    "erros": [],
+    "sonda": {
+      "rolagemHorizontal": false,
+      "rolagemAninhada": [],
+      "foraDaJanela": []
+    }
+  },
+  {
+    "id": "historico",
+    "grupo": "D7",
+    "tamanho": "1280x720",
+    "tema": "escuro",
+    "app": "D7/1280x720-escuro-historico.jpg",
+    "ref": "D7/1280x720-escuro-historico.jpg",
+    "avisos": [],
+    "erros": [],
+    "sonda": {
+      "rolagemHorizontal": false,
+      "rolagemAninhada": [],
+      "foraDaJanela": []
+    }
+  },
+  {
+    "id": "historico",
+    "grupo": "D7",
+    "tamanho": "1280x800",
+    "tema": "claro",
+    "app": "D7/1280x800-claro-historico.jpg",
+    "ref": "D7/1280x800-claro-historico.jpg",
+    "avisos": [],
+    "erros": [],
+    "sonda": {
+      "rolagemHorizontal": false,
+      "rolagemAninhada": [],
+      "foraDaJanela": []
+    }
+  },
+  {
+    "id": "historico",
+    "grupo": "D7",
+    "tamanho": "1280x800",
+    "tema": "escuro",
+    "app": "D7/1280x800-escuro-historico.jpg",
+    "ref": "D7/1280x800-escuro-historico.jpg",
+    "avisos": [],
+    "erros": [],
+    "sonda": {
+      "rolagemHorizontal": false,
+      "rolagemAninhada": [],
+      "foraDaJanela": []
+    }
+  },
+  {
+    "id": "historico",
+    "grupo": "D7",
+    "tamanho": "1440x900",
+    "tema": "claro",
+    "app": "D7/1440x900-claro-historico.jpg",
+    "ref": "D7/1440x900-claro-historico.jpg",
+    "avisos": [],
+    "erros": [],
+    "sonda": {
+      "rolagemHorizontal": false,
+      "rolagemAninhada": [],
+      "foraDaJanela": []
+    }
+  },
+  {
+    "id": "historico",
+    "grupo": "D7",
+    "tamanho": "1440x900",
+    "tema": "escuro",
+    "app": "D7/1440x900-escuro-historico.jpg",
+    "ref": "D7/1440x900-escuro-historico.jpg",
+    "avisos": [],
+    "erros": [],
+    "sonda": {
+      "rolagemHorizontal": false,
+      "rolagemAninhada": [],
+      "foraDaJanela": []
+    }
+  },
+  {
+    "id": "historico-fechamentos",
+    "grupo": "D7",
+    "tamanho": "1280x720",
+    "tema": "claro",
+    "app": "D7/1280x720-claro-historico-fechamentos.jpg",
+    "ref": "D7/1280x720-claro-historico-fechamentos.jpg",
+    "avisos": [],
+    "erros": [],
+    "sonda": {
+      "rolagemHorizontal": false,
+      "rolagemAninhada": [],
+      "foraDaJanela": []
+    }
+  },
+  {
+    "id": "historico-fechamentos",
+    "grupo": "D7",
+    "tamanho": "1280x720",
+    "tema": "escuro",
+    "app": "D7/1280x720-escuro-historico-fechamentos.jpg",
+    "ref": "D7/1280x720-escuro-historico-fechamentos.jpg",
+    "avisos": [],
+    "erros": [],
+    "sonda": {
+      "rolagemHorizontal": false,
+      "rolagemAninhada": [],
+      "foraDaJanela": []
+    }
+  },
+  {
+    "id": "historico-fechamentos",
+    "grupo": "D7",
+    "tamanho": "1280x800",
+    "tema": "claro",
+    "app": "D7/1280x800-claro-historico-fechamentos.jpg",
+    "ref": "D7/1280x800-claro-historico-fechamentos.jpg",
+    "avisos": [],
+    "erros": [],
+    "sonda": {
+      "rolagemHorizontal": false,
+      "rolagemAninhada": [],
+      "foraDaJanela": []
+    }
+  },
+  {
+    "id": "historico-fechamentos",
+    "grupo": "D7",
+    "tamanho": "1280x800",
+    "tema": "escuro",
+    "app": "D7/1280x800-escuro-historico-fechamentos.jpg",
+    "ref": "D7/1280x800-escuro-historico-fechamentos.jpg",
+    "avisos": [],
+    "erros": [],
+    "sonda": {
+      "rolagemHorizontal": false,
+      "rolagemAninhada": [],
+      "foraDaJanela": []
+    }
+  },
+  {
+    "id": "historico-fechamentos",
+    "grupo": "D7",
+    "tamanho": "1440x900",
+    "tema": "claro",
+    "app": "D7/1440x900-claro-historico-fechamentos.jpg",
+    "ref": "D7/1440x900-claro-historico-fechamentos.jpg",
+    "avisos": [],
+    "erros": [],
+    "sonda": {
+      "rolagemHorizontal": false,
+      "rolagemAninhada": [],
+      "foraDaJanela": []
+    }
+  },
+  {
+    "id": "historico-fechamentos",
+    "grupo": "D7",
+    "tamanho": "1440x900",
+    "tema": "escuro",
+    "app": "D7/1440x900-escuro-historico-fechamentos.jpg",
+    "ref": "D7/1440x900-escuro-historico-fechamentos.jpg",
+    "avisos": [],
+    "erros": [],
+    "sonda": {
+      "rolagemHorizontal": false,
+      "rolagemAninhada": [],
+      "foraDaJanela": []
+    }
+  },
+  {
+    "id": "historico-detalhe",
+    "grupo": "D7",
+    "tamanho": "1280x720",
+    "tema": "claro",
+    "app": "D7/1280x720-claro-historico-detalhe.jpg",
+    "ref": "D7/1280x720-claro-historico-detalhe.jpg",
+    "avisos": [],
+    "erros": [],
+    "sonda": {
+      "rolagemHorizontal": false,
+      "rolagemAninhada": [],
+      "foraDaJanela": []
+    }
+  },
+  {
+    "id": "historico-detalhe",
+    "grupo": "D7",
+    "tamanho": "1280x720",
+    "tema": "escuro",
+    "app": "D7/1280x720-escuro-historico-detalhe.jpg",
+    "ref": "D7/1280x720-escuro-historico-detalhe.jpg",
+    "avisos": [],
+    "erros": [],
+    "sonda": {
+      "rolagemHorizontal": false,
+      "rolagemAninhada": [],
+      "foraDaJanela": []
+    }
+  },
+  {
+    "id": "historico-detalhe",
+    "grupo": "D7",
+    "tamanho": "1280x800",
+    "tema": "claro",
+    "app": "D7/1280x800-claro-historico-detalhe.jpg",
+    "ref": "D7/1280x800-claro-historico-detalhe.jpg",
+    "avisos": [],
+    "erros": [],
+    "sonda": {
+      "rolagemHorizontal": false,
+      "rolagemAninhada": [],
+      "foraDaJanela": []
+    }
+  },
+  {
+    "id": "historico-detalhe",
+    "grupo": "D7",
+    "tamanho": "1280x800",
+    "tema": "escuro",
+    "app": "D7/1280x800-escuro-historico-detalhe.jpg",
+    "ref": "D7/1280x800-escuro-historico-detalhe.jpg",
+    "avisos": [],
+    "erros": [],
+    "sonda": {
+      "rolagemHorizontal": false,
+      "rolagemAninhada": [],
+      "foraDaJanela": []
+    }
+  },
+  {
+    "id": "historico-detalhe",
+    "grupo": "D7",
+    "tamanho": "1440x900",
+    "tema": "claro",
+    "app": "D7/1440x900-claro-historico-detalhe.jpg",
+    "ref": "D7/1440x900-claro-historico-detalhe.jpg",
+    "avisos": [],
+    "erros": [],
+    "sonda": {
+      "rolagemHorizontal": false,
+      "rolagemAninhada": [],
+      "foraDaJanela": []
+    }
+  },
+  {
+    "id": "historico-detalhe",
+    "grupo": "D7",
+    "tamanho": "1440x900",
+    "tema": "escuro",
+    "app": "D7/1440x900-escuro-historico-detalhe.jpg",
+    "ref": "D7/1440x900-escuro-historico-detalhe.jpg",
+    "avisos": [],
+    "erros": [],
+    "sonda": {
+      "rolagemHorizontal": false,
+      "rolagemAninhada": [],
+      "foraDaJanela": []
+    }
+  }
+]

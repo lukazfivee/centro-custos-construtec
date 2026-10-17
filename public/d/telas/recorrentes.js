@@ -21,7 +21,7 @@
       celulas: [
         `<div class="dois-tx"><b>${esc(m.nome)}</b><span>${esc(m.centro_codigo)} · ${esc(m.centro_nome)}${m.favorecido ? ` · ${esc(m.favorecido)}` : ''}</span></div>`,
         `${esc(C.FREQUENCIAS[m.frequencia] || m.frequencia)} · dia ${esc(String(m.dia_mes || 1))}`,
-        parcelas(m), esc(CC.money(m.valor)),
+        parcelas(m), `<b class="cad-valor">${esc(CC.money(m.valor))}</b>`,
         m.ativo ? U.chip('Ativo', 'ok') : U.chip('Pausado', 'neutro'), acoes,
       ],
     };
@@ -59,7 +59,7 @@
     const ativos = modelos.filter((m) => m.ativo).length;
     CC.$('.cab .acoes', el).innerHTML = C.pode() ? `<button type="button" class="btn btn-s" data-novo>${D.ic('plus')}Novo recorrente</button>${botaoGerar(atual)}` : '';
     CC.$('[data-corpo]', el).innerHTML = `<div class="rec-grade"><div class="card cad-tabela">${U.tabela({
-      colunas: [{ rotulo: 'Modelo' }, { rotulo: 'Frequência' }, { rotulo: 'Parcelas' }, { rotulo: 'Valor', num: true }, { rotulo: 'Status' }, { rotulo: '' }],
+      colunas: [{ rotulo: 'Modelo' }, { rotulo: 'Frequência' }, { rotulo: 'Parcelas' }, { rotulo: 'Valor', num: true }, { rotulo: 'Status' }, { rotulo: 'Ações' }],
       linhas: modelos.map(linha), vazio: 'Nenhum recorrente cadastrado ainda.',
     })}<div class="cad-rodape"><span>${esc(`${ativos} ativos de ${C.plural(modelos.length, 'modelo', 'modelos')}`)}</span></div></div>${proximas(proxima)}</div>`;
 

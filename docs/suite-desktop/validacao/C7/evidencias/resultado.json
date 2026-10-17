@@ -1,0 +1,914 @@
+[
+ {
+  "id": "categorias",
+  "grupo": "D5",
+  "tamanho": "1280x720",
+  "tema": "claro",
+  "app": "D5/1280x720-claro-categorias.jpg",
+  "ref": "D5/1280x720-claro-categorias.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "categorias",
+  "grupo": "D5",
+  "tamanho": "1280x720",
+  "tema": "escuro",
+  "app": "D5/1280x720-escuro-categorias.jpg",
+  "ref": "D5/1280x720-escuro-categorias.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "categorias",
+  "grupo": "D5",
+  "tamanho": "1280x800",
+  "tema": "claro",
+  "app": "D5/1280x800-claro-categorias.jpg",
+  "ref": "D5/1280x800-claro-categorias.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "categorias",
+  "grupo": "D5",
+  "tamanho": "1280x800",
+  "tema": "escuro",
+  "app": "D5/1280x800-escuro-categorias.jpg",
+  "ref": "D5/1280x800-escuro-categorias.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "categorias",
+  "grupo": "D5",
+  "tamanho": "1440x900",
+  "tema": "claro",
+  "app": "D5/1440x900-claro-categorias.jpg",
+  "ref": "D5/1440x900-claro-categorias.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "categorias",
+  "grupo": "D5",
+  "tamanho": "1440x900",
+  "tema": "escuro",
+  "app": "D5/1440x900-escuro-categorias.jpg",
+  "ref": "D5/1440x900-escuro-categorias.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "categoria-nova",
+  "grupo": "D5",
+  "tamanho": "1280x720",
+  "tema": "claro",
+  "app": "D5/1280x720-claro-categoria-nova.jpg",
+  "ref": "D5/1280x720-claro-categoria-nova.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "categoria-nova",
+  "grupo": "D5",
+  "tamanho": "1280x720",
+  "tema": "escuro",
+  "app": "D5/1280x720-escuro-categoria-nova.jpg",
+  "ref": "D5/1280x720-escuro-categoria-nova.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "categoria-nova",
+  "grupo": "D5",
+  "tamanho": "1280x800",
+  "tema": "claro",
+  "app": "D5/1280x800-claro-categoria-nova.jpg",
+  "ref": "D5/1280x800-claro-categoria-nova.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "categoria-nova",
+  "grupo": "D5",
+  "tamanho": "1280x800",
+  "tema": "escuro",
+  "app": "D5/1280x800-escuro-categoria-nova.jpg",
+  "ref": "D5/1280x800-escuro-categoria-nova.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "categoria-nova",
+  "grupo": "D5",
+  "tamanho": "1440x900",
+  "tema": "claro",
+  "app": "D5/1440x900-claro-categoria-nova.jpg",
+  "ref": "D5/1440x900-claro-categoria-nova.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "categoria-nova",
+  "grupo": "D5",
+  "tamanho": "1440x900",
+  "tema": "escuro",
+  "app": "D5/1440x900-escuro-categoria-nova.jpg",
+  "ref": "D5/1440x900-escuro-categoria-nova.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "categoria-editar",
+  "grupo": "D5",
+  "tamanho": "1280x720",
+  "tema": "claro",
+  "app": "D5/1280x720-claro-categoria-editar.jpg",
+  "ref": "D5/1280x720-claro-categoria-editar.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "categoria-editar",
+  "grupo": "D5",
+  "tamanho": "1280x720",
+  "tema": "escuro",
+  "app": "D5/1280x720-escuro-categoria-editar.jpg",
+  "ref": "D5/1280x720-escuro-categoria-editar.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "categoria-editar",
+  "grupo": "D5",
+  "tamanho": "1280x800",
+  "tema": "claro",
+  "app": "D5/1280x800-claro-categoria-editar.jpg",
+  "ref": "D5/1280x800-claro-categoria-editar.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "categoria-editar",
+  "grupo": "D5",
+  "tamanho": "1280x800",
+  "tema": "escuro",
+  "app": "D5/1280x800-escuro-categoria-editar.jpg",
+  "ref": "D5/1280x800-escuro-categoria-editar.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "categoria-editar",
+  "grupo": "D5",
+  "tamanho": "1440x900",
+  "tema": "claro",
+  "app": "D5/1440x900-claro-categoria-editar.jpg",
+  "ref": "D5/1440x900-claro-categoria-editar.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "categoria-editar",
+  "grupo": "D5",
+  "tamanho": "1440x900",
+  "tema": "escuro",
+  "app": "D5/1440x900-escuro-categoria-editar.jpg",
+  "ref": "D5/1440x900-escuro-categoria-editar.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "fornecedores",
+  "grupo": "D5",
+  "tamanho": "1280x720",
+  "tema": "claro",
+  "app": "D5/1280x720-claro-fornecedores.jpg",
+  "ref": "D5/1280x720-claro-fornecedores.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "fornecedores",
+  "grupo": "D5",
+  "tamanho": "1280x720",
+  "tema": "escuro",
+  "app": "D5/1280x720-escuro-fornecedores.jpg",
+  "ref": "D5/1280x720-escuro-fornecedores.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "fornecedores",
+  "grupo": "D5",
+  "tamanho": "1280x800",
+  "tema": "claro",
+  "app": "D5/1280x800-claro-fornecedores.jpg",
+  "ref": "D5/1280x800-claro-fornecedores.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "fornecedores",
+  "grupo": "D5",
+  "tamanho": "1280x800",
+  "tema": "escuro",
+  "app": "D5/1280x800-escuro-fornecedores.jpg",
+  "ref": "D5/1280x800-escuro-fornecedores.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "fornecedores",
+  "grupo": "D5",
+  "tamanho": "1440x900",
+  "tema": "claro",
+  "app": "D5/1440x900-claro-fornecedores.jpg",
+  "ref": "D5/1440x900-claro-fornecedores.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "fornecedores",
+  "grupo": "D5",
+  "tamanho": "1440x900",
+  "tema": "escuro",
+  "app": "D5/1440x900-escuro-fornecedores.jpg",
+  "ref": "D5/1440x900-escuro-fornecedores.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "fornecedor-detalhe",
+  "grupo": "D5",
+  "tamanho": "1280x720",
+  "tema": "claro",
+  "app": "D5/1280x720-claro-fornecedor-detalhe.jpg",
+  "ref": "D5/1280x720-claro-fornecedor-detalhe.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "fornecedor-detalhe",
+  "grupo": "D5",
+  "tamanho": "1280x720",
+  "tema": "escuro",
+  "app": "D5/1280x720-escuro-fornecedor-detalhe.jpg",
+  "ref": "D5/1280x720-escuro-fornecedor-detalhe.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "fornecedor-detalhe",
+  "grupo": "D5",
+  "tamanho": "1280x800",
+  "tema": "claro",
+  "app": "D5/1280x800-claro-fornecedor-detalhe.jpg",
+  "ref": "D5/1280x800-claro-fornecedor-detalhe.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "fornecedor-detalhe",
+  "grupo": "D5",
+  "tamanho": "1280x800",
+  "tema": "escuro",
+  "app": "D5/1280x800-escuro-fornecedor-detalhe.jpg",
+  "ref": "D5/1280x800-escuro-fornecedor-detalhe.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "fornecedor-detalhe",
+  "grupo": "D5",
+  "tamanho": "1440x900",
+  "tema": "claro",
+  "app": "D5/1440x900-claro-fornecedor-detalhe.jpg",
+  "ref": "D5/1440x900-claro-fornecedor-detalhe.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "fornecedor-detalhe",
+  "grupo": "D5",
+  "tamanho": "1440x900",
+  "tema": "escuro",
+  "app": "D5/1440x900-escuro-fornecedor-detalhe.jpg",
+  "ref": "D5/1440x900-escuro-fornecedor-detalhe.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "fornecedor-duplicado",
+  "grupo": "D5",
+  "tamanho": "1280x720",
+  "tema": "claro",
+  "app": "D5/1280x720-claro-fornecedor-duplicado.jpg",
+  "ref": "D5/1280x720-claro-fornecedor-duplicado.jpg",
+  "avisos": [],
+  "erros": [
+   "console: Failed to load resource: the server responded with a status of 409 (Conflict) http://127.0.0.1:3241/api/fornecedores"
+  ],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "fornecedor-duplicado",
+  "grupo": "D5",
+  "tamanho": "1280x720",
+  "tema": "escuro",
+  "app": "D5/1280x720-escuro-fornecedor-duplicado.jpg",
+  "ref": "D5/1280x720-escuro-fornecedor-duplicado.jpg",
+  "avisos": [],
+  "erros": [
+   "console: Failed to load resource: the server responded with a status of 409 (Conflict) http://127.0.0.1:3241/api/fornecedores"
+  ],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "fornecedor-duplicado",
+  "grupo": "D5",
+  "tamanho": "1280x800",
+  "tema": "claro",
+  "app": "D5/1280x800-claro-fornecedor-duplicado.jpg",
+  "ref": "D5/1280x800-claro-fornecedor-duplicado.jpg",
+  "avisos": [],
+  "erros": [
+   "console: Failed to load resource: the server responded with a status of 409 (Conflict) http://127.0.0.1:3241/api/fornecedores"
+  ],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "fornecedor-duplicado",
+  "grupo": "D5",
+  "tamanho": "1280x800",
+  "tema": "escuro",
+  "app": "D5/1280x800-escuro-fornecedor-duplicado.jpg",
+  "ref": "D5/1280x800-escuro-fornecedor-duplicado.jpg",
+  "avisos": [],
+  "erros": [
+   "console: Failed to load resource: the server responded with a status of 409 (Conflict) http://127.0.0.1:3241/api/fornecedores"
+  ],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "fornecedor-duplicado",
+  "grupo": "D5",
+  "tamanho": "1440x900",
+  "tema": "claro",
+  "app": "D5/1440x900-claro-fornecedor-duplicado.jpg",
+  "ref": "D5/1440x900-claro-fornecedor-duplicado.jpg",
+  "avisos": [],
+  "erros": [
+   "console: Failed to load resource: the server responded with a status of 409 (Conflict) http://127.0.0.1:3241/api/fornecedores"
+  ],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "fornecedor-duplicado",
+  "grupo": "D5",
+  "tamanho": "1440x900",
+  "tema": "escuro",
+  "app": "D5/1440x900-escuro-fornecedor-duplicado.jpg",
+  "ref": "D5/1440x900-escuro-fornecedor-duplicado.jpg",
+  "avisos": [],
+  "erros": [
+   "console: Failed to load resource: the server responded with a status of 409 (Conflict) http://127.0.0.1:3241/api/fornecedores"
+  ],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "recorrentes",
+  "grupo": "D5",
+  "tamanho": "1280x720",
+  "tema": "claro",
+  "app": "D5/1280x720-claro-recorrentes.jpg",
+  "ref": "D5/1280x720-claro-recorrentes.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "recorrentes",
+  "grupo": "D5",
+  "tamanho": "1280x720",
+  "tema": "escuro",
+  "app": "D5/1280x720-escuro-recorrentes.jpg",
+  "ref": "D5/1280x720-escuro-recorrentes.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "recorrentes",
+  "grupo": "D5",
+  "tamanho": "1280x800",
+  "tema": "claro",
+  "app": "D5/1280x800-claro-recorrentes.jpg",
+  "ref": "D5/1280x800-claro-recorrentes.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "recorrentes",
+  "grupo": "D5",
+  "tamanho": "1280x800",
+  "tema": "escuro",
+  "app": "D5/1280x800-escuro-recorrentes.jpg",
+  "ref": "D5/1280x800-escuro-recorrentes.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "recorrentes",
+  "grupo": "D5",
+  "tamanho": "1440x900",
+  "tema": "claro",
+  "app": "D5/1440x900-claro-recorrentes.jpg",
+  "ref": "D5/1440x900-claro-recorrentes.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "recorrentes",
+  "grupo": "D5",
+  "tamanho": "1440x900",
+  "tema": "escuro",
+  "app": "D5/1440x900-escuro-recorrentes.jpg",
+  "ref": "D5/1440x900-escuro-recorrentes.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "recorrente-novo",
+  "grupo": "D5",
+  "tamanho": "1280x720",
+  "tema": "claro",
+  "app": "D5/1280x720-claro-recorrente-novo.jpg",
+  "ref": "D5/1280x720-claro-recorrente-novo.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "recorrente-novo",
+  "grupo": "D5",
+  "tamanho": "1280x720",
+  "tema": "escuro",
+  "app": "D5/1280x720-escuro-recorrente-novo.jpg",
+  "ref": "D5/1280x720-escuro-recorrente-novo.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "recorrente-novo",
+  "grupo": "D5",
+  "tamanho": "1280x800",
+  "tema": "claro",
+  "app": "D5/1280x800-claro-recorrente-novo.jpg",
+  "ref": "D5/1280x800-claro-recorrente-novo.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "recorrente-novo",
+  "grupo": "D5",
+  "tamanho": "1280x800",
+  "tema": "escuro",
+  "app": "D5/1280x800-escuro-recorrente-novo.jpg",
+  "ref": "D5/1280x800-escuro-recorrente-novo.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "recorrente-novo",
+  "grupo": "D5",
+  "tamanho": "1440x900",
+  "tema": "claro",
+  "app": "D5/1440x900-claro-recorrente-novo.jpg",
+  "ref": "D5/1440x900-claro-recorrente-novo.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "recorrente-novo",
+  "grupo": "D5",
+  "tamanho": "1440x900",
+  "tema": "escuro",
+  "app": "D5/1440x900-escuro-recorrente-novo.jpg",
+  "ref": "D5/1440x900-escuro-recorrente-novo.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "recorrentes-gerar",
+  "grupo": "D5",
+  "tamanho": "1280x720",
+  "tema": "claro",
+  "app": "D5/1280x720-claro-recorrentes-gerar.jpg",
+  "ref": "D5/1280x720-claro-recorrentes-gerar.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "recorrentes-gerar",
+  "grupo": "D5",
+  "tamanho": "1280x720",
+  "tema": "escuro",
+  "app": "D5/1280x720-escuro-recorrentes-gerar.jpg",
+  "ref": "D5/1280x720-escuro-recorrentes-gerar.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "recorrentes-gerar",
+  "grupo": "D5",
+  "tamanho": "1280x800",
+  "tema": "claro",
+  "app": "D5/1280x800-claro-recorrentes-gerar.jpg",
+  "ref": "D5/1280x800-claro-recorrentes-gerar.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "recorrentes-gerar",
+  "grupo": "D5",
+  "tamanho": "1280x800",
+  "tema": "escuro",
+  "app": "D5/1280x800-escuro-recorrentes-gerar.jpg",
+  "ref": "D5/1280x800-escuro-recorrentes-gerar.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "recorrentes-gerar",
+  "grupo": "D5",
+  "tamanho": "1440x900",
+  "tema": "claro",
+  "app": "D5/1440x900-claro-recorrentes-gerar.jpg",
+  "ref": "D5/1440x900-claro-recorrentes-gerar.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "recorrentes-gerar",
+  "grupo": "D5",
+  "tamanho": "1440x900",
+  "tema": "escuro",
+  "app": "D5/1440x900-escuro-recorrentes-gerar.jpg",
+  "ref": "D5/1440x900-escuro-recorrentes-gerar.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "recorrentes-gerado",
+  "grupo": "D5",
+  "tamanho": "1280x720",
+  "tema": "claro",
+  "app": "D5/1280x720-claro-recorrentes-gerado.jpg",
+  "ref": "D5/1280x720-claro-recorrentes-gerado.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "recorrentes-gerado",
+  "grupo": "D5",
+  "tamanho": "1280x720",
+  "tema": "escuro",
+  "app": "D5/1280x720-escuro-recorrentes-gerado.jpg",
+  "ref": "D5/1280x720-escuro-recorrentes-gerado.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "recorrentes-gerado",
+  "grupo": "D5",
+  "tamanho": "1280x800",
+  "tema": "claro",
+  "app": "D5/1280x800-claro-recorrentes-gerado.jpg",
+  "ref": "D5/1280x800-claro-recorrentes-gerado.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "recorrentes-gerado",
+  "grupo": "D5",
+  "tamanho": "1280x800",
+  "tema": "escuro",
+  "app": "D5/1280x800-escuro-recorrentes-gerado.jpg",
+  "ref": "D5/1280x800-escuro-recorrentes-gerado.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "recorrentes-gerado",
+  "grupo": "D5",
+  "tamanho": "1440x900",
+  "tema": "claro",
+  "app": "D5/1440x900-claro-recorrentes-gerado.jpg",
+  "ref": "D5/1440x900-claro-recorrentes-gerado.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "recorrentes-gerado",
+  "grupo": "D5",
+  "tamanho": "1440x900",
+  "tema": "escuro",
+  "app": "D5/1440x900-escuro-recorrentes-gerado.jpg",
+  "ref": "D5/1440x900-escuro-recorrentes-gerado.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ }
+]

@@ -29,7 +29,7 @@
         ${CC.ia && CC.ia.ready() ? `<button class="menu-item" type="button" id="m-ia">${icon('sparkle', 22)}<span>Assistente<small>${tecnico ? 'Apoio à execução, fotos, checklist e relatos de campo' : 'Tire dúvidas sobre obras, custos e propostas e vá direto a qualquer tela'}</small></span></button>
         <button class="menu-item" type="button" id="m-bug">${icon('bug', 22)}<span>Reportar problema<small>Conte o que aconteceu e o assistente monta o relato</small></span></button>` : ''}
         <a class="menu-item" href="${WEBMAIL}" target="_blank" rel="noopener" id="m-webmail">${icon('envelope-simple', 22)}<span>Webmail Pro<small>E-mail corporativo UOL</small></span></a>
-        ${tecnico ? '' : `<a class="menu-item" href="/d/" id="m-web">${icon('desktop', 22)}<span>Versão completa<small>Fechamento, cobranças, cadastros e usuários (tela de computador)</small></span></a>`}
+        ${tecnico ? '' : `<a class="menu-item" href="/d/" id="m-web">${icon('desktop', 22)}<span>Versão completa<small>Abrir o sistema na tela de computador</small></span></a>`}
       </div>
       <button class="btn2 danger-btn" type="button" id="m-sair">${icon('sign-out', 20)}<span>Sair</span></button>`, false, params);
     CC.$('#m-senha', el).addEventListener('click', () => CC.senhaSheet());

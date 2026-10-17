@@ -19,7 +19,7 @@
   D.lancDados = function (l) {
     const linha = (rotulo, valor) => (valor ? `<dt>${esc(rotulo)}</dt><dd>${valor}</dd>` : '');
     const v = D.valorSinal(l);
-    return `<dl class="dados">
+    return `<dl class="dados lanc-dados">
         ${linha('Descrição', esc(l.descricao))}
         ${linha('Valor', `<b class="${v.entrada ? 'entrada' : ''}">${esc(v.texto)}</b>`)}
         ${linha('Situação', D.ui.situacao(l))}

@@ -56,7 +56,9 @@
 @media (max-width: 1379px) {
   .grade-obras { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .grade-obra { grid-template-columns: minmax(0, 1fr); }
-  .kpis.cinco { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  /* Painel lateral desce para baixo: a coluna principal tem largura para os cinco indicadores numa linha (sem buraco 3+2). */
+  .kpis.cinco { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px; }
+  .kpis.cinco .val { font-size: calc(16px * var(--fs, 1)); }
   .grade-nf { grid-template-columns: minmax(0, 1fr); }
 }
 .obras [data-corpo] { display: flex; flex-direction: column; gap: 14px; }

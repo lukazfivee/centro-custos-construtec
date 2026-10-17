@@ -79,6 +79,7 @@ button { cursor: pointer; }
 .tag { height: 20px; padding: 0 8px; border-radius: 5px; font-size: 10.5px; font-weight: 600; display: inline-flex; align-items: center; background: var(--accent-900); color: var(--accent-300); box-shadow: inset 0 0 0 1px var(--divider); white-space: nowrap; }
 .tag.warn { background: var(--warn-soft); color: var(--warn); box-shadow: inset 0 0 0 1px var(--warn-bar); }
 .tag.ok { background: #f0f9f2; color: #176d39; box-shadow: inset 0 0 0 1px #94d3a8; }
+html[data-theme="escuro"] .tag.ok { background: #0f3a26; color: #8fe0b0; box-shadow: inset 0 0 0 1px #2c6e4a; }
 .bar { height: 6px; border-radius: 3px; background: var(--n800); overflow: hidden; }
 .bar span { display: block; height: 100%; border-radius: 3px; background: var(--accent); }
 .bar.warn span { background: var(--warn-bar); }
@@ -106,11 +107,11 @@ button { cursor: pointer; }
 
 .field { display: flex; flex-direction: column; gap: 6px; }
 .field > span { font-size: 11.5px; font-weight: 600; color: var(--n300); }
-.field input, .field select, .field textarea { width: 100%; min-height: 48px; padding: 0 14px; border: 0; border-radius: 10px; background: var(--surface); box-shadow: inset 0 0 0 1px var(--divider); font-size: 16px; outline: none; }
+.field input, .field select, .field textarea { width: 100%; min-width: 0; min-height: 48px; padding: 0 14px; border: 0; border-radius: 10px; background: var(--surface); box-shadow: inset 0 0 0 1px var(--divider); font-size: 16px; outline: none; }
 .field textarea { padding: 12px 14px; min-height: 76px; resize: vertical; }
 .field input:focus, .field select:focus, .field textarea:focus { box-shadow: inset 0 0 0 2px var(--accent); }
 .field.money input { min-height: 56px; font-size: 22px; font-weight: 600; }
-.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
 .photo { display: flex; align-items: center; gap: 12px; }
 .photo .thumb { width: 60px; height: 78px; flex: none; border-radius: 8px; background: var(--n800) center/cover no-repeat; display: grid; place-items: center; color: var(--n300); }
 .alert { font-size: 12.5px; font-weight: 600; color: var(--warn); display: flex; gap: 6px; align-items: flex-start; }

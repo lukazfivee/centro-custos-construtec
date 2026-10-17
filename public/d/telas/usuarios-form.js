@@ -42,10 +42,10 @@
       obras: (usuario?.obras || []).map(Number),
       metodo: X.convitesOk ? 'convite' : 'senha',
     };
-    const corpo = `<form class="form-lanc" novalidate>
-      ${U.campo({ rotulo: 'Nome', name: 'nome', valor: usuario?.nome })}
+    const corpo = `<form class="form-lanc usu-form" novalidate>
+      <div class="usu-identidade">${U.campo({ rotulo: 'Nome', name: 'nome', valor: usuario?.nome })}
+      ${U.campo({ rotulo: 'Papel', name: 'suiteRole', tipo: 'select', valor: papelInicial, opcoes: X.PAPEIS })}</div>
       ${U.campo({ rotulo: 'E-mail', name: 'email', tipo: 'email', valor: usuario?.email })}
-      ${U.campo({ rotulo: 'Papel', name: 'suiteRole', tipo: 'select', valor: papelInicial, opcoes: X.PAPEIS })}
       ${blocoApps(estado.apps)}
       <div data-obras-wrap></div>
       ${editando ? '' : `<div class="fld"><span>Como a pessoa entra</span>${X.convitesOk ? U.seg('metodo', [{ valor: 'convite', rotulo: 'Convite por e-mail' }, { valor: 'senha', rotulo: 'Senha provisória' }], 'convite', 'Método') : '<small class="muted">Sem conta corporativa, o acesso é por senha provisória.</small>'}</div>
@@ -137,6 +137,7 @@
         } else if (estado.metodo === 'senha') {
           await CC.api('/usuarios', { method: 'POST', body: { nome, email, senha, suiteRole: papel(), apps: estado.apps, obras: obrasCorpo } });
           ctl.marcarSalvo();
+          ctl.cabecalho({ icone: 'check', titulo: 'Usuário criado', sub: nome });
           ctl.desenhar(`${D.sucesso('Usuário criado', `${nome} já pode entrar com a senha provisória.`)}<div class="usu-senha"><span class="eyebrow">Senha provisória</span><code>${esc(senha)}</code><button type="button" class="btn btn-s" data-copiar>${D.ic('copy')}Copiar senha</button></div>`);
           ctl.botoes('<button type="button" class="btn btn-p" data-concluir>Concluir</button>');
           CC.$('[data-copiar]', ctl.corpo).addEventListener('click', () => { navigator.clipboard?.writeText(senha).then(() => CC.toast('Senha copiada')); });
@@ -145,6 +146,7 @@
         } else {
           const { data } = await CC.api('/cadastros/convites', { method: 'POST', body: { email, papel: papel(), apps: estado.apps } });
           ctl.marcarSalvo();
+          ctl.cabecalho({ icone: 'check', titulo: 'Convite enviado', sub: email });
           ctl.desenhar(`${D.sucesso('Convite enviado', `Enviamos o convite para ${email} como ${X.nomePapel(papel())}.`)}${data?.code ? `<div class="usu-senha"><span class="eyebrow">Código da empresa</span><code>${esc(data.code)}</code></div>` : ''}`);
           ctl.botoes('<button type="button" class="btn btn-p" data-concluir>Concluir</button>');
           CC.$('[data-concluir]', ctl.rodape).addEventListener('click', () => ctl.fechar(true));

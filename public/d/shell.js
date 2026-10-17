@@ -61,7 +61,6 @@
           <button type="button" class="ibtn" data-sair aria-label="Sair" title="Sair">${D.ic('sign-out', 18)}</button></div>
       </aside>
       <div class="area">
-        ${D.simulando() ? `<div class="como-faixa" role="status">${D.ic('eye')}<span>Você está vendo o sistema como <b>${esc(D.papelNome())}</b>. Menus e botões sem permissão somem. O servidor continua usando o seu papel real.</span><button type="button" class="btn btn-s" data-sair-como>Voltar para ${esc(D.papelNome(D.usuario().suiteRole || 'admin'))}</button></div>` : ''}
         <header class="top">
           <div class="busca" role="search"></div>
           <span class="espaco"></span>
@@ -70,6 +69,7 @@
           <div class="suite"></div>
           <button type="button" class="ibtn" data-tema></button>
         </header>
+        ${D.simulando() ? `<div class="como-faixa" role="status">${D.ic('eye')}<span>Você está vendo o sistema como <b>${esc(D.papelNome())}</b>. Menus e botões sem permissão somem. O servidor continua usando o seu papel real.</span><button type="button" class="btn btn-s" data-sair-como>Voltar para ${esc(D.papelNome(D.usuario().suiteRole || 'admin'))}</button></div>` : ''}
         <main id="conteudo" class="conteudo" tabindex="-1"></main>
       </div></div>`;
     pintarTema();

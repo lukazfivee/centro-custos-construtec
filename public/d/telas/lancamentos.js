@@ -94,7 +94,11 @@
       if (aoContar) aoContar(`${p.total} lançamento${p.total === 1 ? '' : 's'}${f.mes ? ` em ${D.mesAno(f.mes).toLowerCase()}` : ''}`);
       const ini = p.total ? (p.pagina - 1) * p.limite + 1 : 0;
       const fim = Math.min(p.total, p.pagina * p.limite);
-      alvo.innerHTML = `<div class="card tabela">${U.tabela({ colunas: COLUNAS, linhas: r.itens.map(linha), vazio: 'Nenhum lançamento com esses filtros.' })}
+      // Dentro da obra a coluna Obra repete a mesma obra em toda linha: sai, e a descricao ganha a largura (sem reticencias em 1280).
+      const colObra = COLUNAS.findIndex((c) => c.rotulo === 'Obra');
+      const semObra = (lista) => (obraFixa ? lista.filter((_, i) => i !== colObra) : lista);
+      const linhas = r.itens.map(linha).map((x) => ({ ...x, celulas: semObra(x.celulas) }));
+      alvo.innerHTML = `<div class="card tabela">${U.tabela({ colunas: semObra(COLUNAS), linhas, vazio: 'Nenhum lançamento com esses filtros.' })}
         <div class="rodape"><span class="muted">Exibindo ${ini}–${fim} de ${p.total}</span>
           <span class="total">Total líquido <b class="${Number(r.totalLiquido) >= 0 ? 'entrada' : ''}">${esc(Number(r.totalLiquido) ? CC.signed(r.totalLiquido) : CC.money(0))}</b></span>
           <span class="pager"><button type="button" class="btn btn-s" data-pag="-1"${p.temAnterior ? '' : ' disabled'} aria-label="Página anterior">${D.ic('caret-left')}</button>

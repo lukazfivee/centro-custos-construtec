@@ -20,8 +20,8 @@ jobs:
       # Unico lugar que muda a cada pre-lancamento: o numero da RC. O versionCode do
       # Android sai dele (3.1.0-rc.N -> 31000+N; ver versionCodeFor no Worker) e o app
       # instalado so oferece a atualizacao quando o codigo da release for maior.
-      RC_NUMBER: '31'
-      APP_NOTES: 'Correção no aplicativo do celular: o PIN não é mais apagado quando a sessão vence; basta entrar com e-mail e senha e digitar o PIN que você já tinha.'
+      RC_NUMBER: '32'
+      APP_NOTES: 'Suíte para Windows: a barra de título agora segue o estilo do ChamadoPro (32 px, ponto ciano, texto espaçado, luz do mouse).'
     steps:
       - name: Baixar codigo
         uses: actions/checkout@v7

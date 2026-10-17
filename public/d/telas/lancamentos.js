@@ -95,7 +95,8 @@
       const ini = p.total ? (p.pagina - 1) * p.limite + 1 : 0;
       const fim = Math.min(p.total, p.pagina * p.limite);
       // Dentro da obra a coluna Obra repete a mesma obra em toda linha: sai, e a descricao ganha a largura (sem reticencias em 1280).
-      const semObra = (lista) => (obraFixa ? lista.filter((_, i) => i !== 3) : lista);
+      const colObra = COLUNAS.findIndex((c) => c.rotulo === 'Obra');
+      const semObra = (lista) => (obraFixa ? lista.filter((_, i) => i !== colObra) : lista);
       const linhas = r.itens.map(linha).map((x) => ({ ...x, celulas: semObra(x.celulas) }));
       alvo.innerHTML = `<div class="card tabela">${U.tabela({ colunas: semObra(COLUNAS), linhas, vazio: 'Nenhum lançamento com esses filtros.' })}
         <div class="rodape"><span class="muted">Exibindo ${ini}–${fim} de ${p.total}</span>

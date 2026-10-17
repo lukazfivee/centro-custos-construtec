@@ -21,8 +21,10 @@ function iniciar(porta) {
       res.writeHead(200, { 'content-type': TIPOS['.html'] });
       return res.end(paginaEstado());
     }
-    const arquivo = path.normalize(path.join(PASTA, decodeURIComponent(url.pathname)));
-    if (!arquivo.startsWith(PASTA) || !fs.existsSync(arquivo) || fs.statSync(arquivo).isDirectory()) {
+    let caminho;
+    try { caminho = decodeURIComponent(url.pathname); } catch { res.writeHead(400); res.end(); return; }
+    const arquivo = path.normalize(path.join(PASTA, caminho));
+    if (arquivo !== PASTA && !arquivo.startsWith(PASTA + path.sep) || !fs.existsSync(arquivo) || fs.statSync(arquivo).isDirectory()) {
       res.writeHead(404); return res.end('nao achei');
     }
     res.writeHead(200, { 'content-type': TIPOS[path.extname(arquivo)] || 'application/octet-stream' });

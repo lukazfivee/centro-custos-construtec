@@ -57,8 +57,12 @@ test('lista de fechamentos nao entrega pendencias com valores a quem nao tem p8'
   const doAdmin = await call('GET', '/fechamento-mensal', admin);
   assert.equal(doAdmin.status, 200);
   assert.equal(doAdmin.data[0].pendencias[0].valor, 48250.9);
+  // O tecnico so executa (p12): nem a lista de fechamentos ele le, e nada vaza na recusa.
+  const doTecnico = await call('GET', '/fechamento-mensal', tokens.tecnico);
+  assert.equal(doTecnico.status, 403);
+  assert.doesNotMatch(JSON.stringify(doTecnico.data), /48250|Contas a pagar vencidas/);
   // Os demais sabem que o mes esta fechado (trava de lancamentos), sem as pendencias e seus valores.
-  for (const role of ['tecnico', 'comercial', 'gestor']) {
+  for (const role of ['comercial', 'gestor']) {
     const { status, data } = await call('GET', '/fechamento-mensal', tokens[role]);
     assert.equal(status, 200);
     assert.equal(data.length, 1);

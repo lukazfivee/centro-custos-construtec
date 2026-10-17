@@ -94,7 +94,9 @@ async function collectConsoleErrors(driver) {
       driver.manage().logs().get('browser'),
       new Promise((_, reject) => setTimeout(() => reject(new Error('logs().get timeout')), 5000)),
     ]);
-    return entries.filter((entry) => entry.level.name === 'SEVERE');
+    // O Orçamentos de produção só aceita ser embutido pelo Centro de produção (frame-ancestors); no teste local o
+    // navegador avisa e isso não é erro do Centro.
+    return entries.filter((entry) => entry.level.name === 'SEVERE' && !/violates the following Content Security Policy directive: "frame-ancestors/.test(entry.message));
   } catch {
     return null; // indica que a coleta não é suportada/disponível neste ambiente
   }

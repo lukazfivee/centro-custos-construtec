@@ -34,9 +34,9 @@ const MODULES = suiteModules(APP_ROOT);
 const CENTRO_URL = `http://127.0.0.1:${MODULES.centro.port}/d/`;
 const TARGETS = ['centro', 'orcamentos'];
 // Barra de título própria (Windows): faixa fixa no topo; as duas telas ocupam o que sobra abaixo dela.
-const BAR_HEIGHT = 36;
-const BAR_COLOR = '#031f29';
-const BAR_SYMBOLS = '#b9d4dd';
+const BAR_HEIGHT = 32;
+const BAR_COLOR = '#020d14';
+const BAR_SYMBOLS = '#ffffff';
 const runtime = createCentroRuntime({ appRoot: APP_ROOT, port: MODULES.centro.port });
 const { loadEnv, loadPrefs, savePrefs, configureLocalFirewall, afterServerStart } = runtime;
 

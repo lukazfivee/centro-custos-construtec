@@ -14,12 +14,9 @@
 .cab .tit h1 { overflow-wrap: anywhere; }
 
 /* Barras fixas e rodapes com fundo do tema, para o conteudo nunca aparecer por tras. */
-.drawer, .drawer .dcab, .drawer .dabas, .drawer .drod { background: var(--color-surface); }
 .drawer .drod { flex-wrap: wrap; position: relative; z-index: 1; }
-.dialogo { background: var(--color-surface); }
 .imp-barra { background: var(--color-surface); }
-.toast { max-width: min(560px, calc(100vw - 48px)); box-shadow: 0 0 0 1px var(--color-divider), 0 14px 34px rgba(3, 31, 41, .3); }
-.pop { background: var(--color-surface); }
+.toast { max-width: min(560px, calc(100vw - 48px)); }
 .conteudo { background: var(--color-bg); overscroll-behavior: contain; }
 .camada, .dialogo-camada, .impressao { overscroll-behavior: contain; }
 .ibtn.vago { pointer-events: none; }

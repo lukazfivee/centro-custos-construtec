@@ -7,7 +7,7 @@
 //   preparar  passos depois de abrir a rota (ctx: tocar, tocarTexto, digitar, painel, dialogo, rolar, offline, api, s...)
 //   muda      grava dados: roda por ultimo e precisa desfazer em limpar
 // Para uma tela nova, copie uma entrada parecida. Uso e opcoes: docs/suite-desktop/validacao/README.md
-const GRUPOS = ['D0', 'D1', 'D2', 'D3a', 'D3b', 'D4', 'D5', 'D6', 'D7', 'Login'];
+const GRUPOS = ['Vidro', 'D0', 'D1', 'D2', 'D3a', 'D3b', 'D4', 'D5', 'D6', 'D7', 'Login'];
 const catalogo = [];
 const t = (grupo, id, def = {}) => catalogo.push({ grupo, id, ...def });
 
@@ -214,4 +214,5 @@ t('Login', 'entrar-senha-errada', { como: null, rota: '', async preparar(c) {
   await c.tocar('button[type="submit"]'); await c.dormir(1500);
 } });
 
+require('./telas-vidro')(t);
 module.exports = { catalogo, GRUPOS, t };

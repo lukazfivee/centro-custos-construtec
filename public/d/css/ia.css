@@ -10,7 +10,7 @@
 body:has(.camada, .dialogo-camada, .impressao) .ia-fab { display: none; }
 
 #ia-sheet { position: fixed; inset: 0; z-index: 45; display: flex; align-items: flex-end; justify-content: flex-end; padding: 0 24px 88px; background: transparent; pointer-events: none; }
-#ia-sheet .sheet { pointer-events: auto; width: 420px; max-width: 100%; height: min(640px, calc(100vh - 120px)); display: flex; flex-direction: column; overflow: hidden; padding: 14px 16px 12px; border-radius: 18px; background: var(--color-surface); color: var(--color-text); box-shadow: var(--shadow-pop); animation: fadeUp .18s ease both; }
+#ia-sheet .sheet { pointer-events: auto; width: 420px; max-width: 100%; height: min(640px, calc(100vh - 120px)); display: flex; flex-direction: column; overflow: hidden; padding: 14px 16px 12px; border-radius: 18px; color: var(--color-text); animation: fadeUp .18s ease both; }
 #ia-sheet .sheet-handle { display: none; }
 #ia-sheet .sheet-head { display: flex; align-items: center; gap: 6px; }
 #ia-sheet .sheet-head b { display: inline-flex; align-items: center; gap: 8px; font-size: calc(15px * var(--fs, 1)); }

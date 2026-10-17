@@ -165,7 +165,8 @@ test('desktop novo: tokens de contraste e rodapes opacos (QA visual)', () => {
   }
   assert.match(tokens, /\[data-theme="escuro"\][\s\S]*--color-field:/);
   assert.match(src('css/base.css'), /box-shadow: inset 0 0 0 1px var\(--color-field\)/);
-  assert.match(src('css/robustez.css'), /\.drawer \.drod \{ background: var\(--color-surface\)/);
+  assert.match(src('css/vidro.css'), /--vidro-painel:/);
+  assert.match(src('css/vidro.css'), /\.drawer \.dcab, \.drawer \.dabas, \.drawer \.drod \{ background: transparent/);
   // Texto branco so sobre a cor de marca solida, nunca sobre accent-300 (claro no tema escuro).
   assert.doesNotMatch(src('css/usuarios.css'), /accent-300\); color: #fff/);
 });

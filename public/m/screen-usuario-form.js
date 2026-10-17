@@ -79,11 +79,13 @@
     const erro = (t) => { CC.$('#uf-erro', el).textContent = t || ''; };
     const pintarObras = () => {
       const box = CC.$('#uf-obras', el);
+      const tecnico = st.papel === 'tecnico';
+      if (tecnico) st.todas = false;
       const escopado = X.ESCOPADOS.includes(st.papel);
       if (!escopado) { box.innerHTML = '<p class="adm-nota">Este papel vê todas as obras.</p>'; return; }
       if (!editando && st.metodo === 'convite') { box.innerHTML = '<p class="adm-nota">Quem entra por convite começa sem obras. Atribua as obras depois que a conta for criada.</p>'; return; }
-      box.innerHTML = `<span class="label">Obras que pode ver</span><div class="seg" role="group" aria-label="Obras">
-        <button type="button" data-todas="1" aria-pressed="${st.todas}">Todas as obras</button><button type="button" data-todas="0" aria-pressed="${!st.todas}">Só algumas</button></div>
+      box.innerHTML = `<span class="label">Obras e serviços atribuídos</span>${tecnico ? '<p class="adm-nota">O técnico acessa somente os itens selecionados.</p>' : `<div class="seg" role="group" aria-label="Obras">
+        <button type="button" data-todas="1" aria-pressed="${st.todas}">Todas as obras</button><button type="button" data-todas="0" aria-pressed="${!st.todas}">Só algumas</button></div>`}
         <div class="adm-toggles col"${st.todas ? ' hidden' : ''}>${obras.length ? obras.map((o) => `<button type="button" class="chip-act" data-obra="${Number(o.id)}" aria-pressed="${st.obras.includes(Number(o.id))}">${icon('check', 16)}<span>${esc(o.codigo)} · ${esc(o.nome)}</span></button>`).join('') : '<p class="adm-nota">Nenhuma obra cadastrada.</p>'}</div>
         ${!st.todas && !st.obras.length ? '<p class="adm-nota warn-txt">Sem nenhuma obra, a pessoa não vê nada até receber uma.</p>' : ''}`;
     };
@@ -125,7 +127,7 @@
       if (!editando && st.metodo === 'senha' && senha.length < 10) return erro('A senha provisória precisa ter pelo menos 10 caracteres.');
       if (!st.apps.length) return erro('Escolha ao menos um app.');
       erro('');
-      const obrasCorpo = X.ESCOPADOS.includes(st.papel) ? (st.todas ? 'todas' : st.obras) : 'todas';
+      const obrasCorpo = st.papel === 'tecnico' ? st.obras : X.ESCOPADOS.includes(st.papel) ? (st.todas ? 'todas' : st.obras) : 'todas';
       const rotulo = salvar.innerHTML;
       CC.busy(salvar, 'Salvando…');
       try {

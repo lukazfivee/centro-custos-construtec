@@ -4,7 +4,7 @@ const express = require('express');
 const { getDb } = require('../db');
 const { autenticar } = require('../middleware/auth');
 const { paramObra } = require('../services/obraScope');
-const { exigirPermissao, can } = require('../services/permissions');
+const { exigirExecucao, can } = require('../services/permissions');
 const { asyncRoute, httpError, positiveId } = require('../lib/http');
 const { recordAudit } = require('../services/audit');
 const core = require('../services/servicos/core');
@@ -36,8 +36,28 @@ async function saveChecklist(tx, id, list) {
   await tx.query('UPDATE service_jobs SET checklist=$2::jsonb,updated_at=NOW() WHERE cost_center_id=$1', [id, JSON.stringify(list)]);
 }
 
+// Relato de campo: execução permite atualizar a descricao, sem liberar cadastro ou valores ao tecnico.
+// O valor anterior evita sobrescrever o relato de um colega; repetir o mesmo envio e inofensivo.
+router.put('/:id/observacoes', exigirExecucao, asyncRoute(async (req, res) => {
+  const id = positiveId(req.params.id), body = req.body || {};
+  if (typeof body.descricao !== 'string' || typeof body.anterior !== 'string') throw httpError(400, 'Informe a descrição e o texto anterior.');
+  if (body.descricao.length > 5000 || body.anterior.length > 5000) throw httpError(400, 'O relato aceita até 5.000 caracteres.');
+  const descricao = body.descricao.trim();
+  await getDb().transaction(async (tx) => {
+    const { center, job } = await core.loadService(tx, id, { lock: true });
+    assertEditable(job);
+    if ((center.description || '') === descricao) return;
+    if ((center.description || '') !== body.anterior) throw httpError(409, 'O relato foi alterado por outra pessoa. Seu texto continua salvo; confira a versão atual antes de substituir.');
+    await tx.query('UPDATE cost_centers SET description=$2,revision=revision+1,updated_at=NOW() WHERE id=$1', [id, descricao || null]);
+    await core.touch(tx, id);
+    await recordAudit({ entityType: 'servico', entityId: center.public_id, action: 'relato_atualizado', client: tx,
+      summary: `Relato de campo do serviço ${center.code} atualizado`, data: { descricao }, user: req.usuario });
+  });
+  res.json({ descricao });
+}));
+
 // Substitui a lista inteira (incluir, remover, reordenar, renomear).
-router.put('/:id/checklist', exigirPermissao('p2'), asyncRoute(async (req, res) => {
+router.put('/:id/checklist', exigirExecucao, asyncRoute(async (req, res) => {
   const id = positiveId(req.params.id);
   const list = readChecklist(req.body?.itens);
   await getDb().transaction(async (tx) => {
@@ -51,7 +71,7 @@ router.put('/:id/checklist', exigirPermissao('p2'), asyncRoute(async (req, res) 
 }));
 
 // Inclui um item. O id vem do celular (criado sem internet), entao repetir o envio nao duplica.
-router.post('/:id/checklist', exigirPermissao('p2'), asyncRoute(async (req, res) => {
+router.post('/:id/checklist', exigirExecucao, asyncRoute(async (req, res) => {
   const id = positiveId(req.params.id);
   const [item] = readChecklist([{ id: req.body?.id, texto: req.body?.texto, feito: false }]);
   let list;
@@ -70,7 +90,7 @@ router.post('/:id/checklist', exigirPermissao('p2'), asyncRoute(async (req, res)
 }));
 
 // Marca ou desmarca um item.
-router.patch('/:id/checklist/:itemId', exigirPermissao('p2'), asyncRoute(async (req, res) => {
+router.patch('/:id/checklist/:itemId', exigirExecucao, asyncRoute(async (req, res) => {
   const id = positiveId(req.params.id);
   if (typeof req.body?.feito !== 'boolean') throw httpError(400, 'Informe feito como true ou false.');
   let list;
@@ -94,7 +114,7 @@ router.get('/:id/fotos', asyncRoute(async (req, res) => {
   res.json(await core.photosOf(getDb(), id));
 }));
 
-router.post('/:id/fotos', exigirPermissao('p2'), asyncRoute(async (req, res) => {
+router.post('/:id/fotos', exigirExecucao, asyncRoute(async (req, res) => {
   const id = positiveId(req.params.id);
   const fase = String(req.body?.fase || '');
   if (!['antes', 'depois'].includes(fase)) throw httpError(400, 'Informe a fase da foto: antes ou depois.');
@@ -126,7 +146,7 @@ router.get('/:id/fotos/:fotoId/arquivo', asyncRoute(async (req, res) => {
 }));
 
 // Quem enviou a foto pode apagar; outros precisam de p3.
-router.delete('/:id/fotos/:fotoId', exigirPermissao('p2'), asyncRoute(async (req, res) => {
+router.delete('/:id/fotos/:fotoId', exigirExecucao, asyncRoute(async (req, res) => {
   const id = positiveId(req.params.id);
   const fotoId = positiveId(req.params.fotoId, 'Foto');
   await getDb().transaction(async (tx) => {
@@ -144,7 +164,7 @@ router.delete('/:id/fotos/:fotoId', exigirPermissao('p2'), asyncRoute(async (req
 }));
 
 // Aceite: assinatura PNG desenhada no aparelho, nome, cargo e data/hora (padrao: agora).
-router.put('/:id/aceite', exigirPermissao('p2'), asyncRoute(async (req, res) => {
+router.put('/:id/aceite', exigirExecucao, asyncRoute(async (req, res) => {
   const id = positiveId(req.params.id);
   const nome = String(req.body?.nome || '').trim().slice(0, 160);
   if (!nome) throw httpError(400, 'Informe o nome de quem aceitou.');
@@ -172,7 +192,7 @@ router.get('/:id/aceite/assinatura', asyncRoute(async (req, res) => {
   sendFile(res, { name: `assinatura-${id}.png`, mime: 'image/png', content: rows[0].accept_signature });
 }));
 
-router.delete('/:id/aceite', exigirPermissao('p2'), asyncRoute(async (req, res) => {
+router.delete('/:id/aceite', exigirExecucao, asyncRoute(async (req, res) => {
   const id = positiveId(req.params.id);
   await getDb().transaction(async (tx) => {
     const { center, job } = await core.loadService(tx, id, { lock: true });

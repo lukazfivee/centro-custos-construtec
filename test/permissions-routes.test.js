@@ -92,7 +92,7 @@ test('cada papel da Suite passa so pelas rotas da sua permissao', async (context
     const token = await login(email, `senha-${role}-123`);
     for (const [method, url, permission] of CASES) {
       const status = await call(method, url, token);
-      if (matrix[role][permission]) assert.notEqual(status, 403, `${role} deveria passar em ${method} ${url} (${permission})`);
+      if (role !== 'tecnico' && matrix[role][permission]) assert.notEqual(status, 403, `${role} deveria passar em ${method} ${url} (${permission})`);
       else assert.equal(status, 403, `${role} deveria ser recusado em ${method} ${url} (${permission})`);
     }
   }

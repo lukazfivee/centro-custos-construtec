@@ -76,6 +76,7 @@
     usuarios: () => D.tem('p9'),
     historico: () => D.tem('p9'),
     cadastrar: () => D.tem('p5'),
+    programacao: () => D.tem('p5'),
   };
   D.pode = (chave) => (REGRAS[chave] ? REGRAS[chave]() : true);
 

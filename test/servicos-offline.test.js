@@ -43,7 +43,7 @@ function ambiente() {
   let uuid = 0;
   const CC = {
     esc: (v) => String(v), icon: () => '', owner: () => 'u1', toast: () => {}, $: () => null,
-    uuid: () => `id-${(uuid += 1)}`, session: { token: () => 'tok' }, sv: {},
+    uuid: () => `id-${(uuid += 1)}`, session: { token: () => 'tok' }, sv: { role: () => 'tecnico' },
     offline: () => CC.estado.offline, estado: { offline: false },
     api: async (rota, opts = {}) => {
       if (CC.estado.offline) throw Object.assign(new Error('Sem internet'), { status: 0 });
@@ -58,6 +58,7 @@ function ambiente() {
   vm.createContext(sandbox);
   vm.runInContext(ler('public/m/queue.js'), sandbox);
   vm.runInContext(ler('public/m/screen-servico-fila.js'), sandbox);
+  vm.runInContext(ler('public/m/screen-servico-registros.js'), sandbox);
   return { CC, calls, falhas };
 }
 
@@ -208,7 +209,7 @@ test('telas: arquivo novo carregado no index e no cache offline, e o envio pela 
   assert.ok(index.indexOf('screen-servico.js') < index.indexOf('screen-servico-fila.js'), 'fila depois do servico (usa CC.sv)');
   assert.match(sw, /'screen-servico-fila\.js'/);
   assert.ok(Number((sw.match(/const CACHE = 'cc-celular-v(\d+)'/) || [])[1]) >= 14, 'cache trocado desde a fila do servico (v14)');
-  const exec = ler('public/m/screen-servico-exec.js');
+  const exec = ler('public/m/screen-servico-exec.js') + ler('public/m/screen-servico-registros.js');
   for (const op of ["op: 'checklist-add'", "op: 'checklist'", "op: 'foto'", "op: 'aceite'"]) assert.ok(exec.includes(op), `${op} na tela de execucao`);
   assert.doesNotMatch(exec, /CC\.api\(`\/servicos\/\$\{s\.id\}\/checklist`, \{ method: 'PUT'/, 'incluir item nao reescreve a lista inteira');
   for (const rel of ['public/m/screen-servico-fila.js', 'public/m/screen-servico-exec.js']) {
@@ -216,4 +217,43 @@ test('telas: arquivo novo carregado no index e no cache offline, e o envio pela 
     assert.ok(txt.split('\n').length <= 350, `${rel} passa de 350 linhas`);
     assert.doesNotMatch(txt, /[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}]/u, `${rel} tem emoji`);
   }
+});
+
+test('relato offline preserva o original, aceita edicoes e nao altera o cache do servidor', async () => {
+  const { CC, calls } = ambiente();
+  CC.estado.offline = true;
+  const original = { ...S, descricao: 'Vistoria inicial' };
+  await CC.sv.salvarObservacao(original, 'Primeiro teste');
+  const primeira = await CC.sv.overlay(original);
+  assert.equal(original.descricao, 'Vistoria inicial');
+  assert.equal(primeira.descricao, 'Primeiro teste');
+  await CC.sv.salvarObservacao(primeira, 'Teste concluido');
+  const [item] = await CC.queue.ops();
+  assert.equal(item.body.anterior, 'Vistoria inicial');
+  assert.equal(item.body.descricao, 'Teste concluido');
+  assert.equal((await CC.queue.ops()).length, 1);
+  CC.estado.offline = false;
+  await CC.queue.run();
+  assert.equal(calls[0].rota, '/servicos/7/observacoes');
+  assert.equal(calls[0].body.anterior, 'Vistoria inicial');
+  assert.equal((await CC.queue.ops()).length, 0);
+});
+
+test('conflito no relato mantem o texto na fila; legenda e pendencias acompanham registros locais', async () => {
+  const { CC, falhas } = ambiente();
+  CC.estado.offline = true;
+  await CC.sv.salvarObservacao({ ...S, descricao: '' }, 'Relato local');
+  await CC.sv.enviar(S, { client_id: 'f1', op: 'foto', body: { fase: 'antes', legenda: 'Central antes do reparo', conteudoBase64: 'AAAA' } }, async () => {});
+  const overlay = await CC.sv.overlay({ ...S, descricao: 'Relato do colega' });
+  assert.equal(overlay.descricaoServidor, 'Relato do colega');
+  assert.equal(overlay.descricao, 'Relato local');
+  assert.equal(overlay.fotos[0].legenda, 'Central antes do reparo');
+  assert.equal(overlay.pendencias.some((p) => p.codigo === 'sem_foto_antes'), false);
+  assert.equal(overlay.pendencias.some((p) => p.codigo === 'sem_foto_depois'), true);
+  falhas.push({ status: 409, message: 'O relato foi alterado por outra pessoa.' });
+  CC.estado.offline = false;
+  await CC.queue.run();
+  const [item] = await CC.queue.ops();
+  assert.equal(item.estado, 'erro');
+  assert.equal(item.body.descricao, 'Relato local');
 });

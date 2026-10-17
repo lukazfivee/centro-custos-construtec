@@ -9,7 +9,7 @@ export const SUITE_APPS = ['centro', 'orcamentos'];
 // Ordem e valores de docs/suite-desktop/01-ESPEC-TELAS.md, seção 6.
 const MATRIX = {
   p1: ['admin', 'gestor', 'financeiro', 'engenharia'],
-  p2: ['admin', 'gestor', 'financeiro', 'engenharia', 'tecnico'],
+  p2: ['admin', 'gestor', 'financeiro', 'engenharia'],
   p3: ['admin', 'gestor', 'financeiro'],
   p4: ['admin', 'gestor', 'financeiro'],
   p5: ['admin', 'gestor'],

@@ -1,13 +1,21 @@
 // Navegacao, barra de abas, entrada pelo app (handoff) e modo offline do site do celular.
 (function (CC) {
   const { esc, icon } = CC;
-  CC.screens = CC.screens || {};
+  const campo = new Set(['home', 'meu-dia', 'atividade-dia', 'meus-trabalhos', 'obras', 'obra', 'servico', 'menu', 'perfil', 'atualizacao', 'report-novo']);
+  const permitido = (name) => !CC.sv || CC.sv.role() !== 'tecnico' || campo.has(name);
+  // Protege tambem chamadas diretas feitas por historico antigo ou pelo assistente.
+  CC.screens = new Proxy(CC.screens || {}, {
+    set(screens, name, screen) {
+      screens[name] = (...args) => permitido(name) ? screen(...args) : CC.toast('Seu acesso é operacional.', 'shield-check');
+      return true;
+    },
+  });
   const TABS = [
-    ['home', 'Início', 'squares-four', ['home']],
+    ['home', 'Início', 'squares-four', ['home', 'meu-dia', 'atividade-dia', 'meus-trabalhos']],
     ['obras', 'Obras', 'buildings', ['obras', 'obra', 'obra-editar', 'obra-folha', 'servico', 'servico-rel']],
     ['lancar', 'Lançar', 'plus-circle', ['lancar', 'ok']],
     ['lancamentos', 'Lançamentos', 'list-bullets', ['lancamentos', 'lanc']],
-    ['menu', 'Menu', 'list', ['menu', 'cobrancas', 'cobranca', 'cobranca-dados', 'cobranca-email', 'recorrentes', 'recorrente', 'fornecedores', 'fornecedor', 'categorias', 'categoria', 'pedidos', 'perfil', 'fechamento', 'historico', 'reports', 'report', 'report-novo', 'usuarios', 'usuario-form', 'papeis', 'emails-ext', 'sistema', 'descartadas', 'descartada', 'atualizacao']],
+    ['menu', 'Menu', 'list', ['menu', 'programacao', 'cobrancas', 'cobranca', 'cobranca-dados', 'cobranca-email', 'recorrentes', 'recorrente', 'fornecedores', 'fornecedor', 'categorias', 'categoria', 'pedidos', 'perfil', 'fechamento', 'historico', 'reports', 'report', 'report-novo', 'usuarios', 'usuario-form', 'papeis', 'emails-ext', 'sistema', 'descartadas', 'descartada', 'atualizacao']],
   ];
   let current = 'home', currentParams = {};
   let lensTimer;
@@ -16,7 +24,9 @@
 
   function paintTabs() {
     const nav = document.getElementById('tabs');
-    const activeIndex = TABS.findIndex(([, , , owns]) => owns.includes(current));
+    const tabs = TABS.filter(([key]) => permitido(key));
+    const activeIndex = tabs.findIndex(([, , , owns]) => owns.includes(current));
+    nav.style.setProperty('--tabs-n', String(tabs.length));
     if (nav.dataset.activeIndex !== undefined && Number(nav.dataset.activeIndex) !== activeIndex) {
       nav.classList.add('is-moving');
       clearTimeout(lensTimer);
@@ -24,7 +34,7 @@
     }
     nav.dataset.activeIndex = String(activeIndex);
     nav.style.setProperty('--active-x', `${Math.max(0, activeIndex) * 100}%`);
-    nav.innerHTML = '<span class="tabs-refraction" aria-hidden="true"></span>' + TABS.map(([key, label, ic, owns]) => {
+    nav.innerHTML = '<span class="tabs-refraction" aria-hidden="true"></span>' + tabs.map(([key, label, ic, owns]) => {
       const on = owns.includes(current);
       return `<button class="tab" type="button" data-go="${key}"${on ? ' aria-current="page"' : ''}>${icon(ic, 22, 'ico-off')}${icon(`${ic}-fill`, 22, 'ico-on')}<span>${label}</span></button>`;
     }).join('');
@@ -35,6 +45,7 @@
   function pickTab(key) { CC.go(key, key === 'lancar' ? { novo: true, from: [current] } : undefined); }
 
   CC.go = function (name, params) {
+    if (!permitido(name)) return CC.toast('Seu acesso é operacional.', 'shield-check');
     const screen = CC.screens[name];
     if (!screen) return;
     current = name;
@@ -71,7 +82,10 @@
       <a class="btn" href="suite://entrar" style="padding:0 22px;text-decoration:none">Entrar</a></div>`);
   }
   CC.onUnauthorized = () => { if (CC.ia && CC.ia.reset) CC.ia.reset(); signedOut('Sua sessão terminou'); };
-  CC.onQueueSent = () => { if (['home', 'lancamentos', 'obra', 'servico'].includes(current)) CC.go(current, currentParams); };
+  CC.onQueueSent = () => {
+    if (current === 'atividade-dia' && CC.programacaoSync) return CC.programacaoSync();
+    if (['home', 'meu-dia', 'meus-trabalhos', 'lancamentos', 'obra', 'servico'].includes(current)) CC.go(current, currentParams);
+  };
 
   async function consumeHandoff(code) {
     history.replaceState(null, '', location.pathname + location.search);
@@ -98,6 +112,8 @@
   let started = false;
   // Depois de entrar pela tela do /m/, sem recarregar: so abre o Inicio se ja tinha aberto antes.
   async function start(obra, pedidos) {
+    if (CC.sv) await CC.sv.loadPerms();
+    if (!CC.session.token()) return;
     if (started) return CC.go('home');
     started = true;
     await CC.queue.refresh();
@@ -116,9 +132,9 @@
       if (target.get('pedidos') === '1' && CC.session.token()) CC.go('pedidos');
     });
     if (obra > 0) return CC.go('obra', { id: obra });
-    if (pedidos) return CC.go('pedidos');
+    if (pedidos && permitido('pedidos')) return CC.go('pedidos');
     const first = location.hash.slice(1);
-    CC.go(CC.screens[first] && !['ok', 'obra', 'login', 'descartada', 'servico', 'servico-rel', 'lanc', 'obra-editar', 'obra-folha', 'cobranca', 'cobranca-dados', 'cobranca-email', 'recorrente', 'fornecedor', 'categoria', 'report', 'usuario-form'].includes(first) ? first : 'home');
+    CC.go(CC.screens[first] && permitido(first) && !['ok', 'obra', 'atividade-dia', 'login', 'descartada', 'servico', 'servico-rel', 'lanc', 'obra-editar', 'obra-folha', 'cobranca', 'cobranca-dados', 'cobranca-email', 'recorrente', 'fornecedor', 'categoria', 'report', 'usuario-form'].includes(first) ? first : 'home');
   }
 
   document.addEventListener('DOMContentLoaded', boot);

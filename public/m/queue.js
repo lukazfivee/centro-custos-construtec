@@ -37,14 +37,20 @@
   function emit() { listeners.forEach((fn) => { try { fn(state); } catch { /* tela fechada */ } }); }
 
   // So os itens da conta atual (outra conta no mesmo celular nao envia nem ve a fila alheia).
-  const mineAll = async () => (await CC.store.all('fila').catch(() => [])).filter((i) => i.owner && i.owner === CC.owner());
+  const mineAll = async () => {
+    const owner = CC.owner(), token = CC.session.token();
+    const items = await CC.store.all('fila').catch(() => []);
+    return token && token === CC.session.token() && owner === CC.owner() ? items.filter((i) => i.owner && i.owner === owner) : [];
+  };
+  const campoOps = new Set(['checklist-add', 'checklist', 'foto', 'aceite', 'observacoes']);
+  const permitido = (i) => !CC.sv || CC.sv.role() !== 'tecnico' || (i.op === 'programacao' ? !!i.atividadeId && !i.payload : i.servicoId && campoOps.has(i.op));
   // Lancamentos e despesas de servico (tem payload) ficam separados das operacoes de campo do servico (op:
   // checklist, foto e aceite), que as telas de lancamentos nao sabem desenhar.
-  CC.queue.mine = async () => (await mineAll()).filter((i) => !i.op);
-  CC.queue.ops = async () => (await mineAll()).filter((i) => i.op);
+  CC.queue.mine = async () => (await mineAll()).filter((i) => !i.op && permitido(i));
+  CC.queue.ops = async () => (await mineAll()).filter((i) => i.op && permitido(i));
 
   CC.queue.refresh = async function () {
-    const items = await mineAll();
+    const items = (await mineAll()).filter(permitido);
     state.pending = items.filter((i) => i.estado !== 'erro').length;
     state.errors = items.filter((i) => i.estado === 'erro').length;
     emit();
@@ -57,6 +63,7 @@
 
   // Guarda a despesa no celular. Ela sai da fila so depois de o servidor confirmar.
   CC.queue.add = async function (item) {
+    if (!permitido(item)) throw new CC.ApiError(403, 'Seu acesso é operacional; sem permissão para lançar despesas.');
     // Se nao der para gravar (ex.: sem espaco), o erro sobe e a tela mantem o rascunho.
     await CC.store.put('fila', { ...item, owner: CC.owner(), estado: 'fila', erro: '', lancamento_id: null, criado_em: agora() });
     await CC.queue.refresh();
@@ -64,6 +71,7 @@
   };
 
   async function sendOne(item) {
+    if (item.op === 'programacao') return CC.programacaoFila.sendOp(item);
     // Checklist, foto e aceite do servico: envio em screen-servico-fila.js.
     if (item.op) return CC.sv.sendOp(item);
     // Despesa de servico (lancamento rapido): rota propria, recibo no mesmo envio; o client_id evita duplicar.
@@ -90,22 +98,29 @@
   // Envia a fila em ordem. Para na primeira falha de rede; erros de dados ficam marcados.
   CC.queue.run = async function () {
     if (state.syncing || CC.offline() || !CC.session.token()) return CC.queue.refresh();
-    const items = (await mineAll()).filter((i) => i.estado !== 'erro').sort((a, b) => a.criado_em - b.criado_em);
-    if (!items.length) return CC.queue.refresh();
+    const owner = CC.owner(), token = CC.session.token();
     state.syncing = true;
     emit();
     let sent = 0;
     try {
+      const mine = (await mineAll()).filter(permitido);
+      const blocked = new Set(mine.filter((i) => i.op === 'programacao' && i.estado === 'erro').map((i) => Number(i.atividadeId)));
+      const items = mine.filter((i) => i.estado !== 'erro').sort((a, b) => a.criado_em - b.criado_em);
       for (const item of items) {
+        if (owner !== CC.owner() || token !== CC.session.token()) break;
+        if (item.op === 'programacao' && blocked.has(Number(item.atividadeId))) continue;
         try {
           await sendOne(item);
           sent += 1;
         } catch (error) {
+          if (owner !== CC.owner() || token !== CC.session.token()) break;
           if (error.status === 0) state.wasOffline = true;
           if (error.status === 0 || error.status === 401 || error.status >= 500) break;
           item.estado = 'erro';
           item.erro = error.message;
+          item.erroStatus = error.status;
           await CC.store.put('fila', item);
+          if (item.op === 'programacao') blocked.add(Number(item.atividadeId));
         }
       }
     } finally {
@@ -120,10 +135,14 @@
     return sent;
   };
 
-  CC.queue.discard = async (clientId) => { await CC.store.del('fila', clientId); return CC.queue.refresh(); };
+  CC.queue.discard = async (clientId) => {
+    const item = await CC.store.get('fila', clientId);
+    if (item && item.owner === CC.owner() && permitido(item)) await CC.store.del('fila', clientId);
+    return CC.queue.refresh();
+  };
   CC.queue.retry = async (clientId) => {
     const item = await CC.store.get('fila', clientId);
-    if (item) { item.estado = 'fila'; item.erro = ''; await CC.store.put('fila', item); }
+    if (item && item.owner === CC.owner() && permitido(item)) { item.estado = 'fila'; item.erro = ''; await CC.store.put('fila', item); }
     return CC.queue.run();
   };
 

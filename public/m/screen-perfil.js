@@ -2,7 +2,7 @@
 // nome e celular. Com conta central, vale para toda a Suíte (Centro e Orçamentos).
 (function (CC) {
   const { esc, icon } = CC;
-  const PERFIS = { admin: 'Administrador', gestor: 'Gestor', supervisor: 'Supervisor' };
+  const PERFIS = { admin: 'Administrador', gestor: 'Gestor', financeiro: 'Financeiro', engenharia: 'Engenharia', tecnico: 'Técnico', supervisor: 'Supervisor' };
   const initials = (name) => {
     const parts = String(name || '').trim().split(/\s+/).filter(Boolean);
     return parts.length ? (parts[0][0] + (parts.length > 1 ? parts[parts.length - 1][0] : '')).toUpperCase() : '';
@@ -43,6 +43,8 @@
   }
 
   CC.screens.perfil = async function (params) {
+    if (CC.sv) await CC.sv.loadPerms();
+    if (!CC.session.token() || (params && params.__nav && params.__nav !== CC.nav)) return;
     const top = `<div class="top"><button class="back" type="button" id="voltar" aria-label="Voltar">${icon('caret-left', 20)}</button><h1>Meu perfil</h1></div>`;
     const back = (el) => CC.$('#voltar', el).addEventListener('click', () => CC.go('menu'));
     back(CC.render(`${top}<div class="skeleton"></div>`, true, params));
@@ -57,7 +59,7 @@
         ${p.foto ? `<button class="btn2" type="button" id="p-tirar" style="width:100%">${icon('x', 18)}Remover foto</button>` : ''}</div>
       <label class="field"><span>Nome</span><input id="p-nome" maxlength="120" autocomplete="name" value="${esc(p.nome)}"></label>
       ${p.central ? `<label class="field"><span>Celular</span><input id="p-cel" inputmode="tel" autocomplete="tel" placeholder="(11) 98765-4321" value="${esc(phoneMask(p.celular))}"></label>` : ''}
-      <div class="card"><div class="kv"><span>E-mail</span><b>${esc(p.email)}</b></div><div class="kv"><span>Perfil</span><b>${esc(PERFIS[p.perfil] || p.perfil)}</b></div></div>
+      <div class="card"><div class="kv"><span>E-mail</span><b>${esc(p.email)}</b></div><div class="kv"><span>Perfil</span><b>${esc(PERFIS[CC.sv ? CC.sv.role() : p.perfil] || p.perfil)}</b></div></div>
       <p class="muted" style="font-size:12.5px;margin:0">${p.central ? 'Nome, celular e foto valem para toda a Suíte Construtec. O e-mail e o perfil são definidos pelo administrador.'
         : 'Instalação local: nome e foto ficam só neste Centro de Custos.'}</p>
       <p class="alert" role="alert" id="p-err"></p>

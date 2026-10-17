@@ -60,10 +60,11 @@
     }
     const fila = await S.naFila(sv.id);
     if (!vivo()) return;
-    el.innerHTML = `<div class="pagina servico">${topo(sv, fila)}
+    el.innerHTML = `<div class="pagina servico">${topo(sv, fila)}${D.tem('p5') ? '<div data-servico-tecnicos></div>' : ''}
       ${semRede ? U.faixa('warn', 'cloud-slash', 'Sem internet. Você está vendo o que foi carregado antes; as despesas na fila sobem quando a conexão voltar.', `<button type="button" class="btn btn-s" data-tentar>${D.ic('arrow-clockwise')}Atualizar</button>`) : ''}
       <div class="grade-sv"><div class="principal">${B.kpis(sv, fila)}${B.porTipo(sv)}${B.lancamentos(sv, fila)}${B.anexos(sv)}</div>
         <div class="lado">${B.feito(sv)}${B.fotos(sv)}${B.aceite(sv)}${B.cobranca(sv)}</div></div></div>`;
+    if (D.tem('p5')) CC.tecnicos.panel(CC.$('[data-servico-tecnicos]', el), sv.id);
     ligar(el, sv, recarregar);
     // Mesmas notas fiscais da obra: o servico e um centro de custo.
     D.obras.abas.nf(CC.$('[data-nf-servico]', el), { id: sv.id, nome: sv.nome }, vivo).catch((error) => {

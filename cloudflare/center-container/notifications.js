@@ -1,9 +1,11 @@
 import { json, requireSession, timingSafeEqual, cleanSyncKey, ORG_ID } from './centralAuth.js';
 import { sendPush } from './fcm.js';
+import { effectiveSuiteRole } from './suiteRoles.js';
 
 // Fase 4 da Suíte mobile: central de notificações, preferências e push (FCM).
 // Rotas do app (Bearer da sessão central) e internas (x-sync-key, do Container).
 export const TYPES = ['proposta_aprovada', 'acima_orcado', 'conta_vencer', 'novo_acesso', 'pedido_acesso', 'cliente_aprovou', 'cliente_ajuste'];
+const FINANCIAL_TYPES = ['proposta_aprovada', 'acima_orcado', 'conta_vencer', 'cliente_aprovou', 'cliente_ajuste'];
 const APPS = new Set(['centro-custos', 'orcamentos', 'conta']);
 // Mesmo formato do seletor Suíte: app e, se houver, o destino validado.
 const LINK = /^(centro-custos|orcamentos)(\?(obra=[0-9]{1,12}|proposta=[A-Za-z0-9-]{1,64}|pedidos=1))?$/;
@@ -63,6 +65,10 @@ export async function deliver(env, input) {
   let ids = everyone
     ? ((await env.DB.prepare(`SELECT id FROM cloud_users WHERE org_id=? AND active=1 AND deleted_at IS NULL${adminsOnly}`).bind(ORG_ID).all()).results || []).map((r) => r.id)
     : [String(input.userId || '')].filter(Boolean);
+  if (FINANCIAL_TYPES.includes(type) && ids.length) {
+    const users = (await env.DB.prepare(`SELECT id,role,suite_role FROM cloud_users WHERE org_id=? AND active=1 AND deleted_at IS NULL AND id IN (${placeholders(ids)})`).bind(ORG_ID, ...ids).all()).results || [];
+    ids = users.filter((user) => effectiveSuiteRole(user) !== 'tecnico').map((user) => user.id);
+  }
   if (type !== 'teste' && ids.length) {
     const off = (await env.DB.prepare(`SELECT user_id FROM notification_prefs WHERE type=? AND enabled=0 AND user_id IN (${placeholders(ids)})`)
       .bind(type, ...ids).all()).results || [];
@@ -183,14 +189,16 @@ export async function handleNotifications(request, env, url) {
       if (request.method === 'POST' && url.pathname === '/v1/internal/notify') return json({ ok: true, ...(await deliver(env, body)) });
       if (request.method === 'POST' && url.pathname === '/v1/internal/notifications') {
         const action = ACTIONS[body.action];
-        const user = await env.DB.prepare('SELECT id FROM cloud_users WHERE id=? AND org_id=? AND active=1 AND deleted_at IS NULL').bind(String(body.userId || ''), ORG_ID).first();
+        const user = await env.DB.prepare('SELECT id,role,suite_role FROM cloud_users WHERE id=? AND org_id=? AND active=1 AND deleted_at IS NULL').bind(String(body.userId || ''), ORG_ID).first();
         if (!action || !user) return json({ ok: false, code: 'NOT_FOUND', error: 'Conta não encontrada.' }, 404);
+        if (effectiveSuiteRole(user) === 'tecnico') return json({ ok: false, code: 'FORBIDDEN', error: 'Sem permissão.' }, 403);
         return action(env, user.id, body);
       }
       return json({ ok: false, error: 'Rota não encontrada.' }, 404);
     }
     const auth = await requireSession(request, env);
     if (auth.error) return json({ ok: false, code: 'SESSION_INVALID', error: auth.error }, auth.status);
+    if (effectiveSuiteRole(auth.user) === 'tecnico' && url.pathname.startsWith('/v1/notifications')) return json({ ok: false, code: 'FORBIDDEN', error: 'Sem permissão.' }, 403);
     const route = `${request.method} ${url.pathname}`;
     if (route === 'POST /v1/push/register') return register(env, auth.user, request, body);
     if (route === 'GET /v1/notifications') return list(env, auth.user.id, Object.fromEntries(url.searchParams));

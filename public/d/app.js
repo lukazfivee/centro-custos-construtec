@@ -39,6 +39,10 @@
   }
 
   function abrir() {
+    // A operação do técnico usa a mesma interface de campo em qualquer aparelho.
+    const user = CC.session.user() || {};
+    const papel = user.suiteRole || ({ admin: 'admin', gestor: 'gestor' })[user.role] || 'tecnico';
+    if (papel === 'tecnico') { location.replace('/m/'); return; }
     montado = true;
     D.montarEstrutura();
     D.montarBusca();
@@ -47,6 +51,12 @@
     D.upd.iniciar();
     if (D.cobr && D.cobr.atualizarContador) D.cobr.atualizarContador();
     D.tema.sincronizar();
+    const query = new URLSearchParams(location.search);
+    if (query.get('programacao') === '1') {
+      query.delete('programacao');
+      const search = query.toString();
+      history.replaceState(null, '', location.pathname + (search ? `?${search}` : '') + '#/programacao');
+    }
     D.iniciarRotas();
   }
 

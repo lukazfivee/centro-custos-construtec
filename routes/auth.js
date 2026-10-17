@@ -5,7 +5,7 @@ const fs = require('fs');
 const crypto = require('crypto');
 const { getDb, getInstanceIdentity } = require('../db');
 const { autenticar } = require('../middleware/auth');
-const { accessInfo } = require('../services/permissions');
+const { accessInfo, suiteRoleOf } = require('../services/permissions');
 const { asyncRoute, httpError } = require('../lib/http');
 const cloudAuth = require('../services/cloudAuth');
 const { mirrorCloudUser } = require('../services/cloudUserMirror');
@@ -219,7 +219,7 @@ router.get('/me', autenticar, asyncRoute(async (req, res) => res.json({
   email: req.usuario.email,
   role: req.usuario.role,
   ...(await accessInfo(req.usuario)),
-  todasObras: req.usuario.all_cost_centers !== false,
+  todasObras: suiteRoleOf(req.usuario) !== 'tecnico' && req.usuario.all_cost_centers !== false,
   instancia: getInstanceIdentity(),
 })));
 

@@ -19,8 +19,21 @@
   };
 
   const TELAS = { home: 'Início', obras: 'Obras', obra: 'detalhe de uma obra', lancar: 'Nova despesa', ok: 'despesa enviada', lancamentos: 'Lançamentos', menu: 'Menu', avisos: 'Notificações', pedidos: 'Pedidos de acesso', perfil: 'Meu perfil' };
+  CC.iaOperationalPrompt = function (device = 'celular') {
+    if (!CC.ia || !CC.ia.role || !CC.ia.role()) return 'Sessão sem papel válido. Peça para entrar novamente; nenhuma consulta está autorizada.';
+    const u = CC.session.user() || {};
+    return `Você é o assistente da Suíte Construtec no ${device}. Quem fala: ${u.nome || u.name || 'usuário'}, papel Técnico.
+Responda em português do Brasil, com frases curtas e sem emojis. Nomes, datas e situação vêm somente das ferramentas; nunca invente dados.
+Consulte somente obras e serviços explicitamente atribuídos à pessoa. Serviço é um item independente, nunca parte de uma obra.
+Para saber a programação de hoje ou de outra data, use ver_programacao. Hoje é ${CC.today ? CC.today() : new Date().toLocaleDateString('en-CA', { timeZone: 'America/Sao_Paulo' })}. Cada técnico tem seu próprio andamento; colegas da mesma atividade acompanham as atualizações. Abra programacao para a pessoa iniciar, pausar, retomar ou concluir sua atividade diária; isso não conclui a obra ou serviço inteiro.
+Use listar_obras ou listar_servicos para descobrir o item; pergunte se houver nomes parecidos. Use ver_obra ou ver_servico para consultar identificação, local, descrição e situação.
+Oriente a execução: abrir o item atribuído, conferir checklist, registrar fotos antes e depois, observações de campo, aceite e iniciar ou concluir o serviço. As ações são feitas pela pessoa na tela.
+Você consulta e abre telas autorizadas com abrir_tela. Não executa alterações. Dados comerciais e financeiros são restritos ao escritório; não os consulte nem sugira lançamentos.
+Para relatar bug, melhoria ou sugestão, descubra em até duas perguntas o que fazia, o esperado, o ocorrido e a tela. Chame preparar_reporte com título, descrição, tipo e severidade. A pessoa confere e envia no cartão.`;
+  };
 
   CC.iaPrompt = function () {
+    if (!CC.ia || !CC.ia.role || !CC.ia.role() || CC.ia.role() === 'tecnico') return CC.iaOperationalPrompt();
     const u = CC.session.user() || {};
     const hoje = new Date().toLocaleDateString('pt-BR', { timeZone: 'America/Sao_Paulo', weekday: 'long', day: '2-digit', month: '2-digit', year: 'numeric' });
     const tela = TELAS[CC.current && CC.current()] || 'Início';
@@ -49,7 +62,7 @@ Conceitos:
 - Obra = centro de custo. Custo orçado = custo base do orçamento aprovado. Gasto comprometido = despesas lançadas (pagas e a pagar). Resultado = recebido menos pago.
 - Conta vencida = a pagar ou a receber com vencimento antes de hoje.
 - Proposta (no Orçamentos): rascunho, em revisão, enviada, aprovada ou recusada. Tem custo, venda, BDI (multiplicador), impostos e margem. Aprovada, ela vira contrato no Centro e dá o orçado por item da obra (use orcado_realizado).
-- Perfis: admin (tudo), gestor (cadastros e financeiro), supervisor (lança e consulta). No Orçamentos: admin, comercial e consulta.
+- Perfis: admin (tudo), gestor (cadastros e financeiro), Técnico (execução dos itens atribuídos). No Orçamentos: admin, comercial e consulta.
 
 Relatar problema (bug, melhoria ou sugestão):
 - Descubra em no máximo duas perguntas o que a pessoa fazia, o que esperava e o que aconteceu, e em que tela.

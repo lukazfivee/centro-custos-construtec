@@ -145,6 +145,15 @@ test('reports do desktop: diagnóstico, print, fila sem duplicar, resposta e per
   const status = await json('GET', '/bug-reports/delivery/status', admin, null, 200);
   assert.equal(status.configured, false);
   assert.equal(status.pending, 1);
+  // Papel canônico técnico prevalece sobre um papel legado administrativo antigo.
+  await getDb().query("UPDATE users SET role='admin',suite_role='tecnico' WHERE email='outra@teste.local'");
+  const proprios = await json('GET', '/bug-reports', outra, null, 200);
+  assert.deepEqual(proprios.map((r) => r.id), [sem.id]);
+  assert.equal((await call('GET', `/bug-reports/${criado.id}`, outra)).status, 403);
+  assert.equal((await call('GET', `/bug-reports/${criado.id}/anexo`, outra)).status, 403);
+  assert.equal((await call('POST', `/bug-reports/${criado.id}/retry`, outra)).status, 403);
+  assert.equal((await call('POST', '/bug-reports/delivery/retry', outra)).status, 403);
+  assert.equal((await json('GET', '/bug-reports/delivery/status', outra, null, 200)).pending, 1);
 });
 
 test('reports do desktop: tela registrada, fila no navegador e botão antigo fora', () => {

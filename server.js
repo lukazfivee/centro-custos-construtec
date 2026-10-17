@@ -10,6 +10,7 @@ const QRCode = require('qrcode');
 const { initializeDatabase, closeDatabase, getDb, getInstanceIdentity } = require('./db');
 const { observability } = require('./middleware/observability');
 const logger = require('./lib/logger');
+const { centerProxyAccess } = require('./middleware/centerProxyAccess');
 
 function rawBody(req) {
   return new Promise((resolve, reject) => {
@@ -85,6 +86,7 @@ function createApp({ orcamentosApp } = {}) {
   app.use('/v1/auth/password-reset', require('./routes/passwordResetLocal')); // so local; na nuvem o Worker atende /v1
   app.use('/api/usuarios', require('./routes/usersAccess'));
   app.use('/api/usuarios', require('./routes/users'));
+  app.use('/api/centros-custo', require('./routes/costCenterTechnicians'));
   app.use('/api/centros-custo', require('./routes/costCenterDiscard'));
   app.use('/api/centros-custo', require('./routes/costCenters'));
   app.use('/api/centros-custo', require('./routes/costCenterBudget'));
@@ -93,6 +95,7 @@ function createApp({ orcamentosApp } = {}) {
   app.use('/api/centros-custo', require('./routes/costCenterInvoicesLedger'));
   app.use('/api/servicos', require('./routes/servicos'));
   app.use('/api/servicos', require('./routes/servicosCampo'));
+  app.use('/api/programacao', require('./routes/programacao'));
   app.use('/api/categorias', require('./routes/categories'));
   app.use('/api/fornecedores', require('./routes/suppliers'));
   app.use('/api/historico', require('./routes/history'));
@@ -158,6 +161,7 @@ function createApp({ orcamentosApp } = {}) {
   }
 
   app.use('/chamados-proxy', (req, res) => proxyPass(req, res, CHAMADOPRO_URL, true));
+  app.use('/orcamentos-api', centerProxyAccess);
   if (orcamentosApp) app.use('/orcamentos-api', orcamentosApp);
   else app.use('/orcamentos-api', (req, res) => proxyPass(req, res, ORCAMENTOS_API_URL, false));
   app.use('/orcamentos', express.static(ORCAMENTOS_RENDERER_DIR, { index:'index.html', etag:true }));
@@ -204,8 +208,10 @@ function createApp({ orcamentosApp } = {}) {
   // Embedded Orçamentos uses relative /api URLs; proxy only requests coming from that renderer.
   app.use('/api', (req, res) => {
     if (req.get('referer')?.includes('/orcamentos/')) {
-      req.url = `/api${req.url}`;
-      return proxyPass(req, res, ORCAMENTOS_API_URL, false);
+      return centerProxyAccess(req, res, () => {
+        req.url = `/api${req.url}`;
+        return proxyPass(req, res, ORCAMENTOS_API_URL, false);
+      });
     }
     return res.status(404).json({ erro:'Rota da API não encontrada.', requestId:req.requestId });
   });

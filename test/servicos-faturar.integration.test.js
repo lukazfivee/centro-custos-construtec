@@ -60,6 +60,7 @@ test('Servicos curtos: faturar (cobranca na nuvem e NFS-e) e descarte/restauraca
 
   await context.test('faturar: so concluido, valida forma e vencimento, cria a cobranca e o servico vira faturado', async () => {
     const s = await request('/servicos', 'POST', { cliente: 'Padaria Boa', valor: 800, descricao: 'Remanejar rack' }, 201);
+    await db.query("INSERT INTO user_cost_centers(user_id,cost_center_id) SELECT id,$1 FROM users WHERE email='tec2@teste.local'", [s.id]);
     const publicId = (await db.query('SELECT public_id FROM cost_centers WHERE id=$1', [s.id])).rows[0].public_id;
     obras.push({ publicId, code: s.codigo, name: s.nome, client: 'Padaria Boa', contractAmount: 800, projectStatus: 'execucao' });
     await request(`/servicos/${s.id}/faturar`, 'POST', { forma: 'pix', vencimentoDias: 10 }, 409, gestor);
@@ -89,11 +90,12 @@ test('Servicos curtos: faturar (cobranca na nuvem e NFS-e) e descarte/restauraca
     assert.equal(nf.original_name, 'nfse-77.pdf');
     await request(`/servicos/${s.id}/faturar`, 'POST', { forma: 'pix' }, 409, gestor);
     await request(`/servicos/${s.id}/checklist`, 'PUT', { itens: [{ texto: 'x' }] }, 409, gestor);
+    await request(`/servicos/${s.id}/observacoes`, 'PUT', { descricao: 'Alteracao apos faturar', anterior: '' }, 409, tec);
     await request(`/servicos/${s.id}/situacao`, 'PUT', { situacao: 'em_andamento' }, 409, gestor);
     const d = await request(`/servicos/${s.id}`, 'GET', undefined, 200, gestor);
     assert.equal(d.faturamento.cobrancaSincronizada, true);
     const dt = await request(`/servicos/${s.id}`, 'GET', undefined, 200, tec);
-    assert.equal(dt.faturamento.valor, undefined);
+    assert.equal(dt.faturamento, undefined);
     assert.ok((await db.query("SELECT 1 FROM audit_log WHERE entity_type='servico' AND action='faturado'")).rows.length);
   });
 

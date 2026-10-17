@@ -4,7 +4,7 @@ const express = require('express');
 const { getDb } = require('../db');
 const { autenticar } = require('../middleware/auth');
 const { paramObra, obrasPermitidas, restringir } = require('../services/obraScope');
-const { exigirPermissao, can } = require('../services/permissions');
+const { exigirPermissao, exigirExecucao, can, suiteRoleOf } = require('../services/permissions');
 const { asyncRoute, httpError, positiveId } = require('../lib/http');
 const { validDate } = require('../lib/dates');
 const { roundDecimal } = require('../lib/decimal');
@@ -57,7 +57,9 @@ router.get('/', asyncRoute(async (req, res) => {
   if (req.query.ativo === 'true' || req.query.ativo === 'false') { values.push(req.query.ativo === 'true'); where += ` AND cc.active=$${values.length}`; }
   ({ where, values } = restringir(where, values, await obrasPermitidas(req), 'cc.id'));
   const { rows } = await getDb().query(`SELECT cc.id,cc.code,cc.name,cc.client,cc.responsible,cc.start_date::text AS data,cc.contract_amount,cc.active,
-      COALESCE(sj.status,'agendado') AS status,sj.location,
+      COALESCE(sj.status,'agendado') AS status,sj.location,sj.checklist,(sj.accept_signature IS NOT NULL) AS has_signature,
+      (SELECT COUNT(*)::int FROM service_photos sp WHERE sp.cost_center_id=cc.id AND sp.phase='antes') AS fotos_antes,
+      (SELECT COUNT(*)::int FROM service_photos sp WHERE sp.cost_center_id=cc.id AND sp.phase='depois') AS fotos_depois,
       COALESCE((SELECT SUM(t.amount*t.accounting_sign) FROM transactions t WHERE t.cost_center_id=cc.id AND t.type='despesa' AND t.deleted_at IS NULL),0) AS gastos
     FROM cost_centers cc LEFT JOIN service_jobs sj ON sj.cost_center_id=cc.id ${where}
     ORDER BY cc.start_date DESC NULLS LAST,cc.id DESC LIMIT 1000`, values);
@@ -65,7 +67,10 @@ router.get('/', asyncRoute(async (req, res) => {
   res.json(rows.map((r) => {
     const s = core.summarize(r.contract_amount, [{ tipo: 'outros', valor: core.money(r.gastos) }]);
     const item = { id: r.id, codigo: r.code, nome: r.name, cliente: r.client || '', local: r.location || '', data: r.data,
-      responsavel: r.responsible || '', situacao: r.status, ativo: r.active, gastos: s.gastos };
+      responsavel: r.responsible || '', situacao: r.status, ativo: r.active, gastos: s.gastos,
+      execucao: { itens: (r.checklist || []).length, feitos: (r.checklist || []).filter((i) => i.feito).length,
+        fotosAntes: r.fotos_antes, fotosDepois: r.fotos_depois, aceite: r.has_signature } };
+    if (suiteRoleOf(req.usuario) === 'tecnico') delete item.gastos;
     return money ? { ...item, valor: s.cobrado, resultado: s.resultado, margem: s.margem } : item;
   }));
 }));
@@ -112,8 +117,8 @@ router.put('/:id', exigirPermissao('p5'), asyncRoute(async (req, res) => {
   res.json(await core.serviceDetail(db, id, req.usuario));
 }));
 
-// Agendado <-> em andamento (p2). Reabrir um concluido (volta a em andamento) exige p5. Faturado nao volta.
-router.put('/:id/situacao', exigirPermissao('p2'), asyncRoute(async (req, res) => {
+// Agendado <-> em andamento: execução de campo. Reabrir concluído exige p5. Faturado não volta.
+router.put('/:id/situacao', exigirExecucao, asyncRoute(async (req, res) => {
   const id = positiveId(req.params.id);
   const target = String(req.body?.situacao || '');
   if (!['agendado', 'em_andamento'].includes(target)) throw httpError(400, 'Situação inválida. Use agendado ou em_andamento; para concluir ou faturar use as ações próprias.');
@@ -152,7 +157,7 @@ router.post('/:id/gastos', exigirPermissao('p2'), asyncRoute(async (req, res) =>
   res.status(out.status).json(out.body);
 }));
 
-router.post('/:id/concluir', exigirPermissao('p2'), asyncRoute(async (req, res) => {
+router.post('/:id/concluir', exigirExecucao, asyncRoute(async (req, res) => {
   res.json(await completeService(positiveId(req.params.id), req.body || {}, req.usuario));
 }));
 

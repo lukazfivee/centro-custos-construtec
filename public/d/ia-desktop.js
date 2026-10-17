@@ -24,10 +24,13 @@
   Object.keys(IA.telas).forEach((k) => { delete IA.telas[k]; delete IA.nomes[k]; });
   Object.assign(IA.telas, {
     inicio: tela('inicio'),
+    programacao: tela('programacao'),
     lancamentos: tela('lancamentos'),
     nova_despesa: tela('lancamentos', 'lancamentos?novo=1'),
     obras: tela('obras'),
     obra: (a) => (a.obra_id > 0 ? () => D.ir(`obras/${Number(a.obra_id)}`) : 'Informe obra_id (use listar_obras).'),
+    servicos: tela('obras', 'obras?tipo=servico'),
+    servico: (a) => (a.servico_id > 0 ? () => D.ir(`servicos/${Number(a.servico_id)}`) : 'Informe servico_id (use listar_servicos).'),
     cobrancas: tela('cobrancas'),
     categorias: tela('categorias'),
     fornecedores: tela('fornecedores'),
@@ -43,12 +46,14 @@
   Object.assign(IA.nomes, { inicio: 'Início', lancamentos: 'Lançamentos', nova_despesa: 'Novo lançamento', obras: 'Obras', obra: 'a obra', cobrancas: 'Cobranças', categorias: 'Categorias',
     fornecedores: 'Fornecedores', recorrentes: 'Recorrentes', fechamento: 'Fechamento mensal', usuarios: 'Usuários', historico: 'Histórico', reports: 'Reports', configuracoes: 'Configurações',
     orcamentos: 'Orçamentos', proposta: 'a proposta' });
+  Object.assign(IA.nomes, { servicos: 'Serviços', servico: 'o serviço', programacao: 'Programação' });
 
   if (IA.sugestoes) {
     IA.sugestoes.splice(0, IA.sugestoes.length, 'Quais obras estão acima do orçado?', 'Quanto tenho a pagar este mês?', 'Como crio um novo lançamento?', 'Resumo das propostas enviadas', 'Quero reportar um problema');
   }
 
   CC.iaPrompt = function () {
+    if (!IA.role() || IA.role() === 'tecnico') return CC.iaOperationalPrompt('computador');
     const u = CC.session.user() || {};
     const hoje = new Date().toLocaleDateString('pt-BR', { timeZone: 'America/Sao_Paulo', weekday: 'long', day: '2-digit', month: '2-digit', year: 'numeric' });
     const aberta = ROTULOS[CC.current()] || 'Início';

@@ -7,10 +7,19 @@
   const IA = CC.ia = CC.ia || {};
   const SUGESTOES = ['Quais obras estão acima do orçado?', 'Quanto tenho a pagar este mês?', 'Como lanço uma despesa com foto?', 'Resumo das propostas enviadas', 'Quero reportar um problema'];
   IA.sugestoes = SUGESTOES; // o desktop troca as sugestões do celular (public/d/ia-desktop.js)
+  const OPERACIONAIS = ['Qual é minha programação de hoje?', 'Quais são minhas obras e serviços?', 'Ver checklist dos meus serviços', 'Como registro fotos e observações?', 'Quero reportar um problema'];
+  IA.getSuggestions = () => IA.role() === 'tecnico' ? OPERACIONAIS : (IA.role() ? SUGESTOES : []);
   const PASSOS = { listar_obras: 'Procurando as obras', ver_obra: 'Abrindo a obra', orcado_realizado: 'Comparando orçado e realizado', resumo_geral: 'Somando o mês',
     buscar_lancamentos: 'Procurando lançamentos', listar_categorias: 'Lendo as categorias', listar_propostas: 'Consultando o Orçamentos', ver_proposta: 'Abrindo a proposta',
-    abrir_tela: 'Preparando a tela', preparar_reporte: 'Montando o relato' };
-  const state = { chat: null, sdk: null, model: 0, busy: false, log: [], cards: [], live: '', screen: '' };
+    ver_programacao: 'Consultando a programação', abrir_tela: 'Preparando a tela', preparar_reporte: 'Montando o relato' };
+  const state = { chat: null, sdk: null, model: 0, busy: false, log: [], cards: [], live: '', screen: '', owner: '', epoch: 0 };
+  const same = (owner) => owner === state.owner && owner === IA.contextKey();
+  async function context() {
+    if (!await IA.prepare()) { IA.reset(); return ''; }
+    const owner = IA.contextKey();
+    if (state.owner !== owner) { IA.reset(); state.owner = owner; }
+    return owner;
+  }
 
   IA.ready = () => Boolean(CC.iaConfig && CC.iaConfig.firebase);
 
@@ -54,10 +63,11 @@
     return { ai, backend: ai.getAI(fb, { backend: new ai.GoogleAIBackend() }) };
   }
   // Pre-carrega o SDK e o token do App Check para a primeira pergunta nao esperar por eles.
-  IA.warm = () => { if (IA.ready() && !CC.offline()) sdk().catch(() => {}); };
+  IA.warm = async () => { if (IA.ready() && !CC.offline() && await context()) await sdk().catch(() => {}); };
 
-  async function newChat(history) {
+  async function newChat(history, owner) {
     const { ai, backend } = await sdk();
+    if (!same(owner)) throw new Error('A sessão mudou.');
     const m = CC.iaConfig.modelos[state.model];
     const model = ai.getGenerativeModel(backend, {
       model: m.nome, systemInstruction: CC.iaPrompt(), tools: IA.declarations(ai.Schema),
@@ -75,31 +85,37 @@
   // Limite gratuito ou modelo sobrecarregado: segue no reserva com a mesma conversa;
   // no ultimo modelo, tenta mais uma vez depois de uma pausa curta.
   // Texto parcial vai para a bolha ao vivo; devolve a resposta completa (com as chamadas de ferramenta).
-  async function stream(content) {
+  async function stream(content, owner) {
     state.live = '';
     const r = await state.chat.sendMessageStream(content);
     for await (const chunk of r.stream) {
+      if (!same(owner)) throw new Error('A sessão mudou.');
       let t = '';
       try { t = chunk.text(); } catch { t = ''; }
       if (t) { state.live += t; live(); }
     }
-    return { response: await r.response };
+    const response = await r.response;
+    if (!same(owner)) throw new Error('A sessão mudou.');
+    return { response };
   }
 
   async function send(content) {
-    if (!state.chat) await newChat();
-    else if (CC.current && state.screen !== CC.current()) await newChat(await state.chat.getHistory()); // a instrucao conta a tela aberta agora
+    const owner = state.owner;
+    if (!same(owner)) throw new Error('A sessão mudou.');
+    if (!state.chat) await newChat([], owner);
+    else if (CC.current && state.screen !== CC.current()) await newChat(await state.chat.getHistory(), owner); // a instrucao conta a tela aberta agora
     try {
-      return await stream(content);
+      return await stream(content, owner);
     } catch (error) {
       if (state.live || (!quota(error) && !busy(error))) throw error;
       if (state.model + 1 < CC.iaConfig.modelos.length) {
         state.model += 1;
-        await newChat(await state.chat.getHistory());
+        await newChat(await state.chat.getHistory(), owner);
       } else if (busy(error)) {
         await new Promise((resolve) => setTimeout(resolve, 1500));
       } else throw error;
-      return stream(content);
+      if (!same(owner)) throw new Error('A sessão mudou.');
+      return stream(content, owner);
     }
   }
 
@@ -133,8 +149,8 @@
     const el = body();
     if (!el) return;
     el.innerHTML = state.log.length ? state.log.map((m) => (m.report ? reportHtml(m.report) : `<div class="ia-msg ${m.who}">${m.who === 'ia' ? md(m.text) : esc(m.text)}${m.go ? `<button type="button" class="chip-act ia-go" data-go-ia="${state.log.indexOf(m)}">${icon('arrow-right', 16)}Ir para ${esc(m.label || 'a tela')}</button>` : ''}</div>`)).join('')
-      : `<div class="ia-hello">${icon('sparkle-fill', 28)}<b>Como posso ajudar?</b><span>Pergunte sobre obras, custos, orçado x realizado e propostas, peça para abrir uma tela ou relate um problema.</span>
-        <div class="ia-sug">${SUGESTOES.map((s) => `<button type="button" class="chip-act" data-sug="${esc(s)}">${esc(s)}</button>`).join('')}</div></div>`;
+      : `<div class="ia-hello">${icon('sparkle-fill', 28)}<b>Como posso ajudar?</b><span>${IA.role() === 'tecnico' ? 'Consulte suas obras e serviços, checklist, fotos e observações, ou relate um problema.' : 'Pergunte sobre obras, custos, orçado x realizado e propostas, peça para abrir uma tela ou relate um problema.'}</span>
+        <div class="ia-sug">${IA.getSuggestions().map((s) => `<button type="button" class="chip-act" data-sug="${esc(s)}">${esc(s)}</button>`).join('')}</div></div>`;
     if (state.busy && state.live) el.insertAdjacentHTML('beforeend', `<div class="ia-msg ia" id="ia-live">${md(state.live)}</div>`);
     else if (state.busy) el.insertAdjacentHTML('beforeend', `<div class="ia-msg ia busy" role="status"><span class="ia-dots"><i></i><i></i><i></i></span><small id="ia-step">${esc(state.step || 'Pensando')}</small></div>`);
     CC.$$('[data-sug]', el).forEach((b) => b.addEventListener('click', () => ask(b.dataset.sug)));
@@ -152,6 +168,8 @@
 
   async function ask(text) {
     const q = String(text || '').trim();
+    const owner = await context(), epoch = state.epoch;
+    if (!owner) return;
     if (!q || state.busy) return;
     state.log.push({ who: 'eu', text: q });
     if (CC.offline()) { state.log.push({ who: 'erro', text: 'O assistente precisa de internet.' }); return paint(); }
@@ -167,6 +185,7 @@
         const step = CC.$('#ia-step'); if (step) step.textContent = state.step;
         const parts = [];
         for (const call of calls) parts.push({ functionResponse: { name: call.name, response: await IA.run(call) } });
+        if (!same(owner)) return;
         result = await send(parts);
       }
       let answer = '';
@@ -176,8 +195,10 @@
       if (IA.pendingNav && reply.text.length > 160) { reply.go = IA.pendingNav; reply.label = IA.pendingLabel; IA.pendingNav = null; }
       state.log.push(reply);
     } catch (error) {
+      if (!same(owner)) return;
       state.log.push({ who: 'erro', text: friendly(error) });
     } finally {
+      if (state.epoch !== epoch || !same(owner)) return;
       state.log.push(...state.cards); // o cartão do relato vem depois do texto que o apresenta
       state.busy = false; state.live = '';
       paint();
@@ -185,7 +206,7 @@
     if (IA.pendingNav) {
       const go = IA.pendingNav;
       IA.pendingNav = null;
-      setTimeout(() => { close(); go(); }, 900);
+      setTimeout(() => { if (same(owner)) { close(); go(); } }, 900);
     }
   }
 
@@ -238,8 +259,8 @@
     document.removeEventListener('keydown', onKey);
   }
 
-  IA.open = function (starter) {
-    if (!IA.ready()) return;
+  IA.open = async function (starter) {
+    if (!IA.ready() || !await context()) return;
     close();
     const el = document.createElement('div');
     el.id = 'ia-sheet';
@@ -251,7 +272,7 @@
       <div class="ia-log" id="ia-log" aria-live="polite"></div>
       <form class="ia-input" id="ia-form"><textarea id="ia-q" rows="1" maxlength="1500" placeholder="Pergunte ou peça uma tela" aria-label="Mensagem para o assistente"></textarea>
         <button class="ia-send" type="submit" aria-label="Enviar">${icon('paper-plane-right', 20)}</button></form>
-      <small class="ia-note">A IA pode errar. Confira os valores nas telas.${CC.iaConfig.recaptcha && secureOrigin() ? ' Protegido pelo reCAPTCHA (<a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Privacidade</a>, <a href="https://policies.google.com/terms" target="_blank" rel="noopener">Termos</a>).' : ''}</small></div>`;
+      <small class="ia-note">A IA pode errar. Confira as informações nas telas.${CC.iaConfig.recaptcha && secureOrigin() ? ' Protegido pelo reCAPTCHA (<a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Privacidade</a>, <a href="https://policies.google.com/terms" target="_blank" rel="noopener">Termos</a>).' : ''}</small></div>`;
     el.addEventListener('click', (event) => { if (event.target === el || event.target.closest('.sheet-x')) close(); });
     document.body.appendChild(el);
     document.addEventListener('keydown', onKey);
@@ -262,11 +283,12 @@
     CC.$('#ia-form', el).addEventListener('submit', (event) => { event.preventDefault(); const q = input.value; input.value = ''; grow(); ask(q); });
     CC.$('#ia-new', el).addEventListener('click', () => { if (state.busy) return; state.log = []; state.chat = null; state.model = 0; paint(); input.focus(); });
     paint();
-    if (starter) ask(starter); else input.focus();
+    if (starter) return ask(starter); else input.focus();
   };
 
   // A conversa pertence a conta: sair ou trocar de conta comeca do zero.
-  IA.reset = () => { state.log = []; state.chat = null; state.model = 0; close(); };
+  IA.reset = () => { state.epoch += 1; state.owner = ''; state.log = []; state.chat = null; state.model = 0;
+    state.cards = []; state.live = ''; state.busy = false; IA.pendingNav = null; close(); };
   document.addEventListener('click', (event) => { if (event.target.closest('[data-ia]')) IA.open(); });
   window.addEventListener('load', () => setTimeout(() => { if (CC.session.token()) IA.warm(); }, 2500));
   mountFab();

@@ -47,6 +47,7 @@ function integrationRequiresLoopback() {
 }
 
 async function autenticarOuChaveIntegracao(req, res, next) {
+  if (req.headers.authorization) return autenticar(req, res, next);
   const integrationKey = req.headers['x-construtec-integration-key'];
   if (integrationKey) {
     if (integrationRequiresLoopback() && !isLoopback(req)) {

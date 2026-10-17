@@ -35,7 +35,8 @@ test('a Suíte tem barra de título própria com as telas abaixo dela', () => {
   const html = read('desktop/titlebar.html');
   assert.match(html, /-webkit-app-region: drag/);
   assert.match(html, /prefers-reduced-motion: reduce/);
-  assert.match(html, /--nav: #020d14/, 'mesma cor da barra do ChamadoPro');
+  assert.match(html, /IBM Plex Sans/, 'fonte do app');
+  assert.match(main, /setTitleBarOverlay/, 'a barra acompanha a cor do topo da tela ativa');
   const pkg = JSON.parse(read('package.json'));
   for (const file of ['desktop/titlebar.html', 'desktop/titlebar.js', 'desktop/titlebar-preload.js']) assert.ok(pkg.build.files.includes(file), `${file} entra no pacote`);
 });

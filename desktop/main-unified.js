@@ -76,7 +76,29 @@ if (!gotLock) {
       active.webContents.focus();
     }
     if (mainWindow && !mainWindow.isDestroyed()) mainWindow.webContents.send('suite:active', target);
+    void syncBarColor();
     mainWindow?.setTitle(target === 'orcamentos' ? 'Suíte Construtec — Orçamentos' : 'Suíte Construtec — Centro de Custos');
+  }
+
+  // A barra de título usa a cor do topo da tela ativa (claro ou escuro) e acompanha a troca de tema.
+  let barColor = BAR_COLOR;
+  async function syncBarColor() {
+    if (!mainWindow || mainWindow.isDestroyed()) return;
+    const view = liveView(activeTarget === 'orcamentos' ? orcView : centroView);
+    if (!view || !view.webContents.getURL().startsWith('http')) return;
+    try {
+      const css = await view.webContents.executeJavaScript('getComputedStyle(document.body).backgroundColor');
+      const m = /rgba?\((\d+),\s*(\d+),\s*(\d+)/.exec(String(css));
+      if (!m) return;
+      const [r, g, b] = [m[1], m[2], m[3]].map(Number);
+      const color = `#${[r, g, b].map((n) => n.toString(16).padStart(2, '0')).join('')}`;
+      if (color === barColor) return;
+      barColor = color;
+      const light = (0.299 * r + 0.587 * g + 0.114 * b) > 150;
+      mainWindow.setTitleBarOverlay({ color, symbolColor: light ? '#0b2f3b' : '#ffffff', height: BAR_HEIGHT });
+      mainWindow.setBackgroundColor(color);
+      mainWindow.webContents.send('suite:bar', { color, light });
+    } catch { /* tela ainda carregando */ }
   }
 
   async function readCentroToken() {
@@ -271,6 +293,8 @@ if (!gotLock) {
     mainWindow.on('focus', () => mainWindow?.webContents.send('suite:focus', true));
     mainWindow.on('blur', () => mainWindow?.webContents.send('suite:focus', false));
     mainWindow.webContents.once('did-finish-load', () => mainWindow?.webContents.send('suite:active', activeTarget));
+    const barTimer = setInterval(() => { void syncBarColor(); }, 1500);
+    mainWindow.on('closed', () => clearInterval(barTimer));
 
     centroView = new WebContentsView({
       webPreferences: { nodeIntegration: false, contextIsolation: true, preload: CENTRO_PRELOAD },

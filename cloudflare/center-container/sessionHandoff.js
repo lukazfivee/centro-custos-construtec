@@ -1,3 +1,4 @@
+import { issueChamadosHandoff, consumeChamadosHandoffResponse } from './chamados/worker/chamados-central.js';
 import { json, publicUser, requireSession, sha256Text, cleanSyncKey } from './centralAuth.js';
 import { serviceKeyValid } from './identityAdmin.js';
 import { effectiveSuiteRole, parseApps } from './suiteRoles.js';
@@ -6,7 +7,7 @@ import { appAllowed, appDenied } from './loginGuard.js';
 // Destinos do handoff (contrato §6). O código só vale no destino para o qual
 // foi emitido; o do Orçamentos só é trocado pelo servidor do Orçamentos
 // (CONSTRUTEC_IDENTITY_KEY) e vira uma sessão central filha da sessão do app.
-const TARGETS = new Set(['centro-custos', 'orcamentos']);
+const TARGETS = new Set(['centro-custos', 'orcamentos', 'chamados']);
 // Destino do handoff -> identificador do app na lista `apps` da conta.
 const APP_OF = { 'centro-custos': 'centro', orcamentos: 'orcamentos' };
 const WEB_NAMES = { 'centro-custos': 'Centro de Custos web', orcamentos: 'Orçamentos web' };
@@ -24,6 +25,7 @@ export async function issueHandoff(request, env) {
   if (auth.error) return json({ ok: false, code: 'SESSION_INVALID', error: auth.error }, auth.status);
   let body;
   try { body = await request.json(); } catch { body = null; }
+  if (body?.target === 'chamados') return issueChamadosHandoff(request, env, body);
   if (!TARGETS.has(body?.target)) return targetInvalid();
   if (!appAllowed(auth.user, APP_OF[body.target])) return json(appDenied(APP_OF[body.target]), 403);
   const value = code();
@@ -36,6 +38,7 @@ export async function issueHandoff(request, env) {
 export async function consumeHandoff(request, env) {
   let body;
   try { body = await request.json(); } catch { body = null; }
+  if (body?.target === 'chamados') return consumeChamadosHandoffResponse(request, env, body);
   const target = body?.target === undefined ? 'centro-custos' : body.target;
   if (!TARGETS.has(target)) return targetInvalid();
   const value = String(body?.code || '');

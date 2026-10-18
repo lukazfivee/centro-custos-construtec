@@ -1,0 +1,14 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Acessos ao Chamados · Construtec</title><link rel="stylesheet" href="/chamados/acessos.css"></head>
+<body><header class="top"><a class="brand" href="/suite/"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19V5h16v14h-5v-8H9v8Z" fill="none" stroke="currentColor" stroke-width="2"/></svg><span>CONSTRUTEC<small>Administração da Suíte</small></span></a><button type="button" id="logout" hidden>Sair da administração</button></header>
+<main><section id="login-section" class="login"><p class="eyebrow">Chamados e manutenção</p><h1>Controle de acesso</h1>
+<p class="intro">Defina quem pode entrar, o que pode fazer e quais clientes pode acompanhar.</p>
+<form id="login-form"><label>E-mail da conta administradora<input name="email" type="email" autocomplete="username" required></label>
+<label>Senha da Suíte<input name="password" type="password" autocomplete="current-password" required></label>
+<button class="primary" type="submit">Entrar na administração</button><p id="login-message" role="status" aria-live="polite"></p></form>
+<a href="/redefinir-senha">Esqueci minha senha</a></section>
+<section id="workspace" hidden><div class="heading"><div><p class="eyebrow">Administração · Chamados</p><h1>Contas e permissões</h1><p>Concessões explícitas, com histórico de cada alteração.</p></div><button id="refresh-users" type="button">Atualizar contas</button></div>
+<p id="page-message" role="status" aria-live="polite"></p><div class="workspace"><aside><label>Buscar conta<input id="search-users" type="search" placeholder="Nome ou e-mail"></label><div id="users" class="users"></div></aside>
+<section id="detail" class="detail" aria-live="polite"><div class="empty"><h2>Selecione uma conta</h2><p>Escolha uma pessoa para consultar ou alterar o acesso ao Chamados.</p></div></section></div></section></main>
+<script src="/chamados/acessos.js" defer></script></body></html>

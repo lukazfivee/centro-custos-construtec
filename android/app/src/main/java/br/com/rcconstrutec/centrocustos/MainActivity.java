@@ -150,6 +150,7 @@ public final class MainActivity extends Activity implements AuthController.Shell
                 runOnUiThread(this::sessionRejected);
                 return;
             } catch (IOException noNetwork) { offline = true; }
+            if (SuiteViews.needsHandoff(app) && !url.contains("#handoff=")) { runOnUiThread(() -> toast("Não foi possível abrir " + SuiteViews.called(app) + " com esta conta agora.")); return; }
             auth.markEnteredOffline(offline);
             String target = url;
             runOnUiThread(() -> { showWebApp(app, target, true); hideAuth(); toast(notice); updater.autoCheck(); });
@@ -253,18 +254,19 @@ public final class MainActivity extends Activity implements AuthController.Shell
         settings.setJavaScriptEnabled(true); settings.setDomStorageEnabled(true); settings.setDatabaseEnabled(true);
         settings.setAllowFileAccess(false); settings.setAllowContentAccess(true); settings.setMixedContentMode(WebSettings.MIXED_CONTENT_NEVER_ALLOW);
         settings.setMediaPlaybackRequiresUserGesture(true); settings.setBuiltInZoomControls(false); settings.setDisplayZoomControls(false);
-        AppWebView.attach(this, webView, frame, url, SuiteViews.ORCAMENTOS.equals(app) ? "Orçamentos" : "Centro de Custos", new AppWebView.Host() {
+        AppWebView.attach(this, webView, frame, url, SuiteViews.title(app), new AppWebView.Host() {
             @Override public boolean openFileChooser(ValueCallback<Uri[]> callback, WebChromeClient.FileChooserParams params) {
                 suppressLock = true;
                 if (!chooser.open(callback, params)) { suppressLock = false; toast("Nenhum seletor de arquivos disponível."); }
                 return true;
             }
             @Override public void loadFailed(String message) {
-                if (central) toast(message != null ? message : "Sem conexão com " + (SuiteViews.ORCAMENTOS.equals(app) ? "o Orçamentos" : "o Centro de Custos") + ". Tente de novo quando conectar.");
+                if (central) toast(message != null ? message : "Sem conexão com " + SuiteViews.called(app) + ". Tente de novo quando conectar.");
                 else showSetup(message != null ? message : "Não foi possível acessar esta instalação. Confirme o endereço e a rede Wi-Fi.");
             }
             @Override public void message(String message) { toast(message); }
             @Override public void suiteLink(String action) {
+                if (SuiteViews.needsHandoff(app) && !action.startsWith("app/")) return; // o site do Chamados so troca de app
                 if (updater.handleLink(action, central && auth.unlocked())) return; // suite://atualizacao/instalar
                 String[] other = action.startsWith("app/") ? SuiteViews.parse(action.substring(4)) : null; // suite://app/<id>?destino
                 if (central && other != null && SuiteViews.known(other[0]) && auth.unlocked()) openApp(other[0], null, other[1]);

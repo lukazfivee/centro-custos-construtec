@@ -1,21 +1,25 @@
-// Suíte Construtec para Windows: uma janela, um instalador, duas telas.
+// Suíte Construtec para Windows: uma janela, um instalador, três telas.
 // - Centro de Custos: o servidor Express local (server.js) em 127.0.0.1:3333, aberto em /d/.
 // - Orçamentos: API local e IPC do pacote modules/orcamentos-main (gerado a partir do repositório do
 //   Orçamentos por scripts/build-suite-modules.js) e o renderer em modules/orcamentos, aberto por arquivo.
 // Cada tela é uma WebContentsView com o seu preload; o menu Suíte de cada uma chama `suite:switch`.
-// A conta entra uma vez no Centro e vai para o Orçamentos por um código de uso único (handoff).
-const { app, BrowserWindow, WebContentsView, nativeImage, dialog, ipcMain, shell } = require('electron');
+// Chamados e O.S.: site (desktop/chamados-view.cjs) numa terceira view, com sessão própria e só na origem configurada.
+// A conta entra uma vez no Centro e vai para o Orçamentos e o Chamados por um código de uso único (handoff).
+const { app, BrowserWindow, WebContentsView, nativeImage, dialog, ipcMain, shell, session } = require('electron');
 const path = require('path');
 const fs = require('fs');
 const net = require('net');
 const crypto = require('crypto');
 const suiteModules = require('./suite-modules');
+const { applyDefaults: applyChamadosDefaults } = require('./chamados-navigation.cjs');
+const { createChamadosView } = require('./chamados-view.cjs');
 const createCentroRuntime = require('./centro-runtime');
 
 let mainWindow = null;
 let isQuitting = false;
 let centroView = null;
 let orcView = null;
+let chamados = null;
 let activeTarget = 'centro';
 let orcamentosMain = null;
 let orcamentosStart = null;
@@ -32,8 +36,9 @@ const gotLock = app.requestSingleInstanceLock();
 const APP_ROOT = path.join(__dirname, '..');
 const MODULES = suiteModules(APP_ROOT);
 const CENTRO_URL = `http://127.0.0.1:${MODULES.centro.port}/d/`;
-const TARGETS = ['centro', 'orcamentos'];
-// Barra de título própria (Windows): faixa fixa no topo; as duas telas ocupam o que sobra abaixo dela.
+const TARGETS = ['centro', 'orcamentos', 'chamados'];
+const TITLES = { centro: 'Centro de Custos', orcamentos: 'Orçamentos', chamados: 'Chamados e O.S.' };
+// Barra de título própria (Windows): faixa fixa no topo; as telas ocupam o que sobra abaixo dela.
 const BAR_HEIGHT = 32;
 const BAR_COLOR = '#020d14';
 const BAR_SYMBOLS = '#ffffff';
@@ -63,28 +68,27 @@ if (!gotLock) {
   function fitViews() {
     if (!mainWindow || mainWindow.isDestroyed()) return;
     const [width, height] = mainWindow.getContentSize();
-    for (const view of [centroView, orcView]) liveView(view)?.setBounds({ x: 0, y: BAR_HEIGHT, width, height: Math.max(0, height - BAR_HEIGHT) });
+    for (const view of [centroView, orcView, chamados?.view()]) liveView(view)?.setBounds({ x: 0, y: BAR_HEIGHT, width, height: Math.max(0, height - BAR_HEIGHT) });
   }
 
   function showTarget(target) {
     activeTarget = target;
-    const active = target === 'orcamentos' ? orcView : centroView;
-    const other = target === 'orcamentos' ? centroView : orcView;
-    liveView(other)?.setVisible(false);
-    if (liveView(active)) {
-      active.setVisible(true);
-      active.webContents.focus();
+    const views = { centro: centroView, orcamentos: orcView, chamados: chamados?.view() };
+    for (const [name, view] of Object.entries(views)) if (name !== target) liveView(view)?.setVisible(false);
+    if (liveView(views[target])) {
+      views[target].setVisible(true);
+      views[target].webContents.focus();
     }
     if (mainWindow && !mainWindow.isDestroyed()) mainWindow.webContents.send('suite:active', target);
     void syncBarColor();
-    mainWindow?.setTitle(target === 'orcamentos' ? 'Suíte Construtec — Orçamentos' : 'Suíte Construtec — Centro de Custos');
+    mainWindow?.setTitle(`Suíte Construtec — ${TITLES[target]}`);
   }
 
   // A barra de título usa a cor do topo da tela ativa (claro ou escuro) e acompanha a troca de tema.
   let barColor = BAR_COLOR;
   async function syncBarColor() {
     if (!mainWindow || mainWindow.isDestroyed()) return;
-    const view = liveView(activeTarget === 'orcamentos' ? orcView : centroView);
+    const view = liveView({ centro: centroView, orcamentos: orcView, chamados: chamados?.view() }[activeTarget]);
     if (!view || !view.webContents.getURL().startsWith('http')) return;
     try {
       const css = await view.webContents.executeJavaScript('getComputedStyle(document.body).backgroundColor');
@@ -158,6 +162,12 @@ if (!gotLock) {
 
   async function switchTo(target, hash) {
     if (!TARGETS.includes(target)) return { switched: false };
+    if (target === 'chamados') {
+      // Como no Orçamentos, o erro de entrada aparece numa caixa com "Tentar de novo" e o app segue aberto.
+      if (!(await chamados.open()).switched) return { switched: false };
+      showTarget(target);
+      return { switched: true };
+    }
     if (target === 'orcamentos') {
       if (!orcamentosAvailable() || !orcamentosStart) {
         dialog.showErrorBox('Orçamentos indisponível', 'Os arquivos do Orçamentos não foram encontrados nesta instalação.');
@@ -190,7 +200,7 @@ if (!gotLock) {
   // ---- IPC -----------------------------------------------------------------------------------------
 
   function senderIsSuiteView(event) {
-    return [centroView, orcView].some((view) => liveView(view) && view.webContents === event.sender);
+    return [centroView, orcView].some((view) => liveView(view) && view.webContents === event.sender) || chamados?.isSender(event) === true;
   }
 
   function initIPC() {
@@ -209,7 +219,8 @@ if (!gotLock) {
     ipcMain.handle('open-webmail', () => shell.openExternal('https://webmailpro.uol.com.br/'));
     ipcMain.handle('suite:switch', async (event, target, hash) => {
       if (!senderIsSuiteView(event)) return { switched: false };
-      return switchTo(target === 'centro' ? 'centro' : 'orcamentos', hash);
+      if (!TARGETS.includes(target)) return { switched: false };
+      return switchTo(target, chamados?.isSender(event) ? undefined : hash);
     });
   }
 
@@ -268,9 +279,9 @@ if (!gotLock) {
         if (contents.isDevToolsOpened()) contents.closeDevTools();
         else contents.openDevTools({ mode: 'detach' });
       }
-      if (input.control && !input.shift && !input.alt && (input.key === '1' || input.key === '2')) {
+      if (input.control && !input.shift && !input.alt && (input.key === '1' || input.key === '2' || input.key === '3')) {
         event.preventDefault();
-        void switchTo(input.key === '1' ? 'centro' : 'orcamentos');
+        void switchTo(TARGETS[Number(input.key) - 1]);
       }
     });
   }
@@ -321,6 +332,14 @@ if (!gotLock) {
       attachCommon(orcView);
       orcView.webContents.on('did-fail-load', (_event, code, description) => console.error(`[orcamentos] falha ao carregar (${code}): ${description}`));
     }
+
+    chamados = createChamadosView({
+      electron: { WebContentsView, session, shell, dialog },
+      host: {
+        getWindow: () => mainWindow, module: MODULES.chamados, port: MODULES.centro.port, readToken: readCentroToken,
+        preload: path.join(__dirname, 'chamados-preload.js'), onCreate: attachCommon,
+      },
+    });
 
     mainWindow.on('resize', fitViews);
     mainWindow.on('maximize', fitViews);
@@ -377,6 +396,7 @@ if (!gotLock) {
   app.whenReady().then(async () => {
     try {
       loadEnv();
+      applyChamadosDefaults(process.env);
       initIPC();
       initUpdater();
       createWindow();

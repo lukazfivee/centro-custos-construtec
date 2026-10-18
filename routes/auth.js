@@ -17,6 +17,7 @@ const { clientIp } = require('../lib/clientIp');
 const { appAllowed, APP_DENIED_MESSAGE } = require('../services/appAccess');
 
 const router = express.Router();
+require('../services/chamadosSuite.cjs').registerRoutes(router, { autenticar, asyncRoute, cloudAuth });
 const LOGIN_MAX_FAILURES = 5;
 const LOGIN_EMAIL_MAX_FAILURES = 30;
 const LOGIN_BLOCK_MS = 15 * 60 * 1000;

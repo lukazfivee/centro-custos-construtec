@@ -2,7 +2,8 @@
 const { SUITE_ROLES, SCOPED_ROLES, suiteRoleOf } = require('./permissions');
 const { httpError } = require('../lib/http');
 
-const APPS = ['centro', 'orcamentos'];
+const LEGACY_APPS = ['centro', 'orcamentos'];
+const APPS = [...LEGACY_APPS, 'chamados'];
 
 function legacyRoleFor(suiteRole) {
   if (suiteRole === 'admin') return 'admin';
@@ -12,8 +13,9 @@ function legacyRoleFor(suiteRole) {
 
 function parseApps(value) {
   if (Array.isArray(value)) return APPS.filter((app) => value.includes(app));
-  if (!value) return [...APPS];
-  try { return parseApps(JSON.parse(value)); } catch { return [...APPS]; }
+  if (!value) return [...LEGACY_APPS];
+  try { const parsed = JSON.parse(value); return Array.isArray(parsed) ? parseApps(parsed) : [...LEGACY_APPS]; }
+  catch { return [...LEGACY_APPS]; }
 }
 
 // Valida o trecho de acesso de um corpo de requisicao. Devolve so o que veio.

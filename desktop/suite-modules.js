@@ -1,10 +1,15 @@
 const path = require('path');
+const { configuredOrigin } = require('./chamados-navigation.cjs');
 
 // Onde cada tela da Suíte vive. Os arquivos do Orçamentos (modules/) são gerados por
 // scripts/build-suite-modules.js a partir do repositório do Orçamentos e não ficam no Git.
 module.exports = function suiteModules(appRoot) {
   const orcamentos = path.join(appRoot, 'modules');
   return {
+    chamados: {
+      id: 'chamados', kind: 'web',
+      get origin() { return configuredOrigin(process.env); },
+    },
     centro: {
       id: 'centro',
       port: 3333,

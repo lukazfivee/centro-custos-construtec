@@ -3,8 +3,10 @@
 // Orçamentos e para clientes antigos; `suite_role` é o papel novo. Sempre que o
 // papel novo é gravado, o legado é derivado dele.
 
+import { parseSuiteApps } from './chamados/protocol.js';
+
 export const SUITE_ROLES = ['admin', 'gestor', 'financeiro', 'engenharia', 'tecnico', 'comercial'];
-export const SUITE_APPS = ['centro', 'orcamentos'];
+export const SUITE_APPS = ['centro', 'orcamentos', 'chamados'];
 
 // Ordem e valores de docs/suite-desktop/01-ESPEC-TELAS.md, seção 6.
 const MATRIX = {
@@ -45,10 +47,10 @@ export function effectiveSuiteRole(row) {
   return 'tecnico';
 }
 
+// Legacy missing/corrupt apps keep only the original two applications.
+// Chamados always needs an explicit apps entry and an active access grant.
 export function parseApps(value) {
-  if (Array.isArray(value)) return SUITE_APPS.filter((app) => value.includes(app));
-  if (!value) return [...SUITE_APPS];
-  try { return parseApps(JSON.parse(value)); } catch { return [...SUITE_APPS]; }
+  return parseSuiteApps(value);
 }
 
 export function normalizeApps(value) {

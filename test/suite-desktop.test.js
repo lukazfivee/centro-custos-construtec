@@ -63,7 +63,7 @@ test('o instalador leva a configuração do app e prepara o Orçamentos antes de
   }
 });
 
-test('POST /auth/suite-handoff só serve conta corporativa e só para o Orçamentos', async (context) => {
+test('POST /auth/suite-handoff exige conta corporativa e respeita ativação de Chamados', async (context) => {
   const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'centro-custos-suite-handoff-'));
   process.env.PGLITE_DATA_DIR = path.join(tempRoot, 'database');
   process.env.RESTORE_ROOT_DIR = path.join(tempRoot, 'restore');
@@ -93,7 +93,8 @@ test('POST /auth/suite-handoff só serve conta corporativa e só para o Orçamen
   const token = (await login.json()).token;
 
   assert.equal((await post(null, { target: 'orcamentos' })).status, 401, 'sem sessão');
-  assert.equal((await post(token, { target: 'chamados' })).status, 400, 'destino que não existe');
+  assert.equal((await post(token, { target: 'chamados' })).status, 503, 'módulo ainda desativado');
+  assert.equal((await post(token, { target: 'inexistente' })).status, 400, 'destino desconhecido');
   assert.equal((await post(token, { target: 'orcamentos' })).status, 409, 'conta local não tem sessão central');
 });
 

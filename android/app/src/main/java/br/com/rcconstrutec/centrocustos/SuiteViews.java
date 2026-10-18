@@ -13,13 +13,14 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * As WebViews remotas da Suite, uma por app (Centro de Custos e Orcamentos).
+ * As WebViews remotas da Suite, uma por app (Centro de Custos, Orcamentos e Chamados e O.S.).
  * A ativa fica visivel; a outra fica escondida sem recarregar, para a troca
  * entre apps nao perder o estado da tela.
  */
 final class SuiteViews {
     static final String CENTRO_CUSTOS = "centro-custos";
     static final String ORCAMENTOS = "orcamentos";
+    static final String CHAMADOS = "chamados";
 
     private final Activity activity;
     private final FrameLayout layer;
@@ -32,10 +33,18 @@ final class SuiteViews {
         this.layer = layer;
     }
 
-    static boolean known(String app) { return CENTRO_CUSTOS.equals(app) || ORCAMENTOS.equals(app); }
+    static boolean known(String app) { return CENTRO_CUSTOS.equals(app) || ORCAMENTOS.equals(app) || CHAMADOS.equals(app); }
+
+    /** Nome do app para a tela de carregamento e os avisos ("o Chamados e O.S." em called). */
+    static String title(String app) { return ORCAMENTOS.equals(app) ? "Orçamentos" : CHAMADOS.equals(app) ? "Chamados e O.S." : "Centro de Custos"; }
+    static String called(String app) { return "o " + title(app); }
+
+    /** O Chamados nunca abre sem o codigo de entrada: sem ele cairia numa tela de login propria, fora da conta unica. */
+    static boolean needsHandoff(String app) { return CHAMADOS.equals(app); }
 
     /** Endereco inicial de cada app web (bases vindas do Gradle). */
     static String start(String app) {
+        if (CHAMADOS.equals(app)) return BuildConfig.CHAMADOS_WEB_BASE.replaceAll("/+$", "") + "/";
         return ORCAMENTOS.equals(app) ? BuildConfig.ORC_WEB_BASE.replaceAll("/+$", "") + "/" : BuildConfig.CENTRAL_WEB_BASE.replaceAll("/+$", "") + "/m/";
     }
 

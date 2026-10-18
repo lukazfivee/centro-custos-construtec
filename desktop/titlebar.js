@@ -1,7 +1,7 @@
 // Barra de título da Suíte: acompanha a tela ativa, a janela em foco e a cor do topo do app.
 const barra = document.getElementById('barra');
 const atual = document.getElementById('atual');
-const NOMES = { centro: 'Centro de Custos', orcamentos: 'Orçamentos' };
+const NOMES = { centro: 'Centro de Custos', orcamentos: 'Orçamentos', chamados: 'Chamados e O.S.' };
 
 window.suiteBar?.onActive((target) => { atual.textContent = NOMES[target] || ''; });
 window.suiteBar?.onFocus((focused) => { barra.classList.toggle('inativa', !focused); });

@@ -62,7 +62,7 @@ test('/classico/ serve a interface antiga e / abre o Desktop novo', async (conte
   for (const inexistente of ['nao-existe.js', 'assets/nao-existe.png', 'a/b/c']) assert.equal((await fetch(`${base}/classico/${inexistente}`)).status, 404, inexistente);
   for (const travessia of ['..%2fserver.js', '..%5cserver.js', '.env']) assert.notEqual((await fetch(`${base}/classico/${travessia}`)).status, 200, travessia);
   // /m e /d reais nao ganham uma segunda copia (nem outro escopo de service worker) sob /classico.
-  for (const duplicado of ['m/sw.js', 'm/', 'd/index.html']) assert.equal((await fetch(`${base}/classico/${duplicado}`)).status, 404, duplicado);
+  for (const duplicado of ['m/sw.js', 'm/', 'M/', 'D/index.html', 'd/index.html']) assert.equal((await fetch(`${base}/classico/${duplicado}`)).status, 404, duplicado);
 
   // Compatibilidade: ?antiga=1 e ?entrar=1 seguem abrindo a mesma pagina.
   for (const consulta of ['?antiga=1', '?entrar=1']) {

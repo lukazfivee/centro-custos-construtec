@@ -19,7 +19,8 @@ test('técnico: atribuição pelo gestor, escopo, execução e menu sem financei
     };
     const admin = (await api('/auth/login', 'POST', { email: ADMIN_EMAIL, senha: ADMIN_PASSWORD })).token;
     await api('/usuarios', 'POST', { nome: 'Técnico Demonstração', email: 'tecnico@teste.local', senha: 'Tecnico@123456', role: 'supervisor' }, admin);
-    const hoje = new Date().toLocaleDateString('sv-SE', { timeZone: 'America/Sao_Paulo' });
+    // Mesmo fuso do navegador do teste (CC.today usa o horario local), senao entre 21h e meia-noite de Brasilia o servico vira atrasado.
+    const hoje = new Date().toLocaleDateString('sv-SE');
     const service = await api('/servicos', 'POST', { cliente: 'Condomínio Sol', valor: 1250, nome: 'Revisão da central de alarme', local: 'Bloco A · sala técnica', data: hoje, descricao: 'Vistoria inicial realizada.' }, admin);
     const obra = await api('/centros-custo', 'POST', { codigo: 'OB-TEC', nome: 'Obra atribuída', cliente: 'Cliente Obra' }, admin);
     await api('/servicos', 'POST', { cliente: 'Outro cliente', valor: 9999, nome: 'Serviço não designado', data: hoje }, admin);

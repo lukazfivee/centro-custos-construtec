@@ -1,5 +1,6 @@
 const test=require('node:test'),assert=require('node:assert/strict'),path=require('node:path'),{pathToFileURL}=require('node:url');
-const {adminFixture,WORKER}=require('./chamados-admin-fixture.cjs'),{prepareDeploymentFixture}=require('./chamados-deployment-fixture.cjs');
+const {hasSqlite,adminFixture,WORKER}=require('./chamados-admin-fixture.cjs'),{prepareDeploymentFixture}=require('./chamados-deployment-fixture.cjs');
+if(!hasSqlite){test('Chamados: node:sqlite indisponível nesta versão do Node',{skip:true},()=>{});return;}
 test('fixture de implantação autentica pela senha normal e nunca administra Central',async t=>{
  const f=await adminFixture(t),fixture=await prepareDeploymentFixture({grantedBy:f.admin.id,clientIds:['client-one']});
  await f.env.DB.batch(fixture.insertStatements.map(q=>f.env.DB.prepare(q.sql).bind(...q.params)));

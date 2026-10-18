@@ -1,5 +1,6 @@
 const test=require('node:test'),assert=require('node:assert/strict');
-const {adminFixture}=require('./chamados-admin-fixture.cjs');
+const {hasSqlite,adminFixture}=require('./chamados-admin-fixture.cjs');
+if(!hasSqlite){test('Chamados: node:sqlite indisponível nesta versão do Node',{skip:true},()=>{});return;}
 test('admin central legado concede a si próprio sem inventar papel ou alterar apps anteriores',async t=>{
  const f=await adminFixture(t),body=f.save(),key=crypto.randomUUID();
  assert.equal((await f.request('GET')).data.grant,null);

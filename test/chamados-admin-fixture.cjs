@@ -1,6 +1,7 @@
 const fs=require('node:fs'),path=require('node:path');
 const {pathToFileURL}=require('node:url');
-const {DatabaseSync}=require('node:sqlite');
+let DatabaseSync;try{({DatabaseSync}=require('node:sqlite'));}catch{}
+const hasSqlite=Boolean(DatabaseSync); // Node 20 (CI) não tem node:sqlite: os testes do Chamados se pulam.
 const {setup}=require('./password-reset-fixture.test');
 const ROOT=path.join(__dirname,'..'),WORKER=path.join(ROOT,'cloudflare/center-container');
 function sqliteD1() {
@@ -34,4 +35,4 @@ async function adminFixture(t) {
  t.after(()=>{env.DB.raw.close();env.CHAMADOS_DB.raw.close();});
  return {...base,admin,request,save,central};
 }
-module.exports={adminFixture,sqliteD1,WORKER};
+module.exports={hasSqlite,adminFixture,sqliteD1,WORKER};

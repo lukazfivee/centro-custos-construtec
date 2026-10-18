@@ -1,5 +1,6 @@
 const test=require('node:test'),assert=require('node:assert/strict'),path=require('node:path'),{pathToFileURL}=require('node:url');
-const {adminFixture,WORKER}=require('./chamados-admin-fixture.cjs');
+const {hasSqlite,adminFixture,WORKER}=require('./chamados-admin-fixture.cjs');
+if(!hasSqlite){test('Chamados: node:sqlite indisponível nesta versão do Node',{skip:true},()=>{});return;}
 async function fixture(t,{grant=true,explicit=true}={}) {
  const f=await adminFixture(t);
  const made=await f.call('POST','/v1/users',{token:f.token,body:{name:'Target',email:'target@rcconstrutec.com.br',

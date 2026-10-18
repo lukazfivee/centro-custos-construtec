@@ -1,5 +1,7 @@
 const test=require('node:test'),assert=require('node:assert/strict');
 const {notificationFixture}=require('./chamados-notifications-fixture.cjs');
+const {hasSqlite}=require('./chamados-admin-fixture.cjs');
+if(!hasSqlite){test('Chamados: node:sqlite indisponível nesta versão do Node',{skip:true},()=>{});return;}
 test('relay usa identidade central, payload persistido e recibo idempotente; nunca e-mail arbitrário',async t=>{
  const f=await notificationFixture(t),first=await f.send();
  assert.deepEqual(first,{status:200,data:{status:'accepted',providerId:'receipt-one'}});

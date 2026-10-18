@@ -164,17 +164,6 @@
   color: #fff !important;
 }
 
-.suite-dropdown-item.hub-link {
-  background: rgba(8, 92, 229, 0.15) !important;
-  color: #fff !important;
-  border: 1px solid rgba(8, 92, 229, 0.25) !important;
-}
-
-.suite-dropdown-item.hub-link:hover {
-  background: rgba(8, 92, 229, 0.28) !important;
-  border-color: #01b7f1 !important;
-}
-
 .suite-dropdown-item.current-system {
   background: rgba(22, 131, 93, 0.16) !important;
   color: #34d399 !important;

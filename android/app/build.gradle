@@ -13,6 +13,8 @@ def centralHost = new URI(centralApiBase).host
 // (3.1.0-rc.N -> codigo 31000+N); sem eles vale o padrao abaixo.
 def appVersionName = (project.findProperty('appVersionName') ?: '3.1.0-rc.20').toString()
 def appVersionCode = (project.findProperty('appVersionCode') ?: '31020').toString().toInteger()
+// Chamados e O.S. dentro do app: -PchamadosWebBase=...
+def chamadosWebBase = (project.findProperty('chamadosWebBase') ?: 'https://construtec-chamados.construtec-reports.workers.dev').toString().replaceAll('/+$', '')
 def orcWebBase = (project.findProperty('orcWebBase') ?: 'https://construtec-orcamentos-cloud.construtec-reports.workers.dev').toString().replaceAll('/+$', '')
 
 android {
@@ -28,6 +30,7 @@ android {
         buildConfigField 'String', 'CENTRAL_API_BASE', "\"${centralApiBase}\""
         buildConfigField 'String', 'CENTRAL_WEB_BASE', "\"${centralWebBase}\""
         buildConfigField 'String', 'ORC_WEB_BASE', "\"${orcWebBase}\""
+        buildConfigField 'String', 'CHAMADOS_WEB_BASE', "\"${chamadosWebBase}\""
         manifestPlaceholders = [centralHost: centralHost]
     }
 

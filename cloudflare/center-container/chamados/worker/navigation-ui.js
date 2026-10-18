@@ -23,7 +23,9 @@
      if(existing)link.remove();else link.replaceWith(item(mobile));
     }
    }
-   if(!parent.querySelector('[data-chamados],[data-chamados-launch="app"]')) {
+   // Centro novo: o proprio menu (public/d/suite.js e public/m/suite.js) cuida do item e da concessao.
+   const native=parent.querySelector('[data-chamados-slot]');
+   if(!native && !parent.querySelector('[data-chamados],[data-chamados-launch="app"]')) {
     const a=item(mobile),before=mobile?null:parent.querySelector('.sep');parent.insertBefore(a,before);
    }
    const existing=parent.querySelector('[data-chamados-launch="admin"]');

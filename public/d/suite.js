@@ -28,10 +28,10 @@
   async function openChamados(origin) {
     if (!validOrigin(origin)) return;
     if (window.electronAPI?.suiteSwitch) {
-      try {
-        const result = await window.electronAPI.suiteSwitch('chamados');
-        if (!result?.switched) throw new Error('Não foi possível abrir o Chamados com esta conta.');
-      } catch (error) { CC.toast(error.message, 'warning-circle'); }
+      // No app Suíte o Chamados é a terceira tela da janela; se a entrada falhar, o app já explica (caixa com
+      // "Tentar de novo"), então aqui só avisa se a própria chamada ao app quebrar.
+      try { await window.electronAPI.suiteSwitch('chamados'); }
+      catch { CC.toast('Não foi possível abrir o Chamados.', 'warning-circle'); }
       return;
     }
     // Open synchronously with the click; no identity or secret is placed in this window.

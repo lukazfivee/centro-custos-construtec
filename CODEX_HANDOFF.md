@@ -50,10 +50,10 @@
 - Curva S: HALF_UP racional, cronograma estável e indicadores indisponíveis quando não há base suficiente.
 - Recibo idempotente inclui obra e baseline original. Boletim inclui acumulado/saldo e não infere execução física pelo gasto.
 - `lib/localControl.js`: parada local autenticada, reutilizando fechamento HTTP/PGlite do servidor.
-- Homologação com banco isolado: integração real, reinício, backup/restauração, Hub e PDF A4 aprovados.
+- Homologação com banco isolado: integração real, reinício, backup/restauração e PDF A4 aprovados.
 - Instâncias produtivas antigas preservadas; precisam de reinício seguro para carregar o backend corrigido.
 - Relatório: `../INTEGRAÇÃO-ORÇAMENTOS-CENTRO V3/09-HOMOLOGACAO-SUITE.md`.
-- Validação final: `npm test` 107/107; `npm run check` 76 arquivos; Hub e PowerShell sem erros de sintaxe.
+- Validação final: `npm test` 107/107; `npm run check` 76 arquivos; PowerShell sem erros de sintaxe.
 
 ## 2026-09-06 15:56 BRT — projeções financeiras do Centro de Custos
 

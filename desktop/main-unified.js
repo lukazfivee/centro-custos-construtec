@@ -293,7 +293,7 @@ if (!gotLock) {
     mainWindow.on('focus', () => mainWindow?.webContents.send('suite:focus', true));
     mainWindow.on('blur', () => mainWindow?.webContents.send('suite:focus', false));
     mainWindow.webContents.once('did-finish-load', () => mainWindow?.webContents.send('suite:active', activeTarget));
-    const barTimer = setInterval(() => { void syncBarColor(); }, 1500);
+    const barTimer = setInterval(() => { void syncBarColor(); }, 250);
     mainWindow.on('closed', () => clearInterval(barTimer));
 
     centroView = new WebContentsView({

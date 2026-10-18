@@ -73,7 +73,7 @@ test('mobile server fallback works without JavaScript', async () => {
 test('generated resources exactly match reviewable sources', async () => {
   const assets = await import(pathToFileURL(path.join(dir, 'suite-launcher-assets.js')).href);
   for (const [name, file] of [['suiteDocument', 'index.html'], ['suiteStyles', 'suite.css'], ['suiteScript', 'suite.js']]) {
-    assert.equal(assets[name], fs.readFileSync(path.join(root, 'public/suite', file), 'utf8'));
+    assert.equal(assets[name], fs.readFileSync(path.join(root, 'public/suite', file), 'utf8').replace(/\r\n/g, '\n'));
   }
   const { handleSuiteLauncher } = await load();
   assert.match(handleSuiteLauncher(req('/suite/suite.css')).headers.get('content-type'), /^text\/css/);

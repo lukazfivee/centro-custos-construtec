@@ -11,6 +11,7 @@ const { initializeDatabase, closeDatabase, getDb, getInstanceIdentity } = requir
 const { observability } = require('./middleware/observability');
 const logger = require('./lib/logger');
 const { centerProxyAccess } = require('./middleware/centerProxyAccess');
+const { allowedLocalOrigin } = require('./lib/localCors');
 
 function rawBody(req) {
   return new Promise((resolve, reject) => {
@@ -26,8 +27,9 @@ function createApp({ orcamentosApp } = {}) {
   app.disable('x-powered-by');
   app.set('etag', 'strong');
   app.use((req, res, next) => {
-    const origin = req.get('origin');
-    if (origin && /^http:\/\/(localhost|127\.0\.0\.1):\d+$/.test(origin)) {
+    // Origens locais: so localhost|127\.0\.0\.1 nas portas da Suite (lib/localCors.js), nao qualquer porta.
+    const origin = allowedLocalOrigin(req.get('origin'));
+    if (origin) {
       res.setHeader('Access-Control-Allow-Origin', origin);
       res.setHeader('Vary', 'Origin');
     }

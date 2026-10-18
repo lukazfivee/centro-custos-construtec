@@ -10,6 +10,7 @@ const fs = require('fs');
 const net = require('net');
 const crypto = require('crypto');
 const suiteModules = require('./suite-modules');
+const { openChamados } = require('./chamados-navigation.cjs');
 const createCentroRuntime = require('./centro-runtime');
 
 let mainWindow = null;
@@ -32,7 +33,7 @@ const gotLock = app.requestSingleInstanceLock();
 const APP_ROOT = path.join(__dirname, '..');
 const MODULES = suiteModules(APP_ROOT);
 const CENTRO_URL = `http://127.0.0.1:${MODULES.centro.port}/d/`;
-const TARGETS = ['centro', 'orcamentos'];
+const TARGETS = ['centro', 'orcamentos', 'chamados'];
 // Barra de título própria (Windows): faixa fixa no topo; as duas telas ocupam o que sobra abaixo dela.
 const BAR_HEIGHT = 32;
 const BAR_COLOR = '#020d14';
@@ -158,6 +159,10 @@ if (!gotLock) {
 
   async function switchTo(target, hash) {
     if (!TARGETS.includes(target)) return { switched: false };
+    if (target === 'chamados') return openChamados({
+      module: MODULES.chamados, port: MODULES.centro.port, token: await readCentroToken(),
+      openExternal: (url) => shell.openExternal(url),
+    });
     if (target === 'orcamentos') {
       if (!orcamentosAvailable() || !orcamentosStart) {
         dialog.showErrorBox('Orçamentos indisponível', 'Os arquivos do Orçamentos não foram encontrados nesta instalação.');
@@ -209,7 +214,8 @@ if (!gotLock) {
     ipcMain.handle('open-webmail', () => shell.openExternal('https://webmailpro.uol.com.br/'));
     ipcMain.handle('suite:switch', async (event, target, hash) => {
       if (!senderIsSuiteView(event)) return { switched: false };
-      return switchTo(target === 'centro' ? 'centro' : 'orcamentos', hash);
+      if (!TARGETS.includes(target)) return { switched: false };
+      return switchTo(target, hash);
     });
   }
 

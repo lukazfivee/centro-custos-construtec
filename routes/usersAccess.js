@@ -11,6 +11,9 @@ const { readAccess, setObras, legacyRoleFor, decorate } = require('../services/u
 
 const router = express.Router();
 router.use(autenticar, exigirPermissao('p9'));
+require('../services/chamadosAccessAdmin.cjs').registerRoutes(router, {
+  getDb, positiveId, asyncRoute, httpError, cloudAuth, mirrorCloudUser,
+});
 
 function cloudToken(req) {
   if (!req.usuario.cloud_managed || !req.usuario.cloud_session_token) {

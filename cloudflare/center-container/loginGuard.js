@@ -57,6 +57,7 @@ export async function noteLoginFailure(db, email) {
 // App que esta pedindo o login: o Centro (app e Container) ou o Orcamentos. O Orcamentos chega com a chave
 // de servico e sem cabecalho de app; o Container do Centro usa a chave so para repassar o IP e se identifica.
 export function loginApp(request, service) {
+  if (request.headers.get('x-construtec-app') === 'chamados') return 'chamados';
   return service && request.headers.get('x-construtec-app') !== 'centro' ? 'orcamentos' : 'centro';
 }
 
@@ -65,7 +66,7 @@ export function appAllowed(row, app) {
   return parseApps(row?.apps).includes(app);
 }
 
-export const APP_NAMES = { centro: 'Centro de Custos', orcamentos: 'Orçamentos' };
+export const APP_NAMES = { centro: 'Centro de Custos', orcamentos: 'Orçamentos', chamados: 'Chamados' };
 export function appDenied(app) {
   return { ok: false, code: 'APP_NOT_ALLOWED', error: `Sua conta não tem acesso ao ${APP_NAMES[app]}. Peça a um administrador para liberar.` };
 }

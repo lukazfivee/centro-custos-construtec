@@ -71,6 +71,7 @@
       "desktop/titlebar.js",
       "desktop/titlebar-preload.js",
       "desktop/suite-modules.js",
+      "desktop/chamados-navigation.cjs",
       "desktop/preload.js",
       "modules/**/*",
       "desktop/icon.png"

@@ -140,6 +140,7 @@
     };
     CC.$$('[data-aba]', el).forEach((botao) => botao.addEventListener('click', async () => {
       aba = botao.dataset.aba;
+      CC.$('[data-novo]', el).hidden = aba !== 'usuarios'; // convidar so faz sentido na lista de usuarios
       CC.$$('[data-aba]', el).forEach((b) => b.setAttribute('aria-selected', b === botao ? 'true' : 'false'));
       try { await carregar(); } catch (error) { corpo.innerHTML = U.faixa('err', 'warning-circle', error.message); }
     }));

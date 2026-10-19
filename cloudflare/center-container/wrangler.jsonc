@@ -9,7 +9,14 @@
   "triggers": { "crons": ["0 11 * * *"] },
   // Impressao digital da chave fixa de assinatura do app (publica): libera os App Links
   // (/redefinir-senha e /cadastro abrem direto no app).
-  "vars": { "ANDROID_CERT_SHA256": "0D:85:31:22:E7:A6:BC:5A:9E:FF:A7:49:1D:DF:99:8F:BB:3D:F7:0E:0F:DB:B0:D9:28:17:7B:25:C4:8E:E7:84" },
+  // CHAMADOS_*: sem eles o item "Chamados e O.S." nunca aparece na Suite (a central responde "indisponivel").
+  // O segredo CHAMADOS_SERVICE_KEY fica no Worker (wrangler secret), nao aqui. Um deploy sem estas variaveis as apaga.
+  "vars": {
+    "ANDROID_CERT_SHA256": "0D:85:31:22:E7:A6:BC:5A:9E:FF:A7:49:1D:DF:99:8F:BB:3D:F7:0E:0F:DB:B0:D9:28:17:7B:25:C4:8E:E7:84",
+    "CHAMADOS_ENABLED": "true",
+    "CHAMADOS_PUBLIC_ORIGIN": "https://construtec-chamados.construtec-reports.workers.dev",
+    "CHAMADOS_ORGANIZATION_ID": "rcconstrutec.com.br"
+  },
   "containers": [{
     "class_name": "CentroCustosApi",
     "image": "../../Dockerfile",
@@ -24,5 +31,9 @@
     "binding": "DB",
     "database_name": "centro-custos-producao",
     "database_id": "95e0be7b-2f59-4af4-87c3-95dc6b0ef95c"
+  }, {
+    "binding": "CHAMADOS_DB",
+    "database_name": "construtec-chamados-producao",
+    "database_id": "3935067a-ab35-4736-970d-600b7d876d55"
   }]
 }

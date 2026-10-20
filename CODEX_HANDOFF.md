@@ -1,5 +1,13 @@
 # Handoff — Centro de Custos
 
+## 2026-10-20 BRT - Otimizacao fase 1: logs de invocacao desligados (Claude Code)
+
+- Base: `origin/main` em `8e291f8`, branch `perf/fase1-logs`. Plano geral de reducao de atraso e de custo na Cloudflare (Orcamentos, Centro e Chamados).
+- `cloudflare/center-container/wrangler.jsonc`: `observability.logs.invocation_logs` false (o log de cada invocacao deixa de ser gravado; logs de erro e `console.log` continuam). Efeito so depois do proximo deploy.
+- Conferido sem mudar: o Worker publicado e o `center-container` (e o que `scripts/deploy-cloud.js` usa). O `cloudflare-sync-worker` tem o mesmo nome `centro-custos-api`; conferir antes de qualquer deploy dele (`deploy-iphone-cloud.yml`).
+- Cache estatico ja esta razoavel (`server.js`: fontes e imagens 7 dias; JS/CSS com `no-cache` e ETag forte). Pendente, nao feito: cada revalidacao de JS/CSS passa por Worker, Durable Object e Container (pode acordar o Container). Opcoes: servir `public/` por Static Assets do Worker, ou nome com hash.
+- Proximo passo: medir antes e depois (volume de logs e uso do Container no painel Cloudflare).
+
 ## 2026-09-27 12:40 BRT — Suíte mobile, Fase 4 (notificações) publicada (Claude Code)
 
 - Central de notificações no Worker (D1 `010`), push pelo Firebase (`FCM_SERVICE_ACCOUNT`), avisos de proposta aprovada, item acima do orçado, contas a vencer e novo acesso, sino e central no site do celular, app com Firebase Messaging (PR #45).

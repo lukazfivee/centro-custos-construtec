@@ -89,17 +89,47 @@
     const bt = CC.$('[data-recolher]');
     let salvo = '';
     try { salvo = localStorage.getItem(CHAVE_MENU) || ''; } catch { /* sem armazenamento */ }
-    const aplicar = (recolhido) => {
+    let recolhido = false;
+    const aplicar = (valor) => {
+      recolhido = valor;
       app.classList.toggle('recolhido', recolhido);
       bt.setAttribute('aria-expanded', String(!recolhido));
       bt.setAttribute('aria-label', recolhido ? 'Expandir menu' : 'Recolher menu');
       bt.title = `${bt.getAttribute('aria-label')} (Ctrl B)`;
     };
     aplicar(salvo ? salvo === 'recolhido' : window.innerWidth < 1280);
+
+    // Espiar: recolhido, o mouse em cima abre o menu por cima da pagina e ele recolhe sozinho ao sair.
+    // Depois de recolher no botao com o mouse em cima, so volta a espiar depois que o mouse sair.
+    const side = CC.$('.side');
+    let espia = false;
+    let travado = false;
+    let timer = 0;
+    const espiar = (abrir) => {
+      espia = abrir;
+      app.classList.toggle('espia', abrir);
+      app.classList.toggle('recolhido', recolhido && !abrir);
+      if (abrir) document.querySelector('.menu-dica')?.remove();
+    };
+    side.addEventListener('mouseenter', () => {
+      clearTimeout(timer);
+      if (!recolhido || travado || espia) return;
+      timer = setTimeout(() => espiar(true), 140);
+    });
+    side.addEventListener('mouseleave', () => {
+      clearTimeout(timer);
+      travado = false;
+      if (!espia) return;
+      timer = setTimeout(() => espiar(false), 220);
+    });
+
     const alternar = () => {
-      const recolhido = !app.classList.contains('recolhido');
-      aplicar(recolhido);
-      try { localStorage.setItem(CHAVE_MENU, recolhido ? 'recolhido' : 'aberto'); } catch { /* segue */ }
+      clearTimeout(timer);
+      const novo = !recolhido;
+      espiar(false);
+      aplicar(novo);
+      travado = novo && side.matches(':hover');
+      try { localStorage.setItem(CHAVE_MENU, novo ? 'recolhido' : 'aberto'); } catch { /* segue */ }
     };
     bt.addEventListener('click', alternar);
     document.addEventListener('keydown', (e) => {
@@ -116,7 +146,7 @@
     const mostrar = (e) => {
       const a = e.target.closest('[data-nav]');
       tirar();
-      if (!a || !app.classList.contains('recolhido')) return;
+      if (!a || !app.classList.contains('recolhido')) return; // espiando, a classe sai e a dica some
       const r = a.getBoundingClientRect();
       dica = document.createElement('div');
       dica.className = 'menu-dica';

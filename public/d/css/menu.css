@@ -1,14 +1,14 @@
 /* Menu lateral: recolher/expandir (Ctrl B), sombra sobre a pagina e animacao ao passar o mouse. */
 .side { box-shadow: 4px 0 24px rgba(3, 31, 41, .18), 1px 0 0 rgba(3, 31, 41, .06); }
 [data-theme="escuro"] .side { box-shadow: 4px 0 28px rgba(0, 0, 0, .55), 1px 0 0 rgba(255, 255, 255, .04); }
-.app.anima .side { transition: width .28s cubic-bezier(.2, .8, .2, 1), padding .28s cubic-bezier(.2, .8, .2, 1); }
+.app.anima .side { transition: width .28s cubic-bezier(.2, .8, .2, 1), padding .28s cubic-bezier(.2, .8, .2, 1), margin-right .28s cubic-bezier(.2, .8, .2, 1), box-shadow .28s ease; }
 
 /* Botao de recolher, metade para fora da borda. */
 .recolher { position: absolute; top: 30px; right: -13px; z-index: 2; width: 26px; height: 26px; border: 0; border-radius: 50%; background: var(--color-surface); color: var(--color-text); box-shadow: 0 0 0 1px var(--color-divider), 0 4px 12px rgba(3, 31, 41, .22); display: grid; place-items: center; cursor: pointer; opacity: .9; transition: transform .2s ease, opacity .2s ease, background-color .2s ease, color .2s ease; }
 .recolher:hover { opacity: 1; transform: scale(1.12); background: #12a9d1; color: #fefefe; }
 .recolher:focus-visible { outline: 2px solid #5fd0ee; outline-offset: 2px; }
 .recolher .ph { transition: transform .28s cubic-bezier(.2, .8, .2, 1); }
-.app.recolhido .recolher .ph { transform: rotate(180deg); }
+.app.recolhido .recolher .ph, .app.espia .recolher .ph { transform: rotate(180deg); }
 
 /* Marca: logo inteiro aberto, simbolo recolhido (troca com fade). */
 .side .marca { position: relative; }
@@ -52,7 +52,17 @@
 
 @keyframes menuDica { from { opacity: 0; transform: translate(-6px, -50%) } to { opacity: 1; transform: translate(0, -50%) } }
 
+/* Espiar: com o menu recolhido, o mouse em cima abre o menu por cima da pagina (sem empurrar o conteudo) e ele recolhe ao sair.
+   O JS tira .recolhido e poe .espia; a coluna segue em 72 px (margem negativa) e os itens entram em cascata. */
+:root { --side-aberto: 236px; }
+.app.espia { --side-w: 72px; }
+.app.espia .side { width: var(--side-aberto); margin-right: calc(72px - var(--side-aberto)); box-shadow: 10px 0 36px rgba(3, 31, 41, .32), 1px 0 0 rgba(3, 31, 41, .06); }
+[data-theme="escuro"] .app.espia .side { box-shadow: 10px 0 40px rgba(0, 0, 0, .7), 1px 0 0 rgba(255, 255, 255, .04); }
+@keyframes menuItem { from { opacity: 0; transform: translateX(-10px) } to { opacity: 1; transform: none } }
+.app:not(.recolhido) .nav .rot, .app:not(.recolhido) .side .quem .nome, .app:not(.recolhido) .side .marca .logo, .app:not(.recolhido) .side .marca span { animation: menuItem .34s cubic-bezier(.2, .8, .2, 1) both; animation-delay: calc(var(--n, 0) * 26ms + 50ms); }
+.grupo > .nav:nth-of-type(1) { --n: 1 } .grupo > .nav:nth-of-type(2) { --n: 2 } .grupo > .nav:nth-of-type(3) { --n: 3 } .grupo > .nav:nth-of-type(4) { --n: 4 } .grupo > .nav:nth-of-type(5) { --n: 5 } .grupo > .nav:nth-of-type(6) { --n: 6 } .grupo > .nav:nth-of-type(n+7) { --n: 7 }
+
 @media (prefers-reduced-motion: reduce) {
   .app.anima .side, .nav, .nav::before, .nav .ph, .nav .rot, .recolher, .recolher .ph, .side .marca .simb { transition: none; }
-  .nav[aria-current="page"]::after, .menu-dica { animation: none; }
+  .nav[aria-current="page"]::after, .menu-dica, .app .nav .rot, .app .side .quem .nome, .app .side .marca .logo, .app .side .marca span { animation: none; }
 }

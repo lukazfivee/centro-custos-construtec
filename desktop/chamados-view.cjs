@@ -63,7 +63,18 @@ function createChamadosView({ electron, host }) {
     await session.fromPartition(PARTITION).clearStorageData().catch(() => {});
   }
 
+  // O Chamados é um PWA e o service worker dele só troca de versão quando todas as telas fecham, o que nunca acontece
+  // numa janela de app que fica aberta. Na primeira carga de cada execução o app descarta o service worker e o cache dele
+  // (o login e os rascunhos do técnico ficam em outro armazenamento e não são tocados): assim o visual novo sempre entra.
+  let shellRefreshed = false;
+  async function refreshShell() {
+    if (shellRefreshed) return;
+    shellRefreshed = true;
+    await session.fromPartition(PARTITION).clearStorageData({ storages: ['serviceworkers', 'cachestorage'] }).catch(() => {});
+  }
+
   async function load(url) {
+    await refreshShell();
     const contents = live().webContents;
     // Trocar só o # não recarrega o documento: sai da página antiga antes, para o código novo valer.
     await contents.loadURL('about:blank').catch(() => {});

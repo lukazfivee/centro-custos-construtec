@@ -40,11 +40,13 @@ test('desktop: página carrega o assistente do celular e o adaptador, antes do a
   for (const ref of ['m/ia-config.js', 'm/ia-tools.js', 'm/ia-chat.js', 'd/ia-desktop.js', 'd/css/ia.css']) assert.ok(fs.existsSync(path.join(PUBLIC, ref)), ref);
 });
 
-test('desktop: botão flutuante fica abaixo de painéis e diálogos e sai quando eles abrem', () => {
+test('desktop: assistente abre pelo botão da barra do topo; o flutuante do celular não aparece', () => {
   const css = read('d/css/ia.css');
-  assert.match(css, /\.ia-fab \{[^}]*position: fixed;[^}]*z-index: 40;/);
-  assert.match(css, /body:has\(\.camada, \.dialogo-camada, \.impressao\) \.ia-fab \{ display: none; \}/);
+  assert.match(css, /\.ia-fab \{ display: none !important; \}/);
   assert.match(css, /#ia-sheet \{[^}]*pointer-events: none;/);
+  const shell = read('d/shell.js');
+  assert.match(shell, /<button type="button" class="ibtn" data-ia aria-label="Assistente" title="Assistente"/);
+  assert.ok(shell.indexOf('data-ia ') < shell.indexOf('data-tema'), 'à esquerda dos outros botões do topo');
   const base = read('d/css/componentes.css');
   assert.match(base, /\.camada \{[^}]*z-index: 50;/);
   assert.match(base, /\.dialogo-camada \{[^}]*z-index: 60;/);

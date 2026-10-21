@@ -60,7 +60,7 @@ t('D1', 'rapido-validacao', { rota: 'inicio', ref: 'erro', async preparar(c) {
   await c.tocarTexto('.drawer .drod button', 'Registrar'); await c.dormir(500);
 } });
 t('D1', 'atividade-aberta', { rota: 'inicio', async preparar(c) { await c.tocar('[data-lanc]'); await c.painel(); } });
-t('D0', 'assistente-aberto', { rota: 'inicio', async preparar(c) { await c.tocar('#ia-fab'); await c.dormir(900); } });
+t('D0', 'assistente-aberto', { rota: 'inicio', async preparar(c) { await c.tocar('.top [data-ia]'); await c.dormir(900); } });
 
 // D2 · Lancamentos ----------------------------------------------------------------------------
 const FILA_LIMPA = async (c) => { await c.aba.enviar('Storage.clearDataForOrigin', { origin: c.s.url, storageTypes: 'indexeddb' }); await c.offline(false); };

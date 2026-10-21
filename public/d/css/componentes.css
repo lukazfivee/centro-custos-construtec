@@ -8,6 +8,11 @@
 
 .kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; }
 .kpi { padding: 16px; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+/* Quadrados com informacao reagem ao mouse (anel de 1 px no foco, sombra suave, sobe 1 px), como os KPIs do Chamados; so ao passar o
+   mouse, sem clique, e nunca nos que tem campos (o anel de foco do campo ja marca o que esta ativo). */
+.conteudo .card:not(:has(input, select, textarea)) { transition: box-shadow .15s ease, transform .15s ease; }
+.conteudo .card:not(:has(input, select, textarea)):hover { box-shadow: 0 0 0 1px var(--color-focus), 0 8px 20px rgba(3, 31, 41, .08); transform: translateY(-1px); }
+@media (prefers-reduced-motion: reduce) { .conteudo .card:not(:has(input, select, textarea)):hover { transform: none; } }
 .kpi .topo { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
 .kpi .ic { width: 30px; height: 30px; border-radius: 9px; display: grid; place-items: center; background: var(--color-accent-900); color: var(--color-accent-300); }
 .kpi .ic .ph { font-size: calc(16px * var(--fs, 1)); }

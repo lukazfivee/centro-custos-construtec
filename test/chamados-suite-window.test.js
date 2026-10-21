@@ -70,7 +70,7 @@ test('handoff: o pedido vai só ao servidor local, com POST, sem seguir redireci
 // ---- Janela: a view do Chamados com Electron simulado ----
 
 function harness({ tokens = ['tok-1'], fetches = [], answers = [] } = {}) {
-  const log = { loads: [], external: [], boxes: [], errors: [], cleared: 0, perms: {}, views: [], failLoad: 0 };
+  const log = { loads: [], external: [], boxes: [], errors: [], cleared: 0, shell: [], perms: {}, views: [], failLoad: 0 };
   class Contents {
     constructor() {
       this.handlers = {};
@@ -102,7 +102,7 @@ function harness({ tokens = ['tok-1'], fetches = [], answers = [] } = {}) {
   const controller = createChamadosView({
     electron: {
       WebContentsView: View,
-      session: { fromPartition: (name) => { log.partition = name; return { clearStorageData: async () => { log.cleared += 1; } }; } },
+      session: { fromPartition: (name) => { log.partition = name; return { clearStorageData: async (options) => { if (options?.storages) log.shell.push(options.storages.join(',')); else log.cleared += 1; } }; } },
       shell: { openExternal: (url) => { log.external.push(url); } },
       dialog: {
         showMessageBox: async (_window, options) => { log.boxes.push(options); return { response: answers.length ? answers.shift() : 1 }; },
@@ -261,4 +261,12 @@ test('a troca de tela ajusta o tamanho das telas: o Chamados nasce na 1ª abertu
   const show = main.slice(main.indexOf('function showTarget'), main.indexOf('// A barra de título usa a cor'));
   assert.ok(show.includes('fitViews()'), 'showTarget chama fitViews antes de mostrar a tela');
   assert.ok(show.indexOf('fitViews()') < show.indexOf('setVisible(true)'));
+});
+
+test('service worker e cache do Chamados são descartados uma vez por execução, sem apagar o login', async () => {
+  const { controller, log } = harness({ tokens: ['tok-1', 'tok-2'] });
+  await controller.open();
+  await controller.open();
+  assert.deepEqual(log.shell, ['serviceworkers,cachestorage']);
+  assert.equal(log.cleared, 1, 'só a limpeza de outra conta; o descarte do service worker não apaga o login');
 });

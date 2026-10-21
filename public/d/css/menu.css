@@ -5,7 +5,7 @@
 
 /* Botao de recolher, metade para fora da borda. */
 .recolher { position: absolute; top: 30px; right: -13px; z-index: 2; width: 26px; height: 26px; border: 0; border-radius: 50%; background: var(--color-surface); color: var(--color-text); box-shadow: 0 0 0 1px var(--color-divider), 0 4px 12px rgba(3, 31, 41, .22); display: grid; place-items: center; cursor: pointer; opacity: .9; transition: transform .2s ease, opacity .2s ease, background-color .2s ease, color .2s ease; }
-.recolher:hover { opacity: 1; transform: scale(1.12); background: #12a9d1; color: #fefefe; }
+.recolher:hover { opacity: 1; transform: scale(1.12); background: var(--color-accent-500); color: #fefefe; }
 .recolher:focus-visible { outline: 2px solid #5fd0ee; outline-offset: 2px; }
 .recolher .ph { transition: transform .28s cubic-bezier(.2, .8, .2, 1); }
 .app.recolhido .recolher .ph, .app.espia .recolher .ph { transform: rotate(180deg); }
@@ -20,10 +20,10 @@
 .nav::before { content: ''; position: absolute; inset: 0; z-index: -1; border-radius: inherit; background: linear-gradient(90deg, rgba(18, 169, 209, .22), rgba(18, 169, 209, .04)); transform: scaleX(0); transform-origin: left; opacity: 0; transition: transform .25s cubic-bezier(.2, .8, .2, 1), opacity .25s ease; }
 .nav:hover { background: transparent; color: #fefefe; }
 .nav:hover::before { transform: scaleX(1); opacity: 1; }
-.nav .ph { transition: transform .22s cubic-bezier(.3, 1.6, .5, 1), color .15s ease; }
+.nav .ph { transition: transform .22s cubic-bezier(.3, 1.3, .5, 1), color .15s ease; }
 .nav:hover .ph { transform: scale(1.18) translateX(1px); color: #5fd0ee; }
 .nav:active .ph { transform: scale(.94); }
-.nav[aria-current="page"]::after { content: ''; position: absolute; left: -14px; top: 9px; bottom: 9px; width: 3px; border-radius: 0 3px 3px 0; background: #12a9d1; box-shadow: 0 0 10px rgba(18, 169, 209, .7); animation: menuBarra .3s cubic-bezier(.2, .8, .2, 1) both; }
+.nav[aria-current="page"]::after { content: ''; position: absolute; left: -14px; top: 9px; bottom: 9px; width: 3px; border-radius: 0 3px 3px 0; background: var(--color-accent-500); box-shadow: 0 0 10px rgba(18, 169, 209, .7); animation: menuBarra .3s cubic-bezier(.2, .8, .2, 1) both; }
 .nav .rot { max-width: 240px; transition: opacity .2s ease, max-width .38s cubic-bezier(.2, .8, .2, 1), transform .32s cubic-bezier(.2, .8, .2, 1); }
 .nav:focus-visible { outline: 2px solid #5fd0ee; outline-offset: -2px; }
 .side .grupo > span { transition: opacity .18s ease, max-height .28s ease, padding .28s ease; max-height: 28px; overflow: hidden; white-space: nowrap; }

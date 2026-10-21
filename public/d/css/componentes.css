@@ -79,7 +79,7 @@
 .vazio-tela b { color: var(--color-text); font-size: calc(16px * var(--fs, 1)); }
 .carregando { display: flex; align-items: center; gap: 10px; padding: 24px 0; color: var(--color-neutral-300); font-size: calc(13.5px * var(--fs, 1)); }
 /* Tela de abertura animada: logo que respira sobre um brilho, barra de progresso e pontinhos no texto. */
-.abertura { position: relative; overflow: hidden; display: grid; place-items: center; align-content: center; gap: 14px; min-height: 100vh; padding: 28px; color: var(--color-neutral-300); font-size: calc(13.5px * var(--fs, 1)); background: linear-gradient(135deg, rgba(13, 127, 159, .06), transparent 40%), var(--color-bg); }
+.abertura { position: relative; overflow: hidden; display: grid; place-items: center; align-content: center; gap: 14px; min-height: 100vh; padding: 28px; color: var(--c-muted); font-size: calc(13.5px * var(--fs, 1)); background: linear-gradient(135deg, rgba(13, 127, 159, .06), transparent 40%), var(--color-bg); }
 .abertura::before { content: ""; position: absolute; width: 360px; height: 360px; border-radius: 50%; background: radial-gradient(circle, rgba(13, 127, 159, .22), transparent 68%); animation: abertura-brilho 3.2s ease-in-out infinite; pointer-events: none; }
 .abertura > * { position: relative; }
 .abertura-logo { height: 52px; width: auto; max-width: 230px; object-fit: contain; margin-bottom: 8px; animation: abertura-entrada .7s ease-out both, abertura-respira 2.6s ease-in-out .7s infinite; }
@@ -87,7 +87,7 @@
 [data-theme="escuro"] .abertura-logo-claro { display: none; }
 [data-theme="escuro"] .abertura-logo-escuro { display: block; }
 .abertura-barra { width: 180px; height: 3px; border-radius: 3px; overflow: hidden; background: rgba(13, 127, 159, .18); }
-.abertura-barra i { display: block; width: 40%; height: 100%; border-radius: 3px; background: linear-gradient(90deg, transparent, #0d7f9f, transparent); animation: abertura-barra 1.3s ease-in-out infinite; }
+.abertura-barra i { display: block; width: 40%; height: 100%; border-radius: 3px; background: linear-gradient(90deg, transparent, var(--color-accent-600), transparent); animation: abertura-barra 1.3s ease-in-out infinite; }
 .abertura strong { font-weight: 600; letter-spacing: .01em; }
 .abertura strong::after { content: ""; display: inline-block; width: 1.2em; text-align: left; animation: abertura-pontos 1.4s steps(1, end) infinite; }
 @keyframes abertura-entrada { from { opacity: 0; transform: translateY(8px) scale(.94); } to { opacity: 1; transform: none; } }

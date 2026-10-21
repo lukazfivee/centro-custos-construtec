@@ -20,7 +20,7 @@
 .paleta { display: flex; gap: 8px; flex-wrap: wrap; }
 .paleta button { width: 32px; height: 32px; border: 0; border-radius: 9px; cursor: pointer; transition: transform .12s ease, box-shadow .12s ease; }
 .paleta button:hover { transform: scale(1.06); }
-.paleta button[aria-pressed="true"] { box-shadow: 0 0 0 2px var(--color-surface), 0 0 0 4px var(--cor-atual, #12a9d1); }
+.paleta button[aria-pressed="true"] { box-shadow: 0 0 0 2px var(--color-surface), 0 0 0 4px var(--cor-atual, var(--color-accent-500)); }
 .paleta button:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 3px; }
 
 /* Interruptor "ativa" dos paineis. */

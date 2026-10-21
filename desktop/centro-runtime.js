@@ -227,12 +227,15 @@ module.exports = function createCentroRuntime({ appRoot, port }) {
 
 
   // Chamado depois que o servidor subiu: grava as credenciais iniciais e mostra o aviso de primeiro acesso.
+  // O aviso aparece só na primeira abertura, quando a senha acabou de ser criada; nas seguintes ele não volta
+  // (a senha segue no arquivo da Área de Trabalho até ser trocada).
   async function afterServerStart() {
-    if (shouldPersistBootstrap && firstAccessCredentials) {
+    const primeiraVez = shouldPersistBootstrap && !!firstAccessCredentials;
+    if (primeiraVez) {
       persistBootstrapCredentials(firstAccessCredentials);
       shouldPersistBootstrap = false;
+      await showFirstAccessInfo();
     }
-    await showFirstAccessInfo();
   }
 
   return { loadEnv, loadPrefs, savePrefs, configureLocalFirewall, afterServerStart };

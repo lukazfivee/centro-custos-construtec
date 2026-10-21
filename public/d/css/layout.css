@@ -66,7 +66,7 @@
 .suite .pop { right: 0; top: 46px; width: 300px; padding: 8px; }
 .suite .pop .lbl { display: block; padding: 6px 10px 8px; color: var(--color-accent-300); }
 .suite .res { padding: 9px 10px; border-radius: 10px; text-decoration: none; }
-.suite .res.atual { background: var(--color-accent-900); cursor: default; }
+.suite .res.atual { background: var(--color-accent-900); }
 .suite .res .ic { width: 32px; height: 32px; }
 .suite .sep { height: 1px; margin: 6px 4px; background: var(--color-divider); }
 

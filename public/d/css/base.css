@@ -1,5 +1,6 @@
 /* Base e componentes simples (botoes, campos, cartao, chip, segmentado, tabela). */
-@media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition: none !important; animation: none !important; } }
+/* A barra lateral mantem o efeito mesmo com "reduzir movimento" do Windows (pedido do Lucas). */
+@media (prefers-reduced-motion: reduce) { :not(.side):not(.side *), :not(.side):not(.side *)::before, :not(.side):not(.side *)::after { transition: none !important; animation: none !important; } }
 
 * { box-sizing: border-box; }
 html, body { margin: 0; height: 100%; background: var(--color-bg); }

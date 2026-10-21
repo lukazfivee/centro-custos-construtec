@@ -15,7 +15,7 @@
     const inner = content(icon, title, subtitle);
     return url ? '<a class="res" role="menuitem" href="' + esc(url)
       + '" target="_blank" rel="noopener">' + inner + D.ic('arrow-square-out', 15) + '</a>'
-      : '<div class="res atual" role="menuitem" aria-current="page">' + inner + D.ui.chip('Atual', 'ok') + '</div>';
+      : '<a class="res atual" role="menuitem" href="#/inicio" aria-current="page">' + inner + D.ui.chip('Atual', 'ok') + '</a>';
   };
   function validOrigin(value) {
     try {

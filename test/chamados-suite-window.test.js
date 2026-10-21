@@ -255,3 +255,10 @@ test('a janela da Suíte tem Chamados como terceira tela, com barra de título e
     assert.ok(pkg.build.files.includes(file), `${file} entra no pacote`);
   }
 });
+
+test('a troca de tela ajusta o tamanho das telas: o Chamados nasce na 1ª abertura e não pode ficar em 0x0', () => {
+  const main = read('desktop/main-unified.js');
+  const show = main.slice(main.indexOf('function showTarget'), main.indexOf('// A barra de título usa a cor'));
+  assert.ok(show.includes('fitViews()'), 'showTarget chama fitViews antes de mostrar a tela');
+  assert.ok(show.indexOf('fitViews()') < show.indexOf('setVisible(true)'));
+});

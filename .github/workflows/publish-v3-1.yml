@@ -20,7 +20,7 @@ jobs:
       # Unico lugar que muda a cada pre-lancamento: o numero da RC. O versionCode do
       # Android sai dele (3.1.0-rc.N -> 31000+N; ver versionCodeFor no Worker) e o app
       # instalado so oferece a atualizacao quando o codigo da release for maior.
-      RC_NUMBER: '43'
+      RC_NUMBER: '44'
       APP_NOTES: 'Orcamentos: textos do resumo, selo de custo e colunas de valores deixam de ser cortados; PDF sem pagina so com a assinatura.'
     steps:
       - name: Baixar codigo

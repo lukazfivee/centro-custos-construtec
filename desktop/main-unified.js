@@ -75,6 +75,7 @@ if (!gotLock) {
     activeTarget = target;
     const views = { centro: centroView, orcamentos: orcView, chamados: chamados?.view() };
     for (const [name, view] of Object.entries(views)) if (name !== target) liveView(view)?.setVisible(false);
+    fitViews(); // o Chamados nasce na 1ª abertura, depois do último ajuste: sem isto ele ficaria com 0x0 (tela em branco)
     if (liveView(views[target])) {
       views[target].setVisible(true);
       views[target].webContents.focus();

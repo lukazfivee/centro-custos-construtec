@@ -54,7 +54,7 @@
 .selo.off { background: var(--c-warn-soft); color: var(--c-warn); }
 .selo.off .ponto { background: #e0a33a; }
 .selo.enviando { background: var(--color-accent-900); color: var(--color-accent-300); }
-.selo.enviando .ponto { background: #12a9d1; animation: blink 1s ease-in-out infinite; }
+.selo.enviando .ponto { background: var(--color-accent-500); animation: blink 1s ease-in-out infinite; }
 .selo.falha { background: var(--c-err-soft); color: var(--c-err); }
 .selo.falha .ponto { background: #b8452c; }
 .selo.local { background: var(--c-muted-soft); color: var(--c-muted); }

@@ -87,7 +87,7 @@
 [data-theme="escuro"] .abertura-logo-claro { display: none; }
 [data-theme="escuro"] .abertura-logo-escuro { display: block; }
 .abertura-barra { width: 180px; height: 3px; border-radius: 3px; overflow: hidden; background: rgba(13, 127, 159, .18); }
-.abertura-barra i { display: block; width: 40%; height: 100%; border-radius: 3px; background: linear-gradient(90deg, transparent, #0d7f9f, transparent); animation: abertura-barra 1.3s ease-in-out infinite; }
+.abertura-barra i { display: block; width: 40%; height: 100%; border-radius: 3px; background: linear-gradient(90deg, transparent, var(--color-accent-600), transparent); animation: abertura-barra 1.3s ease-in-out infinite; }
 .abertura strong { font-weight: 600; letter-spacing: .01em; }
 .abertura strong::after { content: ""; display: inline-block; width: 1.2em; text-align: left; animation: abertura-pontos 1.4s steps(1, end) infinite; }
 @keyframes abertura-entrada { from { opacity: 0; transform: translateY(8px) scale(.94); } to { opacity: 1; transform: none; } }

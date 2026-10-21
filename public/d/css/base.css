@@ -1,6 +1,7 @@
 /* Base e componentes simples (botoes, campos, cartao, chip, segmentado, tabela). */
 /* A barra lateral mantem o efeito mesmo com "reduzir movimento" do Windows (pedido do Lucas). */
-@media (prefers-reduced-motion: reduce) { :not(.side):not(.side *), :not(.side):not(.side *)::before, :not(.side):not(.side *)::after { transition: none !important; animation: none !important; } }
+/* Sem deslocamento nem laço, mas a mudança de estado continua visível: cor, fundo, contorno e opacidade trocam em 150 ms. */
+@media (prefers-reduced-motion: reduce) { :not(.side):not(.side *), :not(.side):not(.side *)::before, :not(.side):not(.side *)::after { animation: none !important; transition-property: color, background-color, border-color, box-shadow, opacity !important; transition-duration: .15s !important; transition-delay: 0s !important; } }
 
 * { box-sizing: border-box; }
 html, body { margin: 0; height: 100%; background: var(--color-bg); }

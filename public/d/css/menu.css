@@ -20,7 +20,7 @@
 .nav::before { content: ''; position: absolute; inset: 0; z-index: -1; border-radius: inherit; background: linear-gradient(90deg, rgba(18, 169, 209, .22), rgba(18, 169, 209, .04)); transform: scaleX(0); transform-origin: left; opacity: 0; transition: transform .25s cubic-bezier(.2, .8, .2, 1), opacity .25s ease; }
 .nav:hover { background: transparent; color: #fefefe; }
 .nav:hover::before { transform: scaleX(1); opacity: 1; }
-.nav .ph { transition: transform .22s cubic-bezier(.3, 1.6, .5, 1), color .15s ease; }
+.nav .ph { transition: transform .22s cubic-bezier(.3, 1.3, .5, 1), color .15s ease; }
 .nav:hover .ph { transform: scale(1.18) translateX(1px); color: #5fd0ee; }
 .nav:active .ph { transform: scale(.94); }
 .nav[aria-current="page"]::after { content: ''; position: absolute; left: -14px; top: 9px; bottom: 9px; width: 3px; border-radius: 0 3px 3px 0; background: #12a9d1; box-shadow: 0 0 10px rgba(18, 169, 209, .7); animation: menuBarra .3s cubic-bezier(.2, .8, .2, 1) both; }

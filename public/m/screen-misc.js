@@ -51,7 +51,8 @@
     }
     const ia = CC.$('#m-ia', el);
     if (ia) ia.addEventListener('click', () => CC.ia.open());
-    CC.$('#m-ajuda', el).addEventListener('click', () => CC.go('ajuda'));
+    const ajuda = CC.$('#m-ajuda', el);
+    if (ajuda) ajuda.addEventListener('click', () => CC.go('ajuda'));
     const bug = CC.$('#m-bug', el);
     if (bug) bug.addEventListener('click', () => CC.ia.open('Quero reportar um problema no app.'));
     if (CC.adm) CC.adm.wireMenu(el); // Administracao (screen-adm.js); pedidos de acesso ficam em Usuarios

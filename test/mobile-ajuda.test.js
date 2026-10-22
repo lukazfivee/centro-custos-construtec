@@ -12,6 +12,8 @@ test('o Menu do celular tem o item Ajuda e a tela esta carregada, no cache e lib
   assert.match(menu, /CC\.go\('ajuda'\)/);
   assert.match(read('public/m/index.html'), /screen-ajuda\.js/);
   assert.match(read('public/m/sw.js'), /'screen-ajuda\.js'/);
+  assert.match(read('public/m/sw.js'), /'ajuda\.css'/);
+  assert.match(read('public/m/index.html'), /href="ajuda\.css"/);
   const app = read('public/m/app.js');
   assert.match(app, /'atualizacao', 'ajuda', 'report-novo'\]\)/);
   assert.match(app, /'perfil', 'ajuda', 'fechamento'/);

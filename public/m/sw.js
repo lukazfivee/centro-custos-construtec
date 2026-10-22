@@ -2,7 +2,7 @@
 // os dados offline ficam no IndexedDB (queue.js), com a fila de lancamentos.
 const CACHE = 'cc-celular-v33';
 const SHELL = ['./', 'manifest.webmanifest', 'simbolo.png', 'icon-180.png', 'm.css', 'anim.css', 'barra.css', 'tema.js', 'servico.css', 'fin.css', 'adm.css',
-  'obra-tec.css', 'tecnico.css', 'tecnicos.css', 'tecnicos.js', 'menu-cartao.css', 'screen-home-tecnico.js', 'screen-servico-registros.js', 'icons.js', 'core.js', 'queue.js', 'abas-arrastar.js', 'app.js', 'screen-entrar.js', 'screen-home.js', 'screen-obra.js', 'screen-lancar.js',
+  'obra-tec.css', 'tecnico.css', 'tecnicos.css', 'tecnicos.js', 'menu-cartao.css', 'ajuda.css', 'screen-home-tecnico.js', 'screen-servico-registros.js', 'icons.js', 'core.js', 'queue.js', 'abas-arrastar.js', 'app.js', 'screen-entrar.js', 'screen-home.js', 'screen-obra.js', 'screen-lancar.js',
   'screen-misc.js', 'screen-lancamentos.js', 'screen-lanc.js', 'screen-lanc-docs.js', 'screen-obra-acoes.js', 'screen-obra-abas.js',
   'screen-obra-form.js', 'screen-servico.js', 'screen-servico-fila.js', 'screen-servico-exec.js', 'screen-servico-gasto.js', 'screen-servico-fim.js',
   'screen-servico-form.js', 'screen-descartadas.js', 'suite.js', 'screen-avisos.js', 'screen-pedidos.js', 'screen-adm.js', 'screen-fechamento.js',

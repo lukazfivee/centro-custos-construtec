@@ -108,7 +108,7 @@ test('celular no navegador: código inválido ou falha não navega e avisa', asy
 });
 
 test('celular: o cache do service worker foi renovado e os menus não têm o ChamadoPro antigo nem emoji', () => {
-  assert.match(read('public/m/sw.js'), /const CACHE = 'cc-celular-v31'/);
+  assert.match(read('public/m/sw.js'), /const CACHE = 'cc-celular-v32'/);
   for (const file of ['public/m/suite.js', 'public/d/suite.js']) {
     const source = read(file);
     assert.doesNotMatch(source, /chamadopro-app\.lucas-coelho5923/, file);

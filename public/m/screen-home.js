@@ -147,7 +147,7 @@
     const tipo = tipoAtual();
     if (CC.sv) await CC.sv.loadPerms();
     if (!CC.session.token() || (params && params.__nav && params.__nav !== CC.nav)) return;
-    const novo = CC.sv && CC.sv.can('p5') ? `<button class="sv-novo" type="button" id="novo" aria-label="Novo">${icon('plus', 20)}</button>` : '';
+    const novo = CC.sv && CC.sv.can('p5') ? `<button class="sv-novo" type="button" id="novo" aria-label="Novo">${icon('plus', 22)}</button>` : '';
     const top = `<div class="top"><span class="brand"><img src="simbolo.png" alt=""><span>Centro de Custos</span></span>${CC.bellBtn ? CC.bellBtn() : ''}${novo}${CC.suitePill()}</div>
       <div class="seg obras-tipo" role="group" aria-label="Obra ou serviço">${TIPOS.map(([v, t]) => `<button type="button" data-tipo="${v}" aria-pressed="${v === tipo}">${t}</button>`).join('')}</div>`;
     const bind = () => {

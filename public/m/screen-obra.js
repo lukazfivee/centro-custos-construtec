@@ -13,7 +13,7 @@
   // porDescricao: titulo = descricao (como as Atividades recentes do desktop); sem ele, favorecido primeiro.
   CC.txRow = function (t, extra, porDescricao) {
     const value = amountOf(t);
-    const state = t.situacao === 'vencido' ? '<span class="state">Vencida</span>'
+    const state = t.situacao === 'vencido' ? '<span class="state err">Vencida</span>'
       : (t.status_financeiro === 'pendente' ? `<small>${t.tipo === 'receita' ? 'A receber' : 'A pagar'}${t.vencimento ? ` · vence ${esc(CC.dateBr(t.vencimento))}` : ''}</small>` : '');
     const estorno = t.estorno_de ? '<small class="state">Estorno</small>' : (t.estornado || t.reversed_at ? '<small>Estornado</small>' : '');
     // Lancamento do servidor (tem id) abre o detalhe; o que ainda esta na fila do celular nao.
@@ -96,7 +96,7 @@
     const body = tab === 'resumo' ? resumo(c, list)
       : (tab === 'caixa' ? caixa(list)
         : (ABAS[tab] ? '<div id="obra-aba"></div>'
-          : (list.length || queued ? `${queued}${byDate(list)}` : `<div class="empty">${icon('receipt', 28)}Nenhum lançamento nesta obra ainda.</div>`)));
+          : (list.length || queued ? `<div class="rows">${queued}${byDate(list)}</div>` : `<div class="empty">${icon('receipt', 28)}Nenhum lançamento nesta obra ainda.</div>`)));
     CC.render(`<div class="top obra-top"><button class="back" type="button" id="voltar" aria-label="Voltar">${icon('caret-left', 20)}</button>
         <span class="grow"><h1>${esc(c.nome)}</h1><small class="muted">${esc([c.cliente, c.codigo].filter(Boolean).join(' · '))}</small></span>
         ${CC.obraMenu ? `<button class="back" type="button" id="obra-mais" aria-label="Mais ações da obra" aria-haspopup="dialog">${icon('dots-three', 22)}</button>` : ''}${CC.bellBtn ? CC.bellBtn() : ''}${CC.suitePill()}</div>

@@ -100,7 +100,7 @@
     const vazio = f.busca ? `Nada encontrado para "${esc(f.busca)}" ${esc(quando)}.` : `Nenhum lançamento ${esc(quando)}.`;
     const page = CC.render(`${CC.header('Lançamentos')}${filtros}${CC.staleNote(result)}${local}
       ${memo.total ? `<div class="kv lanc-total"><span>${memo.total === 1 ? '1 lançamento' : `${memo.total} lançamentos`} · total líquido</span><b class="${memo.liquido >= 0 ? 'in' : ''}">${esc(CC.signed(memo.liquido))}</b></div>` : ''}
-      ${list || (local ? '' : `<div class="empty">${icon('list-bullets', 28)}${vazio}</div>`)}
+      ${list ? `<div class="rows">${list}</div>` : (local ? '' : `<div class="empty">${icon('list-bullets', 28)}${vazio}</div>`)}
       ${resto > 0 ? `<button class="btn2" type="button" id="l-mais">Carregar mais ${Math.min(resto, POR_PAGINA)} de ${resto}</button>` : ''}`, false, params);
     wire();
     CC.wireTx(page, ['lancamentos', { mes: f.mes, situacao: f.situacao, tipo: f.tipo, busca: f.busca }]);

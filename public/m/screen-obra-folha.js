@@ -96,7 +96,7 @@
       <iframe class="sv-rel" id="of-doc" src="${url}" title="${bol ? 'Boletim de medição' : 'Relatório executivo'}"></iframe>
       ${bol ? '' : `<button class="btn2" type="button" id="of-csv">${icon('download-simple', 18)}Planilha em CSV</button>`}
       <div class="actions"><button class="btn2" type="button" id="of-share">${icon('share-network', 18)}Compartilhar</button>
-        <button class="btn" type="button" id="of-print">${icon('printer', 18)}Imprimir ou PDF</button></div>`, true, params);
+        <button class="btn" type="button" id="of-print">${icon('printer', 18)}Imprimir</button></div>`, true, params);
     document.body.classList.add('no-tabs');
     CC.$('#voltar', page).addEventListener('click', () => { URL.revokeObjectURL(url); voltar(); });
     CC.$('#of-print', page).addEventListener('click', () => { try { CC.$('#of-doc', page).contentWindow.print(); } catch { window.open(url, '_blank'); } });
@@ -107,7 +107,7 @@
       if (navigator.canShare && navigator.canShare({ files: [file] })) {
         try { await navigator.share({ files: [file], title: bol ? 'Boletim de medição' : 'Relatório executivo' }); } catch { /* cancelado */ }
       } else {
-        CC.toast('Use Imprimir ou PDF e salve o arquivo para enviar', 'file-text');
+        CC.toast('Use Imprimir e salve como PDF para enviar', 'file-text');
       }
     });
   };

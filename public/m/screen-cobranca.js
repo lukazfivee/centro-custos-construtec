@@ -36,7 +36,7 @@
       <div class="card fin-prox"><span class="label">Próximo passo</span><b>${esc(prox.texto)}</b>
         ${pode && prox.acao ? `<button class="btn" type="button" id="cob-prox">${icon(prox.icone, 18)}${esc(prox.rotulo)}</button>` : ''}</div>
       <p class="alert" role="alert" id="err"></p>
-      <div class="actions"><button class="btn2" type="button" id="cob-email">${icon('envelope-simple', 18)}E-mail ao cliente</button>
+      <div class="actions"><button class="btn2" type="button" id="cob-email">${icon('envelope-simple', 18)}E-mail</button>
         ${pode ? `<button class="btn2" type="button" id="cob-dados">${icon('pencil-simple', 18)}Editar dados</button>` : ''}</div>`, true, params);
     document.body.classList.add('no-tabs');
     F.voltar(page, voltar);

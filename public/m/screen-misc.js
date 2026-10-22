@@ -11,11 +11,12 @@
     const user = CC.session.user() || {};
     const roles = { admin: 'Administrador', gestor: 'Gestor', financeiro: 'Financeiro', engenharia: 'Engenharia', supervisor: 'Supervisor', tecnico: 'Técnico' };
     const papel = CC.sv ? CC.sv.role() : user.suiteRole || user.role, tecnico = papel === 'tecnico';
-    const quem = [roles[papel] || '', user.email || ''].filter(Boolean).join(' · ');
+    // Papel e e-mail em linhas proprias: juntos com " · " o ponto ficava pendurado no fim da linha (CC-33).
+    const quem = [roles[papel] || '', user.email || ''].filter(Boolean);
     // Mesma organizacao do Menu do Orcamentos: titulo, cartao do perfil e uma lista agrupada (titulo, linha de apoio e seta).
     const el = CC.render(`${CC.header('')}
       <h1 class="title">Menu</h1>
-      <button class="card who" type="button" id="m-perfil">${CC.avatar(CC.perfilFoto, user.nome, 44)}<span class="grow"><b>${esc(user.nome || 'Meu perfil')}</b><small>${esc(quem)}</small></span></button>
+      <button class="card who" type="button" id="m-perfil">${CC.avatar(CC.perfilFoto, user.nome, 44)}<span class="grow"><b>${esc(user.nome || 'Meu perfil')}</b>${quem.map((q) => `<small>${esc(q)}</small>`).join('')}</span></button>
       <div class="card menu-card">
         <div id="m-fin"></div>
         ${CC.programacaoEscritorio && CC.programacaoEscritorio.can() ? `<button class="menu-item" type="button" id="m-programacao">${icon('calendar-blank', 22)}<span>Programação diária<small>Planejar destinos e acompanhar as equipes</small></span></button>` : ''}

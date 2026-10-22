@@ -29,6 +29,17 @@
 
   const TIPO_NOME = { lancamento: 'lançamento', categoria: 'categoria', fornecedor: 'fornecedor', obra: 'obra', usuario: 'usuário', fechamento: 'fechamento', recorrente: 'recorrente', permissao: 'permissão', backup: 'backup', bug_report: 'report' };
   H.tipoNome = (t) => TIPO_NOME[t] || String(t || '').replace(/_/g, ' ');
+  // Onde: "Report nº 2", "Fechamento de agosto/2026" no lugar da chave interna "report · 2" (CC-27).
+  const MESES = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'];
+  H.onde = (item) => {
+    const tipo = H.tipoNome(item.tipo);
+    const nome = tipo.charAt(0).toUpperCase() + tipo.slice(1);
+    const id = String(item.entity_id || '');
+    const mes = /^(\d{4})-(\d{1,2})$/.exec(id);
+    if (mes && MESES[Number(mes[2]) - 1]) return `${nome} de ${MESES[Number(mes[2]) - 1]}/${mes[1]}`;
+    if (/^\d{1,12}$/.test(id)) return `${nome} nº ${id}`;
+    return nome;
+  };
 
   const CAMPOS = {
     type: 'Tipo', costCenterId: 'Obra (código interno)', categoryId: 'Categoria (código interno)', description: 'Descrição', counterparty: 'Favorecido',

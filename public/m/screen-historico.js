@@ -7,14 +7,17 @@
   const POR_PAGINA = 30;
   const TIPOS = [['', 'Tudo'], ['lancamentos', 'Lançamentos'], ['cadastros', 'Cadastros'], ['cobrancas', 'Cobranças'], ['fechamento', 'Fechamento'], ['usuarios', 'Usuários']];
   const PERIODOS = [['', 'Todo o período'], ['hoje', 'Hoje'], ['7d', 'Últimos 7 dias'], ['mes', 'Este mês'], ['mes_ant', 'Mês anterior'], ['custom', 'Escolher datas']];
+  // Mesmo mapa do desktop (public/d/telas/historico-dados.js), inclusive as acoes em ingles do registro antigo (CC-11).
   const ACOES = {
+    create: 'Criou', update: 'Editou', delete: 'Excluiu', confirmed: 'Confirmou',
     criado: 'Criou', criada: 'Criou', atualizado: 'Editou', atualizada: 'Editou', alterada: 'Editou', excluido: 'Excluiu', excluida: 'Excluiu',
     estornado: 'Estornou', fechado: 'Fechou', reaberto: 'Reabriu', ativado: 'Ativou', desativado: 'Desativou', acesso_alterado: 'Permissão',
     descartada: 'Descartou', restaurada: 'Restaurou', gerados: 'Gerou', conciliada: 'Conciliou', importada: 'Importou',
   };
   const TOM = { Excluiu: 'warn', Descartou: 'warn', Estornou: 'warn', Reabriu: 'warn', Desativou: 'warn', Criou: 'ok', Fechou: 'ok', Ativou: 'ok' };
   const ORIGENS = { computador: 'Computador', celular: 'Celular', fila: 'Fila do celular' };
-  const TIPO_NOME = { lancamento: 'lançamento', categoria: 'categoria', fornecedor: 'fornecedor', obra: 'obra', usuario: 'usuário', fechamento: 'fechamento', recorrente: 'recorrente', permissao: 'permissão', backup: 'backup' };
+  const TIPO_NOME = { lancamento: 'lançamento', categoria: 'categoria', fornecedor: 'fornecedor', obra: 'obra', usuario: 'usuário', fechamento: 'fechamento', recorrente: 'recorrente', permissao: 'permissão', backup: 'backup', bug_report: 'report' };
+  const MESES = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'];
   const CAMPOS = {
     type: 'Tipo', costCenterId: 'Obra (código interno)', categoryId: 'Categoria (código interno)', description: 'Descrição', counterparty: 'Favorecido',
     amount: 'Valor', date: 'Competência', notes: 'Observação', dueDate: 'Vencimento', settlementDate: 'Liquidação', financialStatus: 'Situação',
@@ -25,6 +28,14 @@
 
   const acao = (a) => ACOES[a] || (String(a || '').replace(/_/g, ' ').replace(/^./, (c) => c.toUpperCase()));
   const tipoNome = (t) => TIPO_NOME[t] || String(t || '').replace(/_/g, ' ');
+  // "Report nº 2", "Fechamento de agosto/2026" (igual ao H.onde do desktop).
+  const ondeDe = (item) => {
+    const nome = tipoNome(item.tipo).replace(/^./, (c) => c.toUpperCase());
+    const id = String(item.entity_id || '');
+    const mes = /^(\d{4})-(\d{1,2})$/.exec(id);
+    if (mes && MESES[Number(mes[2]) - 1]) return `${nome} de ${MESES[Number(mes[2]) - 1]}/${mes[1]}`;
+    return /^\d{1,12}$/.test(id) ? `${nome} nº ${id}` : nome;
+  };
   const campo = (k) => CAMPOS[k] || String(k).replace(/_/g, ' ').replace(/^./, (c) => c.toUpperCase());
   function valor(k, v) {
     if (v == null || v === '') return '—';
@@ -83,7 +94,7 @@
     const a = acao(item.acao);
     const m = mudancas(item);
     const motivo = item.data && typeof item.data === 'object' ? item.data.motivo : '';
-    const onde = [tipoNome(item.tipo), item.entity_id && String(item.entity_id).length <= 14 ? item.entity_id : ''].filter(Boolean).join(' · ');
+    const onde = ondeDe(item);
     const kv = (k, v) => (v ? `<div class="kv"><span>${esc(k)}</span><b>${esc(v)}</b></div>` : '');
     const sh = CC.sheet('adm-hist', `${CC.sheetHead('list-checks', `${a} · ${item.resumo || tipoNome(item.tipo)}`)}
       <div class="card">${kv('Quando', A.quando(item.created_at))}${kv('Quem', item.usuario || 'Sistema')}${kv('Ação', a)}${kv('Onde', onde)}${kv('Origem', ORIGENS[item.origem] || 'Computador')}${kv('Motivo', motivo)}</div>

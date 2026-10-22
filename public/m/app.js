@@ -1,7 +1,7 @@
 // Navegacao, barra de abas, entrada pelo app (handoff) e modo offline do site do celular.
 (function (CC) {
   const { esc, icon } = CC;
-  const campo = new Set(['home', 'meu-dia', 'atividade-dia', 'meus-trabalhos', 'obras', 'obra', 'servico', 'menu', 'perfil', 'atualizacao', 'report-novo']);
+  const campo = new Set(['home', 'meu-dia', 'atividade-dia', 'meus-trabalhos', 'obras', 'obra', 'servico', 'menu', 'perfil', 'atualizacao', 'ajuda', 'report-novo']);
   const permitido = (name) => !CC.sv || CC.sv.role() !== 'tecnico' || campo.has(name);
   // Protege tambem chamadas diretas feitas por historico antigo ou pelo assistente.
   CC.screens = new Proxy(CC.screens || {}, {
@@ -15,7 +15,7 @@
     ['obras', 'Obras', 'buildings', ['obras', 'obra', 'obra-editar', 'obra-folha', 'servico', 'servico-rel']],
     ['lancar', 'Lançar', 'plus-circle', ['lancar', 'ok']],
     ['lancamentos', 'Lançamentos', 'list-bullets', ['lancamentos', 'lanc']],
-    ['menu', 'Menu', 'list', ['menu', 'programacao', 'cobrancas', 'cobranca', 'cobranca-dados', 'cobranca-email', 'recorrentes', 'recorrente', 'fornecedores', 'fornecedor', 'categorias', 'categoria', 'pedidos', 'perfil', 'fechamento', 'historico', 'reports', 'report', 'report-novo', 'usuarios', 'usuario-form', 'papeis', 'emails-ext', 'sistema', 'descartadas', 'descartada', 'atualizacao']],
+    ['menu', 'Menu', 'list', ['menu', 'programacao', 'cobrancas', 'cobranca', 'cobranca-dados', 'cobranca-email', 'recorrentes', 'recorrente', 'fornecedores', 'fornecedor', 'categorias', 'categoria', 'pedidos', 'perfil', 'ajuda', 'fechamento', 'historico', 'reports', 'report', 'report-novo', 'usuarios', 'usuario-form', 'papeis', 'emails-ext', 'sistema', 'descartadas', 'descartada', 'atualizacao']],
   ];
   let current = 'home', currentParams = {};
   let lensTimer;

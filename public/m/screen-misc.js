@@ -27,8 +27,9 @@
         ${inApp ? `<button class="menu-item" type="button" id="m-tour">${icon('arrow-right', 22)}<span>Rever o tour<small>As quatro telas de boas-vindas da Suíte</small></span></button>` : ''}
         <button class="menu-item" type="button" id="m-tema">${icon(dark ? 'moon' : 'sun', 22)}<span>Tema<small>${dark ? 'Escuro' : 'Claro'}</small></span></button>
         <button class="menu-item" type="button" id="m-senha">${icon('key', 22)}<span>Alterar senha<small>Troque a senha de entrada da Suíte</small></span></button>
-        ${CC.ia && CC.ia.ready() ? `<button class="menu-item" type="button" id="m-ia">${icon('sparkle', 22)}<span>Assistente<small>${tecnico ? 'Apoio à execução, fotos, checklist e relatos de campo' : 'Tire dúvidas sobre obras, custos e propostas e vá direto a qualquer tela'}</small></span></button>
-        <button class="menu-item" type="button" id="m-bug">${icon('bug', 22)}<span>Reportar problema<small>Conte o que aconteceu e o assistente monta o relato</small></span></button>` : ''}
+        <button class="menu-item" type="button" id="m-ajuda">${icon('question', 22)}<span>Ajuda<small>Como lançar, regras, perfis e como reportar um problema</small></span></button>
+         ${CC.ia && CC.ia.ready() ? `<button class="menu-item" type="button" id="m-ia">${icon('sparkle', 22)}<span>Assistente<small>${tecnico ? 'Apoio à execução, fotos, checklist e relatos de campo' : 'Tire dúvidas sobre obras, custos e propostas e vá direto a qualquer tela'}</small></span></button>
+       <button class="menu-item" type="button" id="m-bug">${icon('bug', 22)}<span>Reportar problema<small>Conte o que aconteceu e o assistente monta o relato</small></span></button>` : ''}
         <a class="menu-item" href="${WEBMAIL}" target="_blank" rel="noopener" id="m-webmail">${icon('envelope-simple', 22)}<span>Webmail Pro<small>E-mail corporativo UOL</small></span></a>
         ${tecnico ? '' : `<a class="menu-item" href="/d/" id="m-web">${icon('desktop', 22)}<span>Versão completa<small>Abrir o sistema na tela de computador</small></span></a>`}
       </div>
@@ -50,6 +51,8 @@
     }
     const ia = CC.$('#m-ia', el);
     if (ia) ia.addEventListener('click', () => CC.ia.open());
+    const ajuda = CC.$('#m-ajuda', el);
+    if (ajuda) ajuda.addEventListener('click', () => CC.go('ajuda'));
     const bug = CC.$('#m-bug', el);
     if (bug) bug.addEventListener('click', () => CC.ia.open('Quero reportar um problema no app.'));
     if (CC.adm) CC.adm.wireMenu(el); // Administracao (screen-adm.js); pedidos de acesso ficam em Usuarios

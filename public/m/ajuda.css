@@ -1,0 +1,10 @@
+/* Ajuda (screen-ajuda.js): secoes que abrem e fecham, uma por assunto. */
+.ajuda-lista { display: flex; flex-direction: column; gap: 10px; margin-top: 12px; }
+.ajuda-sec { padding: 0; }
+.ajuda-sec summary { list-style: none; cursor: pointer; padding: 14px 16px; display: flex; align-items: center; justify-content: space-between; }
+.ajuda-sec summary::-webkit-details-marker { display: none; }
+.ajuda-sec summary::after { content: ""; width: 8px; height: 8px; border-right: 2px solid var(--n300); border-bottom: 2px solid var(--n300); transform: rotate(45deg); transition: transform .15s ease; }
+.ajuda-sec[open] summary::after { transform: rotate(-135deg); }
+.ajuda-corpo { padding: 0 16px 14px; }
+.ajuda-corpo p { margin: 0 0 10px; font-size: 14px; line-height: 1.45; }
+.ajuda-corpo p:last-child { margin-bottom: 0; }

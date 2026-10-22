@@ -1,5 +1,12 @@
 # Handoff — Centro de Custos
 
+## 2026-10-22 BRT - Harden: aviso com data inválida (Codex)
+
+- Base: `origin/main` em `7c07ec9`, branch `fix/harden-22-10`.
+- `public/m/screen-avisos.js`: data inválida agora fica em "Anteriores" e sem horário, em vez de mostrar `Invalid Date`; mesma regra aplicada no Orçamentos.
+- Validação: `npm run check` passou (300 arquivos); `npm test` passou.
+- Não publicado. Kit local: D0/Início, Sem internet, Alteração não salva e Assistente em 1440x900 e 1280x720, claro/escuro, sem corte ou rolagem indevida. O 503 de `/api/auth/suite-chamados` vem da ponte opcional sem mock no kit; o item fica oculto como previsto.
+
 ## 2026-10-20 BRT - Otimizacao fase 1: logs de invocacao desligados (Claude Code)
 
 - Base: `origin/main` em `8e291f8`, branch `perf/fase1-logs`. Plano geral de reducao de atraso e de custo na Cloudflare (Orcamentos, Centro e Chamados).

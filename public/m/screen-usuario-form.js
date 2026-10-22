@@ -57,7 +57,7 @@
       metodo: convitesOk && !editando ? 'convite' : 'senha',
     };
     const titulo = editando ? 'Editar acesso' : (convitesOk ? 'Convidar usuário' : 'Novo usuário');
-    const el = CC.render(`${A.top(titulo, editando ? usuario.email : 'Papel, apps e obras que a pessoa pode ver')}
+    const el = CC.render(`${A.top(titulo, editando ? X.nomePapel(usuario.suiteRole || 'tecnico') : 'Papel, apps e obras que a pessoa pode ver')}
       ${editando ? `<div class="card"><div class="kv"><span>Nome</span><b>${esc(usuario.nome || '')}</b></div><div class="kv"><span>E-mail</span><b>${esc(usuario.email)}</b></div></div>
         ${usuario.cloud_managed ? '<p class="adm-nota">Nome e e-mail vêm do diretório central; aqui mudam papel, apps e obras.</p>' : ''}`
         : `${convitesOk ? `<div><span class="label">Como a pessoa entra</span><div class="seg" role="group" aria-label="Método">

@@ -35,7 +35,8 @@
 .busca input::-webkit-search-cancel-button { display: none; }
 .busca kbd { position: absolute; right: 10px; top: 10px; height: 20px; padding: 0 6px; border-radius: 5px; box-shadow: inset 0 0 0 1px var(--color-divider); font: calc(11px * var(--fs, 1)) var(--font-body); color: var(--color-neutral-300); display: grid; place-items: center; }
 .pop { position: absolute; z-index: 40; border-radius: 14px; animation: fadeUp .18s ease both; }
-.busca .pop { left: 0; right: 0; top: 46px; padding: 6px; max-height: 420px; overflow: auto; }
+/* Resultados mais largos que o campo (CC-30): o nome do lancamento cabe sem reticencias. */
+.busca .pop { left: 0; top: 46px; width: max(100%, calc(480px * var(--fs, 1))); padding: 6px; max-height: 420px; overflow: auto; }
 .res { width: 100%; display: flex; align-items: center; gap: 12px; padding: 8px 10px; border: 0; border-radius: 9px; background: transparent; color: var(--color-text); text-align: left; cursor: pointer; font-family: var(--font-body); }
 .res:hover, .res[aria-selected="true"] { background: var(--color-accent-900); }
 .res .ic { width: 30px; height: 30px; border-radius: 9px; background: var(--color-accent-900); color: var(--color-accent-300); display: grid; place-items: center; flex: none; }
@@ -63,7 +64,7 @@
 .suite { position: relative; }
 .suite > .btn { height: 36px; padding: 0 12px; }
 .suite > .btn .ph-squares-four { color: var(--color-accent-300); }
-.suite .pop { right: 0; top: 46px; width: 300px; padding: 8px; }
+.suite .pop { right: 0; top: 46px; width: calc(300px * var(--fs, 1)); padding: 8px; }
 .suite .pop .lbl { display: block; padding: 6px 10px 8px; }
 .suite .res { padding: 9px 10px; border-radius: 10px; text-decoration: none; }
 .suite .res.atual { background: var(--color-accent-900); }

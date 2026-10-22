@@ -49,8 +49,9 @@
   };
 
   // Tabela: colunas [{ rotulo, num, html (cabecalho ja escapado, ex.: caixa de selecao) }], linhas [{ id, celulas: [html], clicavel }]. Celulas ja vem escapadas.
-  U.tabela = ({ colunas, linhas, vazio }) => {
-    if (!linhas.length) return U.vazio('magnifying-glass', vazio || 'Nada por aqui ainda.');
+  // vazioIcone: icone do assunto no estado vazio (a lupa e de "nenhum resultado" de busca/filtro).
+  U.tabela = ({ colunas, linhas, vazio, vazioIcone }) => {
+    if (!linhas.length) return U.vazio(vazioIcone || 'magnifying-glass', vazio || 'Nada por aqui ainda.');
     const th = colunas.map((c) => `<th${c.num ? ' class="num"' : ''} scope="col">${c.html || esc(c.rotulo)}</th>`).join('');
     const tr = linhas.map((l) => `<tr${l.clicavel ? ` class="rw" tabindex="0" data-id="${esc(l.id)}"` : ''}>${l.celulas.map((c, i) => `<td${colunas[i] && colunas[i].num ? ' class="num"' : ''}>${c}</td>`).join('')}</tr>`).join('');
     return `<table class="tbl"><thead><tr>${th}</tr></thead><tbody>${tr}</tbody></table>`;

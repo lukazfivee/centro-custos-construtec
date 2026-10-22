@@ -26,7 +26,7 @@
     ] }));
     return `<section class="card tabela" data-bloco="${tipo}"><div class="bcab pad"><span class="duas-l"><b>${esc(titulo)}</b><span>${esc(sub)}</span></span>
       ${gerir ? `<button type="button" class="btn btn-s" data-lancar-nf="${tipo}">${D.ic('plus')}Lançar NF</button>` : ''}</div>
-      ${U.tabela({ colunas: [{ rotulo: 'Emissão' }, { rotulo: 'Número' }, { rotulo: 'Valor', num: true }, { rotulo: 'Status' }, { rotulo: '', num: true }], linhas, vazio: 'Nenhuma nota lançada.' })}</section>`;
+      ${U.tabela({ colunas: [{ rotulo: 'Emissão' }, { rotulo: 'Número' }, { rotulo: 'Valor', num: true }, { rotulo: 'Status' }, { rotulo: '', num: true }], linhas, vazio: 'Nenhuma nota lançada.', vazioIcone: 'receipt' })}</section>`;
   }
 
   // Area de soltar do PDF (a mesma dos documentos do lancamento): clique, Enter ou arrastar.

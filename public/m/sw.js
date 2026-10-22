@@ -10,7 +10,7 @@ const SHELL = ['./', 'manifest.webmanifest', 'simbolo.png', 'icon-180.png', 'm.c
   'screen-sistema.js', 'screen-perfil.js', 'screen-atualizacao.js', 'fin-base.js', 'cobr-regras.js', 'screen-cobrancas.js', 'screen-cobranca.js',
   'screen-cobranca-dados.js', 'screen-cobranca-email.js', 'screen-recorrentes.js', 'screen-recorrente-form.js', 'screen-fornecedores.js',
   'screen-fornecedor-form.js', 'screen-categorias.js', 'screen-obra-tec.js', 'screen-obra-curva.js', 'screen-obra-folha.js',
-  'screen-obra-importar.js', 'screen-home-mais.js', 'screen-busca.js', 'ia-config.js', 'ia-tools.js', 'ia-chat.js', 'index.html', 'icon-192.png',
+  'screen-obra-importar.js', 'screen-home-mais.js', 'screen-busca.js', 'ia-config.js', 'ia-tools.js', 'ia-voz.js', 'ia-chat.js', 'index.html', 'icon-192.png',
   'programacao.css', 'programacao-escritorio.css', 'programacao-nuvem.js', 'programacao-fila.js', 'screen-meu-dia.js', 'screen-programacao-atividade.js',
   'programacao-escritorio-form.js', 'programacao-escritorio.js', 'screen-programacao.js',
   'icon-512.png', 'fonts/plex-400.woff2', 'fonts/plex-500.woff2', 'fonts/plex-600.woff2', 'fonts/plex-700.woff2'];

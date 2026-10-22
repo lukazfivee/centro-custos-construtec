@@ -41,7 +41,7 @@ function chatFixture({ desktop = false, pending = false, delayedReply = false } 
     externalImport: async (url) => { imports.push(url); order.push('import'); return url.endsWith('firebase-app.js') ? { getApps: () => [{}] } : ai; } };
   if (desktop) CC.d = { papelSuite: () => user.suiteRole, tem: (p) => user.permissoes.includes(p), papelNome: () => 'Técnico',
     lerRota: () => ({ nome: 'obras' }), podeTela: () => true, ir() {} };
-  for (const file of ['m/ia-config.js', 'm/ia-tools.js', 'm/ia-chat.js']) {
+  for (const file of ['m/ia-config.js', 'm/ia-tools.js', 'm/ia-voz.js', 'm/ia-chat.js']) {
     // Só o import de SDK externo é substituído; conversa, autorização e renderização são reais.
     vm.runInNewContext(read(file).replaceAll('import(', 'externalImport('), context);
   }

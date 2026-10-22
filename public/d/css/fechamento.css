@@ -1,6 +1,7 @@
 /* D7: Fechamento mensal. KPIs, lista dos meses do ano e coluna do checklist. */
 .fech-kpis { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
-.fech-grade { display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: 16px; align-items: start; }
+/* Coluna do checklist com largura de leitura (CC-22): no minimo 320 px ou 30% da linha. */
+.fech-grade { display: grid; grid-template-columns: minmax(0, 1fr) minmax(calc(320px * var(--fs, 1)), 32%); gap: 16px; align-items: start; }
 .fech-topo { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding: 16px 18px; border-bottom: 1px solid var(--color-divider); }
 .fech-topo b { font-size: calc(15px * var(--fs, 1)); }
 .fech-tabela .tbl td:first-child { min-width: 190px; }
@@ -14,7 +15,7 @@
 .fechamento .fech-ano { width: 112px; flex: none; }
 
 .fech-lado { padding: 18px; display: flex; flex-direction: column; gap: 4px; }
-.fech-lado .topo { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding-bottom: 10px; }
+.fech-lado .topo { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; padding-bottom: 10px; }
 .fech-lado .topo b { font-size: calc(15px * var(--fs, 1)); }
 .fech-checklist { display: block; list-style: none; margin: 0; padding: 0; }
 .ck-item { display: grid; grid-template-columns: 34px minmax(0, 1fr) auto; gap: 12px; align-items: start; padding: 12px 0; border-top: 1px solid var(--color-divider); }

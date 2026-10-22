@@ -44,17 +44,18 @@
     ].join('');
   }
 
-  function linha(i) {
+  // conclusao: a coluna Conclusao so aparece quando alguma linha tem data (CC-23).
+  function linha(i, conclusao) {
     const pode = B.podeExcluir();
     return {
       id: i.publicId, clicavel: true,
       celulas: [
         ...(pode ? [B.celulaSelecao(i)] : []),
         `<span class="duas-l"><b>${esc(i.code)}</b><span>${esc(i.name)}</span></span>`,
-        esc(D.data(i.completionDate) || '—'),
+        ...(conclusao ? [esc(D.data(i.completionDate) || '—')] : []),
         B.chipOperacional(i),
         `<span class="duas-l">${B.chipFinanceiro(i)}<span>${esc(i.clientName || i.client || '')}</span></span>`,
-        esc(i.invoiceNumber || '—'),
+        `<span class="nowrap">${esc(i.invoiceNumber || '—')}</span>`,
         `<span class="${B.vencida(i) ? 'vencido' : ''}">${esc(D.data(i.dueDate) || '—')}</span>`,
         `<b>${esc(CC.money(i.receivableAmount))}</b>`,
         `<span class="acoes"><button type="button" class="ibtn" data-acao="acompanhar" aria-label="Acompanhar ${esc(i.name)}" title="Acompanhar">${D.ic('list-checks', 18)}</button>
@@ -63,7 +64,10 @@
     };
   }
   const COLUNAS_BASE = [{ rotulo: 'Obra' }, { rotulo: 'Conclusão' }, { rotulo: 'Situação operacional' }, { rotulo: 'Situação financeira' }, { rotulo: 'NF' }, { rotulo: 'Vencimento' }, { rotulo: 'Valor', num: true }, { rotulo: 'Ações', num: true }];
-  const colunas = () => (B.podeExcluir() ? [B.colunaSelecao, ...COLUNAS_BASE] : COLUNAS_BASE);
+  const colunas = (conclusao) => {
+    const base = conclusao ? COLUNAS_BASE : COLUNAS_BASE.filter((c) => c.rotulo !== 'Conclusão');
+    return B.podeExcluir() ? [B.colunaSelecao, ...base] : base;
+  };
 
   async function baixarCsv() {
     const url = URL.createObjectURL(new Blob([B.csv(B.filtrar(emExcluidas() ? excluidas : itens, emExcluidas() ? '' : filtro, busca))], { type: 'text/csv;charset=utf-8' }));
@@ -109,8 +113,9 @@
         return;
       }
       const vis = B.filtrar(itens, filtro, busca);
+      const comConclusao = vis.some((i) => D.data(i.completionDate));
       const abertas = vis.filter((i) => !B.pago(i)).reduce((s, i) => s + B.cents(i.receivableAmount), 0);
-      CC.$('[data-tabela]', el).innerHTML = `<div class="barra-selecao" data-barra role="status" hidden></div><div class="card tabela tabela-sel">${U.tabela({ colunas: colunas(), linhas: vis.map(linha), vazio: 'Nenhuma cobrança com esses filtros.' })}
+      CC.$('[data-tabela]', el).innerHTML = `<div class="barra-selecao" data-barra role="status" hidden></div><div class="card tabela tabela-sel">${U.tabela({ colunas: colunas(comConclusao), linhas: vis.map((i) => linha(i, comConclusao)), vazio: 'Nenhuma cobrança com esses filtros.' })}
         <div class="rodape"><span class="muted">Exibindo ${vis.length} de ${itens.length} cobranças</span><span class="total">Em aberto <b>${esc(CC.money(B.reais(abertas)))}</b></span></div></div>`;
       const abrir = (tr, aba) => B.abrir(itens.find((x) => x.publicId === tr.dataset.id), aba, recarregar);
       CC.$$('tr.rw', el).forEach((tr) => {

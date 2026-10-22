@@ -33,7 +33,7 @@
     const nova = pode ? `<button class="back" type="button" id="ca-nova" aria-label="Nova categoria">${icon('plus', 22)}</button>` : '';
     const page = CC.render(`${F.top('Categorias', `${F.plural(ativas, 'ativa', 'ativas')} · usadas nos lançamentos`, nova)}${CC.staleNote(result)}
       ${F.busca('ca-busca', estado.busca, 'Buscar categoria')}
-      <div class="chips" role="group" aria-label="Tipo da categoria">${FILTROS.map(([k, l]) => `<button class="chip-act" type="button" data-filtro="${k}" aria-pressed="${k === estado.filtro}">${l}</button>`).join('')}</div>
+      <div class="seg" role="group" aria-label="Tipo da categoria">${FILTROS.map(([k, l]) => `<button type="button" data-filtro="${k}" aria-pressed="${k === estado.filtro}">${l}</button>`).join('')}</div>
       <div id="ca-lista"></div>`, true, params);
     F.voltar(page, voltar);
     const pintar = () => {

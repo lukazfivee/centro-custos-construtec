@@ -14,7 +14,8 @@
 .adm-kpi { min-width: 0; padding: 10px 8px; border-radius: 12px; background: var(--surface); box-shadow: var(--shadow); text-align: center; }
 .adm-kpi b { display: block; font-size: 20px; font-weight: 600; line-height: 1.2; }
 .adm-kpi b.ok { color: var(--accent-300); } .adm-kpi b.warn { color: var(--warn); }
-.adm-kpi small { display: block; font-size: 10.5px; line-height: 1.25; color: var(--n300); }
+/* Rotulo numa linha so (CC-18): quebrado em 2 linhas desalinhava os numeros. */
+.adm-kpi small { display: block; font-size: 10.5px; line-height: 1.25; color: var(--n300); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
 /* Linhas tocaveis das listas. */
 .adm-lista { display: flex; flex-direction: column; padding-top: 0; padding-bottom: 0; }

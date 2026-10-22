@@ -54,7 +54,7 @@
     const conta = (lista, g) => lista.filter((r) => R.entrega(r).grupo === g).length;
     const kpi = (rotulo, n, tom) => `<div class="adm-kpi"><b class="${tom || ''}">${n}</b><small>${esc(rotulo)}</small></div>`;
     const el = CC.render(`${topo}
-      <div class="adm-kpis">${kpi('Enviados no mês', doMes.length)}${kpi('Entregues', conta(doMes, 'entregues'), 'ok')}${kpi('Na fila', conta(todos, 'fila'), conta(todos, 'fila') ? 'warn' : '')}${kpi('Falharam', conta(todos, 'falharam'), conta(todos, 'falharam') ? 'warn' : '')}</div>
+      <div class="adm-kpis">${kpi('No mês', doMes.length)}${kpi('Entregues', conta(doMes, 'entregues'))}${kpi('Na fila', conta(todos, 'fila'), conta(todos, 'fila') ? 'warn' : '')}${kpi('Falharam', conta(todos, 'falharam'), conta(todos, 'falharam') ? 'warn' : '')}</div>
       <button class="btn" type="button" id="rp-novo">${icon('plus', 18)}Novo report</button>
       <label class="field busca"><span class="sr">Buscar</span>${icon('magnifying-glass', 18)}<input id="rp-busca" type="search" autocomplete="off" value="${esc(busca)}" placeholder="Título ou descrição"></label>
       <div class="seg" role="group" aria-label="Situação da entrega">${FILTROS.map(([k, l]) => `<button type="button" data-f="${k}" aria-pressed="${k === filtro}">${l}</button>`).join('')}</div>

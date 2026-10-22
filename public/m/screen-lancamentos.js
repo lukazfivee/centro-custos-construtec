@@ -40,8 +40,8 @@
     const key = JSON.stringify([f.mes, f.situacao, f.tipo, f.busca]);
     const filtros = `${CC.monthStep(f.mes)}
       <label class="field busca"><span class="sr">Buscar</span>${icon('magnifying-glass', 18)}<input id="l-busca" type="search" enterkeyhint="search" autocomplete="off" value="${esc(f.busca)}" placeholder="Descrição, fornecedor ou nota fiscal"></label>
-      <div class="chips" role="group" aria-label="Tipo">${TIPOS.map(([k, l]) => `<button class="chip-act" type="button" data-t="${k}" aria-pressed="${k === f.tipo}">${l}</button>`).join('')}</div>
-      <div class="seg" role="group" aria-label="Situação">${SIT.map(([k, l]) => `<button type="button" data-f="${k}" aria-pressed="${k === f.situacao}">${k === 'liquidado' && f.tipo === 'receita' ? 'Recebidos' : l}</button>`).join('')}</div>`;
+      <div class="seg" role="group" aria-label="Tipo">${TIPOS.map(([k, l]) => `<button type="button" data-t="${k}" aria-pressed="${k === f.tipo}">${l}</button>`).join('')}</div>
+      <div class="chips" role="group" aria-label="Situação">${SIT.map(([k, l]) => `<button class="chip-act" type="button" data-f="${k}" aria-pressed="${k === f.situacao}">${k === 'liquidado' && f.tipo === 'receita' ? 'Recebidos' : l}</button>`).join('')}</div>`;
     const go = (mudar) => CC.screens.lancamentos({ ...f, ...mudar });
     const wire = () => {
       CC.$$('[data-f]').forEach((b) => b.addEventListener('click', () => go({ situacao: b.dataset.f })));

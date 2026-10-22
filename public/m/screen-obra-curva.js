@@ -50,9 +50,9 @@
       ['Orçado', moneyShort(e.bac), 'custo base'],
       ['Realizado', moneyShort(e.ac), `${pct(e.financialBurnPercent)} consumido`, e.ac > e.bac ? 'warn-txt' : ''],
       ['Valor agregado', e.ev == null ? '—' : moneyShort(e.ev), `${pct(e.physicalPercent)} medido`],
-      ['Eficiência de custo', cpi, e.cpi == null ? 'sem medição' : (e.cpi >= 1 ? 'dentro do avanço' : 'acima do avanço'), e.cpi != null && e.cpi < 1 ? 'warn-txt' : ''],
-      ['Projeção no término', e.eac == null ? '—' : moneyShort(e.eac), 'custo estimado'],
-      ['Desvio no término', e.vac == null ? '—' : `${e.vac < 0 ? '−' : ''}${moneyShort(Math.abs(e.vac))}`, e.vac == null ? '' : (e.vac < 0 ? 'sobrecusto' : 'economia'), e.vac != null && e.vac < 0 ? 'warn-txt' : ''],
+      ['Eficiência', cpi, e.cpi == null ? 'sem medição' : (e.cpi >= 1 ? 'dentro do avanço' : 'acima do avanço'), e.cpi != null && e.cpi < 1 ? 'warn-txt' : ''],
+      ['Projeção', e.eac == null ? '—' : moneyShort(e.eac), 'custo estimado'],
+      ['Desvio final', e.vac == null ? '—' : `${e.vac < 0 ? '−' : ''}${moneyShort(Math.abs(e.vac))}`, e.vac == null ? '' : (e.vac < 0 ? 'sobrecusto' : 'economia'), e.vac != null && e.vac < 0 ? 'warn-txt' : ''],
     ];
     const din = (v) => (v == null ? '—' : esc(moneyShort(v)));
     const meses = tl.map((t) => `<div class="cs-mes"><b>${esc(nomeMes(t.month))}</b><span class="orc-nums"><span>Previsto <b>${din(t.plannedCumulative)}</b></span>

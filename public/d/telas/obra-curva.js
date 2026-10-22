@@ -52,9 +52,9 @@
       k({ rotulo: 'Orçado', dica: 'BAC · orçamento no término', valor: CC.moneyShort(e.bac), det: 'custo base aprovado', icone: 'calculator' }),
       k({ rotulo: 'Realizado', dica: 'AC · custo real', valor: CC.moneyShort(e.ac), det: `${pct(e.financialBurnPercent)} consumido`, icone: 'arrow-up-right', tom: 'saida', tomValor: e.ac > e.bac ? 'err' : '' }),
       k({ rotulo: 'Valor agregado', dica: 'EV · valor agregado', valor: e.ev == null ? '—' : CC.moneyShort(e.ev), det: `${pct(e.physicalPercent)} medido`, icone: 'check' }),
-      k({ rotulo: 'Eficiência de custo', dica: 'CPI · índice de desempenho de custo', valor: e.cpi == null ? '—' : Number(e.cpi).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }), det: e.cpi == null ? 'sem medição' : (e.cpi >= 1 ? 'custo dentro do avanço' : 'custo acima do avanço'), icone: 'gauge', tomValor: cpiTom }),
-      k({ rotulo: 'Projeção no término', dica: 'EAC · estimativa no término', valor: e.eac == null ? '—' : CC.moneyShort(e.eac), det: 'custo estimado', icone: 'target' }),
-      k({ rotulo: 'Desvio no término', dica: 'VAC · variação no término', valor: e.vac == null ? '—' : `${e.vac < 0 ? '−' : ''}${CC.moneyShort(Math.abs(e.vac))}`, det: e.projectedStatus || '', icone: 'scales', tom: vacTom === 'err' ? 'err' : 'info', tomValor: vacTom }),
+      k({ rotulo: 'Eficiência', dica: 'CPI · índice de desempenho de custo', valor: e.cpi == null ? '—' : Number(e.cpi).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }), det: e.cpi == null ? 'sem medição' : (e.cpi >= 1 ? 'custo dentro do avanço' : 'custo acima do avanço'), icone: 'gauge', tomValor: cpiTom }),
+      k({ rotulo: 'Projeção', dica: 'EAC · estimativa no término', valor: e.eac == null ? '—' : CC.moneyShort(e.eac), det: 'custo estimado', icone: 'target' }),
+      k({ rotulo: 'Desvio final', dica: 'VAC · variação no término', valor: e.vac == null ? '—' : `${e.vac < 0 ? '−' : ''}${CC.moneyShort(Math.abs(e.vac))}`, det: e.projectedStatus || '', icone: 'scales', tom: vacTom === 'err' ? 'err' : 'info', tomValor: vacTom }),
     ].join('');
     const din = (v) => (v == null ? '' : esc(CC.money(v)));
     const tabela = U.tabela({

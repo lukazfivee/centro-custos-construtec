@@ -46,8 +46,8 @@
     if (!opcoesMes.includes(mes)) opcoesMes.push(mes);
     el.innerHTML = `<div class="pagina inicio">
       ${D.ui.cabecalho({ grupo: 'Visão geral', titulo: 'Painel financeiro', sub: D.mesAno(mes), acoes: `
-        <select class="inp" data-f="obra" aria-label="Filtrar por obra" style="width:260px"><option value="">Todas as obras</option></select>
-        <select class="inp" data-f="mes" aria-label="Mês" style="width:220px">${opcoesMes.map((m) => `<option value="${m}"${m === mes ? ' selected' : ''}>${esc(D.mesAno(m))}</option>`).join('')}</select>
+        <select class="inp" data-f="obra" aria-label="Filtrar por obra" style="width:calc(260px * var(--fs, 1))"><option value="">Todas as obras</option></select>
+        <select class="inp" data-f="mes" aria-label="Mês" style="width:auto;min-width:calc(220px * var(--fs, 1))">${opcoesMes.map((m) => `<option value="${m}"${m === mes ? ' selected' : ''}>${esc(D.mesAno(m))}</option>`).join('')}</select>
         <button type="button" class="btn btn-p" data-rapido>${D.ic('lightning')}Lançamento rápido</button>` })}
       <div data-pu></div>
       <div data-corpo>${D.ui.carregando('Carregando o painel…')}</div></div>`;

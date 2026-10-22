@@ -47,6 +47,7 @@ input[type="file"]::file-selector-button { height: 32px; margin-right: 10px; pad
 textarea.inp { height: 76px; padding: 10px 12px; resize: vertical; }
 input::placeholder, textarea::placeholder { color: var(--color-placeholder); opacity: 1; }
 .fld { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.fld > .inp { min-width: 0; max-width: 100%; }
 .fld > span { font-size: calc(12px * var(--fs, 1)); font-weight: 600; color: var(--color-neutral-300); }
 .fld .erro { display: none; font-size: calc(12px * var(--fs, 1)); font-weight: 600; color: var(--c-err); }
 .fld.tem-erro .inp { box-shadow: inset 0 0 0 2px var(--c-err); }

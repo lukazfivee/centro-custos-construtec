@@ -6,7 +6,9 @@
 .campo-busca .inp { padding-left: 38px; }
 .campo-busca input::-webkit-search-cancel-button { display: none; }
 .filtros .mini { display: flex; align-items: center; gap: 8px; font-size: calc(12.5px * var(--fs, 1)); font-weight: 600; color: var(--color-neutral-300); }
-.filtros .mini .inp { width: 160px; }
+/* Selects pela largura da maior opcao (nunca cortam com --fs); o minimo vem no style de cada um. */
+.filtros select.inp { width: auto; max-width: 100%; }
+.filtros .mini .inp { width: calc(160px * var(--fs, 1)); }
 .filtros .inp:disabled { opacity: .5; }
 
 .tabela { overflow: hidden; }

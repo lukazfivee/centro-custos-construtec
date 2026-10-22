@@ -46,7 +46,10 @@ html[data-theme="escuro"] { --g-rec: #22a0cc; --g-desp: #c2831c; --g-prev: #6f8f
 
 /* Inicio completo e busca. */
 .hp { display: flex; flex-direction: column; gap: 14px; }
+/* Titulo de secao em caixa normal, como os titulos de bloco do desktop (CC-16): sem sobretitulo em caixa alta. */
+.sec-tit { display: block; margin: 0 0 8px; font-size: 15px; font-weight: 600; letter-spacing: 0; text-transform: none; color: var(--text); }
 .hp-sec { margin-top: 6px; }
+.hp-head .sec-tit { margin: 0; }
 .hp-ctx { margin-top: -8px; font-size: 12px; }
 .hp .card { display: flex; flex-direction: column; gap: 8px; }
 .hp-cat { display: flex; flex-direction: column; gap: 2px; } .hp-cat .kv { padding: 2px 0; } .hp-cat .kv span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }

@@ -223,7 +223,7 @@ body.no-tabs .tabs { display: none; }
 .aviso-text small { font-size: 12px; color: var(--n300); }
 .aviso:not(.novo) .aviso-text b { font-weight: 500; }
 .pref { justify-content: space-between; }
-.pref input { width: 22px; height: 22px; accent-color: var(--accent); }
+.pref input { width: 22px; height: 22px; accent-color: var(--accent-300); } /* caixa de ligar/desligar vira interruptor em barra.css (D5) */
 #teste { width: 100%; margin-top: 12px; }
 .tab { position: relative; z-index: 3; min-width: 0; border: 0; border-radius: 25px; background: transparent; color: var(--tab-ink); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; font-size: 10px; font-weight: 600; transition: transform .24s cubic-bezier(.2, .9, .3, 1.25), color .2s; }
 .tab[aria-current="page"] { color: var(--tab-active); }

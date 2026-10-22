@@ -35,7 +35,7 @@
   };
   F.solta = (b, ic, rotulo) => { b.disabled = false; b.innerHTML = `${icon(ic, 18)}${esc(rotulo)}`; };
   F.campo = (rot, id, valor, extra) => `<label class="field"><span>${esc(rot)}</span><input id="${id}" value="${esc(valor == null ? '' : valor)}"${extra || ''}></label>`;
-  F.troca = (id, titulo, sub, ligado) => `<label class="menu-item pref"><span>${esc(titulo)}${sub ? `<small>${esc(sub)}</small>` : ''}</span><input type="checkbox" id="${id}"${ligado ? ' checked' : ''}></label>`;
+  F.troca = (id, titulo, sub, ligado) => `<label class="menu-item pref"><span>${esc(titulo)}${sub ? `<small>${esc(sub)}</small>` : ''}</span><input type="checkbox" role="switch" id="${id}"${ligado ? ' checked' : ''}></label>`;
 
   // Busca que filtra na hora (lista ja carregada). fn(texto) repinta so a lista.
   F.busca = (id, valor, ph) => `<label class="field busca"><span class="sr">Buscar</span>${icon('magnifying-glass', 18)}<input id="${id}" type="search" enterkeyhint="search" autocomplete="off" value="${esc(valor)}" placeholder="${esc(ph)}"></label>`;

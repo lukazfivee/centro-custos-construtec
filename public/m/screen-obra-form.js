@@ -21,14 +21,14 @@
         <span class="grow"><h1>Editar obra</h1><small class="muted">${esc(o.codigo)}</small></span></div>
       <div class="grid2">${campo('Código', 'o-codigo', o.codigo, ' maxlength="40" autocapitalize="characters"')}
         <label class="field"><span>Situação</span><select id="o-sit">${SITUACAO.map(([k, t]) => `<option value="${k}"${o.situacao === k ? ' selected' : ''}>${t}</option>`).join('')}</select></label></div>
-      <label class="field"><span>Nome da obra</span><textarea id="o-nome" rows="2" maxlength="140">${esc(o.nome)}</textarea></label>
+      <label class="field"><span>Nome da obra</span><input id="o-nome" maxlength="140" autocomplete="off" value="${esc(o.nome)}"></label>
       ${campo('Cliente', 'o-cli', o.cliente, ' maxlength="160"')}
       <div class="grid2">${campo('Contrato', 'o-contrato', o.contrato, ' maxlength="80"')}${campo('Responsável', 'o-resp', o.responsavel, ' maxlength="120"')}</div>
       <div class="grid2">${campo('Início', 'o-ini', o.data_inicio, ' type="date"')}${campo('Término previsto', 'o-fim', o.data_fim, ' type="date"')}</div>
       <div class="grid2">${campo('Valor contratado (R$)', 'o-contr', valorBr(o.valor_contrato), ' inputmode="decimal" placeholder="0,00"')}
         ${campo('Orçamento mensal (R$)', 'o-orc', valorBr(o.orcamento), ' inputmode="decimal" placeholder="0,00"')}</div>
       <label class="field"><span>Descrição / escopo</span><textarea id="o-desc" rows="3" maxlength="2000" placeholder="Opcional">${esc(o.descricao || '')}</textarea></label>
-      <label class="menu-item pref"><span>Obra ativa<small>Inativas somem das listas de lançamento</small></span><input type="checkbox" id="o-ativo"${o.ativo !== false ? ' checked' : ''}></label>
+      <label class="menu-item pref"><span>Obra ativa<small>Inativas somem das listas de lançamento</small></span><input type="checkbox" role="switch" id="o-ativo"${o.ativo !== false ? ' checked' : ''}></label>
       <p class="alert" role="alert" id="err"></p>
       <div class="actions"><button class="btn" type="button" id="salvar">${icon('check', 18)}Salvar alterações</button></div>`, true, params);
     document.body.classList.add('no-tabs');

@@ -101,7 +101,7 @@
       ${CC.staleNote(result)}
       <div class="chips obra-abas" role="group" aria-label="Seções da obra">${TABS.map(([k, label]) => `<button class="chip-act" type="button" data-tab="${k}" aria-pressed="${k === tab}">${label}</button>`).join('')}</div>
       ${body}
-      ${CC.sv && CC.sv.can('p5') ? '<div id="obra-tecnicos"></div>' : ''}
+      ${tab === 'resumo' && CC.sv && CC.sv.can('p5') ? '<div id="obra-tecnicos"></div>' : ''}
       <div class="actions"><button class="btn" type="button" id="lancar">${icon('camera', 18)}Lançar despesa</button></div>`, true, params);
     CC.$('#voltar').addEventListener('click', () => CC.go('obras'));
     CC.$$('[data-tab]').forEach((b) => b.addEventListener('click', () => CC.screens.obra({ id, tab: b.dataset.tab })));
@@ -113,6 +113,6 @@
     const mais = CC.$('#obra-mais');
     if (mais) mais.addEventListener('click', () => CC.obraMenu(c));
     CC.$('#lancar').addEventListener('click', () => CC.go('lancar', { obraId: id, from: ['obra', { id, tab: 'lanc' }] }));
-    if (CC.sv && CC.sv.can('p5') && CC.tecnicos) CC.tecnicos.panel(CC.$('#obra-tecnicos'), id);
+    if (CC.$('#obra-tecnicos') && CC.tecnicos) CC.tecnicos.panel(CC.$('#obra-tecnicos'), id);
   };
 })(window.CC = window.CC || {});

@@ -62,12 +62,12 @@ test('técnico: atribuição pelo gestor, escopo, execução e menu sem financei
     await click('#obra-tecnicos button[type=submit]');
     await driver.wait(async () => (await (await find('#obra-tecnicos [data-tc-status]')).getText()).includes('atualizados'), 10000);
     await screenshot('designar-tecnico-obra');
-    // O mesmo componente é oferecido no desktop administrativo, no detalhe do serviço.
+    // No desktop administrativo, o detalhe do serviço abre os técnicos no painel lateral (botão "Técnicos").
     await driver.get(ctx.baseUrl + '/d/#/servicos/' + service.id);
-    await (await wait('[data-servico-tecnicos] summary')).click();
-    await click('[data-servico-tecnicos] input[name=tecnico]');
-    await click('[data-servico-tecnicos] button[type=submit]');
-    await driver.wait(async () => (await (await find('[data-servico-tecnicos] [data-tc-status]')).getText()).includes('atualizados'), 10000);
+    await (await wait('[data-tecnicos]')).click();
+    await click('.drawer input[name=tecnico]');
+    await click('.drawer [data-salvar]');
+    await driver.wait(async () => (await driver.findElements(By.css('.drawer'))).length === 0, 10000);
     await screenshot('designar-tecnico-servico-desktop');
     await driver.get(ctx.baseUrl + '/m/');
     await driver.executeScript('CC.go("menu")');

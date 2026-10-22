@@ -10,8 +10,9 @@
     <div class="acoes">${acoes || ''}</div></div>`;
 
   // tom: cor do icone (ok, saida, info, warn, err). tomValor: cor do valor (ok, err).
-  U.kpi = ({ rotulo, valor, det, icone, tom, tomValor }) => `<div class="card kpi">
-    <div class="topo"><span class="lbl">${esc(rotulo)}</span><span class="ic ${esc(tom || 'info')}">${D.ic(icone || 'chart-bar')}</span></div>
+  // dica: texto do title do rotulo (ex.: a sigla tecnica); sem ela, o proprio rotulo.
+  U.kpi = ({ rotulo, valor, det, icone, tom, tomValor, dica }) => `<div class="card kpi">
+    <div class="topo"><span class="lbl" title="${esc(dica || rotulo)}">${esc(rotulo)}</span><span class="ic ${esc(tom || 'info')}">${D.ic(icone || 'chart-bar')}</span></div>
     <span class="val ${esc(tomValor || '')}">${esc(valor)}</span>${det ? `<span class="det">${esc(det)}</span>` : ''}</div>`;
 
   // tom: ok, warn, err, info, neutro.

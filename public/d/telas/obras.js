@@ -32,12 +32,12 @@
     const n = (x) => Number(x || 0).toLocaleString('pt-BR', { maximumFractionDigits: 0 });
     const v = O.carteiraComparavel(p);
     return [
-      k({ rotulo: tipo === 'servico' ? 'Serviços na carteira' : tipo === 'todos' ? 'Obras e serviços' : 'Obras na carteira', valor: String(p.totalCenters != null ? p.totalCenters : obras.length), det: `${exec} em execução`, icone: 'buildings', tom: 'info' }),
-      k({ rotulo: 'Valor contratual', valor: CC.moneyShort(v.contratado), det: 'soma dos contratos', icone: 'handshake', tom: 'info' }),
+      k({ rotulo: tipo === 'servico' ? 'Serviços' : tipo === 'todos' ? 'Obras e serviços' : 'Obras', valor: String(p.totalCenters != null ? p.totalCenters : obras.length), det: `${exec} em execução`, icone: 'buildings', tom: 'info' }),
+      k({ rotulo: 'Contratado', valor: CC.moneyShort(v.contratado), det: 'soma dos contratos', icone: 'handshake', tom: 'info' }),
       k({ rotulo: 'Realizado', valor: CC.moneyShort(p.totalRealizedCost), det: v.detRealizado, icone: 'arrow-up-right', tom: 'saida' }),
-      k({ rotulo: 'Saldo da carteira', valor: v.saldo == null ? '—' : `${v.saldo < 0 ? '−' : ''}${CC.moneyShort(Math.abs(v.saldo))}`, det: v.detSaldo, icone: 'scales', tom: v.saldo < 0 ? 'err' : 'ok', tomValor: v.saldo < 0 ? 'err' : '' }),
+      k({ rotulo: 'Saldo', valor: v.saldo == null ? '—' : `${v.saldo < 0 ? '−' : ''}${CC.moneyShort(Math.abs(v.saldo))}`, det: v.detSaldo, icone: 'scales', tom: v.saldo < 0 ? 'err' : 'ok', tomValor: v.saldo < 0 ? 'err' : '' }),
       k({ rotulo: 'Horas medidas', valor: `${n(horas.consumed)} h`, det: `de ${n(horas.planned)} h planejadas`, icone: 'clock', tom: 'info' }),
-      k({ rotulo: 'Faturado', valor: CC.moneyShort(fat.totalBilled), det: p.totalContractValue > 0 ? `${n((fat.totalBilled / p.totalContractValue) * 100)}% do contratado` : 'sem contrato importado', icone: 'receipt', tom: 'ok' }),
+      k({ rotulo: 'Faturado', valor: CC.moneyShort(fat.totalBilled), det: p.totalContractValue > 0 ? `${n((fat.totalBilled / p.totalContractValue) * 100)}% ${p.totalContractValue === v.contratado ? 'do contratado' : 'dos contratos importados'}` : 'sem contrato importado', icone: 'receipt', tom: 'ok' }),
     ].join('');
   }
 

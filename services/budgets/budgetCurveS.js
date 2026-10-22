@@ -192,7 +192,7 @@ async function getCostCenterCurveS(pool, costCenterId) {
       eac, // Estimate At Completion
       vac, // Variance At Completion
       isOverBudget,
-      projectedStatus: !canProject ? 'Dados insuficientes para projeção' : isOverBudget ? 'Sobrecusto Projetado' : vac === 0 ? 'No Orçamento' : 'Economia Projetada',
+      projectedStatus: !canProject ? 'Dados insuficientes para projeção' : isOverBudget ? 'Sobrecusto projetado' : vac === 0 ? 'No orçamento' : 'Economia projetada',
     },
     timeline,
     hypotheses: [

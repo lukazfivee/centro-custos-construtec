@@ -47,12 +47,12 @@
     }
     const cpi = e.cpi == null ? '—' : Number(e.cpi).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     const kpis = [
-      ['BAC · orçado', moneyShort(e.bac), 'custo base'],
-      ['AC · realizado', moneyShort(e.ac), `${pct(e.financialBurnPercent)} consumido`, e.ac > e.bac ? 'warn-txt' : ''],
-      ['EV · agregado', e.ev == null ? '—' : moneyShort(e.ev), `${pct(e.physicalPercent)} medido`],
-      ['CPI', cpi, e.cpi == null ? 'sem medição' : (e.cpi >= 1 ? 'dentro do avanço' : 'acima do avanço'), e.cpi != null && e.cpi < 1 ? 'warn-txt' : ''],
-      ['EAC · projeção', e.eac == null ? '—' : moneyShort(e.eac), 'custo no término'],
-      ['VAC · desvio', e.vac == null ? '—' : `${e.vac < 0 ? '−' : ''}${moneyShort(Math.abs(e.vac))}`, e.vac == null ? '' : (e.vac < 0 ? 'sobrecusto' : 'economia'), e.vac != null && e.vac < 0 ? 'warn-txt' : ''],
+      ['Orçado', moneyShort(e.bac), 'custo base'],
+      ['Realizado', moneyShort(e.ac), `${pct(e.financialBurnPercent)} consumido`, e.ac > e.bac ? 'warn-txt' : ''],
+      ['Valor agregado', e.ev == null ? '—' : moneyShort(e.ev), `${pct(e.physicalPercent)} medido`],
+      ['Eficiência de custo', cpi, e.cpi == null ? 'sem medição' : (e.cpi >= 1 ? 'dentro do avanço' : 'acima do avanço'), e.cpi != null && e.cpi < 1 ? 'warn-txt' : ''],
+      ['Projeção no término', e.eac == null ? '—' : moneyShort(e.eac), 'custo estimado'],
+      ['Desvio no término', e.vac == null ? '—' : `${e.vac < 0 ? '−' : ''}${moneyShort(Math.abs(e.vac))}`, e.vac == null ? '' : (e.vac < 0 ? 'sobrecusto' : 'economia'), e.vac != null && e.vac < 0 ? 'warn-txt' : ''],
     ];
     const din = (v) => (v == null ? '—' : esc(moneyShort(v)));
     const meses = tl.map((t) => `<div class="cs-mes"><b>${esc(nomeMes(t.month))}</b><span class="orc-nums"><span>Previsto <b>${din(t.plannedCumulative)}</b></span>
@@ -62,7 +62,7 @@
         <span class="cs-leg"><span><i class="cs-q prev"></i>Previsto</span><span><i class="cs-q real"></i>Realizado</span><span><i class="cs-q med"></i>Medido</span></span>
         ${grafico(tl, Number(e.bac || ce.baseCost || 0), Number(ce.contractValue || 0))}
         ${e.projectedStatus ? `<small class="muted">${esc(e.projectedStatus)}</small>` : ''}</div>
-      <div class="note mt-note">${icon('info', 18)}<span><b>Como ler:</b> previsto segue a distribuição S do orçamento aprovado; realizado é o custo lançado; medido é o avanço aprovado pelo cliente (em relação ao contrato). CPI abaixo de 1 indica custo acima do avanço.</span></div>
+      <div class="note mt-note">${icon('info', 18)}<span><b>Como ler:</b> previsto segue a distribuição S do orçamento aprovado; realizado é o custo lançado; medido é o avanço aprovado pelo cliente (em relação ao contrato). Eficiência de custo (CPI) abaixo de 1 indica custo acima do avanço.</span></div>
       <span class="label">Mês a mês · acumulado</span><div class="cs-meses">${meses}</div>
       ${(d.hypotheses || []).length ? `<span class="label">Premissas</span><ul class="cs-prem">${d.hypotheses.map((h) => `<li>${esc(h)}</li>`).join('')}</ul>` : ''}`;
   };

@@ -16,7 +16,7 @@
 .cartao-servico .tx .muted { font-size: calc(12.5px * var(--fs, 1)); }
 .cartao-servico .valores { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: 10px; padding-top: 10px; border-top: 1px solid var(--color-divider); }
 .cartao-servico .valores > span { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
-.cartao-servico .valores .lbl { font-size: calc(10.5px * var(--fs, 1)); }
+.cartao-servico .valores .lbl { font-size: calc(11.5px * var(--fs, 1)); }
 .cartao-servico .valores b { font-size: calc(14px * var(--fs, 1)); font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .cartao-servico .bts { display: flex; gap: 8px; flex-wrap: wrap; margin-top: auto; }
 .cartao-servico .bts .btn { height: 38px; }
@@ -34,7 +34,7 @@
 .kpis-sv { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
 .kpis-sv.dois { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .kpi-sv { padding: 14px 16px; display: flex; flex-direction: column; gap: 4px; min-width: 0; }
-.kpi-sv .lbl { font-size: calc(10.5px * var(--fs, 1)); }
+.kpi-sv .lbl { font-size: calc(11.5px * var(--fs, 1)); }
 .kpi-sv b { font: 600 calc(20px * var(--fs, 1))/1.2 var(--font-heading); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-variant-numeric: tabular-nums; }
 .kpi-sv .muted { font-size: calc(12px * var(--fs, 1)); }
 .bloco-sv { padding: 18px 20px; display: flex; flex-direction: column; gap: 12px; min-width: 0; }
@@ -82,7 +82,7 @@
 .fotos-sv { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
 .foto-sv { position: relative; margin: 0; aspect-ratio: 1; border-radius: 10px; overflow: hidden; background: linear-gradient(150deg, #2f5d6b 0%, #163a46 55%, #0c2028 100%); display: flex; flex-direction: column; justify-content: space-between; padding: 8px; box-sizing: border-box; color: #e6f1f4; }
 .foto-sv img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-.foto-sv .fase, .foto-sv .hora { position: relative; font-size: calc(10px * var(--fs, 1)); font-weight: 700; text-shadow: 0 1px 2px rgba(0, 0, 0, .6); }
+.foto-sv .fase, .foto-sv .hora { position: relative; font-size: calc(11.5px * var(--fs, 1)); font-weight: 700; text-shadow: 0 1px 2px rgba(0, 0, 0, .6); }
 .foto-sv .fase { letter-spacing: .04em; text-transform: uppercase; }
 .bts-foto { display: flex; gap: 8px; flex-wrap: wrap; }
 .bts-foto .btn { height: 34px; cursor: pointer; }

@@ -15,7 +15,7 @@
 
 .grafico { position: relative; height: 292px; }
 .grafico svg { display: block; }
-.eixo-y, .eixo-x { position: absolute; font-size: calc(11px * var(--fs, 1)); line-height: 16px; color: var(--color-neutral-300); white-space: nowrap; pointer-events: none; }
+.eixo-y, .eixo-x { position: absolute; font-size: calc(11.5px * var(--fs, 1)); line-height: 16px; color: var(--color-neutral-300); white-space: nowrap; pointer-events: none; }
 .eixo-y { left: 0; }
 .eixo-x { top: 272px; transform: translateX(-50%); }
 .medias { margin-top: auto; display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; padding-top: 14px; border-top: 1px solid var(--color-divider); }

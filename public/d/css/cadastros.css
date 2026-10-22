@@ -51,7 +51,7 @@
 .prox-item { display: grid; grid-template-columns: 38px minmax(0, 1fr) auto; gap: 10px; align-items: start; padding: 10px 0; border-top: 1px solid var(--color-divider); }
 .prox-item .dia { display: flex; flex-direction: column; align-items: center; line-height: 1.1; }
 .prox-item .dia b { font-size: calc(17px * var(--fs, 1)); font-weight: 600; }
-.prox-item .dia span { font-size: calc(10.5px * var(--fs, 1)); letter-spacing: .06em; color: var(--color-neutral-300); text-transform: uppercase; }
+.prox-item .dia span { font-size: calc(11.5px * var(--fs, 1)); letter-spacing: .06em; color: var(--color-neutral-300); text-transform: uppercase; }
 .prox-item .val { font-size: calc(13px * var(--fs, 1)); font-weight: 600; white-space: nowrap; }
 .prox-total { display: flex; justify-content: space-between; padding-top: 12px; border-top: 1px solid var(--color-divider); font-size: calc(13px * var(--fs, 1)); }
 .prox-nota { font-size: calc(12px * var(--fs, 1)); color: var(--color-neutral-300); padding-top: 4px; }

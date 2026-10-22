@@ -90,6 +90,8 @@
   }
   function guardarTipo(v) { try { localStorage.setItem(TIPO_CHAVE, v); } catch (e) { /* sem armazenamento */ } }
   // Filtro de situacao da lista (como no desktop), lembrado por tipo. Obras inativas so aparecem no filtro proprio.
+  // Rotulo da situacao (como o desktop), nunca a chave crua "execucao" (CC-14).
+  const SIT_NOME = { execucao: 'Em execução', planejamento: 'Planejamento', pausado: 'Pausada', concluido: 'Concluída' };
   const SIT_OBRA = [['', 'Ativas'], ['execucao', 'Em execução'], ['planejamento', 'Planejamento'], ['pausado', 'Pausadas'], ['concluido', 'Concluídas'], ['inativas', 'Inativas']];
   const SIT_SERV = [['', 'Todos'], ['agendado', 'Agendados'], ['em_andamento', 'Em andamento'], ['concluido', 'Concluídos'], ['faturado', 'Faturados']];
   const sitAtual = (tipo) => { try { return localStorage.getItem(`cc.m.obras.sit.${tipo}`) || ''; } catch (e) { return ''; } };
@@ -97,7 +99,7 @@
 
   // n: numeros da carteira (portfolio-summary) da obra; com orcamento importado, o consumo e sobre o custo base, como no desktop.
   function obraRow(c, n) {
-    if (CC.sv.role() === 'tecnico') return `<button class="row" type="button" data-obra="${c.id}"><span class="line"><span class="grow"><span class="name">${esc(c.nome)}</span><br><span class="cli">${esc([c.cliente, c.local, c.codigo].filter(Boolean).join(' · '))}</span></span><span class="tag">${esc(c.situacao || 'Em acompanhamento')}</span>${icon('caret-right', 16)}</span></button>`;
+    if (CC.sv.role() === 'tecnico') return `<button class="row" type="button" data-obra="${c.id}"><span class="line"><span class="grow"><span class="name">${esc(c.nome)}</span><br><span class="cli">${esc([c.cliente, c.local, c.codigo].filter(Boolean).join(' · '))}</span></span><span class="tag">${esc(SIT_NOME[c.situacao] || 'Em acompanhamento')}</span>${icon('caret-right', 16)}</span></button>`;
     const base = n && Number(n.baseCost) > 0;
     const budget = base ? Number(n.baseCost) : Number(c.orcamento), spent = base ? Number(n.realizedCost) : Number(c.total_comprometido), p = pct(spent, budget);
     const over = p !== null && p > 100, atencao = p !== null && p > 80; // desktop: atencao acima de 80%

@@ -42,7 +42,8 @@ test('service worker do Celular foi atualizado depois das correcoes do C9', () =
 
 test('botao do assistente nao cobre o fim do conteudo (reserva de espaco com e sem barra de acoes)', () => {
   const barra = read('barra.css');
-  assert.match(barra, /body:has\(\.ia-fab:not\(\[hidden\]\)\):not\(:has\(\.actions\)\) \{ padding-bottom: calc\(var\(--barra-topo\) \+ 74px\)/);
-  assert.match(barra, /body\.no-tabs:has\(\.ia-fab:not\(\[hidden\]\)\):not\(:has\(\.actions\)\) \{ padding-bottom: calc\(var\(--sab\) \+ 76px\)/);
-  assert.match(barra, /body:has\(\.ia-fab:not\(\[hidden\]\)\) \.actions \{ margin-top: 52px/);
+  // D1: reserva a altura do botão + 16 px no fim da rolagem; em tela com barra de ações o botão some.
+  assert.match(barra, /body:has\(\.ia-fab:not\(\[hidden\]\)\):not\(:has\(\.actions\)\) \{ padding-bottom: calc\(var\(--barra-topo\) \+ 82px\)/);
+  assert.match(barra, /body\.no-tabs:has\(\.ia-fab:not\(\[hidden\]\)\):not\(:has\(\.actions\)\) \{ padding-bottom: calc\(var\(--sab\) \+ 84px\)/);
+  assert.match(barra, /body:has\(\.actions\) \.ia-fab \{ display: none; \}/);
 });

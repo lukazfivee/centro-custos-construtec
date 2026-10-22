@@ -127,7 +127,9 @@ html[data-theme="escuro"] .seg button[aria-pressed="true"] { background: #1a4a5a
 .btn2 { min-height: 48px; border: 0; border-radius: 10px; background: var(--surface); box-shadow: inset 0 0 0 1px var(--divider); font-size: 14px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 8px; transition: transform .12s; }
 .btn:active, .btn2:active, .chip-act:active, .tab:active { transform: scale(.96); }
 .btn[disabled] { opacity: .6; }
-.actions { position: sticky; bottom: calc(var(--barra-topo) + 26px); margin: 0 -20px -24px; padding: 10px 20px 12px; background: var(--bg); box-shadow: 0 -1px 0 var(--divider); display: flex; gap: 10px; }
+/* Barra de acoes no pe da tela: com pouco conteudo a tela ocupa a altura toda e a barra desce (margin-top: auto), sem flutuar no meio (CC-13). */
+.actions { position: sticky; bottom: calc(var(--barra-topo) + 26px); margin: auto -20px -24px; padding: 10px 20px 12px; background: var(--bg); box-shadow: 0 -1px 0 var(--divider); display: flex; gap: 10px; }
+.screen:has(> .actions) { min-height: calc(100dvh - var(--barra-topo) - 26px); } body.no-tabs .screen:has(> .actions) { min-height: calc(100dvh - var(--sab)); }
 body.no-tabs .actions { bottom: var(--sab); padding-bottom: 28px; }
 .actions > * { flex: 1; }
 

@@ -118,6 +118,15 @@ test('Cockpit Consolidado da Carteira de Obras (Multi-Obras)', async (context) =
     assert.equal(p.atRiskCenters[0].id, costCenterId);
     assert.equal(p.atRiskCenters[0].burnRate, 87.0);
     assert.equal(p.atRiskCenters[0].isOverBudget, false);
+
+    // Mesmo universo para a tela (CC-06): orçado × realizado só das obras com orçamento importado.
+    assert.equal(p.comparable.centersWithBaseline, 1);
+    assert.equal(p.comparable.baseCost, 2760.00);
+    assert.equal(p.comparable.realizedCost, 2400.00);
+    assert.equal(p.comparable.balance, 360.00);
+    assert.equal(p.comparable.burnRatePercent, 87.0);
+    assert.equal(p.comparable.centersWithoutBaseline, p.totalCenters - 1);
+    assert.ok(p.contractedTotal >= 3450.00);
   });
 
   await context.test('3. Proteção e autenticação', async () => {

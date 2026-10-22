@@ -114,12 +114,15 @@
     const n = (x) => Number(x || 0).toLocaleString('pt-BR', { maximumFractionDigits: 0 });
     const h = p.laborHours || {}, fat = (p.clientBilling || {}).totalBilled || 0;
     const exec = (p.statusCounts && p.statusCounts.execucao) || 0;
-    const saldo = Number(p.totalBalance) || 0;
+    // Mesmo universo do desktop (CC-06): percentual e saldo so das obras com orcamento importado; "—" se faltar alguma.
+    const c = p.comparable || {}, com = Number(c.centersWithBaseline || 0), sem = Number(c.centersWithoutBaseline || 0);
+    const saldo = Number(c.balance) || 0;
+    const pct = `${Number(c.burnRatePercent || 0).toLocaleString('pt-BR', { maximumFractionDigits: 1 })}% do orçado`;
     return CC.tiles([
       ['Obras', String(p.totalCenters != null ? p.totalCenters : obras.length), `${exec} em execução`],
-      ['Contratado', moneyShort(p.totalContractValue), 'soma dos contratos'],
-      ['Realizado', moneyShort(p.totalRealizedCost), `${n(p.burnRatePercent)}% do orçado`],
-      ['Saldo', `${saldo < 0 ? '− ' : ''}${moneyShort(Math.abs(saldo))}`, 'orçado − realizado', saldo < 0 ? 'warn-txt' : ''],
+      ['Contratado', moneyShort(p.contractedTotal != null ? p.contractedTotal : p.totalContractValue), 'soma dos contratos'],
+      ['Realizado', moneyShort(p.totalRealizedCost), !com ? 'sem orçamento importado' : (sem ? `— · ${sem} sem orçamento` : pct)],
+      ['Saldo', com ? `${saldo < 0 ? '− ' : ''}${moneyShort(Math.abs(saldo))}` : '—', !com ? 'sem orçamento' : (sem ? `de ${com} ${com === 1 ? 'obra' : 'obras'}` : 'orçado − realizado'), saldo < 0 ? 'warn-txt' : ''],
       ['Horas medidas', `${n(h.consumed)} h`, `de ${n(h.planned)} h`],
       ['Faturado', moneyShort(fat), p.totalContractValue > 0 ? `${n((fat / p.totalContractValue) * 100)}% do contrato` : 'sem contrato'],
     ]);

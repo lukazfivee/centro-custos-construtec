@@ -4,9 +4,17 @@
 .alerta-carteira b { font-weight: 700; }
 .barra-filtro { display: flex; align-items: center; flex-wrap: wrap; justify-content: space-between; gap: 12px; }
 .grade-obras { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
-.cartao-obra { padding: 18px; display: flex; flex-direction: column; gap: 12px; min-width: 0; }
-.cartao-obra .topo { display: flex; justify-content: space-between; gap: 8px; }
-.cartao-obra .tx { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.cartao-obra { position: relative; padding: 18px; display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+.cartao-obra .topo { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; min-height: 32px; }
+.cartao-obra .topo .chips { display: flex; flex-wrap: wrap; gap: 6px; min-width: 0; }
+/* Cartao inteiro clicavel: o link do titulo cobre o cartao; os icones de acao ficam por cima. */
+.cartao-obra .tx { display: flex; flex-direction: column; gap: 2px; min-width: 0; color: inherit; text-decoration: none; }
+.cartao-obra .tx::after { content: ''; position: absolute; inset: 0; border-radius: inherit; }
+.cartao-obra .tx:hover b { color: var(--color-accent-300); }
+.cartao-obra .tx:focus-visible { outline: none; }
+.cartao-obra:has(.tx:focus-visible) { box-shadow: 0 0 0 2px var(--color-focus); }
+.cartao-obra .acoes-cartao { position: relative; z-index: 1; display: flex; gap: 2px; margin: -4px -6px 0 0; flex: none; }
+.ibtn.perigo:hover { background: var(--c-err-soft); color: var(--c-err); }
 .cartao-obra .tx b { font-size: calc(16px * var(--fs, 1)); font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .cartao-obra .tx .muted { font-size: calc(13px * var(--fs, 1)); }
 .uso-linha { display: flex; flex-direction: column; gap: 5px; font-size: calc(12.5px * var(--fs, 1)); color: var(--color-neutral-300); }
@@ -16,7 +24,6 @@
 .cartao-obra .valores { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding-top: 10px; border-top: 1px solid var(--color-divider); }
 .cartao-obra .valores > span { display: flex; flex-direction: column; gap: 2px; }
 .cartao-obra .valores b { font-size: calc(14px * var(--fs, 1)); font-weight: 600; }
-.cartao-obra .bts { display: grid; grid-template-columns: 1fr auto auto; gap: 8px; }
 
 .voltar { display: inline-flex; align-items: center; gap: 6px; font-size: calc(13.5px * var(--fs, 1)); font-weight: 600; color: var(--color-accent-300); text-decoration: none; align-self: flex-start; }
 .cab-obra { align-items: center; }

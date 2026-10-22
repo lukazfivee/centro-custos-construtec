@@ -26,3 +26,10 @@ test('a ajuda do celular diz o mesmo que a do desktop sobre fechamento e perfis,
   const desktop = read('public/d/ajuda.js');
   for (const [, nome] of desktop.matchAll(/\['[a-z-]+', '([A-ZÀ-Ú][a-zà-ú]+)', '/g)) if (['Administrador', 'Gestor', 'Financeiro', 'Engenharia', 'Técnico', 'Comercial'].includes(nome)) assert.ok(js.includes(`'${nome}'`), nome);
 });
+
+test('o item Ajuda fica fora do bloco que só existe com o assistente pronto', () => {
+  const menu = read('public/m/screen-misc.js');
+  const ajuda = menu.indexOf('id="m-ajuda"');
+  const bloco = menu.indexOf('${CC.ia && CC.ia.ready() ?');
+  assert.ok(ajuda > 0 && bloco > 0 && ajuda < bloco, 'Ajuda deve vir antes do bloco condicional do assistente');
+});

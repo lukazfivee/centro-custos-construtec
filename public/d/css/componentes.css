@@ -30,7 +30,8 @@
 .faixa > span { flex: 1; min-width: 0; }
 .faixa.warn { background: var(--c-warn-soft); color: var(--c-warn); box-shadow: inset 0 0 0 1px var(--c-warn-bar); }
 .faixa.err { background: var(--c-err-soft); color: var(--c-err); }
-.faixa.info { background: var(--color-accent-900); color: var(--color-accent-300); }
+.faixa.info { background: var(--c-muted-soft); color: var(--color-text); font-weight: 400; box-shadow: inset 0 0 0 1px var(--color-divider); }
+.faixa.info .ph { color: var(--color-neutral-300); }
 
 /* Painel lateral: substitui os modais de formulario. */
 .camada { position: fixed; inset: 0; z-index: 50; display: flex; justify-content: flex-end; }

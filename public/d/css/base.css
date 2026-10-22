@@ -16,7 +16,8 @@ a { color: var(--color-accent-300); }
 .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
 .card { background: var(--color-surface); border-radius: 14px; box-shadow: var(--shadow-sm), 0 1px 2px rgba(3, 31, 41, .04); }
-.eyebrow { font-size: calc(11px * var(--fs, 1)); font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--color-accent-300); }
+/* Sobretitulo neutro (D2): o ciano fica para o que age. */
+.eyebrow { font-size: calc(11px * var(--fs, 1)); font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--color-neutral-300); }
 .lbl { font-size: calc(11.5px * var(--fs, 1)); font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--color-neutral-300); }
 .muted { color: var(--color-neutral-300); }
 
@@ -53,7 +54,8 @@ input::placeholder, textarea::placeholder { color: var(--color-placeholder); opa
 .chip.ok { background: var(--c-ok-soft); color: var(--c-ok); }
 .chip.warn { background: var(--c-warn-soft); color: var(--c-warn); }
 .chip.err { background: var(--c-err-soft); color: var(--c-err); }
-.chip.info { background: var(--color-accent-900); color: var(--color-accent-300); }
+/* Situacao informativa nao age: mesmo par neutro (Regra do Ciano que Age, D3). */
+.chip.info { background: var(--c-muted-soft); color: var(--c-muted); }
 .chip.neutro { background: var(--c-muted-soft); color: var(--c-muted); }
 /* Selo de situacao no cabecalho da pagina (fundo da pagina, nao do cartao): contorno leve para nao sumir no tema claro. */
 .acoes > .chip { box-shadow: inset 0 0 0 1px color-mix(in srgb, currentColor 30%, transparent); }

@@ -63,7 +63,7 @@
           const resto = Object.values(data.impedimentos || {}).reduce((a, n) => a + n, 0);
           ctl.erro('');
           alvo.innerHTML = U.faixa(resto ? 'warn' : 'info', resto ? 'warning' : 'check-circle',
-            `${data.excluidos} lançamento(s) e ${data.recorrentes} recorrente(s) excluídos.${data.ignorados.length ? ` Ficaram ${data.ignorados.length}: ${data.ignorados.map((i) => `${i.descricao} (${i.motivo})`).join('; ')}.` : ''}${resto ? ' Ainda há registros que impedem o descarte (rateios, medições ou notas fiscais).' : ' Agora é só descartar.'}`);
+            `${D.plural(data.excluidos, 'lançamento', 'lançamentos')} e ${D.plural(data.recorrentes, 'recorrente', 'recorrentes')} excluídos.${data.ignorados.length ? ` Ficaram ${data.ignorados.length}: ${data.ignorados.map((i) => `${i.descricao} (${i.motivo})`).join('; ')}.` : ''}${resto ? ' Ainda há registros que impedem o descarte (rateios, medições ou notas fiscais).' : ' Agora é só descartar.'}`);
         } catch (error) { voltarL(); ctl.erro(error.message); }
       });
     };

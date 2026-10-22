@@ -134,7 +134,7 @@
       k = ve ? [['Cobrado', moneyShort(sum(mes, (v) => v.valor)), `${mes.length} em ${CC.monthName()}`], ['Gastos', moneyShort(sum(mes, (v) => v.gastos)), 'do mês'], ['Resultado', moneyShort(sum(mes, (v) => v.resultado)), 'cobrado − gastos']]
         : [['Serviços', String(servs.length), CC.sv.plural(servs.filter((v) => v.situacao === 'agendado').length, 'agendado', 'agendados')], ['Em andamento', String(andamento), 'agora'], ['Gastos', moneyShort(sum(servs, (v) => v.gastos)), 'lançados']];
     } else {
-      k = [['Centros', String(obras.length + servs.length), `${obras.length} obras · ${servs.length} serviços`],
+      k = [['Centros', String(obras.length + servs.length), `${CC.sv.plural(obras.length, 'obra', 'obras')} · ${CC.sv.plural(servs.length, 'serviço', 'serviços')}`],
         ve ? ['Receita', moneyShort(oCont + sum(servs, (v) => v.valor)), 'contratos e serviços'] : ['Em andamento', String(andamento), 'serviços'],
         ['Gasto', moneyShort(oGas + sum(servs, (v) => v.gastos)), 'até hoje']];
     }
@@ -174,7 +174,7 @@
     const chips = sits ? `<div class="chips" role="group" aria-label="Situação">${sits.map(([k, l]) => `<button class="chip-act" type="button" data-sit="${k}" aria-pressed="${k === (tipo === 'obra' ? sitO : sitS)}">${l}</button>`).join('')}</div>` : '';
     const stale = obrasRes.stale ? obrasRes : servRes;
     const title = tipo === 'obra' ? 'Obras' : tipo === 'servico' ? 'Serviços' : 'Obras e serviços';
-    const sub = CC.sv.role() === 'tecnico' ? 'Itens atribuídos a você' : tipo === 'obra' ? `${obras.length} obras · orçado × gasto` : tipo === 'servico' ? `${servs.length} serviços · ${CC.monthName()}` : `${obras.length} obras e ${servs.length} serviços`;
+    const sub = CC.sv.role() === 'tecnico' ? 'Itens atribuídos a você' : tipo === 'obra' ? `${CC.sv.plural(obras.length, 'obra', 'obras')} · orçado × gasto` : tipo === 'servico' ? `${CC.sv.plural(servs.length, 'serviço', 'serviços')} · ${CC.monthName()}` : `${CC.sv.plural(obras.length, 'obra', 'obras')} e ${CC.sv.plural(servs.length, 'serviço', 'serviços')}`;
     const vazio = `<div class="empty">${icon(tipo === 'servico' ? 'wrench' : 'buildings', 28)}${sitO || sitS ? 'Nada nesta situação.' : (tipo === 'servico' ? 'Nenhum serviço cadastrado.' : tipo === 'todos' ? 'Nenhuma obra ou serviço cadastrado.' : 'Nenhuma obra cadastrada.')}</div>`;
     const porObra = new Map(((carteira && carteira.porObra) || []).map((x) => [Number(x.id), x]));
     const row = (c) => obraRow(c, porObra.get(Number(c.id)));

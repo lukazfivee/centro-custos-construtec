@@ -113,7 +113,7 @@
       const fechados = meses.filter((x) => x.fechado).length;
       const aberto = ano === anoHoje ? `${F.mesNome(ano, mesHoje).toLowerCase()} aberto` : 'ano anterior';
       corpo.innerHTML = `<div class="fech-kpis">${kpis(m)}</div>
-        <div class="fech-grade"><div class="card tabela fech-tabela"><div class="fech-topo"><b>Competências de ${ano}</b><span class="muted">${esc(`${fechados} fechados · ${aberto}`)}</span></div>
+        <div class="fech-grade"><div class="card tabela fech-tabela"><div class="fech-topo"><b>Competências de ${ano}</b><span class="muted">${esc(`${D.plural(fechados, 'fechado', 'fechados')} · ${aberto}`)}</span></div>
           ${U.tabela({ colunas: COLUNAS, linhas: ordenar(meses, ano, hoje).map((x) => linha(x, { ano, anoHoje, mesHoje })) })}</div>
           <aside class="card fech-lado" data-lado aria-label="Checklist do fechamento"></aside></div>`;
       const sel = CC.$(`tr.rw[data-id="${selecionado}"]`, corpo);

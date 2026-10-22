@@ -38,7 +38,7 @@
     const k = U.kpi;
     return [
       k({ rotulo: 'Finalizadas', valor: CC.money(B.reais(ind.finalizadas)), det: `${ind.qtdPagas} cobrança${ind.qtdPagas === 1 ? '' : 's'} paga${ind.qtdPagas === 1 ? '' : 's'}`, icone: 'check-circle', tom: 'ok' }),
-      k({ rotulo: 'Aguardando pagamento', valor: CC.money(B.reais(ind.aguardando)), det: ind.venceramEntre ? `${ind.venceramEntre} vencida(s) entre elas` : 'nenhuma vencida', icone: 'hourglass', tom: 'info' }),
+      k({ rotulo: 'Aguardando pagamento', valor: CC.money(B.reais(ind.aguardando)), det: ind.venceramEntre ? `${D.plural(ind.venceramEntre, 'vencida', 'vencidas')} entre elas` : 'nenhuma vencida', icone: 'hourglass', tom: 'info' }),
       k({ rotulo: 'Pendentes', valor: String(ind.pendentes), det: 'aprovação, NF ou envio', icone: 'clock', tom: 'warn' }),
       k({ rotulo: 'A receber', valor: CC.money(B.reais(ind.aReceber)), det: 'tudo o que não foi pago', icone: 'arrow-down-left', tom: 'info' }),
     ].join('');

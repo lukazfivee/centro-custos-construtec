@@ -25,12 +25,12 @@
     const res = Number(r.saldo) || 0;
     const qv = Number(r.qtdVencidos) || 0;
     return [
-      k({ rotulo: 'Recebido', valor: CC.money(r.receitas), det: `${r.qtdRecebidos || 0} recebimento(s) no mês`, icone: 'arrow-down-left', tom: 'ok' }),
+      k({ rotulo: 'Recebido', valor: CC.money(r.receitas), det: `${D.plural(r.qtdRecebidos || 0, 'recebimento', 'recebimentos')} no mês`, icone: 'arrow-down-left', tom: 'ok' }),
       k({ rotulo: 'Pago', valor: CC.money(r.despesas), det: `${r.qtdPagos || 0} despesas liquidadas`, icone: 'arrow-up-right', tom: 'saida' }),
       k({ rotulo: 'Resultado', valor: CC.money(res), det: 'recebido − pago', icone: 'scales', tom: 'info', tomValor: res < 0 ? 'err' : 'ok' }),
       k({ rotulo: 'A receber', valor: CC.money(r.aReceber), det: 'previsto em aberto', icone: 'hourglass', tom: 'info' }),
       k({ rotulo: 'A pagar', valor: CC.money(r.aPagar), det: 'contas pendentes', icone: 'calendar-blank', tom: 'warn' }),
-      k({ rotulo: 'Vencidos', valor: CC.money(r.vencidos), det: qv ? `${qv} conta(s) em atraso` : 'nenhuma pendência', icone: 'warning', tom: qv ? 'err' : 'ok', tomValor: qv ? 'err' : '' }),
+      k({ rotulo: 'Vencidos', valor: CC.money(r.vencidos), det: qv ? `${D.plural(qv, 'conta', 'contas')} em atraso` : 'nenhuma pendência', icone: 'warning', tom: qv ? 'err' : 'ok', tomValor: qv ? 'err' : '' }),
     ].join('');
   }
 

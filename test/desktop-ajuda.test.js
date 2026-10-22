@@ -24,9 +24,11 @@ test('index.html carrega o CSS e o JS da ajuda', () => {
 
 test('a ajuda fala do Centro de Custos: atalhos reais, regras, perfis, sobre e reportar pelo assistente', () => {
   const js = read('ajuda.js');
-  for (const trecho of ['Ctrl', 'Busca rápida', 'Fechamento mensal', 'Comprometido', 'Administrador', 'Gestor', 'Supervisor', 'Centro de Custos Construtec', 'Reportar problema', "CC.ia.open('Quero reportar um problema no app.')"])
+  for (const trecho of ['Ctrl', 'Busca rápida', 'Fechamento mensal', 'Comprometido', 'Administrador', 'Gestor', 'Financeiro', 'Engenharia', 'Técnico', 'Comercial', 'Centro de Custos Construtec', 'Reportar problema', "CC.ia.open('Quero reportar um problema no app.')"])
     assert.ok(js.includes(trecho), `falta: ${trecho}`);
   assert.ok(!/lucide/i.test(js));
+  assert.ok(!js.includes('Supervisor'), 'o perfil Supervisor não existe mais no modelo da Suíte');
+  assert.ok(js.includes('primeiro reabra o fechamento'), 'estorno em mês fechado exige reabrir antes');
   const atalhos = js.slice(js.indexOf('const ATALHOS'), js.indexOf('];', js.indexOf('const ATALHOS')));
   for (const real of ["'K'", "'B'", "'Esc'"]) assert.ok(atalhos.includes(real));
 });

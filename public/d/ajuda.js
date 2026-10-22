@@ -23,14 +23,20 @@
     ${bloco('Lançamentos', 'Cada receita ou despesa tem <b>competência</b> (o mês a que pertence), <b>vencimento</b> e situação. Use <b>Pendente</b> enquanto a conta não foi paga ou recebida; ao liquidar, mude para <b>Liquidado</b> e informe a data.')}
     ${bloco('Obras e orçamento', 'Cada obra (centro de custo) tem um orçamento mensal. <b>Comprometido</b> soma todas as despesas do mês, pagas ou pendentes; <b>Pago/recebido</b> considera só o que foi liquidado.', 'Saldo do orçamento = orçamento mensal − comprometido')}
     ${bloco('Cobranças', 'A cobrança acompanha o recebimento de um serviço: nota fiscal, vencimento e pagamento. O e-mail ao cliente sai em nome de quem envia, com resposta para a sua conta.')}
-    ${bloco('Fechamento mensal', 'Conferir e fechar o mês trava os lançamentos daquele período. Para corrigir depois, reabra o fechamento ou use um <b>estorno</b>; tudo fica registrado em <b>Histórico</b>, com quem fez e quando.')}
+    ${bloco('Fechamento mensal', 'Conferir e fechar o mês trava os lançamentos daquele período. Para corrigir um mês fechado, primeiro reabra o fechamento (só quem tem a permissão de fechamento); no mês aberto, use <b>editar</b> ou <b>estornar</b>. Tudo fica registrado em <b>Histórico</b>, com quem fez e quando.')}
   </div>`;
 
+  const PAPEIS = [
+    ['shield-check', 'Administrador', 'Tudo, inclusive usuários e permissões, fechamento mensal, backup e restauração.'],
+    ['user-check', 'Gestor', 'Painel, lançamentos (editar, excluir e estornar), cadastros, cobranças e autorização de envio, custo e BDI nos Orçamentos, horas e medições.'],
+    ['currency-dollar', 'Financeiro', 'Painel, lançar, editar, excluir e estornar lançamentos e acompanhar cobranças.'],
+    ['hard-hat', 'Engenharia', 'Painel, lançar despesas, horas e medições, e custo e BDI nos Orçamentos, nas obras que lhe forem atribuídas.'],
+    ['wrench', 'Técnico', 'Registra horas e medições, só nas obras atribuídas a ele.'],
+    ['handshake', 'Comercial', 'Orçamentos: ver custo, BDI e margem, enviar e aprovar propostas.'],
+  ];
   const perfis = () => `<div class="aj-sec">
-    <div class="aj-cartao"><div class="aj-selo">${D.ic('shield-check', 18)} Administrador</div><p>Acesso total: usuários, cadastros, exclusões, backup e restauração.</p></div>
-    <div class="aj-cartao"><div class="aj-selo">${D.ic('user-check', 18)} Gestor</div><p>Lançamentos, exclusões, obras, categorias, fornecedores, relatórios e sincronização.</p></div>
-    <div class="aj-cartao"><div class="aj-selo">${D.ic('user', 18)} Supervisor</div><p>Cria e edita lançamentos e consulta painéis e relatórios. Não gerencia usuários, cadastros estruturais, backup nem exclusões.</p></div>
-    <p class="aj-desc">Menus e botões sem permissão não aparecem. Cada pessoa deve usar o próprio usuário.</p>
+    ${PAPEIS.map(([ic, nome, texto]) => `<div class="aj-cartao"><div class="aj-selo">${D.ic(ic, 18)} ${esc(nome)}</div><p>${esc(texto)}</p></div>`).join('')}
+    <p class="aj-desc">É o padrão de cada perfil; o administrador pode ajustar as permissões em <b>Usuários</b>. Menus e botões sem permissão não aparecem. Cada pessoa deve usar o próprio usuário.</p>
   </div>`;
 
   const sobre = () => {

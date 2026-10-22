@@ -35,6 +35,13 @@
 #ia-sheet .ia-input textarea:focus { box-shadow: inset 0 0 0 2px var(--color-focus); }
 #ia-sheet .ia-send { flex: none; width: 42px; height: 42px; border: 0; border-radius: 12px; background: var(--color-brand); color: var(--on-brand); display: grid; place-items: center; cursor: pointer; }
 #ia-sheet .ia-send:hover { background: var(--color-accent-700); }
+#ia-sheet .ia-mic { flex: none; width: 42px; height: 42px; border: 0; border-radius: 12px; background: var(--color-bg); color: var(--color-text); box-shadow: inset 0 0 0 1px var(--color-field); display: grid; place-items: center; cursor: pointer; }
+#ia-sheet .ia-mic:hover { box-shadow: inset 0 0 0 1px var(--color-focus); }
+#ia-sheet .ia-mic.rec { background: var(--c-warn-soft); color: var(--c-warn); box-shadow: inset 0 0 0 2px var(--c-warn); animation: iaRec 1.2s infinite ease-in-out; }
+#ia-sheet .ia-mic:disabled { opacity: .55; cursor: default; }
+#ia-sheet .ia-voz { display: block; margin-top: 6px; text-align: center; font-size: calc(12.5px * var(--fs, 1)); color: var(--color-text); }
+@keyframes iaRec { 50% { opacity: .65; } }
+@media (prefers-reduced-motion: reduce) { #ia-sheet .ia-mic.rec { animation: none; } }
 #ia-sheet .ia-note { display: block; margin-top: 6px; text-align: center; font-size: calc(11.5px * var(--fs, 1)); color: var(--color-neutral-300); }
 #ia-sheet .ia-note a { color: inherit; }
 #ia-sheet .ia-go { display: flex; margin-top: 10px; }

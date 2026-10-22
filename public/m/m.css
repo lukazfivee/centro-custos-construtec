@@ -264,6 +264,12 @@ body.no-tabs .tabs { display: none; }
 .ia-input textarea:focus { box-shadow: inset 0 0 0 2px var(--accent); }
 .ia-send { flex: none; width: 46px; height: 46px; border: 0; border-radius: 14px; background: var(--fill); color: #fff; display: grid; place-items: center; }
 .ia-send:active { transform: scale(.94); }
+.ia-mic { flex: none; width: 46px; height: 46px; border: 0; border-radius: 14px; background: var(--surface); color: var(--text); box-shadow: inset 0 0 0 1px var(--divider); display: grid; place-items: center; }
+.ia-mic.rec { background: var(--warn-soft); color: var(--warn-text); box-shadow: inset 0 0 0 2px var(--warn-text); animation: iaRec 1.2s infinite ease-in-out; }
+.ia-mic:disabled { opacity: .55; }
+.ia-voz { display: block; margin-top: 6px; text-align: center; font-size: 12.5px; color: var(--text); }
+@keyframes iaRec { 50% { opacity: .65; } }
+@media (prefers-reduced-motion: reduce) { .ia-mic.rec { animation: none; } }
 .ia-note a { color: inherit; }
 .grecaptcha-badge { visibility: hidden; } /* o aviso do reCAPTCHA fica na folha do assistente */
 .ia-go { display: flex; margin-top: 10px; min-height: 40px; }

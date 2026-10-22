@@ -129,6 +129,7 @@ public final class MainActivity extends Activity implements AuthController.Shell
         authView.evaluate("window.__setInsets&&window.__setInsets(" + Math.round(bars.top / density) + "," + Math.round(bottom / density) + ")");
     }
 
+    @Override public void onRequestPermissionsResult(int code, String[] permissions, int[] results) { super.onRequestPermissionsResult(code, permissions, results); if (code == AppWebView.MIC_REQUEST) AppWebView.micResult(results); }
     @Override public void enterApp(String notice) {
         String[] target = pushTarget;
         pushTarget = null;

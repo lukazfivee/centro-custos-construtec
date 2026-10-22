@@ -24,7 +24,7 @@ function observability(req, res, next) {
   res.setHeader('X-Content-Type-Options', 'nosniff');
   res.setHeader('Content-Security-Policy', frameAncestors());
   res.setHeader('Referrer-Policy', 'no-referrer');
-  res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
+  res.setHeader('Permissions-Policy', 'camera=(), microphone=(self), geolocation=()');
   if (req.path.startsWith('/api/')) res.setHeader('Cache-Control', 'no-store');
 
   beginRequest(req.method);

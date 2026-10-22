@@ -252,9 +252,13 @@
     });
   }
 
+
+  IA.voz = IA.criarVoz({ state, sdk, context, paint, quota, busy, friendly, same });
+
   function onKey(event) { if (event.key === 'Escape') close(); }
   function close() {
     const el = document.getElementById('ia-sheet');
+    IA.voz.cancelar();
     if (el) el.remove();
     document.removeEventListener('keydown', onKey);
   }
@@ -271,7 +275,9 @@
         <button type="button" class="chip-act" id="ia-new">Nova conversa</button><button type="button" class="sheet-x" aria-label="Fechar">${icon('x', 20)}</button></div>
       <div class="ia-log" id="ia-log" aria-live="polite"></div>
       <form class="ia-input" id="ia-form"><textarea id="ia-q" rows="1" maxlength="1500" placeholder="Pergunte ou peça uma tela" aria-label="Mensagem para o assistente"></textarea>
+        ${IA.voz.suportada() ? `<button class="ia-mic" id="ia-mic" type="button" aria-label="Ditar mensagem" aria-pressed="false">${icon('microphone', 20)}</button>` : ''}
         <button class="ia-send" type="submit" aria-label="Enviar">${icon('paper-plane-right', 20)}</button></form>
+      <small class="ia-voz" id="ia-voz" role="status" hidden></small>
       <small class="ia-note">A IA pode errar. Confira as informações nas telas.${CC.iaConfig.recaptcha && secureOrigin() ? ' Protegido pelo reCAPTCHA (<a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Privacidade</a>, <a href="https://policies.google.com/terms" target="_blank" rel="noopener">Termos</a>).' : ''}</small></div>`;
     el.addEventListener('click', (event) => { if (event.target === el || event.target.closest('.sheet-x')) close(); });
     document.body.appendChild(el);
@@ -280,7 +286,9 @@
     const grow = () => { input.style.height = 'auto'; input.style.height = `${Math.min(120, input.scrollHeight)}px`; };
     input.addEventListener('input', grow);
     input.addEventListener('keydown', (event) => { if (event.key === 'Enter' && !event.shiftKey) { event.preventDefault(); CC.$('#ia-form', el).requestSubmit(); } });
-    CC.$('#ia-form', el).addEventListener('submit', (event) => { event.preventDefault(); const q = input.value; input.value = ''; grow(); ask(q); });
+    const mic = CC.$('#ia-mic', el);
+    if (mic) mic.addEventListener('click', IA.voz.toggle);
+    CC.$('#ia-form', el).addEventListener('submit', (event) => { event.preventDefault(); if (IA.voz.ocupado()) return; const q = input.value; input.value = ''; grow(); ask(q); });
     CC.$('#ia-new', el).addEventListener('click', () => { if (state.busy) return; state.log = []; state.chat = null; state.model = 0; paint(); input.focus(); });
     paint();
     if (starter) return ask(starter); else input.focus();

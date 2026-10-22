@@ -17,7 +17,7 @@
 
   // Interruptor com rotulo e ajuda (role="switch"). Use C.ligarTroca no corpo do painel.
   C.troca = ({ titulo, texto, ligado }) => `<button type="button" class="troca" role="switch" data-troca aria-checked="${ligado ? 'true' : 'false'}">
-    <span><b>${esc(titulo)}</b><small>${esc(texto)}</small></span><span class="chave" aria-hidden="true"></span></button>`;
+    <span><b>${esc(titulo)}</b>${texto ? `<small>${esc(texto)}</small>` : ''}</span><span class="chave" aria-hidden="true"></span></button>`;
   C.ligarTroca = (corpo, ctl) => {
     const bt = CC.$('[data-troca]', corpo);
     bt.addEventListener('click', () => {

@@ -33,9 +33,7 @@
 .troca[aria-checked="true"] .chave { background: var(--color-switch-on); }
 .troca[aria-checked="true"] .chave::after { transform: translateX(18px); }
 
-/* Fornecedores: dica e lancamentos do mes no painel. */
-.dica { display: flex; gap: 8px; align-items: flex-start; font-size: calc(12px * var(--fs, 1)); color: var(--color-accent-300); }
-.dica .ph { font-size: calc(15px * var(--fs, 1)); margin-top: 1px; }
+/* Fornecedores: lancamentos do mes no painel. */
 .mes-lista { display: flex; flex-direction: column; gap: 4px; }
 .mes-lista .topo { display: flex; justify-content: space-between; align-items: baseline; padding-bottom: 6px; }
 .mes-lista .topo b { font-size: calc(15px * var(--fs, 1)); }

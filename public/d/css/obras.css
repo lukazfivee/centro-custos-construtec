@@ -50,8 +50,7 @@
 
 .grade-nf { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; align-items: start; }
 .chip-bt { border: 0; background: transparent; padding: 0; cursor: pointer; }
-.check { display: flex; align-items: center; gap: 8px; font-size: calc(13.5px * var(--fs, 1)); }
-.check input { width: 16px; height: 16px; }
+
 
 @media (max-width: 1379px) {
   .grade-obras { grid-template-columns: repeat(2, minmax(0, 1fr)); }

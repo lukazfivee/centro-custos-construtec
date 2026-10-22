@@ -29,6 +29,22 @@
       ${U.tabela({ colunas: [{ rotulo: 'Emissão' }, { rotulo: 'Número' }, { rotulo: 'Valor', num: true }, { rotulo: 'Status' }, { rotulo: '', num: true }], linhas, vazio: 'Nenhuma nota lançada.' })}</section>`;
   }
 
+  // Area de soltar do PDF (a mesma dos documentos do lancamento): clique, Enter ou arrastar.
+  function ligarZona(ctl) {
+    const zona = CC.$('[data-zona-nf]', ctl.corpo);
+    const input = CC.$('input', zona);
+    const mostrar = () => {
+      const a = input.files[0];
+      CC.$('[data-nf-nome]', zona).textContent = a ? a.name : 'PDF da nota (opcional)';
+      CC.$('[data-nf-sub]', zona).textContent = a ? `${Math.max(1, Math.round(a.size / 1024)).toLocaleString('pt-BR')} KB · clique para trocar` : 'Arraste ou clique para escolher · até 5 MB';
+    };
+    input.addEventListener('change', mostrar);
+    zona.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); input.click(); } });
+    zona.addEventListener('dragover', (e) => { e.preventDefault(); zona.classList.add('sobre'); });
+    zona.addEventListener('dragleave', () => zona.classList.remove('sobre'));
+    zona.addEventListener('drop', (e) => { e.preventDefault(); zona.classList.remove('sobre'); if (e.dataTransfer.files[0]) { input.files = e.dataTransfer.files; mostrar(); } });
+  }
+
   async function lancar(obra, tipo, aoSalvar) {
     let enviando = false;
     const ctl = await D.painel.abrir({
@@ -36,11 +52,14 @@
       corpo: `<form class="form-lanc" novalidate>
         ${U.campo({ rotulo: 'Número / observação', name: 'observacao', placeholder: 'Ex.: NF 18.442' })}
         <div class="duas">${U.campo({ rotulo: 'Emissão', name: 'dataEmissao', tipo: 'date', valor: CC.today() })}${U.campo({ rotulo: 'Valor (R$)', name: 'valor', placeholder: '0,00' })}</div>
-        <label class="check"><input type="checkbox" name="paga"> ${tipo === 'cliente' ? 'Já recebida' : 'Já paga'}</label>
-        <label class="fld"><span>PDF da nota (opcional, até 5 MB)</span><input class="inp" type="file" name="arquivo" accept="application/pdf,.pdf"></label></form>`,
+        ${D.cad.troca({ titulo: tipo === 'cliente' ? 'Já recebida' : 'Já paga', ligado: false })}
+        <label class="soltar pdf" data-zona-nf tabindex="0">${D.ic('file-pdf', 22)}<b data-nf-nome>PDF da nota (opcional)</b><span class="muted" data-nf-sub>Arraste ou clique para escolher · até 5 MB</span>
+          <input type="file" name="arquivo" accept="application/pdf,.pdf" hidden></label></form>`,
       rodape: `<button type="button" class="btn btn-s" data-fechar>Cancelar</button><button type="button" class="btn btn-p" data-salvar>${D.ic('check')}Lançar NF</button>`,
     });
     if (!ctl) return;
+    const paga = D.cad.ligarTroca(ctl.corpo, ctl);
+    ligarZona(ctl);
     CC.$('[data-salvar]', ctl.rodape).addEventListener('click', async () => {
       if (enviando) return;
       const c = ctl.corpo;
@@ -55,7 +74,7 @@
       enviando = true;
       try {
         const arquivo = CC.$('[name="arquivo"]', c).files[0];
-        const body = { tipo, status: CC.$('[name="paga"]', c).checked ? 'paga' : 'nao_paga', dataEmissao: data, valor, observacao: CC.$('[name="observacao"]', c).value.trim() };
+        const body = { tipo, status: paga() ? 'paga' : 'nao_paga', dataEmissao: data, valor, observacao: CC.$('[name="observacao"]', c).value.trim() };
         if (arquivo) Object.assign(body, { nome: arquivo.name, conteudoBase64: await lerBase64(arquivo) });
         await CC.api(`/centros-custo/${obra.id}/notas-fiscais`, { method: 'POST', body });
         ctl.marcarSalvo();

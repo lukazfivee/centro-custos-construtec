@@ -20,17 +20,17 @@
       <div class="duas">${U.campo({ rotulo: 'Valor contratado (R$)', name: 'valor_contrato', valor: valorBr(o.valor_contrato), placeholder: '0,00' })}
         ${U.campo({ rotulo: 'Orçamento mensal (R$)', name: 'orcamento', valor: valorBr(o.orcamento), placeholder: '0,00', ajuda: 'Usado na barra realizado × orçado do Início' })}</div>
       ${U.campo({ rotulo: 'Descrição / escopo', name: 'descricao', tipo: 'textarea', valor: o.descricao, placeholder: 'Opcional' })}
-      ${o.id ? `<label class="check"><input type="checkbox" name="ativo"${o.ativo !== false ? ' checked' : ''}> Obra ativa (inativas somem das listas de lançamento)</label>` : ''}
+      ${o.id ? D.cad.troca({ titulo: 'Obra ativa', texto: 'Inativas somem das listas de lançamento.', ligado: o.ativo !== false }) : ''}
     </form>`;
   }
 
   function ler(corpo) {
     const v = (n) => (CC.$(`[name="${n}"]`, corpo) || {}).value || '';
-    const ativo = CC.$('[name="ativo"]', corpo);
+    const ativo = CC.$('[data-troca]', corpo);
     return {
       tipo: v('tipo') === 'servico' ? 'servico' : 'obra', codigo: v('codigo').trim(), nome: v('nome').trim(), situacao: v('situacao'), cliente: v('cliente').trim(), contrato: v('contrato').trim(),
       responsavel: v('responsavel').trim(), data_inicio: v('data_inicio'), data_fim: v('data_fim'),
-      valor_contrato: v('valor_contrato'), orcamento: v('orcamento'), descricao: v('descricao').trim(), ativo: ativo ? ativo.checked : true,
+      valor_contrato: v('valor_contrato'), orcamento: v('orcamento'), descricao: v('descricao').trim(), ativo: ativo ? ativo.getAttribute('aria-checked') === 'true' : true,
     };
   }
 
@@ -57,6 +57,7 @@
       rodape: `<button type="button" class="btn btn-s" data-fechar>Cancelar</button><button type="button" class="btn btn-p" data-salvar>${D.ic('check')}${edita ? 'Salvar alterações' : (servico ? 'Criar serviço' : 'Criar obra')}</button>`,
     });
     if (!ctl) return;
+    if (edita) D.cad.ligarTroca(ctl.corpo, ctl);
     const salvar = async () => {
       if (enviando) return;
       const d = ler(ctl.corpo);

@@ -15,7 +15,7 @@
 .cfg-foto input[type="file"] { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
 .cfg-link { border: 0; background: none; padding: 6px 4px; color: var(--color-accent-300); font: 600 calc(13px * var(--fs, 1)) var(--font-body); cursor: pointer; }
 .cfg-link:hover { text-decoration: underline; }
-.cfg-link:focus-visible { outline: 2px solid var(--color-accent-300); outline-offset: 2px; border-radius: 6px; }
+.cfg-link:focus-visible { outline: 2px solid var(--color-accent-300); outline-offset: 2px; border-radius: 5px; }
 .fld .inp[readonly] { background: var(--color-bg); color: var(--color-neutral-300); cursor: default; }
 
 /* Barra de forca da senha */

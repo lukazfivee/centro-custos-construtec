@@ -21,7 +21,7 @@
 .ck-item { display: grid; grid-template-columns: 34px minmax(0, 1fr) auto; gap: 12px; align-items: start; padding: 12px 0; border-top: 1px solid var(--color-divider); }
 .ck-item .dois-tx b { font-size: calc(13.5px * var(--fs, 1)); font-weight: 600; }
 .ck-item .dois-tx span { font-size: calc(12px * var(--fs, 1)); color: var(--color-neutral-300); text-wrap: pretty; }
-.ck-ic { width: 32px; height: 32px; border-radius: 9px; display: grid; place-items: center; background: var(--c-muted-soft); color: var(--c-muted); }
+.ck-ic { width: 32px; height: 32px; border-radius: 10px; display: grid; place-items: center; background: var(--c-muted-soft); color: var(--c-muted); }
 .ck-ic .ph { font-size: calc(17px * var(--fs, 1)); }
 .ck-ic.warn { background: var(--c-warn-soft); color: var(--c-warn); }
 .ck-ic.ok { background: var(--c-ok-soft); color: var(--c-ok); }

@@ -51,7 +51,7 @@
 .usu-matriz th.usu-mx b { display: block; font-size: calc(11.5px * var(--fs, 1)); }
 .usu-matriz th.usu-mx span { display: block; font-size: calc(11.5px * var(--fs, 1)); font-weight: 400; text-transform: none; letter-spacing: 0; }
 .usu-grp th { height: 36px; background: var(--color-bg); font-size: calc(11.5px * var(--fs, 1)); color: var(--color-neutral-300); }
-.usu-tk { display: inline-grid; place-items: center; width: 34px; height: 34px; border: 0; border-radius: 9px; background: transparent; color: var(--color-neutral-300); font: inherit; cursor: pointer; }
+.usu-tk { display: inline-grid; place-items: center; width: 34px; height: 34px; border: 0; border-radius: 10px; background: transparent; color: var(--color-neutral-300); font: inherit; cursor: pointer; }
 .usu-tk.on { background: var(--color-brand); color: var(--on-brand); }
 .usu-tk.trava { background: var(--color-neutral-800); cursor: not-allowed; }
 .usu-tk:disabled { cursor: not-allowed; opacity: .6; }

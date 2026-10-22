@@ -32,6 +32,9 @@
   --c-ok-soft: #e3f6ec;
   --c-err: #b8452c;
   --c-err-soft: #fdecea;
+  /* Botao de perigo: vermelho forte com texto branco nos dois temas. */
+  --c-err-forte: #b8452c;
+  --c-err-forte-hover: #9a3822;
   --c-out: #a24a12;
   --c-out-soft: #fdf0e6;
   --c-muted-soft: #eef1f3;

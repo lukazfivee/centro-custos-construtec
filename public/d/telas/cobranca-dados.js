@@ -38,7 +38,7 @@
       campo.value = [...emails].join(', ');
     });
     if (o.foco) { const f = CC.$(`[name="${o.foco}"]`, corpo); if (f) f.focus(); }
-    CC.$('[data-voltar]', ctl.rodape).addEventListener('click', async () => { if (ctl.sujo && !(await D.confirmar({ titulo: 'Descartar as alterações?', texto: 'O que você mudou ainda não foi salvo.', ok: 'Descartar', cancelar: 'Continuar editando', tom: 'aviso', icone: 'warning' }))) return; ctl.marcarSalvo(); voltar(); });
+    CC.$('[data-voltar]', ctl.rodape).addEventListener('click', async () => { if (ctl.sujo && !(await D.confirmar({ titulo: 'Descartar as alterações?', texto: 'O que você mudou ainda não foi salvo.', ok: 'Descartar', cancelar: 'Continuar editando', tom: 'perigo', icone: 'warning' }))) return; ctl.marcarSalvo(); voltar(); });
     let enviando = false;
     CC.$('[data-salvar-dados]', ctl.rodape).addEventListener('click', async () => {
       if (enviando) return;

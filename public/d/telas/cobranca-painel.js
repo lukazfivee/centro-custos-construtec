@@ -90,7 +90,7 @@
       abas: [{ id: 'acompanhar', rotulo: 'Acompanhamento' }, { id: 'email', rotulo: 'E-mail ao cliente' }], aba: aba === 'email' ? 'email' : 'acompanhar',
       corpo: '', aoTrocarAba: async (id) => {
         if (id === atualAba) return;
-        if (ctl.sujo && !(await D.confirmar({ titulo: 'Descartar as alterações?', texto: 'O que você mudou ainda não foi salvo.', ok: 'Descartar', cancelar: 'Continuar editando', tom: 'aviso', icone: 'warning' }))) {
+        if (ctl.sujo && !(await D.confirmar({ titulo: 'Descartar as alterações?', texto: 'O que você mudou ainda não foi salvo.', ok: 'Descartar', cancelar: 'Continuar editando', tom: 'perigo', icone: 'warning' }))) {
           CC.$$('[data-aba]', ctl.raiz).forEach((b) => b.setAttribute('aria-selected', b.dataset.aba === atualAba ? 'true' : 'false'));
           return;
         }

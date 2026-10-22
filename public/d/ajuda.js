@@ -36,7 +36,7 @@
   ];
   const perfis = () => `<div class="aj-sec">
     ${PAPEIS.map(([ic, nome, texto]) => `<div class="aj-cartao"><div class="aj-selo">${D.ic(ic, 18)} ${esc(nome)}</div><p>${esc(texto)}</p></div>`).join('')}
-    <p class="aj-desc">É o padrão de cada perfil; o administrador pode ajustar as permissões em <b>Usuários</b>. Menus e botões sem permissão não aparecem. Cada pessoa deve usar o próprio usuário.</p>
+    <p class="aj-desc">É o padrão de cada perfil. Em contas corporativas, o administrador ajusta as permissões em <b>Usuários</b>; no aplicativo local essa matriz é só de consulta. Menus e botões sem permissão não aparecem. Cada pessoa deve usar o próprio usuário.</p>
   </div>`;
 
   const sobre = () => {

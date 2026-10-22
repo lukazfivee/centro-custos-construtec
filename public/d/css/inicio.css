@@ -37,8 +37,12 @@
 .linha-rec .v { font-size: calc(13px * var(--fs, 1)); font-weight: 600; white-space: nowrap; }
 .linha-rec .v.entrada { color: var(--c-ok); }
 
-.lista-obras { display: flex; flex-direction: column; }
-.linha-obra { display: grid; grid-template-columns: minmax(0, 1fr) 200px max-content; align-items: center; gap: 18px; padding: 10px 6px; border-top: 1px solid var(--color-divider); color: var(--color-text); text-decoration: none; }
+/* Uma grade so para todas as linhas (subgrid): a barra comeca no mesmo x em todas (CC-17). */
+.lista-obras { display: grid; grid-template-columns: minmax(0, 1fr) minmax(calc(200px * var(--fs, 1)), max-content) max-content; column-gap: 18px; }
+.lista-obras > .vazio-tela { grid-column: 1 / -1; }
+.linha-obra { grid-column: 1 / -1; display: grid; grid-template-columns: subgrid; align-items: center; padding: 10px 6px; border-top: 1px solid var(--color-divider); color: var(--color-text); text-decoration: none; }
+.linha-obra .num { justify-self: end; text-align: right; }
+.linha-obra .pct { white-space: nowrap; }
 .linha-obra:hover { background: var(--color-accent-900); }
 .linha-obra .tx { display: flex; flex-direction: column; min-width: 0; }
 .linha-obra .tx b { font-size: calc(13.5px * var(--fs, 1)); font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -86,7 +90,7 @@
 
 @media (max-width: 1379px) {
   .pu-passos { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-  .linha-obra { grid-template-columns: minmax(0, 1fr) 130px max-content; gap: 12px; }
+  .lista-obras { grid-template-columns: minmax(0, 1fr) minmax(calc(130px * var(--fs, 1)), max-content) max-content; column-gap: 12px; }
 }
 /* C5: seis indicadores no desktop com escala; conteudo longo quebra sem corte. */
 .inicio .cab { flex-wrap: wrap; }

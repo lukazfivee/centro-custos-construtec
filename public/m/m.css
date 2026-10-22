@@ -312,7 +312,7 @@ body.no-tabs .tabs { display: none; }
 /* Detalhe da obra: abas em fila que rola, orcado x realizado e notas fiscais (screen-obra-abas.js). */
 .obra-abas { margin: 0 -20px; }
 .empty small { display: block; max-width: 300px; font-size: 12px; }
-.warn-txt { color: var(--warn); }
+.warn-txt { color: var(--warn); } .err-txt { color: var(--danger-ink); }
 .orc-itens { display: flex; flex-direction: column; }
 .orc-item { display: flex; flex-direction: column; gap: 6px; padding: 12px 0; border-top: 1px solid var(--divider); }
 .orc-item .line { display: flex; align-items: center; gap: 8px; } .orc-item .line b { flex: 1; min-width: 0; font-size: 13.5px; }

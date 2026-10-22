@@ -103,7 +103,7 @@
       <div class="card"><span class="label">Despesas por categoria</span>${categorias(r.porCategoria)}</div>
       <div class="card hp-rec-card"><span class="line hp-head"><span class="label">Atividades recentes</span>
         <button class="chip-act" type="button" id="hp-todos">Ver todos${icon('arrow-right', 14)}</button></span>
-        ${recentes.length ? recentes.map((t) => CC.txRow(t, [t.centro_nome, CC.dateBr(t.data)].filter(Boolean).join(' · '))).join('') : '<p class="sub mt-vazio">Nenhum lançamento neste mês.</p>'}</div>`;
+        ${recentes.length ? recentes.map((t) => CC.txRow(t, [t.centro_nome, CC.dateBr(t.data)].filter(Boolean).join(' · '), true)).join('') : '<p class="sub mt-vazio">Nenhum lançamento neste mês.</p>'}</div>`;
     ligar();
     CC.$('#hp-todos', slot).addEventListener('click', () => CC.go('lancamentos', { mes: filtro.mes }));
     CC.wireTx(slot, ['home']);

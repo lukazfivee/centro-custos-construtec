@@ -11,6 +11,12 @@
   F.podeCobrancas = () => F.corporativo() && F.can('p6');
   F.podeCadastrar = () => F.can('p5');
   F.plural = (n, um, varios) => `${n} ${n === 1 ? um : varios}`;
+  // Telefone so na exibicao: 10 ou 11 digitos viram (11) 3333-4444 / (11) 98765-4321 (igual ao desktop, C.fone).
+  F.fone = (t) => {
+    const d = String(t || '').replace(/[^0-9]/g, '');
+    if ((d.length !== 10 && d.length !== 11) || d.startsWith('0')) return t || '';
+    return `(${d.slice(0, 2)}) ${d.slice(2, d.length - 4)}-${d.slice(-4)}`;
+  };
   F.valorBr = (n) => (Number(n) ? Number(n).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '');
   F.mesCurto = (mes) => new Date(`${mes}-15T12:00:00`).toLocaleDateString('pt-BR', { month: 'long' });
 

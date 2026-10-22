@@ -12,14 +12,14 @@
     const ind = B.indicadores(itens);
     return `<div class="card fin-kpi"><span class="label">A receber</span><b class="big">${esc(money(B.reais(ind.aReceber)))}</b>
       <div class="fin-kpi3"><span><small>Pagas</small><b>${esc(money(B.reais(ind.finalizadas)))}</b><small>${esc(F.plural(ind.qtdPagas, 'cobrança', 'cobranças'))}</small></span>
-        <span><small>Aguardando</small><b>${esc(money(B.reais(ind.aguardando)))}</b><small>${ind.venceramEntre ? esc(`${ind.venceramEntre} vencida(s)`) : 'nenhuma vencida'}</small></span>
+        <span><small>Aguardando</small><b>${esc(money(B.reais(ind.aguardando)))}</b><small>${ind.venceramEntre ? esc(F.plural(ind.venceramEntre, 'vencida', 'vencidas')) : 'nenhuma vencida'}</small></span>
         <span><small>Pendentes</small><b class="${ind.pendentes ? 'warn-txt' : ''}">${esc(String(ind.pendentes))}</b><small>NF ou envio</small></span></div></div>`;
   }
 
   const linha = (i) => `<button type="button" class="row fin-row" data-cob="${esc(i.publicId)}">
     <span class="line"><span class="grow name">${esc(i.name)}</span>${B.tag(i)}</span>
     <span class="cli">${esc([i.code, B.cliente(i)].filter(Boolean).join(' · '))}</span>
-    <span class="line foot"><span class="grow">${esc(i.invoiceNumber ? `NF ${i.invoiceNumber}` : 'Sem NF')}${i.dueDate ? ` · <span class="${B.vencida(i) ? 'warn-txt' : ''}">vence ${esc(CC.dateFull(i.dueDate))}</span>` : ''}</span>
+    <span class="line foot"><span class="grow">${esc(i.invoiceNumber ? (/^NF\b/i.test(String(i.invoiceNumber).trim()) ? i.invoiceNumber : `NF ${i.invoiceNumber}`) : 'Sem NF')}${i.dueDate ? ` · <span class="${B.vencida(i) ? 'err-txt' : ''}">vence ${esc(CC.dateFull(i.dueDate))}</span>` : ''}</span>
       <b class="fin-val">${esc(money(i.receivableAmount))}</b></span></button>`;
 
   const linhaExcluida = (i) => `<div class="row fin-row">

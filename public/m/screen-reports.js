@@ -6,7 +6,7 @@
   const A = CC.adm;
   const R = CC.rep = CC.rep || {};
   const FILTROS = [['todos', 'Todos'], ['entregues', 'Entregues'], ['fila', 'Na fila'], ['falharam', 'Falharam']];
-  R.TIPOS = { bug: ['Erro', 'bug'], sugestao: ['Sugestão', 'sparkle'], melhoria: ['Melhoria', 'sparkle'], duvida: ['Dúvida', 'info'] };
+  R.TIPOS = { bug: ['Erro', 'bug'], sugestao: ['Sugestão', 'lightbulb'], melhoria: ['Melhoria', 'lightbulb'], duvida: ['Dúvida', 'info'] };
   R.tipo = (v) => R.TIPOS[v] || ['Outro', 'info'];
   R.mes = (iso) => { const d = new Date(iso); return Number.isNaN(d.getTime()) ? '' : d.toLocaleDateString('sv-SE', { timeZone: 'America/Sao_Paulo' }).slice(0, 7); };
   const curto = (t, n) => (String(t || '').length > n ? `${String(t).slice(0, n - 1).trim()}…` : String(t || ''));

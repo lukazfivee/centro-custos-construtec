@@ -39,10 +39,10 @@
     const ia = CC.ia && CC.ia.ready && CC.ia.ready();
     const el = CC.render(`${A.top('Novo report', 'Vai para a equipe do sistema')}
       <label class="field"><span>Título</span><input id="rn-titulo" maxlength="200" autocomplete="off" placeholder="Ex.: Botão de anexar NF não responde"></label>
-      <div><span class="label">Tipo</span><div class="seg" role="group" aria-label="Tipo">${TIPOS.map(([k, l]) => `<button type="button" data-tipo="${k}" aria-pressed="${k === 'bug'}">${l}</button>`).join('')}</div></div>
+      <div class="field"><span>Tipo</span><div class="seg" role="group" aria-label="Tipo">${TIPOS.map(([k, l]) => `<button type="button" data-tipo="${k}" aria-pressed="${k === 'bug'}">${l}</button>`).join('')}</div></div>
       <label class="field"><span>Onde aconteceu</span><select id="rn-tela">${telas().map((t) => `<option${t === ultima ? ' selected' : ''}>${esc(t)}</option>`).join('')}</select></label>
       <label class="field"><span>O que aconteceu</span><textarea id="rn-desc" rows="5" maxlength="10000" placeholder="Conte o que você fez, o que esperava e o que viu."></textarea></label>
-      <label class="menu-item pref"><span>Incluir diagnóstico<small>Versão do app, navegador, conexão, tela e as últimas 20 ações. Nada de senhas ou valores.</small></span><input type="checkbox" id="rn-diag" checked></label>
+      <label class="menu-item pref"><span>Incluir diagnóstico<small>Versão do app, navegador, conexão, tela e as últimas 20 ações. Nada de senhas ou valores.</small></span><button type="button" class="adm-sw on" role="switch" aria-checked="true" aria-label="Incluir diagnóstico" id="rn-diag"><span></span></button></label>
       <div class="card"><div class="photo"><span class="thumb" id="rn-thumb">${icon('image', 22)}</span>
         <span class="grow"><b>Print (opcional)</b><small class="muted" id="rn-print-txt" style="display:block">Ajuda a equipe a ver o problema</small></span></div>
         <input type="file" id="rn-arquivo" accept="image/png,image/jpeg,image/webp,image/gif" hidden>
@@ -61,6 +61,8 @@
       th.style.backgroundImage = print ? `url(data:${print.tipo};base64,${print.dados})` : '';
       th.innerHTML = print ? '' : icon('image', 22);
     };
+    const diag = CC.$('#rn-diag', el);
+    diag.addEventListener('click', () => { const on = diag.getAttribute('aria-checked') !== 'true'; diag.setAttribute('aria-checked', String(on)); diag.classList.toggle('on', on); });
     CC.$('#rn-escolher', el).addEventListener('click', () => CC.$('#rn-arquivo', el).click());
     CC.$('#rn-tirar', el).addEventListener('click', () => { print = null; mostrar(); });
     CC.$('#rn-arquivo', el).addEventListener('change', async (event) => {
@@ -84,7 +86,7 @@
       const tipo = CC.$('[data-tipo][aria-pressed="true"]', el).dataset.tipo;
       const body = {
         titulo, descricao, tipo, tela: CC.$('#rn-tela', el).value, client_id: clientId,
-        diagnostico: CC.$('#rn-diag', el).checked ? A.diag() : null,
+        diagnostico: CC.$('#rn-diag', el).getAttribute('aria-checked') === 'true' ? A.diag() : null,
         anexo: print ? { nome: print.nome, tipo: print.tipo, dados: print.dados } : null,
       };
       CC.busy(enviar, 'Enviando…');

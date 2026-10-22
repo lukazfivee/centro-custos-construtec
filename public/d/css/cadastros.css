@@ -16,7 +16,7 @@
 
 /* Categorias: bolinha de cor e paleta do painel. */
 .cat-nome { display: flex; align-items: flex-start; gap: 10px; min-width: 0; }
-.cat-nome .cor { flex: none; width: 10px; height: 10px; margin-top: 5px; border-radius: 3px; background: var(--color-field); }
+.cat-nome .cor { flex: none; width: 10px; height: 10px; margin-top: 5px; border-radius: 50%; background: var(--color-field); }
 .paleta { display: flex; gap: 8px; flex-wrap: wrap; }
 .paleta button { width: 32px; height: 32px; border: 0; border-radius: 9px; cursor: pointer; transition: transform .12s ease, box-shadow .12s ease; }
 .paleta button:hover { transform: scale(1.06); }

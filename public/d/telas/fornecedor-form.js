@@ -12,7 +12,7 @@
       ${U.campo({ rotulo: 'Nome ou razão social', name: 'nome', valor: f.nome, placeholder: 'Ex.: Seg Distribuidora' })}
       <div class="duas">${U.campo({ rotulo: 'CPF ou CNPJ', name: 'documento', valor: f.documento, placeholder: '00.000.000/0000-00' })}
         ${U.campo({ rotulo: 'Categoria mais comum', name: 'categoria_id', tipo: 'select', valor: f.categoria_id || '', opcoes })}</div>
-      <div class="duas">${U.campo({ rotulo: 'Contato', name: 'contato', valor: f.contato })}${U.campo({ rotulo: 'Telefone', name: 'telefone', valor: f.telefone, placeholder: '(11) 90000-0000' })}</div>
+      <div class="duas">${U.campo({ rotulo: 'Contato', name: 'contato', valor: f.contato })}${U.campo({ rotulo: 'Telefone', name: 'telefone', valor: C.fone(f.telefone), placeholder: '(11) 90000-0000' })}</div>
       ${U.campo({ rotulo: 'E-mail', name: 'email', tipo: 'email', valor: f.email })}
       ${f.id ? C.troca({ titulo: 'Fornecedor ativo', ligado: f.ativo !== false }) : ''}
       ${f.id ? '<div class="mes-lista" data-mes></div>' : ''}

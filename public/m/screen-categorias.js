@@ -14,7 +14,7 @@
 
   const linha = (c, pode) => `<button type="button" class="row fin-row" data-cat="${esc(c.id)}"${pode ? '' : ' disabled'}>
     <span class="line"><span class="fin-cor" style="${corOk(c.cor) ? `background:${corOk(c.cor)}` : ''}"></span><span class="grow name">${esc(c.nome)}</span>
-      <span class="tag${c.ativo === false ? '' : ' fin-ok'}">${c.ativo === false ? 'Inativa' : esc(nomeTipo(c.tipo))}</span></span>
+      <span class="tag${c.ativo === false ? '' : ({ despesa: ' fin-warn', receita: ' fin-ok' }[c.tipo] || '')}">${c.ativo === false ? 'Inativa' : esc(nomeTipo(c.tipo))}</span></span>
     ${c.descricao ? `<span class="cli">${esc(c.descricao)}</span>` : ''}
     <span class="line foot"><span class="grow">${esc(F.plural(Number(c.lancamentos_mes) || 0, 'lançamento no mês', 'lançamentos no mês'))}</span>
       <b class="fin-val">${esc(Number(c.total_mes) ? money(c.total_mes) : '—')}</b></span></button>`;

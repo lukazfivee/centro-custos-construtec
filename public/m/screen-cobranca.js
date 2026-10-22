@@ -26,7 +26,7 @@
     const mais = pode ? `<button class="back" type="button" id="cob-mais" aria-label="Mais ações" aria-haspopup="dialog">${icon('dots-three', 22)}</button>` : '';
     const page = CC.render(`${F.top(item.name, [item.code, B.cliente(item)].filter(Boolean).join(' · '), mais)}
       <div class="grid2"><div class="card"><span class="label">Valor</span><b class="fin-num">${esc(money(item.receivableAmount))}</b></div>
-        <div class="card"><span class="label">Vencimento</span><b class="fin-num${venc ? ' warn-txt' : ''}">${esc(CC.dateFull(item.dueDate) || '—')}</b></div></div>
+        <div class="card"><span class="label">Vencimento</span><b class="fin-num${venc ? ' err-txt' : ''}">${esc(CC.dateFull(item.dueDate) || '—')}</b></div></div>
       <div class="card">${linha('Situação', B.textoFin(item))}${linha('Obra', B.textoOp(item))}${linha('Cliente', B.cliente(item) || '—')}
         ${linha('Contato financeiro', (item.clientEmails || []).join(', ') || '—')}${linha('Responsável', item.responsible || '—')}
         ${linha('Conclusão', CC.dateFull(item.completionDate) || '—')}${linha('Nota fiscal', item.invoiceNumber || 'Ainda não emitida')}

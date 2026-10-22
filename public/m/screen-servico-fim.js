@@ -143,7 +143,7 @@
       <iframe class="sv-rel" id="sv-rel" title="Relatório do serviço"></iframe>
       <div class="sv-note">${icon('eye-slash', 16)}<span>Sem custos internos: gastos, resultado e margem não entram no relatório. O cliente vê o que foi feito, as fotos e o valor.</span></div>
       <div class="actions"><button class="btn2" type="button" id="r-share">${icon('share-network', 18)}Compartilhar</button>
-        <button class="btn" type="button" id="r-print">${icon('printer', 18)}Imprimir ou PDF</button></div>`, true, params);
+        <button class="btn" type="button" id="r-print">${icon('printer', 18)}Imprimir</button></div>`, true, params);
     document.body.classList.add('no-tabs');
     CC.$('#voltar', page).addEventListener('click', () => CC.go('servico', { id }));
     // srcdoc depois de a tela estar montada: o quadro pinta na hora (blob ficava branco ate imprimir).
@@ -161,7 +161,7 @@
       if (navigator.canShare && navigator.canShare({ files: [file] })) {
         try { await navigator.share({ files: [file], title: 'Relatório do serviço' }); } catch { /* cancelado */ }
       } else {
-        CC.toast('Use Imprimir ou PDF e salve o arquivo para enviar', 'file-text');
+        CC.toast('Use Imprimir e salve como PDF para enviar', 'file-text');
       }
     });
   };

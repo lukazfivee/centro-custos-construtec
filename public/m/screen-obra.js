@@ -10,14 +10,16 @@
     return t.tipo === 'receita' ? v : -v;
   }
 
-  CC.txRow = function (t, extra) {
+  // porDescricao: titulo = descricao (como as Atividades recentes do desktop); sem ele, favorecido primeiro.
+  CC.txRow = function (t, extra, porDescricao) {
     const value = amountOf(t);
-    const state = t.situacao === 'vencido' ? '<span class="state">Vencida</span>'
+    const state = t.situacao === 'vencido' ? '<span class="state err">Vencida</span>'
       : (t.status_financeiro === 'pendente' ? `<small>${t.tipo === 'receita' ? 'A receber' : 'A pagar'}${t.vencimento ? ` · vence ${esc(CC.dateBr(t.vencimento))}` : ''}</small>` : '');
     const estorno = t.estorno_de ? '<small class="state">Estorno</small>' : (t.estornado || t.reversed_at ? '<small>Estornado</small>' : '');
     // Lancamento do servidor (tem id) abre o detalhe; o que ainda esta na fila do celular nao.
     const [open, close] = t.id ? [`<button class="tx tx-btn" type="button" data-tx="${Number(t.id)}">`, '</button>'] : ['<div class="tx">', '</div>'];
-    return `${open}<span class="grow"><b>${esc(t.favorecido || t.descricao)}</b><small>${esc(t.favorecido ? t.descricao : (t.categoria || ''))}${extra ? ` · ${esc(extra)}` : ''}</small>${state}${estorno}</span>
+    const [titulo, apoio] = porDescricao ? [t.descricao || t.favorecido, t.descricao ? t.favorecido : ''] : [t.favorecido || t.descricao, t.favorecido ? t.descricao : (t.categoria || '')];
+    return `${open}<span class="grow"><b>${esc(titulo)}</b><small>${esc([apoio, extra].filter(Boolean).join(' · '))}</small>${state}${estorno}</span>
       <span class="amt${value > 0 ? ' in' : ''}">${esc(CC.signed(value))}</span>${close}`;
   };
   // Liga o toque nas linhas de lancamento da tela (scope) ao detalhe; from = para onde o Voltar leva.
@@ -94,14 +96,14 @@
     const body = tab === 'resumo' ? resumo(c, list)
       : (tab === 'caixa' ? caixa(list)
         : (ABAS[tab] ? '<div id="obra-aba"></div>'
-          : (list.length || queued ? `${queued}${byDate(list)}` : `<div class="empty">${icon('receipt', 28)}Nenhum lançamento nesta obra ainda.</div>`)));
+          : (list.length || queued ? `<div class="rows">${queued}${byDate(list)}</div>` : `<div class="empty">${icon('receipt', 28)}Nenhum lançamento nesta obra ainda.</div>`)));
     CC.render(`<div class="top obra-top"><button class="back" type="button" id="voltar" aria-label="Voltar">${icon('caret-left', 20)}</button>
         <span class="grow"><h1>${esc(c.nome)}</h1><small class="muted">${esc([c.cliente, c.codigo].filter(Boolean).join(' · '))}</small></span>
         ${CC.obraMenu ? `<button class="back" type="button" id="obra-mais" aria-label="Mais ações da obra" aria-haspopup="dialog">${icon('dots-three', 22)}</button>` : ''}${CC.bellBtn ? CC.bellBtn() : ''}${CC.suitePill()}</div>
       ${CC.staleNote(result)}
       <div class="chips obra-abas" role="group" aria-label="Seções da obra">${TABS.map(([k, label]) => `<button class="chip-act" type="button" data-tab="${k}" aria-pressed="${k === tab}">${label}</button>`).join('')}</div>
       ${body}
-      ${CC.sv && CC.sv.can('p5') ? '<div id="obra-tecnicos"></div>' : ''}
+      ${tab === 'resumo' && CC.sv && CC.sv.can('p5') ? '<div id="obra-tecnicos"></div>' : ''}
       <div class="actions"><button class="btn" type="button" id="lancar">${icon('camera', 18)}Lançar despesa</button></div>`, true, params);
     CC.$('#voltar').addEventListener('click', () => CC.go('obras'));
     CC.$$('[data-tab]').forEach((b) => b.addEventListener('click', () => CC.screens.obra({ id, tab: b.dataset.tab })));
@@ -113,6 +115,6 @@
     const mais = CC.$('#obra-mais');
     if (mais) mais.addEventListener('click', () => CC.obraMenu(c));
     CC.$('#lancar').addEventListener('click', () => CC.go('lancar', { obraId: id, from: ['obra', { id, tab: 'lanc' }] }));
-    if (CC.sv && CC.sv.can('p5') && CC.tecnicos) CC.tecnicos.panel(CC.$('#obra-tecnicos'), id);
+    if (CC.$('#obra-tecnicos') && CC.tecnicos) CC.tecnicos.panel(CC.$('#obra-tecnicos'), id);
   };
 })(window.CC = window.CC || {});

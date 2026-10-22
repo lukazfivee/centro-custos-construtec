@@ -26,7 +26,7 @@
     const mais = pode ? `<button class="back" type="button" id="cob-mais" aria-label="Mais ações" aria-haspopup="dialog">${icon('dots-three', 22)}</button>` : '';
     const page = CC.render(`${F.top(item.name, [item.code, B.cliente(item)].filter(Boolean).join(' · '), mais)}
       <div class="grid2"><div class="card"><span class="label">Valor</span><b class="fin-num">${esc(money(item.receivableAmount))}</b></div>
-        <div class="card"><span class="label">Vencimento</span><b class="fin-num${venc ? ' warn-txt' : ''}">${esc(CC.dateFull(item.dueDate) || '—')}</b></div></div>
+        <div class="card"><span class="label">Vencimento</span><b class="fin-num${venc ? ' err-txt' : ''}">${esc(CC.dateFull(item.dueDate) || '—')}</b></div></div>
       <div class="card">${linha('Situação', B.textoFin(item))}${linha('Obra', B.textoOp(item))}${linha('Cliente', B.cliente(item) || '—')}
         ${linha('Contato financeiro', (item.clientEmails || []).join(', ') || '—')}${linha('Responsável', item.responsible || '—')}
         ${linha('Conclusão', CC.dateFull(item.completionDate) || '—')}${linha('Nota fiscal', item.invoiceNumber || 'Ainda não emitida')}
@@ -36,7 +36,7 @@
       <div class="card fin-prox"><span class="label">Próximo passo</span><b>${esc(prox.texto)}</b>
         ${pode && prox.acao ? `<button class="btn" type="button" id="cob-prox">${icon(prox.icone, 18)}${esc(prox.rotulo)}</button>` : ''}</div>
       <p class="alert" role="alert" id="err"></p>
-      <div class="actions"><button class="btn2" type="button" id="cob-email">${icon('envelope-simple', 18)}E-mail ao cliente</button>
+      <div class="actions"><button class="btn2" type="button" id="cob-email">${icon('envelope-simple', 18)}E-mail</button>
         ${pode ? `<button class="btn2" type="button" id="cob-dados">${icon('pencil-simple', 18)}Editar dados</button>` : ''}</div>`, true, params);
     document.body.classList.add('no-tabs');
     F.voltar(page, voltar);

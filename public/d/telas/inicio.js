@@ -25,12 +25,12 @@
     const res = Number(r.saldo) || 0;
     const qv = Number(r.qtdVencidos) || 0;
     return [
-      k({ rotulo: 'Recebido', valor: CC.money(r.receitas), det: `${r.qtdRecebidos || 0} recebimento(s) no mês`, icone: 'arrow-down-left', tom: 'ok' }),
+      k({ rotulo: 'Recebido', valor: CC.money(r.receitas), det: `${D.plural(r.qtdRecebidos || 0, 'recebimento', 'recebimentos')} no mês`, icone: 'arrow-down-left', tom: 'ok' }),
       k({ rotulo: 'Pago', valor: CC.money(r.despesas), det: `${r.qtdPagos || 0} despesas liquidadas`, icone: 'arrow-up-right', tom: 'saida' }),
       k({ rotulo: 'Resultado', valor: CC.money(res), det: 'recebido − pago', icone: 'scales', tom: 'info', tomValor: res < 0 ? 'err' : 'ok' }),
       k({ rotulo: 'A receber', valor: CC.money(r.aReceber), det: 'previsto em aberto', icone: 'hourglass', tom: 'info' }),
       k({ rotulo: 'A pagar', valor: CC.money(r.aPagar), det: 'contas pendentes', icone: 'calendar-blank', tom: 'warn' }),
-      k({ rotulo: 'Vencidos', valor: CC.money(r.vencidos), det: qv ? `${qv} conta(s) em atraso` : 'nenhuma pendência', icone: 'warning', tom: qv ? 'err' : 'ok', tomValor: qv ? 'err' : '' }),
+      k({ rotulo: 'Vencidos', valor: CC.money(r.vencidos), det: qv ? `${D.plural(qv, 'conta', 'contas')} em atraso` : 'nenhuma pendência', icone: 'warning', tom: qv ? 'err' : 'ok', tomValor: qv ? 'err' : '' }),
     ].join('');
   }
 
@@ -46,8 +46,8 @@
     if (!opcoesMes.includes(mes)) opcoesMes.push(mes);
     el.innerHTML = `<div class="pagina inicio">
       ${D.ui.cabecalho({ grupo: 'Visão geral', titulo: 'Painel financeiro', sub: D.mesAno(mes), acoes: `
-        <select class="inp" data-f="obra" aria-label="Filtrar por obra" style="width:260px"><option value="">Todas as obras</option></select>
-        <select class="inp" data-f="mes" aria-label="Mês" style="width:220px">${opcoesMes.map((m) => `<option value="${m}"${m === mes ? ' selected' : ''}>${esc(D.mesAno(m))}</option>`).join('')}</select>
+        <select class="inp" data-f="obra" aria-label="Filtrar por obra" style="width:calc(260px * var(--fs, 1))"><option value="">Todas as obras</option></select>
+        <select class="inp" data-f="mes" aria-label="Mês" style="width:auto;min-width:calc(220px * var(--fs, 1))">${opcoesMes.map((m) => `<option value="${m}"${m === mes ? ' selected' : ''}>${esc(D.mesAno(m))}</option>`).join('')}</select>
         <button type="button" class="btn btn-p" data-rapido>${D.ic('lightning')}Lançamento rápido</button>` })}
       <div data-pu></div>
       <div data-corpo>${D.ui.carregando('Carregando o painel…')}</div></div>`;

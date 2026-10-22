@@ -35,7 +35,7 @@
       ${F.campo('CPF ou CNPJ', 'fo-doc', d.documento, ' inputmode="numeric" maxlength="30" placeholder="00.000.000/0000-00"')}
       <label class="field"><span>Categoria mais comum</span><select id="fo-cat"><option value="">Nenhuma</option>
         ${cats.map((c) => `<option value="${esc(c.id)}"${String(c.id) === String(d.categoria_id) ? ' selected' : ''}>${esc(c.nome)}</option>`).join('')}</select></label>
-      <div class="grid2">${F.campo('Contato', 'fo-cont', d.contato, ' maxlength="120"')}${F.campo('Telefone', 'fo-tel', d.telefone, ' type="tel" maxlength="40" placeholder="(11) 90000-0000"')}</div>
+      <div class="grid2">${F.campo('Contato', 'fo-cont', d.contato, ' maxlength="120"')}${F.campo('Telefone', 'fo-tel', F.fone(d.telefone), ' type="tel" maxlength="40" placeholder="(11) 90000-0000"')}</div>
       ${F.campo('E-mail', 'fo-email', d.email, ' type="email" maxlength="180" autocapitalize="off"')}
       ${f ? F.troca('fo-ativo', 'Fornecedor ativo', '', f.ativo !== false) : ''}
       ${f ? '<div class="card" id="fo-mes"><div class="skeleton"></div></div>' : ''}

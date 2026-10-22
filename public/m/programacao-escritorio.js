@@ -40,11 +40,15 @@
     slot.__programacao = marker;
     const live = () => slot.isConnected && slot.__programacao === marker && CC.session.token() === token
       && String((CC.session.user() || {}).id || '') === owner && (!config.vivo || config.vivo()) && P.can();
-    if (!token || !P.can()) { slot.innerHTML = '<div class="pe-office"><p role="status">Sem permissão para programar equipes.</p></div>'; return; }
     let dia = config.dia || P.today();
+    // Cabecalho de cada app: o desktop usa o do ui.js, o celular a barra com Voltar. Sem config, titulo simples.
+    const SUB = 'Organize os destinos e acompanhe o andamento individual das equipes.';
+    const cabecalho = (sub) => (config.cabecalho ? config.cabecalho('Programação diária', sub)
+      : `<header class="pe-heading"><h1>Programação diária</h1>${sub ? `<p>${esc(sub)}</p>` : ''}</header>`);
     let listVersion = 0;
     let detailVersion = 0;
-    slot.innerHTML = '<div class="pe-office"><p role="status">Carregando programação…</p></div>';
+    if (!token || !P.can()) { slot.innerHTML = `<div class="pe-office">${cabecalho('')}<p role="status">Sem permissão para programar equipes.</p></div>`; return; }
+    slot.innerHTML = `<div class="pe-office">${cabecalho(SUB)}<p role="status">Carregando programação…</p></div>`;
     async function list() {
       const version = ++listVersion;
       ++detailVersion;
@@ -53,7 +57,7 @@
         if (CC.programacaoNuvem && await CC.programacaoNuvem(() => live() && version === listVersion, slot)) return;
         const { data } = await CC.api(`/programacao?dia=${encodeURIComponent(dia)}`);
         if (!live() || version !== listVersion) return;
-        slot.innerHTML = `<div class="pe-office"><header class="pe-heading"><h1>Programação diária</h1><p>Organize os destinos e acompanhe o andamento individual das equipes.</p></header>
+        slot.innerHTML = `<div class="pe-office">${cabecalho(SUB)}
           <div class="pe-toolbar"><label>Dia da programação<input type="date" required value="${esc(dia)}" data-pe-day></label>
             <button type="button" data-pe-new>Nova atividade</button><button type="button" data-pe-refresh>Atualizar</button></div>
           <p role="status" aria-live="polite" data-pe-notice></p><div data-pe-editor></div><div data-pe-details></div>
@@ -64,7 +68,7 @@
         qa('[data-pe-detail]', slot).forEach((button) => button.addEventListener('click', () => detail(button.dataset.peDetail)));
       } catch (error) {
         if (!live() || version !== listVersion) return;
-        slot.innerHTML = `<div class="pe-office"><h1>Programação diária</h1><p role="alert">${esc(P.errorText(error))}</p><button type="button" data-pe-retry>Tentar novamente</button></div>`;
+        slot.innerHTML = `<div class="pe-office">${cabecalho('')}<p role="alert">${esc(P.errorText(error))}</p><button type="button" data-pe-retry>Tentar novamente</button></div>`;
         q('[data-pe-retry]', slot).addEventListener('click', list);
       }
     }

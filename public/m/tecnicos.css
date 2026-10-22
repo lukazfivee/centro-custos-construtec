@@ -1,11 +1,18 @@
-.tc-equipe { margin-block: 16px; }
-.tc-equipe summary { cursor: pointer; padding-block: 6px; }
-.tc-equipe summary small { display: block; margin-top: 6px; overflow-wrap: anywhere; }
-.tc-equipe fieldset { min-width: 0; margin-block: 16px; padding: 8px; border: 1px solid var(--line, #888); border-radius: 8px; max-height: 280px; overflow: auto; }
-.tc-equipe legend { padding-inline: 6px; font-weight: 500; }
-.tc-equipe .tc-pessoa { display: flex; align-items: center; gap: 12px; min-height: 44px; padding: 6px; cursor: pointer; }
-.tc-pessoa input { width: 20px; height: 20px; flex-shrink: 0; accent-color: var(--ac, #238358); }
+/* Designar tecnicos (celular, aba Resumo da obra e detalhe do servico). Tokens do /m/, anel de 1 px, sem rolagem propria. */
+.tc-equipe { padding: 0; }
+.tc-equipe summary { list-style: none; display: flex; align-items: center; gap: 12px; min-height: 56px; padding: 10px 14px; cursor: pointer; }
+.tc-equipe summary::-webkit-details-marker { display: none; }
+.tc-equipe .tc-tx { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.tc-equipe .tc-tx b { font-size: 14.5px; font-weight: 600; }
+.tc-equipe .tc-tx small { font-size: 12.5px; color: var(--n300); overflow-wrap: anywhere; }
+.tc-equipe .tc-seta { color: var(--n300); transition: transform .2s cubic-bezier(.2, .8, .2, 1); }
+.tc-equipe[open] .tc-seta { transform: rotate(90deg); }
+.tc-equipe form { display: flex; flex-direction: column; gap: 12px; padding: 0 14px 14px; }
+.tc-equipe form > p { margin: 0; font-size: 13px; }
+.tc-equipe fieldset { min-width: 0; margin: 0; padding: 0 0 4px; border: 0; border-radius: 12px; box-shadow: inset 0 0 0 1px var(--divider); }
+.tc-equipe legend { float: left; width: 100%; padding: 10px 14px 4px; font-size: 12.5px; font-weight: 600; color: var(--n300); }
+.tc-equipe .tc-pessoa { clear: both; display: flex; align-items: center; gap: 12px; min-height: 44px; padding: 0 14px; cursor: pointer; }
+.tc-pessoa input { width: 20px; height: 20px; margin: 0; flex-shrink: 0; accent-color: var(--accent-300); }
 .tc-pessoa span { overflow-wrap: anywhere; }
-.tc-equipe form > .btn, .tc-equipe form > .btn2 { margin-block: 6px; }
-.tc-equipe [data-tc-status] { min-height: 1.5em; margin-block: 12px; }
+.tc-equipe [data-tc-status]:empty { display: none; }
 .tc-equipe [hidden] { display: none !important; }

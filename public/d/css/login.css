@@ -22,7 +22,7 @@
 .lg-meio > p { margin: 0; font-size: calc(15.5px * var(--fs, 1)); line-height: 1.6; color: #b9d4dd; text-wrap: pretty; }
 .lg-cards { display: flex; flex-direction: column; gap: 10px; padding-top: 6px; }
 .lg-card { display: flex; gap: 14px; align-items: flex-start; padding: 14px 16px; border-radius: 14px; background: rgba(255, 255, 255, .06); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .12); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
-.lg-card > .ph { width: 40px; height: 40px; flex: none; border-radius: 11px; display: grid; place-items: center; background: rgba(95, 208, 238, .14); color: #5fd0ee; font-size: calc(21px * var(--fs, 1)); }
+.lg-card > .ph { width: 40px; height: 40px; flex: none; border-radius: 12px; display: grid; place-items: center; background: rgba(95, 208, 238, .14); color: #5fd0ee; font-size: calc(21px * var(--fs, 1)); }
 .lg-card span { display: flex; flex-direction: column; gap: 2px; font-size: calc(13px * var(--fs, 1)); line-height: 1.5; color: #b9d4dd; }
 .lg-card b { font-size: calc(14.5px * var(--fs, 1)); font-weight: 600; color: #fefefe; }
 .lg-rodape { position: relative; display: flex; justify-content: space-between; align-items: center; gap: 16px; font-size: calc(12.5px * var(--fs, 1)); color: #8fb3bf; }
@@ -51,7 +51,7 @@
 .lg-aviso.ok { background: var(--c-ok-soft); } .lg-aviso.ok > .ph, .lg-aviso.ok b { color: var(--c-ok); }
 .lg-aviso.warn { background: var(--c-warn-soft); } .lg-aviso.warn > .ph, .lg-aviso.warn b { color: var(--c-warn); }
 .lg-aviso.bad { background: var(--c-err-soft); } .lg-aviso.bad > .ph, .lg-aviso.bad b { color: var(--c-err); }
-.lg-aviso.info { background: var(--color-accent-900); } .lg-aviso.info > .ph, .lg-aviso.info b { color: var(--color-accent-300); }
+.lg-aviso.info { background: var(--c-muted-soft); box-shadow: inset 0 0 0 1px var(--color-divider); } .lg-aviso.info > .ph { color: var(--color-neutral-300); }
 
 .lg-campos { display: flex; flex-direction: column; gap: 14px; }
 .lg-campos.tremer { animation: shakeA .4s ease; }
@@ -72,14 +72,15 @@
 .lg-linha > .btn-g { height: 44px; padding: 0 6px; }
 .lg-manter { position: relative; min-height: 44px; display: flex; align-items: center; gap: 10px; font-size: calc(13.5px * var(--fs, 1)); color: var(--color-text); cursor: pointer; user-select: none; }
 .lg-manter input { position: absolute; opacity: 0; width: 1px; height: 1px; }
-.lg-manter .marca-caixa { width: 20px; height: 20px; flex: none; border-radius: 6px; display: grid; place-items: center; box-shadow: inset 0 0 0 2px var(--color-neutral-500); color: #fefefe; transition: background-color .15s ease, box-shadow .15s ease; }
-.lg-manter .marca-caixa .ph { font-size: 13px; opacity: 0; }
-.lg-manter input:checked + .marca-caixa { background: var(--color-accent-500); box-shadow: inset 0 0 0 2px var(--color-accent-500); }
+.lg-manter .marca-caixa { width: 20px; height: 20px; flex: none; border-radius: 5px; display: grid; place-items: center; box-shadow: inset 0 0 0 2px var(--color-neutral-500); color: #fefefe; transition: background-color .15s ease, box-shadow .15s ease; }
+.lg-manter .marca-caixa .ph { font-size: calc(13px * var(--fs, 1)); opacity: 0; }
+/* Marcada na cor da marca do tema (D5); o check usa a cor da superficie para ter contraste nos dois temas. */
+.lg-manter input:checked + .marca-caixa { background: var(--color-focus); box-shadow: inset 0 0 0 2px var(--color-focus); color: var(--color-surface); }
 .lg-manter input:checked + .marca-caixa .ph { opacity: 1; }
 .lg-manter input:focus-visible + .marca-caixa { outline: 2px solid var(--color-focus); outline-offset: 2px; }
 
-.lg-ir { height: 50px; width: 100%; font-size: calc(15px * var(--fs, 1)); background: linear-gradient(110deg, #0a7896, var(--color-accent-500) 60%, #3cc0e2); }
-.lg-ir:hover { background: linear-gradient(110deg, #0b4a5c, #0a7896 60%, var(--color-accent-500)); }
+/* Entrar e o botao primario do sistema (solido no claro, o degrade do vidro no escuro), sem degrade proprio. */
+.lg-ir { height: 50px; width: 100%; font-size: calc(15px * var(--fs, 1)); }
 .lg-ir .ph { font-size: calc(18px * var(--fs, 1)); }
 .lg-ir.ocupado { opacity: .75; pointer-events: none; }
 .lg-ir.ocupado .ph { animation: spin 1s linear infinite; }
@@ -87,11 +88,11 @@
 .lg-nova { height: 48px; width: 100%; }
 .lg-nova[hidden] { display: none; }
 .lg-primeiro { display: flex; gap: 12px; padding: 14px 16px; border-radius: 12px; box-shadow: inset 0 0 0 1px var(--color-divider); font-size: calc(13px * var(--fs, 1)); line-height: 1.5; color: var(--color-neutral-300); }
-.lg-primeiro > .ph { flex: none; font-size: calc(18px * var(--fs, 1)); color: var(--color-accent-300); }
+.lg-primeiro > .ph { flex: none; font-size: calc(18px * var(--fs, 1)); color: var(--color-neutral-300); }
 .lg-primeiro b { font-weight: 600; color: var(--color-text); }
 
 .lg-ok { align-items: flex-start; }
-.lg-ok-ic { width: 64px; height: 64px; border-radius: 20px; display: grid; place-items: center; background: var(--c-ok-soft); color: var(--c-ok); }
+.lg-ok-ic { width: 64px; height: 64px; border-radius: 14px; display: grid; place-items: center; background: var(--c-ok-soft); color: var(--c-ok); }
 .lg-ok-ic .ph { font-size: calc(30px * var(--fs, 1)); }
 .lg-ok .lg-titulo h2 { font-size: calc(28px * var(--fs, 1)); }
 .lg-ok .lg-titulo p { line-height: 1.6; }

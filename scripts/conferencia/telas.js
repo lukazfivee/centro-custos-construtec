@@ -60,9 +60,12 @@ t('D1', 'rapido-validacao', { rota: 'inicio', ref: 'erro', async preparar(c) {
   await c.tocarTexto('.drawer .drod button', 'Registrar'); await c.dormir(500);
 } });
 t('D1', 'atividade-aberta', { rota: 'inicio', async preparar(c) { await c.tocar('[data-lanc]'); await c.painel(); } });
-t('D0', 'assistente-aberto', { rota: 'inicio', async preparar(c) { await c.tocar('#ia-fab'); await c.dormir(900); } });
+t('D0', 'assistente-aberto', { rota: 'inicio', async preparar(c) { await c.tocar('.top [data-ia]'); await c.dormir(900); } });
 
 // D2 · Lancamentos ----------------------------------------------------------------------------
+// A lista de Lancamentos guarda os filtros no navegador (cc_d_filtros_lanc): sem limpar, a tela herda o filtro e a busca da
+// captura anterior (ex.: "Despesas + A pagar" de filtro-a-pagar) e a linha procurada some. Toda tela D2 comeca da lista sem filtro.
+const SEM_FILTRO = async (c) => { await c.avaliar("localStorage.removeItem('cc_d_filtros_lanc')"); await c.recarregar(); };
 const FILA_LIMPA = async (c) => { await c.aba.enviar('Storage.clearDataForOrigin', { origin: c.s.url, storageTypes: 'indexeddb' }); await c.offline(false); };
 t('D2', 'lista', { rota: 'lancamentos', ref: 'lanc' });
 t('D2', 'filtro-a-pagar', { rota: 'lancamentos', ref: 'filtro', async preparar(c) { await c.tocar('[data-seg="sit"][data-valor="a_pagar"]'); await c.dormir(900); } });
@@ -213,6 +216,11 @@ t('Login', 'entrar-senha-errada', { como: null, rota: '', async preparar(c) {
   await c.digitar('input[type="password"]', 'senha-errada');
   await c.tocar('button[type="submit"]'); await c.dormir(1500);
 } });
+
+for (const tela of catalogo.filter((x) => x.grupo === 'D2')) {
+  const antes = tela.preparar;
+  tela.preparar = async (c) => { await SEM_FILTRO(c); if (antes) await antes(c); };
+}
 
 require('./telas-vidro')(t);
 module.exports = { catalogo, GRUPOS, t };

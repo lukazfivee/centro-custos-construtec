@@ -71,7 +71,8 @@ test('celular: reports com indicadores, detalhe, responder, reenviar e novo repo
   const n = read('screen-report-novo.js');
   assert.match(n, /CC\.api\('\/bug-reports', \{ method: 'POST', body \}\)/);
   assert.match(n, /client_id: clientId/);
-  assert.match(n, /diagnostico: CC\.\$\('#rn-diag', el\)\.checked \? A\.diag\(\) : null/);
+  // "Incluir diagnóstico" é um interruptor (role="switch"), igual ao desktop (CC-10).
+  assert.match(n, /diagnostico: CC\.\$\('#rn-diag', el\)\.getAttribute\('aria-checked'\) === 'true' \? A\.diag\(\) : null/);
   assert.match(n, /4 \* 1024 \* 1024/);
   assert.match(read('screen-misc.js'), /CC\.ia\.open\('Quero reportar um problema no app\.'\)/); // o envio pelo assistente continua
   const adm = read('screen-adm.js');

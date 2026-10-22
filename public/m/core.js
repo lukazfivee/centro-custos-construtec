@@ -35,7 +35,8 @@
   };
   CC.month = () => CC.today().slice(0, 7);
   CC.dateBr = (iso) => (iso ? `${iso.slice(8, 10)}/${iso.slice(5, 7)}` : '');
-  CC.dateFull = (iso) => (iso ? `${iso.slice(8, 10)}/${iso.slice(5, 7)}/${iso.slice(0, 4)}` : '');
+  // So datas AAAA-MM-DD; outro formato vira vazio (o desktop mostra "—"), nunca "19/pr/Mon" (CC-12).
+  CC.dateFull = (iso) => (/^\d{4}-\d{2}-\d{2}/.test(String(iso || '')) ? `${iso.slice(8, 10)}/${iso.slice(5, 7)}/${iso.slice(0, 4)}` : '');
   CC.monthName = () => new Date().toLocaleDateString('pt-BR', { month: 'long' });
   CC.greeting = () => {
     const h = new Date().getHours();

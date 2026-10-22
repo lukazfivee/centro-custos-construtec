@@ -14,7 +14,7 @@
 .conteudo .card:not(:has(input, select, textarea)):hover { box-shadow: 0 0 0 1px var(--color-focus), 0 8px 20px rgba(3, 31, 41, .08); transform: translateY(-1px); }
 @media (prefers-reduced-motion: reduce) { .conteudo .card:not(:has(input, select, textarea)):hover { transform: none; } }
 .kpi .topo { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
-.kpi .ic { width: 30px; height: 30px; border-radius: 9px; display: grid; place-items: center; background: var(--color-accent-900); color: var(--color-accent-300); }
+.kpi .ic { width: 30px; height: 30px; border-radius: 10px; display: grid; place-items: center; background: var(--color-accent-900); color: var(--color-accent-300); }
 .kpi .ic .ph { font-size: calc(16px * var(--fs, 1)); }
 .kpi .val { font: 600 calc(21px * var(--fs, 1))/1.2 var(--font-heading); font-variant-numeric: tabular-nums; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .kpi .det { font-size: calc(12px * var(--fs, 1)); color: var(--color-neutral-300); }
@@ -30,14 +30,15 @@
 .faixa > span { flex: 1; min-width: 0; }
 .faixa.warn { background: var(--c-warn-soft); color: var(--c-warn); box-shadow: inset 0 0 0 1px var(--c-warn-bar); }
 .faixa.err { background: var(--c-err-soft); color: var(--c-err); }
-.faixa.info { background: var(--color-accent-900); color: var(--color-accent-300); }
+.faixa.info { background: var(--c-muted-soft); color: var(--color-text); font-weight: 400; box-shadow: inset 0 0 0 1px var(--color-divider); }
+.faixa.info .ph { color: var(--color-neutral-300); }
 
 /* Painel lateral: substitui os modais de formulario. */
 .camada { position: fixed; inset: 0; z-index: 50; display: flex; justify-content: flex-end; }
 .camada .fundo { position: absolute; inset: 0; border: 0; cursor: default; animation: fadeIn .2s ease both; }
 .drawer { position: relative; width: var(--drawer-w); max-width: 100%; height: 100%; display: flex; flex-direction: column; animation: slideIn .32s cubic-bezier(.2, .8, .2, 1) both; }
 .drawer .dcab { flex: none; display: flex; align-items: center; gap: 12px; padding: 18px 20px; border-bottom: 1px solid var(--color-divider); }
-.drawer .dic { width: 38px; height: 38px; border-radius: 11px; background: var(--color-accent-900); color: var(--color-accent-300); display: grid; place-items: center; flex: none; }
+.drawer .dic { width: 38px; height: 38px; border-radius: 12px; background: var(--color-accent-900); color: var(--color-accent-300); display: grid; place-items: center; flex: none; }
 .drawer .dic .ph { font-size: calc(19px * var(--fs, 1)); }
 .drawer .dtit { flex: 1; min-width: 0; display: flex; flex-direction: column; }
 .drawer .dtit b { font-size: calc(17px * var(--fs, 1)); font-weight: 600; }

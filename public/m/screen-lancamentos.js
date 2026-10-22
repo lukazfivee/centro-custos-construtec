@@ -40,8 +40,8 @@
     const key = JSON.stringify([f.mes, f.situacao, f.tipo, f.busca]);
     const filtros = `${CC.monthStep(f.mes)}
       <label class="field busca"><span class="sr">Buscar</span>${icon('magnifying-glass', 18)}<input id="l-busca" type="search" enterkeyhint="search" autocomplete="off" value="${esc(f.busca)}" placeholder="Descrição, fornecedor ou nota fiscal"></label>
-      <div class="chips" role="group" aria-label="Tipo">${TIPOS.map(([k, l]) => `<button class="chip-act" type="button" data-t="${k}" aria-pressed="${k === f.tipo}">${l}</button>`).join('')}</div>
-      <div class="seg" role="group" aria-label="Situação">${SIT.map(([k, l]) => `<button type="button" data-f="${k}" aria-pressed="${k === f.situacao}">${k === 'liquidado' && f.tipo === 'receita' ? 'Recebidos' : l}</button>`).join('')}</div>`;
+      <div class="seg" role="group" aria-label="Tipo">${TIPOS.map(([k, l]) => `<button type="button" data-t="${k}" aria-pressed="${k === f.tipo}">${l}</button>`).join('')}</div>
+      <div class="chips" role="group" aria-label="Situação">${SIT.map(([k, l]) => `<button class="chip-act" type="button" data-f="${k}" aria-pressed="${k === f.situacao}">${k === 'liquidado' && f.tipo === 'receita' ? 'Recebidos' : l}</button>`).join('')}</div>`;
     const go = (mudar) => CC.screens.lancamentos({ ...f, ...mudar });
     const wire = () => {
       CC.$$('[data-f]').forEach((b) => b.addEventListener('click', () => go({ situacao: b.dataset.f })));
@@ -100,7 +100,7 @@
     const vazio = f.busca ? `Nada encontrado para "${esc(f.busca)}" ${esc(quando)}.` : `Nenhum lançamento ${esc(quando)}.`;
     const page = CC.render(`${CC.header('Lançamentos')}${filtros}${CC.staleNote(result)}${local}
       ${memo.total ? `<div class="kv lanc-total"><span>${memo.total === 1 ? '1 lançamento' : `${memo.total} lançamentos`} · total líquido</span><b class="${memo.liquido >= 0 ? 'in' : ''}">${esc(CC.signed(memo.liquido))}</b></div>` : ''}
-      ${list || (local ? '' : `<div class="empty">${icon('list-bullets', 28)}${vazio}</div>`)}
+      ${list ? `<div class="rows">${list}</div>` : (local ? '' : `<div class="empty">${icon('list-bullets', 28)}${vazio}</div>`)}
       ${resto > 0 ? `<button class="btn2" type="button" id="l-mais">Carregar mais ${Math.min(resto, POR_PAGINA)} de ${resto}</button>` : ''}`, false, params);
     wire();
     CC.wireTx(page, ['lancamentos', { mes: f.mes, situacao: f.situacao, tipo: f.tipo, busca: f.busca }]);

@@ -89,19 +89,19 @@
         ${U.seg('sit', [{ valor: '', rotulo: 'Todas' }, { valor: 'pendentes', rotulo: 'Em aberto' }, { valor: 'a_pagar', rotulo: 'A pagar' }, { valor: 'vencidos', rotulo: 'Vencidos' }, { valor: 'pagos', rotulo: 'Pagos' }, { valor: 'a_receber', rotulo: 'A receber' }, { valor: 'recebidos', rotulo: 'Recebidos' }], f.sit, 'Situação')}
       </div>
       <div class="linha">
-        ${opcoes.obraFixa ? '' : `<select class="inp" data-f="obra" aria-label="Obra" style="width:240px">${opc(a.obras.map((o) => ({ valor: o.id, rotulo: [o.codigo, o.nome].filter(Boolean).join(' · ') })), f.obra, 'Todas as obras')}</select>`}
-        <select class="inp" data-f="mes" aria-label="Competência" style="width:calc(200px * var(--fs, 1))">${opc(listaMeses.map((m) => ({ valor: m, rotulo: D.mesAno(m) })), f.mes, 'Todos os meses')}</select>
+        ${opcoes.obraFixa ? '' : `<select class="inp" data-f="obra" aria-label="Obra" style="width:calc(260px * var(--fs, 1))">${opc(a.obras.map((o) => ({ valor: o.id, rotulo: [o.codigo, o.nome].filter(Boolean).join(' · ') })), f.obra, 'Todas as obras')}</select>`}
+        <select class="inp" data-f="mes" aria-label="Competência" style="min-width:calc(200px * var(--fs, 1))">${opc(listaMeses.map((m) => ({ valor: m, rotulo: D.mesAno(m) })), f.mes, 'Todos os meses')}</select>
         <button type="button" class="btn btn-g" data-mais aria-expanded="${f.mais ? 'true' : 'false'}">${D.ic('sliders-horizontal')}Mais filtros</button>
         ${alterado(f, opcoes.obraFixa) ? `<button type="button" class="btn btn-g" data-limpar>${D.ic('x')}Limpar filtros</button>` : ''}
       </div>
       <div class="linha mais"${f.mais ? '' : ' hidden'}>
-        <select class="inp" data-f="categoria" aria-label="Categoria" style="width:220px">${opc(a.categorias.map((c) => ({ valor: c.id, rotulo: c.nome })), f.categoria, 'Todas as categorias')}</select>
-        <select class="inp" data-f="doc" aria-label="Documento" style="width:240px"><option value="">Com ou sem documento</option><option value="sem"${f.doc === 'sem' ? ' selected' : ''}>Só sem documento anexado</option></select>
+        <select class="inp" data-f="categoria" aria-label="Categoria" style="min-width:calc(220px * var(--fs, 1))">${opc(a.categorias.map((c) => ({ valor: c.id, rotulo: c.nome })), f.categoria, 'Todas as categorias')}</select>
+        <select class="inp" data-f="doc" aria-label="Documento" style="min-width:calc(240px * var(--fs, 1))"><option value="">Com ou sem documento</option><option value="sem"${f.doc === 'sem' ? ' selected' : ''}>Só sem documento anexado</option></select>
         <label class="mini">De<input class="inp" type="date" data-f="de" value="${esc(f.de)}"${f.mes ? ' disabled title="Escolha Todos os meses para usar um período"' : ''}></label>
         <label class="mini">Até<input class="inp" type="date" data-f="ate" value="${esc(f.ate)}"${f.mes ? ' disabled' : ''}></label>
-        <select class="inp" data-f="ordenar" aria-label="Ordenar por" style="width:230px">${[['data', 'Competência'], ['vencimento', 'Vencimento'], ['valor', 'Valor'], ['criado', 'Inclusão'], ['atualizado', 'Alteração']].map(([v, r]) => `<option value="${v}"${f.ordenar === v ? ' selected' : ''}>Ordenar por ${esc(r.toLowerCase())}</option>`).join('')}</select>
-        <select class="inp" data-f="ordem" aria-label="Sentido" style="width:170px"><option value="desc"${f.ordem === 'desc' ? ' selected' : ''}>Mais recentes</option><option value="asc"${f.ordem === 'asc' ? ' selected' : ''}>Mais antigos</option></select>
-        <select class="inp" data-f="limite" aria-label="Por página" style="width:160px">${[25, 50, 100, 200].map((n) => `<option value="${n}"${Number(f.limite) === n ? ' selected' : ''}>${n} por página</option>`).join('')}</select>
+        <select class="inp" data-f="ordenar" aria-label="Ordenar por" style="min-width:calc(230px * var(--fs, 1))">${[['data', 'Competência'], ['vencimento', 'Vencimento'], ['valor', 'Valor'], ['criado', 'Inclusão'], ['atualizado', 'Alteração']].map(([v, r]) => `<option value="${v}"${f.ordenar === v ? ' selected' : ''}>Ordenar por ${esc(r.toLowerCase())}</option>`).join('')}</select>
+        <select class="inp" data-f="ordem" aria-label="Sentido" style="min-width:calc(170px * var(--fs, 1))"><option value="desc"${f.ordem === 'desc' ? ' selected' : ''}>Mais recentes</option><option value="asc"${f.ordem === 'asc' ? ' selected' : ''}>Mais antigos</option></select>
+        <select class="inp" data-f="limite" aria-label="Por página" style="min-width:calc(160px * var(--fs, 1))">${[25, 50, 100, 200].map((n) => `<option value="${n}"${Number(f.limite) === n ? ' selected' : ''}>${n} por página</option>`).join('')}</select>
       </div></div>`;
   };
 

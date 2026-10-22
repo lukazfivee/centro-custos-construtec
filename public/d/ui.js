@@ -10,8 +10,9 @@
     <div class="acoes">${acoes || ''}</div></div>`;
 
   // tom: cor do icone (ok, saida, info, warn, err). tomValor: cor do valor (ok, err).
-  U.kpi = ({ rotulo, valor, det, icone, tom, tomValor }) => `<div class="card kpi">
-    <div class="topo"><span class="lbl">${esc(rotulo)}</span><span class="ic ${esc(tom || 'info')}">${D.ic(icone || 'chart-bar')}</span></div>
+  // dica: texto do title do rotulo (ex.: a sigla tecnica); sem ela, o proprio rotulo.
+  U.kpi = ({ rotulo, valor, det, icone, tom, tomValor, dica }) => `<div class="card kpi">
+    <div class="topo"><span class="lbl" title="${esc(dica || rotulo)}">${esc(rotulo)}</span><span class="ic ${esc(tom || 'info')}">${D.ic(icone || 'chart-bar')}</span></div>
     <span class="val ${esc(tomValor || '')}">${esc(valor)}</span>${det ? `<span class="det">${esc(det)}</span>` : ''}</div>`;
 
   // tom: ok, warn, err, info, neutro.
@@ -48,8 +49,9 @@
   };
 
   // Tabela: colunas [{ rotulo, num, html (cabecalho ja escapado, ex.: caixa de selecao) }], linhas [{ id, celulas: [html], clicavel }]. Celulas ja vem escapadas.
-  U.tabela = ({ colunas, linhas, vazio }) => {
-    if (!linhas.length) return U.vazio('magnifying-glass', vazio || 'Nada por aqui ainda.');
+  // vazioIcone: icone do assunto no estado vazio (a lupa e de "nenhum resultado" de busca/filtro).
+  U.tabela = ({ colunas, linhas, vazio, vazioIcone }) => {
+    if (!linhas.length) return U.vazio(vazioIcone || 'magnifying-glass', vazio || 'Nada por aqui ainda.');
     const th = colunas.map((c) => `<th${c.num ? ' class="num"' : ''} scope="col">${c.html || esc(c.rotulo)}</th>`).join('');
     const tr = linhas.map((l) => `<tr${l.clicavel ? ` class="rw" tabindex="0" data-id="${esc(l.id)}"` : ''}>${l.celulas.map((c, i) => `<td${colunas[i] && colunas[i].num ? ' class="num"' : ''}>${c}</td>`).join('')}</tr>`).join('');
     return `<table class="tbl"><thead><tr>${th}</tr></thead><tbody>${tr}</tbody></table>`;

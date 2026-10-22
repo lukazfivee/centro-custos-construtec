@@ -55,7 +55,8 @@ function escolher(alvos) {
 const ordenadas = (lista) => [...lista.filter((t) => !t.muda), ...lista.filter((t) => t.muda)];
 
 function sessaoDe(s, quem, tema) {
-  if (!quem) return `try{localStorage.setItem('cc_d_tema','${tema}');}catch(e){}`;
+  // Sem pessoa (tela de Login): apaga a sessao deixada pela tela anterior, senao o /d/ abre o Painel.
+  if (!quem) return `try{['cc_token','cc_usuario','cc_instancia'].forEach(function(k){localStorage.removeItem(k);});localStorage.setItem('cc_d_tema','${tema}');}catch(e){}`;
   const p = s.PESSOAS[quem];
   const usuario = { id: s.ids[quem], nome: p.nome, email: p.email, role: p.suiteRole === 'admin' ? 'admin' : (p.suiteRole === 'gestor' ? 'gestor' : 'supervisor') };
   return `try{localStorage.setItem('cc_token',${JSON.stringify(s.tokens[quem])});localStorage.setItem('cc_usuario',${JSON.stringify(JSON.stringify(usuario))});localStorage.setItem('cc_instancia',${JSON.stringify(JSON.stringify(s.instancia))});localStorage.setItem('cc_d_tema','${tema}');localStorage.setItem('cc_d_menu','aberto');}catch(e){}`;

@@ -90,6 +90,8 @@
   }
   function guardarTipo(v) { try { localStorage.setItem(TIPO_CHAVE, v); } catch (e) { /* sem armazenamento */ } }
   // Filtro de situacao da lista (como no desktop), lembrado por tipo. Obras inativas so aparecem no filtro proprio.
+  // Rotulo da situacao (como o desktop), nunca a chave crua "execucao" (CC-14).
+  const SIT_NOME = { execucao: 'Em execução', planejamento: 'Planejamento', pausado: 'Pausada', concluido: 'Concluída' };
   const SIT_OBRA = [['', 'Ativas'], ['execucao', 'Em execução'], ['planejamento', 'Planejamento'], ['pausado', 'Pausadas'], ['concluido', 'Concluídas'], ['inativas', 'Inativas']];
   const SIT_SERV = [['', 'Todos'], ['agendado', 'Agendados'], ['em_andamento', 'Em andamento'], ['concluido', 'Concluídos'], ['faturado', 'Faturados']];
   const sitAtual = (tipo) => { try { return localStorage.getItem(`cc.m.obras.sit.${tipo}`) || ''; } catch (e) { return ''; } };
@@ -97,7 +99,7 @@
 
   // n: numeros da carteira (portfolio-summary) da obra; com orcamento importado, o consumo e sobre o custo base, como no desktop.
   function obraRow(c, n) {
-    if (CC.sv.role() === 'tecnico') return `<button class="row" type="button" data-obra="${c.id}"><span class="line"><span class="grow"><span class="name">${esc(c.nome)}</span><br><span class="cli">${esc([c.cliente, c.local, c.codigo].filter(Boolean).join(' · '))}</span></span><span class="tag">${esc(c.situacao || 'Em acompanhamento')}</span>${icon('caret-right', 16)}</span></button>`;
+    if (CC.sv.role() === 'tecnico') return `<button class="row" type="button" data-obra="${c.id}"><span class="line"><span class="grow"><span class="name">${esc(c.nome)}</span><br><span class="cli">${esc([c.cliente, c.local, c.codigo].filter(Boolean).join(' · '))}</span></span><span class="tag">${esc(SIT_NOME[c.situacao] || 'Em acompanhamento')}</span>${icon('caret-right', 16)}</span></button>`;
     const base = n && Number(n.baseCost) > 0;
     const budget = base ? Number(n.baseCost) : Number(c.orcamento), spent = base ? Number(n.realizedCost) : Number(c.total_comprometido), p = pct(spent, budget);
     const over = p !== null && p > 100, atencao = p !== null && p > 80; // desktop: atencao acima de 80%
@@ -134,7 +136,7 @@
       k = ve ? [['Cobrado', moneyShort(sum(mes, (v) => v.valor)), `${mes.length} em ${CC.monthName()}`], ['Gastos', moneyShort(sum(mes, (v) => v.gastos)), 'do mês'], ['Resultado', moneyShort(sum(mes, (v) => v.resultado)), 'cobrado − gastos']]
         : [['Serviços', String(servs.length), CC.sv.plural(servs.filter((v) => v.situacao === 'agendado').length, 'agendado', 'agendados')], ['Em andamento', String(andamento), 'agora'], ['Gastos', moneyShort(sum(servs, (v) => v.gastos)), 'lançados']];
     } else {
-      k = [['Centros', String(obras.length + servs.length), `${obras.length} obras · ${servs.length} serviços`],
+      k = [['Centros', String(obras.length + servs.length), `${CC.sv.plural(obras.length, 'obra', 'obras')} · ${CC.sv.plural(servs.length, 'serviço', 'serviços')}`],
         ve ? ['Receita', moneyShort(oCont + sum(servs, (v) => v.valor)), 'contratos e serviços'] : ['Em andamento', String(andamento), 'serviços'],
         ['Gasto', moneyShort(oGas + sum(servs, (v) => v.gastos)), 'até hoje']];
     }
@@ -145,7 +147,7 @@
     const tipo = tipoAtual();
     if (CC.sv) await CC.sv.loadPerms();
     if (!CC.session.token() || (params && params.__nav && params.__nav !== CC.nav)) return;
-    const novo = CC.sv && CC.sv.can('p5') ? `<button class="sv-novo" type="button" id="novo" aria-label="Novo">${icon('plus', 20)}</button>` : '';
+    const novo = CC.sv && CC.sv.can('p5') ? `<button class="sv-novo" type="button" id="novo" aria-label="Novo">${icon('plus', 22)}</button>` : '';
     const top = `<div class="top"><span class="brand"><img src="simbolo.png" alt=""><span>Centro de Custos</span></span>${CC.bellBtn ? CC.bellBtn() : ''}${novo}${CC.suitePill()}</div>
       <div class="seg obras-tipo" role="group" aria-label="Obra ou serviço">${TIPOS.map(([v, t]) => `<button type="button" data-tipo="${v}" aria-pressed="${v === tipo}">${t}</button>`).join('')}</div>`;
     const bind = () => {
@@ -174,7 +176,7 @@
     const chips = sits ? `<div class="chips" role="group" aria-label="Situação">${sits.map(([k, l]) => `<button class="chip-act" type="button" data-sit="${k}" aria-pressed="${k === (tipo === 'obra' ? sitO : sitS)}">${l}</button>`).join('')}</div>` : '';
     const stale = obrasRes.stale ? obrasRes : servRes;
     const title = tipo === 'obra' ? 'Obras' : tipo === 'servico' ? 'Serviços' : 'Obras e serviços';
-    const sub = CC.sv.role() === 'tecnico' ? 'Itens atribuídos a você' : tipo === 'obra' ? `${obras.length} obras · orçado × gasto` : tipo === 'servico' ? `${servs.length} serviços · ${CC.monthName()}` : `${obras.length} obras e ${servs.length} serviços`;
+    const sub = CC.sv.role() === 'tecnico' ? 'Itens atribuídos a você' : tipo === 'obra' ? `${CC.sv.plural(obras.length, 'obra', 'obras')} · orçado × gasto` : tipo === 'servico' ? `${CC.sv.plural(servs.length, 'serviço', 'serviços')} · ${CC.monthName()}` : `${CC.sv.plural(obras.length, 'obra', 'obras')} e ${CC.sv.plural(servs.length, 'serviço', 'serviços')}`;
     const vazio = `<div class="empty">${icon(tipo === 'servico' ? 'wrench' : 'buildings', 28)}${sitO || sitS ? 'Nada nesta situação.' : (tipo === 'servico' ? 'Nenhum serviço cadastrado.' : tipo === 'todos' ? 'Nenhuma obra ou serviço cadastrado.' : 'Nenhuma obra cadastrada.')}</div>`;
     const porObra = new Map(((carteira && carteira.porObra) || []).map((x) => [Number(x.id), x]));
     const row = (c) => obraRow(c, porObra.get(Number(c.id)));

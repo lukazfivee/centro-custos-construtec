@@ -30,15 +30,32 @@
     const horas = p.laborHours || { consumed: 0, planned: 0 };
     const fat = p.clientBilling || { totalBilled: 0 };
     const n = (x) => Number(x || 0).toLocaleString('pt-BR', { maximumFractionDigits: 0 });
+    const v = O.carteiraComparavel(p);
     return [
-      k({ rotulo: tipo === 'servico' ? 'Serviços na carteira' : tipo === 'todos' ? 'Obras e serviços' : 'Obras na carteira', valor: String(p.totalCenters != null ? p.totalCenters : obras.length), det: `${exec} em execução`, icone: 'buildings', tom: 'info' }),
-      k({ rotulo: 'Valor contratual', valor: CC.moneyShort(p.totalContractValue), det: 'soma dos contratos', icone: 'handshake', tom: 'info' }),
-      k({ rotulo: 'Realizado', valor: CC.moneyShort(p.totalRealizedCost), det: `${n(p.burnRatePercent)}% do orçado total`, icone: 'arrow-up-right', tom: 'saida' }),
-      k({ rotulo: 'Saldo da carteira', valor: `${p.totalBalance < 0 ? '−' : ''}${CC.moneyShort(p.totalBalance)}`, det: 'orçado − realizado', icone: 'scales', tom: p.totalBalance < 0 ? 'err' : 'ok', tomValor: p.totalBalance < 0 ? 'err' : '' }),
+      k({ rotulo: tipo === 'servico' ? 'Serviços' : tipo === 'todos' ? 'Obras e serviços' : 'Obras', valor: String(p.totalCenters != null ? p.totalCenters : obras.length), det: `${exec} em execução`, icone: 'buildings', tom: 'info' }),
+      k({ rotulo: 'Contratado', valor: CC.moneyShort(v.contratado), det: 'soma dos contratos', icone: 'handshake', tom: 'info' }),
+      k({ rotulo: 'Realizado', valor: CC.moneyShort(p.totalRealizedCost), det: v.detRealizado, icone: 'arrow-up-right', tom: 'saida' }),
+      k({ rotulo: 'Saldo', valor: v.saldo == null ? '—' : `${v.saldo < 0 ? '−' : ''}${CC.moneyShort(Math.abs(v.saldo))}`, det: v.detSaldo, icone: 'scales', tom: v.saldo < 0 ? 'err' : 'ok', tomValor: v.saldo < 0 ? 'err' : '' }),
       k({ rotulo: 'Horas medidas', valor: `${n(horas.consumed)} h`, det: `de ${n(horas.planned)} h planejadas`, icone: 'clock', tom: 'info' }),
-      k({ rotulo: 'Faturado', valor: CC.moneyShort(fat.totalBilled), det: p.totalContractValue > 0 ? `${n((fat.totalBilled / p.totalContractValue) * 100)}% do contratado` : 'sem contrato importado', icone: 'receipt', tom: 'ok' }),
+      k({ rotulo: 'Faturado', valor: CC.moneyShort(fat.totalBilled), det: p.totalContractValue > 0 ? `${n((fat.totalBilled / p.totalContractValue) * 100)}% ${p.totalContractValue === v.contratado ? 'do contratado' : 'dos contratos importados'}` : 'sem contrato importado', icone: 'receipt', tom: 'ok' }),
     ].join('');
   }
+
+  // Indicadores no mesmo universo (CC-06): contratado de todas as obras; percentual e saldo so das obras com
+  // orcamento importado, e o percentual some ("—") quando parte da carteira nao tem orcamento.
+  O.carteiraComparavel = (p) => {
+    const c = p.comparable || {};
+    const sem = Number(c.centersWithoutBaseline || 0);
+    const com = Number(c.centersWithBaseline || 0);
+    const pct = (x) => `${Number(x).toLocaleString('pt-BR', { maximumFractionDigits: 1 })}%`;
+    const semTxt = `${sem} ${sem === 1 ? 'obra' : 'obras'} sem orçamento importado`;
+    return {
+      contratado: p.contractedTotal != null ? p.contractedTotal : p.totalContractValue,
+      detRealizado: !com ? 'nenhuma obra com orçamento importado' : (sem ? `— do orçado · ${semTxt}` : `${pct(c.burnRatePercent)} do orçado total`),
+      saldo: com ? Number(c.balance) : null,
+      detSaldo: !com ? 'sem orçamento importado' : (sem ? `orçado − realizado de ${com} ${com === 1 ? 'obra' : 'obras'}` : 'orçado − realizado'),
+    };
+  };
 
   function alerta(p) {
     const risco = (p.atRiskCenters || []).slice().sort((a, b) => b.burnRate - a.burnRate);
@@ -55,16 +72,17 @@
     const barra = (rotulo, p, cls) => `<span class="uso-linha"><span class="topo"><span>${esc(rotulo)}</span><b class="${p > 1 ? 'err' : ''}">${p == null ? '—' : pct(p)}</b></span>
       <span class="bar"><span class="${cls}" style="width:${p == null ? 0 : Math.min(100, p * 100).toFixed(1)}%"></span></span></span>`;
     const real = n.realizedCost != null ? n.realizedCost : Number(o.total_despesas || 0);
+    // Cartao inteiro abre a obra (link esticado no titulo); Editar e Excluir sao icones no canto (CC-15).
+    const editar = D.pode('cadastrar') ? `<button type="button" class="ibtn" data-editar="${esc(o.id)}" aria-label="Editar ${esc(o.nome)}" title="Editar">${D.ic('pencil-simple')}</button>` : '';
+    const excluir = ['admin', 'gestor'].includes(D.papel()) ? `<button type="button" class="ibtn perigo" data-excluir="${esc(o.id)}" aria-label="Excluir ${esc(o.nome)}" title="Excluir">${D.ic('trash')}</button>` : '';
     return `<article class="card cartao-obra">
-      <div class="topo">${U.chip(o.codigo || '—', 'info')}${O.ehServico(o) ? U.chip('Serviço', 'neutro') : ''}${o.ativo === false ? U.chip('Inativa', 'neutro') : O.chipSituacao(o.situacao)}</div>
-      <div class="tx"><b>${esc(o.nome)}</b><span class="muted">${esc(o.cliente || 'Sem cliente')}</span></div>
+      <div class="topo"><span class="chips">${U.chip(o.codigo || '—', 'info')}${O.ehServico(o) ? U.chip('Serviço', 'neutro') : ''}${o.ativo === false ? U.chip('Inativa', 'neutro') : O.chipSituacao(o.situacao)}</span>
+        ${editar || excluir ? `<span class="acoes-cartao">${editar}${excluir}</span>` : ''}</div>
+      <a class="tx" href="#/obras/${esc(o.id)}"><b>${esc(o.nome)}</b><span class="muted">${esc(o.cliente || 'Sem cliente')}</span></a>
       ${barra('Consumo do orçado', uso, uso == null ? '' : O.faixaUso(uso))}
       ${barra('Medido ao cliente', medido, 'medido')}
       <div class="valores"><span><span class="lbl">Realizado</span><b>${esc(CC.moneyShort(real))}</b></span>
-        <span><span class="lbl">Contratado</span><b>${esc(CC.moneyShort(Number(o.valor_contrato || n.contractValue || 0)))}</b></span></div>
-      <div class="bts"><a class="btn btn-p" href="#/obras/${esc(o.id)}">Abrir obra</a>
-        ${D.pode('cadastrar') ? `<button type="button" class="btn btn-s" data-editar="${esc(o.id)}">Editar</button>` : ''}
-        ${['admin', 'gestor'].includes(D.papel()) ? `<button type="button" class="btn btn-d" data-excluir="${esc(o.id)}">Excluir</button>` : ''}</div></article>`;
+        <span><span class="lbl">Contratado</span><b>${esc(CC.moneyShort(Number(o.valor_contrato || n.contractValue || 0)))}</b></span></div></article>`;
   }
 
   const TITULOS = { obra: ['Obras e centros de custo', 'Carteira da Construtec · orçado, realizado e medição por obra'], servico: ['Serviços', 'Serviços curtos: valor cobrado, gastos e resultado, sem orçamento importado'], todos: ['Obras e serviços', 'Tudo o que tem centro de custo, obras e serviços juntos'] };

@@ -49,12 +49,12 @@
     const cpiTom = e.cpi == null ? '' : (e.cpi >= 1 ? 'ok' : 'err');
     const vacTom = e.vac == null ? '' : (e.vac < 0 ? 'err' : 'ok');
     const kpis = [
-      k({ rotulo: 'BAC · orçado', valor: CC.moneyShort(e.bac), det: 'custo base aprovado', icone: 'calculator' }),
-      k({ rotulo: 'AC · realizado', valor: CC.moneyShort(e.ac), det: `${pct(e.financialBurnPercent)} consumido`, icone: 'arrow-up-right', tom: 'saida', tomValor: e.ac > e.bac ? 'err' : '' }),
-      k({ rotulo: 'EV · valor agregado', valor: e.ev == null ? '—' : CC.moneyShort(e.ev), det: `${pct(e.physicalPercent)} medido`, icone: 'check' }),
-      k({ rotulo: 'CPI', valor: e.cpi == null ? '—' : Number(e.cpi).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }), det: e.cpi == null ? 'sem medição' : (e.cpi >= 1 ? 'custo dentro do avanço' : 'custo acima do avanço'), icone: 'gauge', tomValor: cpiTom }),
-      k({ rotulo: 'EAC · projeção', valor: e.eac == null ? '—' : CC.moneyShort(e.eac), det: 'custo estimado no término', icone: 'target' }),
-      k({ rotulo: 'VAC · desvio', valor: e.vac == null ? '—' : `${e.vac < 0 ? '−' : ''}${CC.moneyShort(Math.abs(e.vac))}`, det: e.projectedStatus || '', icone: 'scales', tom: vacTom === 'err' ? 'err' : 'info', tomValor: vacTom }),
+      k({ rotulo: 'Orçado', dica: 'BAC · orçamento no término', valor: CC.moneyShort(e.bac), det: 'custo base aprovado', icone: 'calculator' }),
+      k({ rotulo: 'Realizado', dica: 'AC · custo real', valor: CC.moneyShort(e.ac), det: `${pct(e.financialBurnPercent)} consumido`, icone: 'arrow-up-right', tom: 'saida', tomValor: e.ac > e.bac ? 'err' : '' }),
+      k({ rotulo: 'Valor agregado', dica: 'EV · valor agregado', valor: e.ev == null ? '—' : CC.moneyShort(e.ev), det: `${pct(e.physicalPercent)} medido`, icone: 'check' }),
+      k({ rotulo: 'Eficiência', dica: 'CPI · índice de desempenho de custo', valor: e.cpi == null ? '—' : Number(e.cpi).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }), det: e.cpi == null ? 'sem medição' : (e.cpi >= 1 ? 'custo dentro do avanço' : 'custo acima do avanço'), icone: 'gauge', tomValor: cpiTom }),
+      k({ rotulo: 'Projeção', dica: 'EAC · estimativa no término', valor: e.eac == null ? '—' : CC.moneyShort(e.eac), det: 'custo estimado', icone: 'target' }),
+      k({ rotulo: 'Desvio final', dica: 'VAC · variação no término', valor: e.vac == null ? '—' : `${e.vac < 0 ? '−' : ''}${CC.moneyShort(Math.abs(e.vac))}`, det: e.projectedStatus || '', icone: 'scales', tom: vacTom === 'err' ? 'err' : 'info', tomValor: vacTom }),
     ].join('');
     const din = (v) => (v == null ? '' : esc(CC.money(v)));
     const tabela = U.tabela({
@@ -65,7 +65,7 @@
       <section class="card bloco"><div class="bcab"><b>Curva S físico-financeira · acumulado</b>
         <span class="legenda"><span><i class="q l-prev"></i>Previsto</span><span><i class="q l-real"></i>Realizado</span><span><i class="q l-med"></i>Medido</span></span></div>
         ${grafico(tl, Number(e.bac || c.baseCost || 0), Number(c.contractValue || 0))}</section>
-      <section class="card bloco como-ler"><span><b>Como ler:</b> previsto segue a distribuição S do orçamento aprovado; realizado é o custo lançado; medido é o avanço aprovado pelo cliente. CPI abaixo de 1 indica custo acima do avanço; EAC = AC + (BAC − EV) / CPI.</span></section>
+      <section class="card bloco como-ler"><span><b>Como ler:</b> previsto segue a distribuição S do orçamento aprovado; realizado é o custo lançado; medido é o avanço aprovado pelo cliente. Eficiência de custo (CPI) abaixo de 1 indica custo acima do avanço; a projeção no término (EAC) é realizado + (orçado − valor agregado) / eficiência.</span></section>
       <section class="card tabela"><div class="bcab pad"><b>Mês a mês</b></div>${tabela}</section>
       <section class="card bloco"><b class="bt">Premissas</b><ul class="premissas">${(d.hypotheses || []).map((h) => `<li>${esc(h)}</li>`).join('')}</ul></section>`;
   };

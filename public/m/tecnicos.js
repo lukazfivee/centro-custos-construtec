@@ -1,4 +1,4 @@
-// Seleção de técnicos no detalhe do item. Reutilizada no celular e desktop administrativo.
+// Seleção de técnicos no detalhe do item (celular). O desktop usa o painel lateral (public/d/telas/obra-tecnicos.js).
 (function (CC) {
   const { esc } = CC;
   CC.tecnicos = {
@@ -11,7 +11,7 @@
         draw(slot, Number(id), data);
       } catch (error) {
         if (!slot.isConnected) return;
-        slot.innerHTML = `<div class="card"><p role="alert">${esc(error.message || 'Não foi possível carregar os técnicos.')}</p><button type="button" class="btn2 btn btn-s" data-tc-retry>Tentar novamente</button></div>`;
+        slot.innerHTML = `<div class="card"><p role="alert">${esc(error.message || 'Não foi possível carregar os técnicos.')}</p><button type="button" class="btn2" data-tc-retry>Tentar novamente</button></div>`;
         CC.$('[data-tc-retry]', slot).addEventListener('click', () => CC.tecnicos.panel(slot, id));
       }
     },
@@ -20,14 +20,14 @@
     let previous = data.atribuidos.slice();
     const nomes = () => data.tecnicos.filter((u) => previous.includes(u.id)).map((u) => u.nome).join(', ');
     const unavailable = previous.filter((uid) => !data.tecnicos.some((u) => u.id === uid));
-    slot.innerHTML = `<details class="card tc-equipe"><summary><b>Designar técnicos</b><small data-tc-nomes>${esc(nomes() || 'Nenhum técnico ativo designado')}</small></summary>
+    slot.innerHTML = `<details class="card tc-equipe"><summary><span class="tc-tx"><b>Designar técnicos</b><small data-tc-nomes>${esc(nomes() || 'Nenhum técnico ativo designado')}</small></span>${CC.icon ? CC.icon('caret-right', 18, 'tc-seta') : ''}</summary>
       <form data-tc-form><fieldset><legend>Técnicos com acesso a este item</legend>
         ${data.tecnicos.map((u) => `<label class="tc-pessoa"><input type="checkbox" name="tecnico" value="${u.id}"${previous.includes(u.id) ? ' checked' : ''}><span>${esc(u.nome)}</span></label>`).join('') || '<p>Nenhum técnico ativo cadastrado.</p>'}
       </fieldset>${unavailable.length ? '<p>Há vínculos de técnicos inativos. Ao salvar, eles serão removidos.</p>' : ''}
       <p class="muted">Os selecionados acessam a execução deste item. Para retirar o acesso, desmarque o técnico e salve.</p>
       <p data-tc-status role="status" aria-live="polite"></p>
-      <button type="submit" class="btn btn-p">Salvar técnicos</button>
-      <button type="button" class="btn2 btn btn-s" data-tc-reload hidden>Atualizar lista</button></form></details>`;
+      <button type="submit" class="btn">Salvar técnicos</button>
+      <button type="button" class="btn2" data-tc-reload hidden>Atualizar lista</button></form></details>`;
     const form = CC.$('[data-tc-form]', slot), status = CC.$('[data-tc-status]', slot), reload = CC.$('[data-tc-reload]', slot);
     reload.addEventListener('click', () => CC.tecnicos.panel(slot, id));
     form.addEventListener('submit', async (e) => {

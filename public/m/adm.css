@@ -14,7 +14,8 @@
 .adm-kpi { min-width: 0; padding: 10px 8px; border-radius: 12px; background: var(--surface); box-shadow: var(--shadow); text-align: center; }
 .adm-kpi b { display: block; font-size: 20px; font-weight: 600; line-height: 1.2; }
 .adm-kpi b.ok { color: var(--accent-300); } .adm-kpi b.warn { color: var(--warn); }
-.adm-kpi small { display: block; font-size: 10.5px; line-height: 1.25; color: var(--n300); }
+/* Rotulo numa linha so (CC-18): quebrado em 2 linhas desalinhava os numeros. */
+.adm-kpi small { display: block; font-size: 10.5px; line-height: 1.25; color: var(--n300); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
 /* Linhas tocaveis das listas. */
 .adm-lista { display: flex; flex-direction: column; padding-top: 0; padding-bottom: 0; }
@@ -26,7 +27,8 @@ button.adm-row:active { background: var(--accent-900); }
 .adm-row b { font-size: 13.5px; font-weight: 600; overflow-wrap: anywhere; }
 .adm-row small { font-size: 11.5px; color: var(--n300); overflow-wrap: anywhere; }
 .adm-row .adm-det { color: var(--text); opacity: .8; }
-.adm-row.sel { box-shadow: inset 3px 0 0 var(--accent); padding-left: 10px; background: var(--accent-900); }
+/* Selecionada: fundo + anel de 1 px, sem faixa lateral (CC-37). */
+.adm-row.sel { box-shadow: inset 0 0 0 1px var(--accent-300); border-radius: 10px; padding-left: 10px; padding-right: 10px; background: var(--accent-900); }
 .adm-row.off b { color: var(--n300); }
 .adm-row-end { display: grid; justify-items: end; gap: 4px; flex: none; }
 .adm-row-end small { font-weight: 600; color: var(--text); }
@@ -72,7 +74,9 @@ button.adm-row:active { background: var(--accent-900); }
 .adm-sw span::after { content: ''; position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; border-radius: 50%; background: #fff; box-shadow: 0 1px 2px rgba(0,0,0,.25); transition: transform .15s; }
 .adm-sw.on span { background: var(--fill); }
 .adm-sw.on span::after { transform: translateX(18px); }
-.adm-sw[disabled] { opacity: .5; }
+/* Somente consulta (CC-35): sem esmaecer o conjunto; ligado = trilho ciano a 40%, desligado = trilho neutro, botao sempre branco. */
+.adm-sw[disabled] { cursor: default; }
+.adm-sw.on[disabled] span { background: rgba(18, 169, 209, .4); }
 .adm-sw.fixo { color: var(--n300); }
 
 /* Faixa do "Ver o sistema como", acima da barra de abas. */

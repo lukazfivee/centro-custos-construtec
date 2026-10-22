@@ -11,6 +11,12 @@
   F.podeCobrancas = () => F.corporativo() && F.can('p6');
   F.podeCadastrar = () => F.can('p5');
   F.plural = (n, um, varios) => `${n} ${n === 1 ? um : varios}`;
+  // Telefone so na exibicao: 10 ou 11 digitos viram (11) 3333-4444 / (11) 98765-4321 (igual ao desktop, C.fone).
+  F.fone = (t) => {
+    const d = String(t || '').replace(/[^0-9]/g, '');
+    if ((d.length !== 10 && d.length !== 11) || d.startsWith('0')) return t || '';
+    return `(${d.slice(0, 2)}) ${d.slice(2, d.length - 4)}-${d.slice(-4)}`;
+  };
   F.valorBr = (n) => (Number(n) ? Number(n).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '');
   F.mesCurto = (mes) => new Date(`${mes}-15T12:00:00`).toLocaleDateString('pt-BR', { month: 'long' });
 
@@ -29,7 +35,7 @@
   };
   F.solta = (b, ic, rotulo) => { b.disabled = false; b.innerHTML = `${icon(ic, 18)}${esc(rotulo)}`; };
   F.campo = (rot, id, valor, extra) => `<label class="field"><span>${esc(rot)}</span><input id="${id}" value="${esc(valor == null ? '' : valor)}"${extra || ''}></label>`;
-  F.troca = (id, titulo, sub, ligado) => `<label class="menu-item pref"><span>${esc(titulo)}${sub ? `<small>${esc(sub)}</small>` : ''}</span><input type="checkbox" id="${id}"${ligado ? ' checked' : ''}></label>`;
+  F.troca = (id, titulo, sub, ligado) => `<label class="menu-item pref"><span>${esc(titulo)}${sub ? `<small>${esc(sub)}</small>` : ''}</span><input type="checkbox" role="switch" id="${id}"${ligado ? ' checked' : ''}></label>`;
 
   // Busca que filtra na hora (lista ja carregada). fn(texto) repinta so a lista.
   F.busca = (id, valor, ph) => `<label class="field busca"><span class="sr">Buscar</span>${icon('magnifying-glass', 18)}<input id="${id}" type="search" enterkeyhint="search" autocomplete="off" value="${esc(valor)}" placeholder="${esc(ph)}"></label>`;

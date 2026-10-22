@@ -30,7 +30,7 @@
     const q = H.quando(item.created_at);
     const motivo = item.data && typeof item.data === 'object' ? item.data.motivo : '';
     const registro = item.resumo || H.tipoNome(item.tipo);
-    const onde = [H.tipoNome(item.tipo), item.entity_id && String(item.entity_id).length <= 14 ? item.entity_id : ''].filter(Boolean).join(' · ');
+    const onde = H.onde(item);
     const corpo = `<div class="hist-det">
       ${linha('Quando', esc(`${q.dia} ${q.hora}`))}${linha('Quem', esc(item.usuario || 'Sistema'))}
       ${linha('Ação', D.ui.chip(a.rotulo, a.tom, a.icone))}${linha('Registro', esc(registro))}

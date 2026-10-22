@@ -8,12 +8,13 @@
   const COLUNAS = ['Quando', 'Usuário', 'Ação', 'Registro', 'Detalhe', 'Origem'].map((rotulo) => ({ rotulo }));
   const cache = new Map();
 
-  function linha(item) {
+  // detalhe: a coluna Detalhe so aparece quando alguma linha tem o que mostrar; senao o Registro ganha o espaco.
+  function linha(item, detalhe) {
     cache.set(String(item.id), item);
     const a = H.acao(item.acao);
     const o = H.origem(item.origem);
     const q = H.quando(item.created_at);
-    const sub = [H.tipoNome(item.tipo), item.entity_id && String(item.entity_id).length <= 14 ? item.entity_id : ''].filter(Boolean).join(' · ');
+    const sub = H.onde(item);
     return {
       id: item.id, clicavel: true,
       celulas: [
@@ -21,7 +22,7 @@
         `<span class="hist-pessoa"><span class="usu-avatar">${esc(D.iniciais(item.usuario))}</span>${esc(item.usuario || 'Sistema')}</span>`,
         U.chip(a.rotulo, a.tom, a.icone),
         `<span class="duas-l hist-reg"><b>${esc(item.resumo || '')}</b><span>${esc(sub)}</span></span>`,
-        `<span class="hist-detalhe">${esc(H.resumoMudancas(item) || '—')}</span>`,
+        ...(detalhe ? [`<span class="hist-detalhe">${esc(H.resumoMudancas(item) || '—')}</span>`] : []),
         `<span class="hist-origem">${D.ic(o.icone, 15)}${esc(o.rotulo)}</span>`,
       ],
     };
@@ -81,7 +82,8 @@
       CC.$('.cab .sub', el).textContent = `Quem mudou o quê, quando e de onde · ${p.total} registro${p.total === 1 ? '' : 's'}`;
       const ini = p.total ? (p.pagina - 1) * p.limite + 1 : 0;
       const fim = Math.min(p.total, p.pagina * p.limite);
-      alvo.innerHTML = `<div class="card tabela">${U.tabela({ colunas: COLUNAS, linhas: r.itens.map(linha), vazio: 'Nenhum registro com esses filtros.' })}
+      const detalhe = r.itens.some((i) => H.resumoMudancas(i));
+      alvo.innerHTML = `<div class="card tabela${detalhe ? '' : ' sem-detalhe'}">${U.tabela({ colunas: detalhe ? COLUNAS : COLUNAS.filter((c) => c.rotulo !== 'Detalhe'), linhas: r.itens.map((i) => linha(i, detalhe)), vazio: 'Nenhum registro com esses filtros.' })}
         <div class="rodape"><span class="muted">Exibindo ${ini}–${fim} de ${p.total}</span><span class="pager" style="margin-left:auto">
           <button type="button" class="btn btn-s" data-pag="-1"${p.temAnterior ? '' : ' disabled'} aria-label="Página anterior">${D.ic('caret-left')}</button>
           <button type="button" class="btn btn-s" data-pag="1"${p.temProxima ? '' : ' disabled'} aria-label="Próxima página">${D.ic('caret-right')}</button></span></div></div>`;

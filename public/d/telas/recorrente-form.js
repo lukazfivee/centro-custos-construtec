@@ -10,6 +10,13 @@
   const valorBr = (n) => (Number(n) ? Number(n).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '');
 
   const categoriasDe = (categorias, tipo) => categorias.filter((c) => c.ativo !== false && (c.tipo === tipo || c.tipo === 'ambos'));
+  // Primeiro mes: lista do mes atual em diante (no lugar do <input type=month>, que no Chrome mostra "--------- de ----").
+  const meses = (atual) => {
+    const lista = Array.from({ length: 24 }, (_, i) => C.somarMes(CC.month(), i));
+    const salvo = String(atual || '').slice(0, 7);
+    if (/^\d{4}-\d{2}$/.test(salvo) && !lista.includes(salvo)) lista.unshift(salvo);
+    return [{ valor: '', rotulo: 'No próximo dia escolhido' }, ...lista.map((ym) => ({ valor: ym, rotulo: D.mesAno(ym) }))];
+  };
   const opcoes = (lista, vazio) => [{ valor: '', rotulo: vazio }, ...lista.map((x) => ({ valor: x.id, rotulo: x.rotulo || x.nome }))];
 
   function campos(m, obras, categorias, favorecidos) {
@@ -25,7 +32,7 @@
         ${U.campo({ rotulo: 'Dia do mês', name: 'dia_mes', tipo: 'number', valor: m.dia_mes || '', placeholder: '1 a 31' })}</div>
       <div class="duas">${U.campo({ rotulo: 'Frequência', name: 'frequencia', tipo: 'select', valor: m.frequencia || 'mensal', opcoes: Object.entries(FREQ).map(([valor, rotulo]) => ({ valor, rotulo })) })}
         ${U.campo({ rotulo: 'Parcelas', name: 'total_parcelas', tipo: 'number', valor: m.total_parcelas || '', placeholder: 'Vazio = sem fim' })}</div>
-      ${U.campo({ rotulo: 'Primeiro mês · opcional', name: 'inicio', tipo: 'month', valor: m.inicio || '', ajuda: 'Vazio: começa no próximo dia escolhido.' })}
+      ${U.campo({ rotulo: 'Primeiro mês', name: 'inicio', tipo: 'select', valor: String(m.inicio || '').slice(0, 7), opcoes: meses(m.inicio) })}
       <div class="faixa info" data-proxima role="status">${D.ic('calendar-check')}<span></span></div>
       ${m.id ? C.troca({ titulo: 'Modelo ativo', texto: 'Pausado não gera lançamentos.', ligado: m.ativo !== false }) : ''}
     </form>`;

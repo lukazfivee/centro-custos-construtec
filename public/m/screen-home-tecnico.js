@@ -52,7 +52,7 @@
       <label class="field"><span>Buscar serviço</span><input id="tc-busca" type="search" placeholder="Serviço, cliente ou local" autocomplete="off"></label>
       <div class="tc-filtros" role="group" aria-label="Filtrar serviços">${FILTROS.map(([k, l]) => `<button class="chip-act" type="button" data-tc-filtro="${k}" aria-pressed="${k === filtro}">${l}</button>`).join('')}</div>
       <p class="sub" id="tc-total" role="status" aria-live="polite"></p><div id="tc-lista" class="tc-lista"></div>
-      <span class="label">Obras em acompanhamento</span>${obras.stale ? CC.staleNote(obras) : ''}
+      <span class="sec-tit">Obras em acompanhamento</span>${obras.stale ? CC.staleNote(obras) : ''}
       ${obras.error ? '<p class="sub">Não foi possível carregar as obras. Abra a aba Obras para tentar novamente.</p>' : projetos.length ? `<div class="rows">${projetos.map((o) => `<button class="row" type="button" data-tc-obra="${o.id}"><span class="line"><span class="grow"><b>${esc(o.nome)}</b><br><small>${esc(o.cliente || o.codigo || '')}</small></span>${icon('caret-right', 18)}</span></button>`).join('')}</div>` : '<p class="sub">Nenhuma obra em acompanhamento.</p>'}`, false, params);
     const busca = CC.$('#tc-busca', view), destino = CC.$('#tc-lista', view);
     const pintar = () => {

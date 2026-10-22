@@ -11,6 +11,8 @@
     return `<i class="${fill ? 'ph-fill' : 'ph'} ph-${base}" aria-hidden="true"${style}></i>`;
   };
   D.ic = (name, size) => CC.icon(name, size);
+  // "1 conta", "2 contas": plural em portugues no lugar de "conta(s)" (CC-25). Mesmo F.plural do celular.
+  D.plural = (n, um, varios) => `${Number(n) || 0} ${Number(n) === 1 ? um : varios}`;
 
   // Datas sempre em dd/mm/aaaa. Aceita "2026-09-14" e "2026-09-14T00:00:00.000Z".
   D.data = (iso) => {

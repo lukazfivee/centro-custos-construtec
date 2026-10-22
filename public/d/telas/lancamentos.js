@@ -85,7 +85,7 @@
         if (!vivo() || minha !== vez) return;
         const fila = CC.queue ? (await CC.queue.mine()).length : 0;
         alvo.innerHTML = U.faixa('warn', 'wifi-slash', error.status === 0
-          ? `Sem internet. A lista volta quando a conexão voltar.${fila ? ` ${fila} lançamento(s) na fila deste computador.` : ''}`
+          ? `Sem internet. A lista volta quando a conexão voltar.${fila ? ` ${D.plural(fila, 'lançamento', 'lançamentos')} na fila deste computador.` : ''}`
           : error.message);
         return;
       }

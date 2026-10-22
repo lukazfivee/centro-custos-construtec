@@ -19,6 +19,7 @@
       <div class="cab cab-obra"><div class="tit">${olho ? `<span class="eyebrow">${esc(olho)}</span>` : ''}<h1>${esc(c.nome)}</h1>${sub ? `<span class="sub">${esc(sub)}</span>` : ''}</div>
         <div class="acoes">${O.chipSituacao(c.situacao)}
           ${D.pode('cadastrar') ? `<button type="button" class="btn btn-s" data-editar-obra>${D.ic('pencil-simple')}Editar obra</button>` : ''}
+          ${D.tem('p5') ? D.tecnicos.botao() : ''}
           <button type="button" class="btn btn-s" data-relatorio>${D.ic('printer')}Relatório executivo</button>
           <button type="button" class="btn btn-p" data-lancar>${D.ic('plus')}Lançar despesa</button></div></div>`;
   }
@@ -44,8 +45,8 @@
     const obra = { ...c, revision: daLista ? daLista.revision : c.revision };
     el.innerHTML = `<div class="pagina obra">${topo(obra)}
       <div class="abas-pagina" role="tablist">${ABAS.map(([k, t]) => `<a class="tab" role="tab" href="#/obras/${esc(c.id)}${k === 'orcado' ? '' : `/${k}`}" aria-selected="${k === aba ? 'true' : 'false'}">${esc(t)}</a>`).join('')}</div>
-      ${D.tem('p5') ? '<div data-obra-tecnicos></div>' : ''}<div data-aba-corpo></div></div>`;
-    if (D.tem('p5')) CC.tecnicos.panel(CC.$('[data-obra-tecnicos]', el), c.id);
+      <div data-aba-corpo></div></div>`;
+    D.tecnicos.ligar(el, c.id);
     const editar = CC.$('[data-editar-obra]', el);
     if (editar) editar.addEventListener('click', () => O.formulario(obra, () => D.ir(location.hash.replace(/^#\/?/, ''))));
     CC.$('[data-lancar]', el).addEventListener('click', () => D.lanc.formulario(null, null, c.id));

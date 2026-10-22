@@ -115,7 +115,7 @@
       <label class="field"><span>Mensagem</span><textarea id="ce-msg" rows="9">${esc(d.bodyText || '')}</textarea></label>
       ${envia ? `<label class="field"><span>Anexo · nota fiscal em PDF</span><select id="ce-anexo">
           ${nfs.map((n) => `<option value="nf:${esc(n.id)}">${esc(`${n.nomeArquivo || 'nota.pdf'} · ${n.observacao || 'NF'}${n.valor == null ? '' : ` · ${CC.money(n.valor)}`}`)}</option>`).join('')}
-          <option value="vinculada">Usar a NF vinculada à obra (cadastro antigo)</option><option value="arquivo">Outro PDF do celular</option></select></label>
+          <option value="vinculada">NF já vinculada à obra</option><option value="arquivo">Outro PDF do celular</option></select></label>
         <input id="ce-arq" type="file" accept="application/pdf,.pdf" hidden>
         <p class="sub fin-nota">${nfs.length ? 'Uma NF em PDF por envio, até 5 MB.' : 'Nenhuma NF em PDF lançada para o cliente nesta obra. Lance na obra ou no serviço (Notas fiscais) ou escolha um PDF.'}</p>
         <label class="menu-item pref"><span>Autorizo o envio deste e-mail ao cliente</span><input type="checkbox" id="ce-ok"></label>`

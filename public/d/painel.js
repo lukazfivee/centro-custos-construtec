@@ -112,7 +112,7 @@
       const sim = await D.confirmar({
         titulo: 'Descartar as alterações?',
         texto: 'O que você mudou neste painel ainda não foi salvo.',
-        ok: 'Descartar', cancelar: 'Continuar editando', tom: 'aviso', icone: 'warning',
+        ok: 'Descartar', cancelar: 'Continuar editando', tom: 'perigo', icone: 'warning',
       });
       if (!sim) return false;
     }

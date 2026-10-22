@@ -69,7 +69,7 @@
     const obras = (base.porCentro || []).slice().sort((a, b) => String(a.nome).localeCompare(String(b.nome), 'pt-BR'));
     if (filtro.obra && !obras.some((o) => String(o.id) === filtro.obra)) filtro.obra = '';
     const nomeObra = (obras.find((o) => String(o.id) === filtro.obra) || {}).nome;
-    const filtros = `<span class="label hp-sec">Painel do mês</span>${CC.monthStep(filtro.mes)}
+    const filtros = `<span class="sec-tit hp-sec">Painel do mês</span>${CC.monthStep(filtro.mes)}
       <label class="field"><span class="sr">Obra</span><select id="hp-obra"><option value="">Todas as obras</option>${obras.map((o) => `<option value="${esc(o.id)}"${String(o.id) === filtro.obra ? ' selected' : ''}>${esc(o.nome)}</option>`).join('')}</select></label>`;
     const ligar = () => {
       CC.$$('[data-mes]', slot).forEach((b) => b.addEventListener('click', () => { filtro.mes = b.dataset.mes; homePainel(slot, base, params); }));
@@ -97,13 +97,13 @@
     slot.innerHTML = `${filtros}${stale ? CC.staleNote(stale) : ''}
       <small class="muted hp-ctx">${esc(`${CC.mesNome(filtro.mes)} · ${nomeObra || 'todas as obras'}`)}</small>
       ${kpis(r)}
-      <div class="card"><span class="label">Evolução · 12 meses</span>
+      <div class="card"><span class="sec-tit">Evolução · 12 meses</span>
         <span class="cs-leg"><span><i class="cs-q rec"></i>Receitas</span><span><i class="cs-q desp"></i>Despesas</span></span>
         ${grafico(r.tendencia)}${medias(r.tendencia)}</div>
-      <div class="card"><span class="label">Despesas por categoria</span>${categorias(r.porCategoria)}</div>
-      <div class="card hp-rec-card"><span class="line hp-head"><span class="label">Atividades recentes</span>
+      <div class="card"><span class="sec-tit">Despesas por categoria</span>${categorias(r.porCategoria)}</div>
+      <div class="card hp-rec-card"><span class="line hp-head"><span class="sec-tit">Atividades recentes</span>
         <button class="chip-act" type="button" id="hp-todos">Ver todos${icon('arrow-right', 14)}</button></span>
-        ${recentes.length ? recentes.map((t) => CC.txRow(t, [t.centro_nome, CC.dateBr(t.data)].filter(Boolean).join(' · '))).join('') : '<p class="sub mt-vazio">Nenhum lançamento neste mês.</p>'}</div>`;
+        ${recentes.length ? recentes.map((t) => CC.txRow(t, [t.centro_nome, CC.dateBr(t.data)].filter(Boolean).join(' · '), true)).join('') : '<p class="sub mt-vazio">Nenhum lançamento neste mês.</p>'}</div>`;
     ligar();
     CC.$('#hp-todos', slot).addEventListener('click', () => CC.go('lancamentos', { mes: filtro.mes }));
     CC.wireTx(slot, ['home']);
@@ -114,12 +114,15 @@
     const n = (x) => Number(x || 0).toLocaleString('pt-BR', { maximumFractionDigits: 0 });
     const h = p.laborHours || {}, fat = (p.clientBilling || {}).totalBilled || 0;
     const exec = (p.statusCounts && p.statusCounts.execucao) || 0;
-    const saldo = Number(p.totalBalance) || 0;
+    // Mesmo universo do desktop (CC-06): percentual e saldo so das obras com orcamento importado; "—" se faltar alguma.
+    const c = p.comparable || {}, com = Number(c.centersWithBaseline || 0), sem = Number(c.centersWithoutBaseline || 0);
+    const saldo = Number(c.balance) || 0;
+    const pct = `${Number(c.burnRatePercent || 0).toLocaleString('pt-BR', { maximumFractionDigits: 1 })}% do orçado`;
     return CC.tiles([
       ['Obras', String(p.totalCenters != null ? p.totalCenters : obras.length), `${exec} em execução`],
-      ['Contratado', moneyShort(p.totalContractValue), 'soma dos contratos'],
-      ['Realizado', moneyShort(p.totalRealizedCost), `${n(p.burnRatePercent)}% do orçado`],
-      ['Saldo', `${saldo < 0 ? '− ' : ''}${moneyShort(Math.abs(saldo))}`, 'orçado − realizado', saldo < 0 ? 'warn-txt' : ''],
+      ['Contratado', moneyShort(p.contractedTotal != null ? p.contractedTotal : p.totalContractValue), 'soma dos contratos'],
+      ['Realizado', moneyShort(p.totalRealizedCost), !com ? 'sem orçamento importado' : (sem ? `— · ${sem} sem orçamento` : pct)],
+      ['Saldo', com ? `${saldo < 0 ? '− ' : ''}${moneyShort(Math.abs(saldo))}` : '—', !com ? 'sem orçamento' : (sem ? `de ${com} ${com === 1 ? 'obra' : 'obras'}` : 'orçado − realizado'), saldo < 0 ? 'warn-txt' : ''],
       ['Horas medidas', `${n(h.consumed)} h`, `de ${n(h.planned)} h`],
       ['Faturado', moneyShort(fat), p.totalContractValue > 0 ? `${n((fat / p.totalContractValue) * 100)}% do contrato` : 'sem contrato'],
     ]);

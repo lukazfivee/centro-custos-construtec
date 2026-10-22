@@ -38,7 +38,7 @@
 
   const render = async (el, rota, vivo) => {
     if (!D.itemMenu(rota.nome)) {
-      el.innerHTML = `<div class="pagina"><div class="card">${D.ui.vazio('compass', 'Esta tela não existe.', 'Use o menu ao lado para escolher uma tela.')}</div></div>`;
+      el.innerHTML = `<div class="pagina">${D.ui.cabecalho({ titulo: 'Tela não encontrada' })}<div class="card">${D.ui.vazio('compass', 'Esta tela não existe.', 'Use o menu ao lado para escolher uma tela.')}</div></div>`;
       return undefined;
     }
     if (!D.podeTela(rota.nome)) return semAcesso(el);

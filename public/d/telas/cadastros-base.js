@@ -14,10 +14,16 @@
   };
   C.pode = () => D.pode('cadastrar');
   C.plural = (n, um, varios) => `${n} ${n === 1 ? um : varios}`;
+  // Telefone so na exibicao: 10 ou 11 digitos viram (11) 3333-4444 / (11) 98765-4321; o resto fica como foi gravado.
+  C.fone = (t) => {
+    const d = String(t || '').replace(/[^0-9]/g, '');
+    if ((d.length !== 10 && d.length !== 11) || d.startsWith('0')) return t || ''; // 0800 e afins ficam como foram gravados
+    return `(${d.slice(0, 2)}) ${d.slice(2, d.length - 4)}-${d.slice(-4)}`;
+  };
 
   // Interruptor com rotulo e ajuda (role="switch"). Use C.ligarTroca no corpo do painel.
   C.troca = ({ titulo, texto, ligado }) => `<button type="button" class="troca" role="switch" data-troca aria-checked="${ligado ? 'true' : 'false'}">
-    <span><b>${esc(titulo)}</b><small>${esc(texto)}</small></span><span class="chave" aria-hidden="true"></span></button>`;
+    <span><b>${esc(titulo)}</b>${texto ? `<small>${esc(texto)}</small>` : ''}</span><span class="chave" aria-hidden="true"></span></button>`;
   C.ligarTroca = (corpo, ctl) => {
     const bt = CC.$('[data-troca]', corpo);
     bt.addEventListener('click', () => {

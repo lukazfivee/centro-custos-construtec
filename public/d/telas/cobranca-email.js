@@ -74,9 +74,11 @@
       : (pendente ? U.faixa('warn', 'clock', 'Envio sem confirmação. Após um minuto, escolha a mesma NF e tente confirmar novamente; confira o histórico antes de reenviar.')
         : (d.status === 'failed' ? U.faixa('err', 'warning-circle', `O último envio falhou: ${d.lastError || 'erro desconhecido'}`)
         : (d.status === 'authorized' ? U.faixa('info', 'seal-check', `Autorizado por ${d.authorizedByEmail || 'gestor'} em ${dataHora(d.authorizedAt)}`) : '')));
-    const somenteLer = pode ? '' : ' disabled';
-    const opcoesAnexo = [...nfs.map((n) => `<option value="nf:${esc(n.id)}">${esc(`${n.nomeArquivo || 'nota.pdf'} · ${n.observacao || 'NF'}${n.valor == null ? '' : ` · ${CC.money(n.valor)}`}`)}</option>`), '<option value="vinculada">Usar a NF vinculada à obra (cadastro antigo)</option>', '<option value="arquivo">Outro PDF do computador…</option>'].join('');
-    ctl.desenhar(`${banner}<form class="form-lanc" novalidate>
+    // Sem permissao (supervisor): campos so de leitura e o motivo dito na faixa (CC-32).
+    const somenteLer = pode ? '' : ' readonly';
+    const motivo = pode ? '' : U.faixa('info', 'eye', 'Só administrador ou gestor edita e envia o e-mail de cobrança. Aqui você confere o rascunho.');
+    const opcoesAnexo = [...nfs.map((n) => `<option value="nf:${esc(n.id)}">${esc(`${n.nomeArquivo || 'nota.pdf'} · ${n.observacao || 'NF'}${n.valor == null ? '' : ` · ${CC.money(n.valor)}`}`)}</option>`), '<option value="vinculada">NF já vinculada à obra</option>', '<option value="arquivo">Outro PDF do computador…</option>'].join('');
+    ctl.desenhar(`${motivo}${banner}<form class="form-lanc" novalidate>
       ${U.campo({ rotulo: 'Para', name: 'to', valor: (d.to || []).join(', '), placeholder: 'cliente@empresa.com.br' }).replace('<input ', `<input${somenteLer} `)}
       <div class="fld"><span>Cópia</span><input class="inp" name="cc" value="${esc(extras.join(', '))}" placeholder="Opcional"${somenteLer}>
         ${fixos.length ? `<small class="muted">Sempre em cópia: ${esc(fixos.join(', '))}</small>` : ''}<span class="erro" role="alert"></span></div>

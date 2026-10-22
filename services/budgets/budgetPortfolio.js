@@ -126,9 +126,26 @@ async function getPortfolioSummary(pool, { kind = null } = {}) {
     };
   });
 
+  // 9. Mesmo universo para os indicadores da tela (CC-06): contratado de todas as obras ativas (o do cadastro,
+  // ou o do contrato importado) e orcado x realizado so das obras que tem orcamento importado.
+  const realizedByCenter = new Map(porObra.map((o) => [o.id, o.realizedCost]));
+  const comBase = centers.filter((c) => (baselineByCenter.get(c.id) || 0) > 0);
+  const comparableBase = comBase.reduce((s, c) => s + (baselineByCenter.get(c.id) || 0), 0);
+  const comparableRealized = comBase.reduce((s, c) => s + (realizedByCenter.get(c.id) || 0), 0);
+  const contractedTotal = centers.reduce((s, c) => s + (Number(c.contract_amount || 0) || contractByCenter.get(c.id) || 0), 0);
+
   return {
     porObra,
     portfolio: {
+      contractedTotal,
+      comparable: {
+        centersWithBaseline: comBase.length,
+        centersWithoutBaseline: centers.length - comBase.length,
+        baseCost: comparableBase,
+        realizedCost: comparableRealized,
+        balance: comparableBase - comparableRealized,
+        burnRatePercent: comparableBase > 0 ? Math.round((comparableRealized / comparableBase) * 1000) / 10 : null,
+      },
       totalCenters: centers.length,
       statusCounts,
       integratedWorksCount: baselines.length,

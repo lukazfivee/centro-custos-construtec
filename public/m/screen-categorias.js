@@ -14,7 +14,7 @@
 
   const linha = (c, pode) => `<button type="button" class="row fin-row" data-cat="${esc(c.id)}"${pode ? '' : ' disabled'}>
     <span class="line"><span class="fin-cor" style="${corOk(c.cor) ? `background:${corOk(c.cor)}` : ''}"></span><span class="grow name">${esc(c.nome)}</span>
-      <span class="tag${c.ativo === false ? '' : ' fin-ok'}">${c.ativo === false ? 'Inativa' : esc(nomeTipo(c.tipo))}</span></span>
+      <span class="tag${c.ativo === false ? '' : ({ despesa: ' fin-warn', receita: ' fin-ok' }[c.tipo] || '')}">${c.ativo === false ? 'Inativa' : esc(nomeTipo(c.tipo))}</span></span>
     ${c.descricao ? `<span class="cli">${esc(c.descricao)}</span>` : ''}
     <span class="line foot"><span class="grow">${esc(F.plural(Number(c.lancamentos_mes) || 0, 'lançamento no mês', 'lançamentos no mês'))}</span>
       <b class="fin-val">${esc(Number(c.total_mes) ? money(c.total_mes) : '—')}</b></span></button>`;
@@ -33,7 +33,7 @@
     const nova = pode ? `<button class="back" type="button" id="ca-nova" aria-label="Nova categoria">${icon('plus', 22)}</button>` : '';
     const page = CC.render(`${F.top('Categorias', `${F.plural(ativas, 'ativa', 'ativas')} · usadas nos lançamentos`, nova)}${CC.staleNote(result)}
       ${F.busca('ca-busca', estado.busca, 'Buscar categoria')}
-      <div class="chips" role="group" aria-label="Tipo da categoria">${FILTROS.map(([k, l]) => `<button class="chip-act" type="button" data-filtro="${k}" aria-pressed="${k === estado.filtro}">${l}</button>`).join('')}</div>
+      <div class="seg" role="group" aria-label="Tipo da categoria">${FILTROS.map(([k, l]) => `<button type="button" data-filtro="${k}" aria-pressed="${k === estado.filtro}">${l}</button>`).join('')}</div>
       <div id="ca-lista"></div>`, true, params);
     F.voltar(page, voltar);
     const pintar = () => {

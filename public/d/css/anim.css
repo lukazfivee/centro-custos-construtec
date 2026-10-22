@@ -8,10 +8,10 @@
 .success .check .ph-fill { font-size: calc(var(--s, 72px) * .6); }
 .success .logo { position: absolute; left: 14%; top: 14%; width: 72%; height: 72%; object-fit: contain; filter: drop-shadow(0 6px 14px rgba(18, 169, 209, .4)); animation: ctLogo .5s cubic-bezier(.2, .8, .2, 1) .80s both; }
 
-@keyframes ctCheck { 0% { opacity: 1; transform: scale(0) } 20% { opacity: 1; transform: scale(1.14) } 32% { opacity: 1; transform: scale(1) } 64% { opacity: 1; transform: scale(1) } 74% { opacity: 0; transform: scale(1.35) } 100% { opacity: 0; transform: scale(1.35) } }
+@keyframes ctCheck { 0% { opacity: 1; transform: scale(0) } 20% { opacity: 1; transform: scale(1) } 32% { opacity: 1; transform: scale(1) } 64% { opacity: 1; transform: scale(1) } 74% { opacity: 0; transform: scale(1.35) } 100% { opacity: 0; transform: scale(1.35) } }
 @keyframes ctRing { 0% { opacity: .9; transform: scale(.85) } 100% { opacity: 0; transform: scale(1.8) } }
 @keyframes ctBurst { 0% { opacity: 0; transform: rotate(var(--r)) translateY(0) scale(.4) } 15% { opacity: 1 } 100% { opacity: 0; transform: rotate(var(--r)) translateY(var(--d)) scale(1) } }
-@keyframes ctLogo { 0% { opacity: 0; transform: scale(.3) rotate(-30deg) } 60% { opacity: 1; transform: scale(1.12) rotate(5deg) } 100% { opacity: 1; transform: scale(1) rotate(0) } }
+@keyframes ctLogo { 0% { opacity: 0; transform: scale(.3) rotate(-30deg) } 60% { opacity: 1; transform: scale(1) rotate(0) } 100% { opacity: 1; transform: scale(1) rotate(0) } }
 @keyframes spin { to { transform: rotate(360deg) } }
 @keyframes blink { 50% { opacity: .35 } }
 @keyframes fadeUp { from { opacity: 0; transform: translateY(14px) } to { opacity: 1; transform: none } }

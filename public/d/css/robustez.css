@@ -3,7 +3,8 @@
 .cad-barra + .cad-tabela, .fech-kpis + .fech-grade, .usu-kpis + .usu-barra { margin-top: 14px; }
 .tabela, .cad-tabela, .fech-tabela { overflow-x: auto; overflow-y: hidden; }
 .kpi .topo { min-height: 36px; }
-.kpi .lbl { min-width: 0; }
+/* Rotulo de KPI numa linha so (CC-18): quebra em 2 linhas desalinhava os valores; o texto inteiro fica no title. */
+.kpi .lbl { min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .kpi .val[data-ajustado] { text-overflow: clip; }
 
 /* Textos que nao podem quebrar no meio. */

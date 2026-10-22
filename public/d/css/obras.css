@@ -4,9 +4,17 @@
 .alerta-carteira b { font-weight: 700; }
 .barra-filtro { display: flex; align-items: center; flex-wrap: wrap; justify-content: space-between; gap: 12px; }
 .grade-obras { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
-.cartao-obra { padding: 18px; display: flex; flex-direction: column; gap: 12px; min-width: 0; }
-.cartao-obra .topo { display: flex; justify-content: space-between; gap: 8px; }
-.cartao-obra .tx { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.cartao-obra { position: relative; padding: 18px; display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+.cartao-obra .topo { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; min-height: 32px; }
+.cartao-obra .topo .chips { display: flex; flex-wrap: wrap; gap: 6px; min-width: 0; }
+/* Cartao inteiro clicavel: o link do titulo cobre o cartao; os icones de acao ficam por cima. */
+.cartao-obra .tx { display: flex; flex-direction: column; gap: 2px; min-width: 0; color: inherit; text-decoration: none; }
+.cartao-obra .tx::after { content: ''; position: absolute; inset: 0; border-radius: inherit; }
+.cartao-obra .tx:hover b { color: var(--color-accent-300); }
+.cartao-obra .tx:focus-visible { outline: none; }
+.cartao-obra:has(.tx:focus-visible) { box-shadow: 0 0 0 2px var(--color-focus); }
+.cartao-obra .acoes-cartao { position: relative; z-index: 1; display: flex; gap: 2px; margin: -4px -6px 0 0; flex: none; }
+.ibtn.perigo:hover { background: var(--c-err-soft); color: var(--c-err); }
 .cartao-obra .tx b { font-size: calc(16px * var(--fs, 1)); font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .cartao-obra .tx .muted { font-size: calc(13px * var(--fs, 1)); }
 .uso-linha { display: flex; flex-direction: column; gap: 5px; font-size: calc(12.5px * var(--fs, 1)); color: var(--color-neutral-300); }
@@ -16,7 +24,6 @@
 .cartao-obra .valores { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding-top: 10px; border-top: 1px solid var(--color-divider); }
 .cartao-obra .valores > span { display: flex; flex-direction: column; gap: 2px; }
 .cartao-obra .valores b { font-size: calc(14px * var(--fs, 1)); font-weight: 600; }
-.cartao-obra .bts { display: grid; grid-template-columns: 1fr auto auto; gap: 8px; }
 
 .voltar { display: inline-flex; align-items: center; gap: 6px; font-size: calc(13.5px * var(--fs, 1)); font-weight: 600; color: var(--color-accent-300); text-decoration: none; align-self: flex-start; }
 .cab-obra { align-items: center; }
@@ -50,8 +57,7 @@
 
 .grade-nf { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; align-items: start; }
 .chip-bt { border: 0; background: transparent; padding: 0; cursor: pointer; }
-.check { display: flex; align-items: center; gap: 8px; font-size: calc(13.5px * var(--fs, 1)); }
-.check input { width: 16px; height: 16px; }
+
 
 @media (max-width: 1379px) {
   .grade-obras { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -65,3 +71,12 @@
 
 /* Aba Obras / Servicos / Todos no topo da carteira */
 .obras .abas-tipo { margin-bottom: 14px; }
+
+/* Tecnicos do item no painel lateral (obra-tecnicos.js): lista com anel de 1 px, caixas na cor da marca. */
+.tc-lista { display: flex; flex-direction: column; border-radius: 12px; box-shadow: inset 0 0 0 1px var(--color-divider); }
+.tc-linha { display: flex; align-items: center; gap: 12px; min-height: 48px; padding: 0 14px; font-size: calc(13.5px * var(--fs, 1)); cursor: pointer; }
+.tc-linha + .tc-linha { box-shadow: inset 0 1px 0 var(--color-divider); }
+.tc-linha:hover { background: var(--color-accent-900); }
+.tc-linha:first-child { border-radius: 12px 12px 0 0; } .tc-linha:last-child { border-radius: 0 0 12px 12px; }
+.tc-linha input { width: 18px; height: 18px; margin: 0; flex: none; }
+.tc-linha span { min-width: 0; overflow-wrap: anywhere; }

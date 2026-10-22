@@ -8,7 +8,7 @@
 
   const linha = (f, pode) => `<button type="button" class="row fin-row" data-forn="${esc(f.id)}"${pode ? '' : ' disabled'}>
     <span class="line"><span class="grow name">${esc(f.nome)}</span>${f.ativo === false ? '<span class="tag">Inativo</span>' : ''}</span>
-    <span class="cli">${esc([f.documento, f.contato, f.telefone].filter(Boolean).join(' · ') || 'Sem documento nem contato')}</span>
+    <span class="cli">${esc([f.documento, f.contato, F.fone(f.telefone)].filter(Boolean).join(' · ') || 'Sem documento nem contato')}</span>
     <span class="line foot"><span class="grow">${esc(F.plural(Number(f.lancamentos_mes) || 0, 'lançamento no mês', 'lançamentos no mês'))}</span>
       <b class="fin-val">${esc(Number(f.gasto_mes) ? money(f.gasto_mes) : '—')}</b></span></button>`;
 

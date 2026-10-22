@@ -21,7 +21,7 @@
       <div class="tit-sv"><span class="eyebrow">${esc(sv.codigo)} · Serviço</span><h1>${esc(sv.nome)}</h1>${meta ? `<span class="sub">${esc(meta)}</span>` : ''}</div>
       <div class="acoes-sv">${S.chip(sv.situacao)}${sv.ativo === false ? U.chip('Inativo', 'neutro') : ''}${fila.length ? U.chip(`Na fila · ${fila.length}`, 'warn', 'cloud-arrow-up') : ''}<span class="espaco"></span>
         ${D.tem('p5') && aberto ? `<button type="button" class="btn btn-s" data-editar>${D.ic('pencil-simple')}Editar</button>` : ''}
-        <button type="button" class="btn btn-s" data-relatorio>${D.ic('file-text')}Relatório do serviço</button>${proximo}
+        ${D.tem('p5') ? D.tecnicos.botao() : ''}<button type="button" class="btn btn-s" data-relatorio>${D.ic('file-text')}Relatório do serviço</button>${proximo}
         ${D.tem('p2') && aberto ? `<button type="button" class="btn btn-p" data-lancar>${D.ic('plus')}Lançar despesa</button>` : ''}</div>`;
   }
 
@@ -60,11 +60,11 @@
     }
     const fila = await S.naFila(sv.id);
     if (!vivo()) return;
-    el.innerHTML = `<div class="pagina servico">${topo(sv, fila)}${D.tem('p5') ? '<div data-servico-tecnicos></div>' : ''}
+    el.innerHTML = `<div class="pagina servico">${topo(sv, fila)}
       ${semRede ? U.faixa('warn', 'cloud-slash', 'Sem internet. Você está vendo o que foi carregado antes; as despesas na fila sobem quando a conexão voltar.', `<button type="button" class="btn btn-s" data-tentar>${D.ic('arrow-clockwise')}Atualizar</button>`) : ''}
       <div class="grade-sv"><div class="principal">${B.kpis(sv, fila)}${B.porTipo(sv)}${B.lancamentos(sv, fila)}${B.anexos(sv)}</div>
         <div class="lado">${B.feito(sv)}${B.fotos(sv)}${B.aceite(sv)}${B.cobranca(sv)}</div></div></div>`;
-    if (D.tem('p5')) CC.tecnicos.panel(CC.$('[data-servico-tecnicos]', el), sv.id);
+    D.tecnicos.ligar(el, sv.id);
     ligar(el, sv, recarregar);
     // Mesmas notas fiscais da obra: o servico e um centro de custo.
     D.obras.abas.nf(CC.$('[data-nf-servico]', el), { id: sv.id, nome: sv.nome }, vivo).catch((error) => {

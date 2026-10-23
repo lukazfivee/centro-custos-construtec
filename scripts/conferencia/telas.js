@@ -107,10 +107,13 @@ t('D3a', 'carteira', { rota: 'obras', ref: 'obras' });
 t('D3a', 'carteira-em-execucao', { rota: 'obras', async preparar(c) { await c.tocar('[data-seg="situacao"][data-valor="execucao"]'); await c.dormir(600); } });
 t('D3a', 'nova-obra', { rota: 'obras', async preparar(c) { await c.tocar('[data-nova]'); await c.painel(); } });
 t('D3a', 'editar-obra', { rota: 'obras', async preparar(c) { await c.tocar(`[data-editar="${c.s.obras.aurora.id}"]`); await c.painel(); } });
-t('D3a', 'obra-orcado', { ref: 'obra', rotaDe: modelo });
-t('D3a', 'obra-orcado-rolado', { rotaDe: modelo, async preparar(c) { await c.rolar('#conteudo', 'fim'); } });
-t('D3a', 'obra-orcado-mao-de-obra', { rotaDe: modelo, async preparar(c) { await c.tocarTexto('[data-seg]', 'Mão de obra'); await c.dormir(500); } });
-t('D3a', 'obra-sem-orcamento', { rotaDe: aurora });
+t('D3a', 'obra-resumo', { rotaDe: modelo });
+t('D3a', 'obra-resumo-aurora', { rotaDe: aurora });
+t('D3a', 'obra-caixa', { rotaDe: (s) => `${aurora(s)}/caixa` });
+t('D3a', 'obra-orcado', { ref: 'obra', rotaDe: (s) => `${modelo(s)}/orcado` });
+t('D3a', 'obra-orcado-rolado', { rotaDe: (s) => `${modelo(s)}/orcado`, async preparar(c) { await c.rolar('#conteudo', 'fim'); } });
+t('D3a', 'obra-orcado-mao-de-obra', { rotaDe: (s) => `${modelo(s)}/orcado`, async preparar(c) { await c.tocarTexto('[data-seg]', 'Mão de obra'); await c.dormir(500); } });
+t('D3a', 'obra-sem-orcamento', { rotaDe: (s) => `${aurora(s)}/orcado` });
 t('D3a', 'obra-lancamentos', { rotaDe: (s) => `${aurora(s)}/lancamentos` });
 t('D3a', 'obra-notas-fiscais', { ref: 'nf', rotaDe: (s) => `${aurora(s)}/nf` });
 t('D3a', 'lancar-nf', { rotaDe: (s) => `${aurora(s)}/nf`, async preparar(c) { await c.tocar('[data-lancar-nf]'); await c.painel(); } });
@@ -125,7 +128,7 @@ t('D3b', 'curva-s', { ref: 'curva', rotaDe: (s) => `${modelo(s)}/curva` });
 t('D3b', 'curva-s-rolada', { rotaDe: (s) => `${modelo(s)}/curva`, async preparar(c) { await c.rolar('#conteudo', 'fim'); } });
 t('D3b', 'relatorio-executivo', { rotaDe: modelo, async preparar(c) { await c.tocar('[data-relatorio]'); await c.dormir(1800); } });
 t('D3b', 'importar-orcamento', { rota: 'obras', async preparar(c) { await c.tocar('[data-importar]'); await c.painel(); } });
-t('D3b', 'vincular-gastos-painel', { rotaDe: modelo, async preparar(c) { await c.tocar('[data-vincular]'); await c.painel(); } });
+t('D3b', 'vincular-gastos-painel', { rotaDe: (s) => `${modelo(s)}/orcado`, async preparar(c) { await c.tocar('[data-vincular]'); await c.painel(); } });
 
 // D4 · Cobrancas ------------------------------------------------------------------------------
 const cobranca = (obra, acao) => async (c) => { await c.linha(obra, acao); await c.painel(); };

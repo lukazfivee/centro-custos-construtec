@@ -6,7 +6,7 @@
   CC.suitePill = () => CC.sv && CC.sv.role() === 'tecnico' ? '' : `<button class="suite-pill" type="button" data-suite aria-haspopup="dialog">${icon('squares-four', 16)}Suíte</button>`;
 
   function header(title) {
-    return `<div class="top"><span class="brand"><img src="simbolo.png" alt=""><span>Centro de Custos</span></span>${CC.bellBtn ? CC.bellBtn() : ''}${CC.suitePill()}</div>
+    return `<div class="top"><span class="brand" role="img" aria-label="Centro de Custos"><img src="simbolo.png" alt=""></span>${CC.bellBtn ? CC.bellBtn() : ''}${CC.suitePill()}</div>
       ${title ? `<h1 class="title">${esc(title)}</h1>` : ''}`;
   }
   CC.header = header;
@@ -148,7 +148,7 @@
     if (CC.sv) await CC.sv.loadPerms();
     if (!CC.session.token() || (params && params.__nav && params.__nav !== CC.nav)) return;
     const novo = CC.sv && CC.sv.can('p5') ? `<button class="sv-novo" type="button" id="novo" aria-label="Novo">${icon('plus', 22)}</button>` : '';
-    const top = `<div class="top"><span class="brand"><img src="simbolo.png" alt=""><span>Centro de Custos</span></span>${CC.bellBtn ? CC.bellBtn() : ''}${novo}${CC.suitePill()}</div>
+    const top = `<div class="top"><span class="brand" role="img" aria-label="Centro de Custos"><img src="simbolo.png" alt=""></span>${CC.bellBtn ? CC.bellBtn() : ''}${novo}${CC.suitePill()}</div>
       <div class="seg obras-tipo" role="group" aria-label="Obra ou serviço">${TIPOS.map(([v, t]) => `<button type="button" data-tipo="${v}" aria-pressed="${v === tipo}">${t}</button>`).join('')}</div>`;
     const bind = () => {
       CC.$$('[data-tipo]').forEach((b) => b.addEventListener('click', () => { if (b.dataset.tipo === tipo) return; guardarTipo(b.dataset.tipo); CC.screens.obras(params); }));

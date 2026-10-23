@@ -25,7 +25,7 @@
         URL.revokeObjectURL(url);
         const dados = canvas.toDataURL('image/jpeg', 0.8).split(',')[1] || '';
         const bytes = Math.floor((dados.length * 3) / 4);
-        if (!dados || bytes > MAX_PRINT) return reject(new Error('O print passa de 4 MB. Escolha uma imagem menor.'));
+        if (!dados || bytes > MAX_PRINT) return reject(new Error('A imagem passa de 4 MB. Escolha uma imagem menor.'));
         return resolve({ nome: `${(arquivo.name || 'print').replace(/\.[^.]+$/, '')}.jpg`, tipo: 'image/jpeg', dados, tamanho: bytes });
       };
       img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('Não foi possível ler a imagem.')); };
@@ -44,7 +44,7 @@
       <label class="field"><span>O que aconteceu</span><textarea id="rn-desc" rows="5" maxlength="10000" placeholder="Conte o que você fez, o que esperava e o que viu."></textarea></label>
       <label class="menu-item pref"><span>Incluir diagnóstico<small>Versão do app, navegador, conexão, tela e as últimas 20 ações. Nada de senhas ou valores.</small></span><button type="button" class="adm-sw on" role="switch" aria-checked="true" aria-label="Incluir diagnóstico" id="rn-diag"><span></span></button></label>
       <div class="card"><div class="photo"><span class="thumb" id="rn-thumb">${icon('image', 22)}</span>
-        <span class="grow"><b>Print (opcional)</b><small class="muted" id="rn-print-txt" style="display:block">Ajuda a equipe a ver o problema</small></span></div>
+        <span class="grow"><b>Imagem da tela (opcional)</b><small class="muted" id="rn-print-txt" style="display:block">Ajuda a equipe a ver o problema</small></span></div>
         <input type="file" id="rn-arquivo" accept="image/png,image/jpeg,image/webp,image/gif" hidden>
         <span class="grid2" style="margin-top:10px"><button class="btn2" type="button" id="rn-escolher">${icon('image', 18)}Escolher</button><button class="btn2" type="button" id="rn-tirar" disabled>${icon('x', 18)}Remover</button></span></div>
       <p class="alert" role="alert" id="rn-erro"></p>
@@ -69,7 +69,7 @@
       const arquivo = event.target.files[0];
       event.target.value = '';
       if (!arquivo) return;
-      if (!/^image\/(png|jpeg|webp|gif)$/.test(arquivo.type)) { erro('O print precisa ser uma imagem PNG, JPG, WEBP ou GIF.'); return; }
+      if (!/^image\/(png|jpeg|webp|gif)$/.test(arquivo.type)) { erro('A imagem precisa ser uma imagem PNG, JPG, WEBP ou GIF.'); return; }
       try { print = await reduzir(arquivo); erro(''); } catch (error) { erro(error.message); }
       mostrar();
     });

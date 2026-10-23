@@ -50,7 +50,7 @@
       const resposta = await fetch(`/api/bug-reports/${id}/anexo`, { headers: { Authorization: `Bearer ${CC.session.token()}` }, cache: 'no-store' });
       if (!resposta.ok) throw new Error('sem print');
       const url = URL.createObjectURL(await resposta.blob());
-      alvo.innerHTML = `<a href="${url}" target="_blank" rel="noopener"><img src="${url}" alt="Print enviado junto com o report"></a>`;
+      alvo.innerHTML = `<a href="${url}" target="_blank" rel="noopener"><img src="${url}" alt="Imagem da tela enviada junto com o report"></a>`;
     } catch {
       alvo.innerHTML = '<span class="muted">Não foi possível carregar o print.</span>';
     }
@@ -100,7 +100,7 @@
     });
     if (!ctl) return;
     const alvo = CC.$('[data-print]', ctl.corpo);
-    if (alvo && local) alvo.innerHTML = `<img src="data:${esc(r.anexo.tipo)};base64,${esc(r.anexo.dados)}" alt="Print que será enviado com o report">`;
+    if (alvo && local) alvo.innerHTML = `<img src="data:${esc(r.anexo.tipo)};base64,${esc(r.anexo.dados)}" alt="Imagem da tela que será enviada com o report">`;
     else if (alvo) carregarPrint(detalhe.id, alvo);
     const salvar = CC.$('[data-salvar-resposta]', ctl.corpo);
     if (salvar) salvar.addEventListener('click', async () => {

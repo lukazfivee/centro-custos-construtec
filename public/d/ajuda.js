@@ -21,7 +21,7 @@
   const bloco = (titulo, texto, formula) => `<div class="aj-item"><h3>${esc(titulo)}</h3><p>${texto}</p>${formula ? `<div class="aj-formula"><code>${esc(formula)}</code></div>` : ''}</div>`;
   const regras = () => `<div class="aj-sec">
     ${bloco('Lançamentos', 'Cada receita ou despesa tem <b>competência</b> (o mês a que pertence), <b>vencimento</b> e situação. Use <b>Pendente</b> enquanto a conta não foi paga ou recebida; ao liquidar, mude para <b>Liquidado</b> e informe a data.')}
-    ${bloco('Obras e orçamento', 'Cada obra (centro de custo) tem um orçamento mensal. <b>Comprometido</b> soma todas as despesas do mês, pagas ou pendentes; <b>Pago/recebido</b> considera só o que foi liquidado.', 'Saldo do orçamento = orçamento mensal − comprometido')}
+    ${bloco('Obras e orçamento', 'Cada obra (centro de custo) tem um orçamento (o valor total da obra). <b>Comprometido</b> soma as despesas do período, pagas ou pendentes; <b>Pago/recebido</b> considera só o que foi liquidado.', 'Saldo do orçamento = orçamento da obra − comprometido')}
     ${bloco('Cobranças', 'A cobrança acompanha o recebimento de um serviço: nota fiscal, vencimento e pagamento. O e-mail ao cliente sai em nome de quem envia, com resposta para a sua conta.')}
     ${bloco('Fechamento mensal', 'Conferir e fechar o mês trava os lançamentos daquele período. Para corrigir um mês fechado, primeiro reabra o fechamento (só quem tem a permissão de fechamento); no mês aberto, use <b>editar</b> ou <b>estornar</b>. Tudo fica registrado em <b>Histórico</b>, com quem fez e quando.')}
   </div>`;

@@ -23,13 +23,14 @@ test('logística: troca de seção mantém o foco e cabe na largura estreita', a
     await driver.wait(async () => driver.executeScript('return document.activeElement?.dataset.aba === "ferramentas"'), 10000);
     assert.equal(await driver.executeScript('return document.activeElement?.getAttribute("aria-current")'), 'page');
 
-    await driver.manage().window().setRect({ width: 390, height: 844 });
+    await driver.manage().window().setRect({ width: 760, height: 844 });
     const widths = await driver.executeScript('const el=document.querySelector(".logi-pagina");return [el.clientWidth,el.scrollWidth]');
+    assert.ok(widths[0] >= 300, `área útil estreita demais para a interface desktop: ${widths[0]}px`);
     const overflow = await driver.executeScript('return [...document.querySelectorAll(".logi-pagina *")].filter(e=>e.scrollWidth>e.clientWidth+2).slice(0,12).map(e=>[e.tagName,e.className,e.clientWidth,e.scrollWidth])');
     assert.ok(widths[1] <= widths[0], `logística extrapolou o contêiner: ${widths.join(' / ')}; ${JSON.stringify(overflow)}`);
     if (process.env.E2E_SCREENSHOT_DIR) {
       fs.mkdirSync(process.env.E2E_SCREENSHOT_DIR, { recursive: true });
-      fs.writeFileSync(path.join(process.env.E2E_SCREENSHOT_DIR, 'logistica-desktop-390.png'), await driver.takeScreenshot(), 'base64');
+      fs.writeFileSync(path.join(process.env.E2E_SCREENSHOT_DIR, 'logistica-desktop-760.png'), await driver.takeScreenshot(), 'base64');
     }
   } finally {
     await stopDriver(driver);

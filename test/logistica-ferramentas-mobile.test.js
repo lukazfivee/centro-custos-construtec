@@ -17,6 +17,10 @@ test('mobile: técnico abre somente o próprio kit e recebe assinatura offline',
   assert.match(app, /'meu-kit'/);
   assert.match(home, /CC\.go\('meu-kit'\)/);
   assert.match(screen, /\/logistica\/meu-kit/);
+  assert.match(screen, /CC\.cached\('meu-kit'/);
+  assert.match(screen, /kit\.ferramentas\.filter/);
+  assert.match(screen, /data-falta="\$\{tool\.id\}"/);
+  assert.match(screen, /Sem conexão/);
   assert.match(screen, /canvas/);
   assert.match(screen, /dataHora/);
   assert.match(screen, /falta/);
@@ -32,5 +36,5 @@ test('mobile: técnico abre somente o próprio kit e recebe assinatura offline',
   assert.match(sw, /screen-logistica-materiais\.js/);
   assert.match(sw, /screen-meu-kit\.js/);
   assert.match(sw, /screen-logistica-fila\.js/);
-  assert.match(sw, /cc-celular-v31/);
+  assert.match(sw, /cc-celular-v35/);
 });

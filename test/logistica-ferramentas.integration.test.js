@@ -121,7 +121,10 @@ test('logística controla ferramentas, escopo do técnico e entregas idempotente
     const apurada = await call(`/faltas/${reported.id}/apuracao`, 'POST', { apuracao: 'Equipe não localizou; registrada como desaparecida' }, 200);
     assert.equal(apurada.estado, 'aberta');
     const replacement = await call('/ferramentas', 'POST', { nome: 'Alicate universal', codigo: 'PAT-REPOSICAO' }, 201);
-    await call('/entregas', 'POST', { tecnicoId: ids.tecA, ferramentaIds: [replacement.id], client_id: 'entrega-reposicao' }, 201);
+    const replacementReceipt = await call('/entregas', 'POST', { tecnicoId: ids.tecA, ferramentaIds: [replacement.id], client_id: 'entrega-reposicao' }, 201);
+    assert.equal((await db.query('SELECT estado FROM logistica_faltas WHERE id=$1', [reported.id])).rows[0].estado, 'aberta');
+    const signature = { dataHora: new Date().toISOString(), client_id: 'assinatura-reposicao', assinatura: { conteudoBase64: `data:image/png;base64,${Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]).toString('base64')}` } };
+    await call(`/entregas/${replacementReceipt.id}/assinatura`, 'PUT', signature, 200, 'tecA');
     const state = (await db.query('SELECT situacao,tecnico_id FROM logistica_ferramentas WHERE id=$1', [missing.id])).rows[0];
     assert.equal(state.situacao, 'baixada');
     assert.equal(state.tecnico_id, null);

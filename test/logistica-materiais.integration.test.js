@@ -22,6 +22,7 @@ test('logística controla saldo, pedidos, entregas parciais e devolução de mat
   const center = (await db.query("INSERT INTO cost_centers(code,name,kind,public_id) VALUES('OB-LOGI','Obra logística','obra',gen_random_uuid()) RETURNING id")).rows[0];
   ids.center = center.id;
   await db.query('INSERT INTO user_cost_centers(user_id,cost_center_id) VALUES($1,$2)', [ids.tecA, ids.center]);
+  await db.query('INSERT INTO user_cost_centers(user_id,cost_center_id) VALUES($1,$2)', [ids.gestor, ids.center]);
   const token = Object.fromEntries(Object.entries(ids).map(([key, value]) => [key, jwt.sign({ sub: value }, process.env.JWT_SECRET)]));
   async function call(route, method = 'GET', body, expected = 200, who = 'gestor') {
     const response = await fetch(`http://127.0.0.1:${server.address().port}/api/logistica${route}`, { method,
@@ -32,6 +33,8 @@ test('logística controla saldo, pedidos, entregas parciais e devolução de mat
   const material = await call('/materiais', 'POST', { nome: 'Conector RJ45', unidade: 'un', saldoInicial: 3, estoqueMinimo: 1, exigeRetorno: true }, 201);
   ids.material = material.id;
   await call('/materiais', 'POST', { nome: 'Material indevido', unidade: 'un' }, 403, 'tecA');
+  assert.equal(Number((await call('/materiais'))[0].saldo), 3);
+  await call('/materiais/entregas', 'POST', { tecnicoId: ids.gestor, centroId: ids.center, itens: [{ materialId: ids.material, quantidade: 1 }], client_id: 'entrega-nao-tecnica' }, 403);
   assert.equal(Number((await call('/materiais'))[0].saldo), 3);
   await call('/materiais/solicitacoes', 'POST', { centroId: ids.center, materialId: ids.material, quantidade: 5, client_id: 'pedido-material-001' }, 201, 'tecA');
   await call('/materiais/solicitacoes', 'POST', { centroId: ids.center, materialId: ids.material, quantidade: 5, client_id: 'pedido-material-001' }, 201, 'tecA');

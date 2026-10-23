@@ -104,6 +104,9 @@ async function cancelarPedido(tx, pedidoId, tecnicoId, motivo, ator) {
 async function entregar(tx, data, ator) {
   const tecnicoId = id(data.tecnicoId, 'o técnico'), centroId = id(data.centroId, 'a obra ou serviço');
   const requestId = data.solicitacaoId == null ? null : id(data.solicitacaoId, 'a solicitação');
+  const tecnico = (await tx.query(`SELECT id FROM users WHERE id=$1 AND active=TRUE AND deleted_at IS NULL
+    AND COALESCE(suite_role,CASE WHEN role='admin' THEN 'admin' WHEN role='gestor' THEN 'gestor' ELSE 'tecnico' END)='tecnico'`, [tecnicoId])).rows[0];
+  if (!tecnico) throw httpError(403, 'A entrega deve ser destinada a um técnico ativo.');
   await assertAtribuido(tx, tecnicoId, centroId);
   const lines = Array.isArray(data.itens) ? data.itens.map((line) => ({ materialId: id(line.materialId, 'o material'), quantidade: qty(line.quantidade) })) : [];
   if (!lines.length || lines.length > 100 || new Set(lines.map((l) => l.materialId)).size !== lines.length) throw httpError(400, 'Selecione materiais sem repetição.');

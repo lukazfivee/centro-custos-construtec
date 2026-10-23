@@ -68,19 +68,6 @@ async function entregarFerramentas(tx, data, ator) {
     await tx.query(`INSERT INTO logistica_eventos(ferramenta_id,recibo_id,tecnico_id,tipo,detalhe,ator_id)
       VALUES($1,$2,$3,$4,$5::jsonb,$6)`, [tool.id, recibo.id, tecnicoId, tipo, JSON.stringify({ codigo: tool.codigo }), ator.id]);
   }
-  const groups = [...new Set(tools.map((tool) => tool.nome.toLowerCase()))];
-  for (const name of groups) {
-    const replacementIds = tools.filter((tool) => tool.nome.toLowerCase() === name).map((tool) => tool.id);
-    const missing = await tx.query(`SELECT m.id,m.ferramenta_id FROM logistica_faltas m
-      JOIN logistica_ferramentas old ON old.id=m.ferramenta_id
-      WHERE m.tecnico_id=$1 AND m.estado='aberta' AND LOWER(old.nome)=LOWER($2)
-      ORDER BY m.id LIMIT $3 FOR UPDATE OF m`, [tecnicoId, name, replacementIds.length]);
-    for (const item of missing.rows) {
-      await tx.query("UPDATE logistica_faltas SET estado='reposta',encerrada_em=NOW() WHERE id=$1", [item.id]);
-      await tx.query("UPDATE logistica_ferramentas SET situacao='baixada',localizacao='extraviada',tecnico_id=NULL,updated_at=NOW() WHERE id=$1", [item.ferramenta_id]);
-      await tx.query("INSERT INTO logistica_eventos(ferramenta_id,recibo_id,tecnico_id,tipo,detalhe,ator_id) VALUES($1,$2,$3,'falta_reposta',$4::jsonb,$5)", [item.ferramenta_id, recibo.id, tecnicoId, JSON.stringify({ faltaId: item.id, repostaPor: replacementIds }), ator.id]);
-    }
-  }
   await recordAudit({ entityType: 'logistica_recibo', entityId: recibo.id, action: 'entrega_iniciada', summary: `Entrega de ${tools.length} ferramenta(s) para técnico ${tecnicoId}`, data: { tecnicoId, ferramentaIds }, user: ator, client: tx });
   return reciboCompleto(tx, recibo.id);
 }
@@ -117,7 +104,7 @@ async function meuKit(db, tecnicoId) {
   });
   const esperados = new Set(padrao.map((item) => item.nome.toLowerCase()));
   const extras = ferramentas.filter((item) => !esperados.has(item.nome.toLowerCase()));
-  return { ferramentas, kitPadrao: kitPadraoAtual, extras, faltas, incompleto: kitPadraoAtual.some((item) => item.falta > 0), recibos };
+  return { ferramentas, kitPadrao: kitPadraoAtual, extras, faltas, incompleto: faltas.length > 0 || kitPadraoAtual.some((item) => item.falta > 0), recibos };
 }
 
 async function relatarFalta(tx, { ferramentaId, tecnicoId, relato, ator }) {
@@ -181,6 +168,23 @@ async function historicoFerramenta(db, ferramentaId) {
   return rows;
 }
 
+async function reporFaltasDoRecibo(tx, reciboId, tecnicoId, ator) {
+  const tools = (await tx.query(`SELECT f.id,f.nome FROM logistica_recibo_ferramentas rf
+    JOIN logistica_ferramentas f ON f.id=rf.ferramenta_id WHERE rf.recibo_id=$1 ORDER BY f.id`, [reciboId])).rows;
+  for (const name of [...new Set(tools.map((tool) => tool.nome.toLowerCase()))]) {
+    const replacementIds = tools.filter((tool) => tool.nome.toLowerCase() === name).map((tool) => tool.id);
+    const missing = await tx.query(`SELECT m.id,m.ferramenta_id FROM logistica_faltas m
+      JOIN logistica_ferramentas old ON old.id=m.ferramenta_id
+      WHERE m.tecnico_id=$1 AND m.estado='aberta' AND LOWER(old.nome)=LOWER($2)
+      ORDER BY m.id LIMIT $3 FOR UPDATE OF m`, [tecnicoId, name, replacementIds.length]);
+    for (const item of missing.rows) {
+      await tx.query("UPDATE logistica_faltas SET estado='reposta',encerrada_em=NOW() WHERE id=$1", [item.id]);
+      await tx.query("UPDATE logistica_ferramentas SET situacao='baixada',localizacao='extraviada',tecnico_id=NULL,updated_at=NOW() WHERE id=$1", [item.ferramenta_id]);
+      await tx.query("INSERT INTO logistica_eventos(ferramenta_id,recibo_id,tecnico_id,tipo,detalhe,ator_id) VALUES($1,$2,$3,'falta_reposta',$4::jsonb,$5)", [item.ferramenta_id, reciboId, tecnicoId, JSON.stringify({ faltaId: item.id, repostaPor: replacementIds }), ator.id]);
+    }
+  }
+}
+
 async function assinarRecibo(tx, { reciboId, tecnicoId, ator, dataHora, assinatura, clientId }) {
   const id = positiveId(reciboId, 'recibo'), userId = positiveId(tecnicoId, 'técnico');
   const client = String(clientId || '').trim();
@@ -202,6 +206,7 @@ async function assinarRecibo(tx, { reciboId, tecnicoId, ator, dataHora, assinatu
     assinado_por=$4,assinatura_client_id=$5 WHERE id=$1`, [id, when.toISOString(), base64, userId, client]);
   await tx.query(`INSERT INTO logistica_eventos(recibo_id,tecnico_id,tipo,detalhe,ator_id)
     VALUES($1,$2,'assinado',$3::jsonb,$2)`, [id, userId, JSON.stringify({ dataHora: when.toISOString(), sha256: signature.sha256 })]);
+  await reporFaltasDoRecibo(tx, id, userId, ator || { id: userId });
   await tx.query("UPDATE logistica_solicitacoes_materiais SET status='concluida' WHERE recibo_id=$1 AND status='aguardando_assinatura'", [id]);
   await recordAudit({ entityType: 'logistica_recibo', entityId: id, action: 'assinado', summary: `Recebimento de ferramentas assinado pelo técnico ${userId}`, data: { tecnicoId: userId, dataHora: when.toISOString(), sha256: signature.sha256 }, user: ator || { id: userId, name: 'Técnico' }, client: tx });
   return reciboCompleto(tx, id);

@@ -6,14 +6,18 @@
 
   CC.screens['meu-kit'] = async function (params) {
     const el = CC.render(`${CC.header('')}<h1 class="title">Meu kit de ferramentas</h1><div class="skeleton"></div>`, false, params);
-    let kit;
-    try { kit = (await CC.api('/logistica/meu-kit')).data; }
+    let kit, stale = false;
+    try { const result = await CC.cached('meu-kit', '/logistica/meu-kit'); kit = result.data; stale = result.stale; }
     catch (error) { return CC.errorScreen(el, error, () => CC.go('meu-kit')); }
     if (params && params.__nav !== CC.nav) return;
     const fila = (await CC.queue.ops()).filter((item) => item.op === 'logistica-assinatura');
     const pendentes = kit.recibos.filter((receipt) => receipt.status === 'aguardando_assinatura' || receipt.status === 'divergencia');
     const missing = kit.faltas.map((item) => `<article class="card lgm-item falta"><b>${esc(item.nome)}</b><span>${esc(item.codigo)} · falta registrada</span></article>`).join('');
-    const padrao = kit.kitPadrao.map((item) => `<article class="card lgm-item${item.falta ? ' falta' : ''}"><b>${esc(item.nome)}</b><span>${item.emPosse} de ${item.quantidade} no kit${item.falta ? ` · faltam ${item.falta}` : ''}</span></article>`).join('');
+    const padrao = kit.kitPadrao.map((item) => {
+      const tools = kit.ferramentas.filter((tool) => tool.nome.toLowerCase() === item.nome.toLowerCase());
+      const units = tools.map((tool) => `<span>${esc(tool.codigo)} · ${esc(labelSituacao(tool.situacao))}</span>${tool.situacao === 'com_tecnico' ? `<button class="btn2" type="button" data-falta="${tool.id}">Relatar falta</button>` : ''}`).join('');
+      return `<article class="card lgm-item${item.falta ? ' falta' : ''}"><b>${esc(item.nome)}</b><span>${item.emPosse} de ${item.quantidade} no kit${item.falta ? ` · faltam ${item.falta}` : ''}</span>${units}</article>`;
+    }).join('');
     const extras = kit.extras.map((item) => `<article class="card lgm-item"><b>${esc(item.nome)}</b><span>${esc(item.codigo)} · ferramenta extra · ${esc(labelSituacao(item.situacao))}</span>${item.situacao === 'com_tecnico' ? `<button class="btn2" type="button" data-falta="${item.id}">Relatar falta</button>` : ''}</article>`).join('');
     const receipts = pendentes.map((receipt) => {
       const op = fila.find((item) => Number(item.reciboId) === Number(receipt.id));
@@ -22,6 +26,7 @@
       return `<article class="card lgm-recibo"><div><b>Ficha ${esc(receipt.tipo.replaceAll('_', ' '))} #${esc(receipt.id)}</b><span>${esc(CC.dateFull(receipt.criado_em.slice(0, 10)))} · ${esc(estado)}${contents ? ` · ${contents}` : ''}</span></div>${receipt.status === 'aguardando_assinatura' && !op ? `<button class="btn" type="button" data-assinar="${receipt.id}">${icon('signature', 18)}Assinar recebimento</button>` : ''}${op?.estado === 'erro' ? `<button class="btn2" type="button" data-retry="${esc(op.client_id)}">Tentar assinatura novamente</button>` : ''}${receipt.status === 'aguardando_assinatura' ? `<button class="btn2" type="button" data-divergencia="${receipt.id}">Informar divergência</button>` : ''}</article>`;
     }).join('');
     el.innerHTML = `${CC.header('')}<h1 class="title">Meu kit de ferramentas</h1><p class="sub">Confira as ferramentas sob sua responsabilidade e as fichas para assinatura.</p>
+      ${stale ? '<div class="card lgm-alert" role="status">Sem conexão · mostrando a última atualização salva neste celular.</div>' : ''}
       ${kit.incompleto ? '<div class="card lgm-alert" role="status">Seu kit padrão está incompleto. As faltas continuam sinalizadas até a reposição.</div>' : ''}
       <h2 class="label">Kit padrão</h2><div class="lgm-list">${padrao || '<p class="sub">O kit padrão ainda não foi configurado pela Logística.</p>'}</div>
       ${missing ? `<h2 class="label">Faltas</h2><div class="lgm-list">${missing}</div>` : ''}

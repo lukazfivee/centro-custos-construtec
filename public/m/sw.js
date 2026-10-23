@@ -1,6 +1,6 @@
 // Guarda o site do celular para abrir sem internet. A API nunca e guardada aqui:
 // os dados offline ficam no IndexedDB (queue.js), com a fila de lancamentos.
-const CACHE = 'cc-celular-v35';
+const CACHE = 'cc-celular-v36';
 const SHELL = ['./', 'manifest.webmanifest', 'simbolo.png', 'icon-180.png', 'm.css', 'anim.css', 'barra.css', 'tema.js', 'servico.css', 'fin.css', 'adm.css',
   'obra-tec.css', 'tecnico.css', 'tecnicos.css', 'tecnicos.js', 'menu-cartao.css', 'ajuda.css', 'screen-home-tecnico.js', 'screen-logistica-materiais.js', 'screen-meu-kit.js', 'logistica-mobile.css', 'screen-servico-registros.js', 'icons.js', 'core.js', 'queue.js', 'abas-arrastar.js', 'app.js', 'screen-entrar.js', 'screen-home.js', 'screen-obra.js', 'screen-lancar.js',
   'screen-misc.js', 'screen-lancamentos.js', 'screen-lanc.js', 'screen-lanc-docs.js', 'screen-obra-acoes.js', 'screen-obra-abas.js',

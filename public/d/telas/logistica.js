@@ -10,6 +10,11 @@
   const abas = [['resumo', 'Resumo'], ['ferramentas', 'Ferramentas'], ['kits', 'Kits dos técnicos'], ['faltas', 'Faltas'], ['movimentacoes', 'Movimentações'], ['materiais', 'Materiais'], ['solicitacoes', 'Solicitações']];
   const dataLocal = (value) => value ? new Date(value).toLocaleString('pt-BR') : '—';
   const tagStatus = (value) => `<span class="logi-tag ${value === 'disponivel' ? 'ok' : value === 'com_tecnico' ? 'out' : 'warn'}">${esc(value.replaceAll('_', ' '))}</span>`;
+  const focarAba = (el, key) => {
+    const button = [...el.querySelectorAll('.logi-abas [data-aba]')].find((item) => item.dataset.aba === key);
+    button?.focus({ preventScroll: true });
+    button?.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+  };
 
   function dialogoFormulario({ titulo, corpo, ok, aoEnviar }) {
     return new Promise((resolve) => {
@@ -39,7 +44,7 @@
       <nav class="logi-abas" aria-label="Seções da logística">${abas.map(([key, label]) => `<button type="button" class="logi-aba ${aba === key ? 'ativa' : ''}" data-aba="${key}" aria-current="${aba === key ? 'page' : 'false'}">${label}</button>`).join('')}</nav>
       <div data-corpo>${U.carregando('Carregando a logística…')}</div><div data-print hidden></div></div>`;
     const atualizar = () => render(el, rota, vivo);
-    el.querySelectorAll('[data-aba]').forEach((button) => button.addEventListener('click', () => { aba = button.dataset.aba; atualizar(); }));
+    el.querySelectorAll('.logi-abas [data-aba]').forEach((button) => button.addEventListener('click', () => { aba = button.dataset.aba; atualizar(); focarAba(el, aba); }));
     el.querySelector('[data-nova-ferramenta]').addEventListener('click', () => formularioFerramenta(el, atualizar));
     el.querySelector('[data-conferencia]').addEventListener('click', () => formularioConferencia(el, atualizar));
     el.querySelector('[data-entrega]').addEventListener('click', () => formularioEntrega(el, atualizar));
@@ -66,7 +71,7 @@
     const itens = [['Disponíveis', r.disponiveis, 'check-circle'], ['Com técnicos', r.com_tecnicos, 'users'], ['Aguardando assinatura', r.aguardando_assinatura, 'signature'], ['Em avaliação', r.em_avaliacao, 'wrench'], ['Divergências', r.divergencias, 'warning-circle'], ['Abaixo do mínimo', materiais.filter((item) => item.estoque_baixo).length, 'warning']];
     CC.$('[data-corpo]', el).innerHTML = `<div class="logi-resumo">${itens.map(([label, value, icon]) => `<article class="card logi-indicador">${D.ic(icon)}<span>${esc(label)}</span><b>${Number(value) || 0}</b></article>`).join('')}</div>
       <section class="card logi-bloco"><div><h2>Próximas ações</h2><p>Registre entradas, entregas e conferências sem passar pelas telas financeiras.</p></div><div class="logi-acoes"><button type="button" class="btn btn-s" data-aba="ferramentas">Consultar inventário</button><button type="button" class="btn btn-s" data-aba="kits">Editar kit padrão</button></div></section>`;
-    CC.$$('.logi-acoes [data-aba]', el).forEach((b) => b.addEventListener('click', () => { aba = b.dataset.aba; render(el, { nome: 'logistica' }, () => true); }));
+    CC.$$('.logi-acoes [data-aba]', el).forEach((b) => b.addEventListener('click', () => { aba = b.dataset.aba; render(el, { nome: 'logistica' }, () => true); focarAba(el, aba); }));
   }
 
   function desenharFerramentas(el, lista, atualizar) {

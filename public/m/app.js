@@ -1,7 +1,7 @@
 // Navegacao, barra de abas, entrada pelo app (handoff) e modo offline do site do celular.
 (function (CC) {
   const { esc, icon } = CC;
-  const campo = new Set(['home', 'meu-dia', 'atividade-dia', 'meus-trabalhos', 'obras', 'obra', 'servico', 'menu', 'perfil', 'atualizacao', 'ajuda', 'report-novo']);
+  const campo = new Set(['home', 'meu-dia', 'atividade-dia', 'meus-trabalhos', 'obras', 'obra', 'servico', 'meu-kit', 'meus-materiais', 'menu', 'perfil', 'atualizacao', 'ajuda', 'report-novo']);
   const permitido = (name) => !CC.sv || CC.sv.role() !== 'tecnico' || campo.has(name);
   // Protege tambem chamadas diretas feitas por historico antigo ou pelo assistente.
   CC.screens = new Proxy(CC.screens || {}, {
@@ -84,6 +84,8 @@
   CC.onUnauthorized = () => { if (CC.ia && CC.ia.reset) CC.ia.reset(); signedOut('Sua sessão terminou'); };
   CC.onQueueSent = () => {
     if (current === 'atividade-dia' && CC.programacaoSync) return CC.programacaoSync();
+    if (current === 'meu-kit') return CC.go(current, currentParams);
+    if (current === 'meus-materiais') return CC.go(current, currentParams);
     if (['home', 'meu-dia', 'meus-trabalhos', 'lancamentos', 'obra', 'servico'].includes(current)) CC.go(current, currentParams);
   };
 

@@ -43,7 +43,10 @@
     return token && token === CC.session.token() && owner === CC.owner() ? items.filter((i) => i.owner && i.owner === owner) : [];
   };
   const campoOps = new Set(['checklist-add', 'checklist', 'foto', 'aceite', 'observacoes']);
-  const permitido = (i) => !CC.sv || CC.sv.role() !== 'tecnico' || (i.op === 'programacao' ? !!i.atividadeId && !i.payload : i.servicoId && campoOps.has(i.op));
+  const permitido = (i) => !CC.sv || CC.sv.role() !== 'tecnico' || (i.op === 'programacao' ? !!i.atividadeId && !i.payload
+    : i.op === 'logistica-assinatura' ? Number.isSafeInteger(Number(i.reciboId)) && Number(i.reciboId) > 0 && !!i.body?.assinatura?.conteudoBase64
+      : i.op === 'logistica-solicitacao' ? Number(i.body?.centroId) > 0 && Number(i.body?.materialId) > 0 && Number(i.body?.quantidade) > 0 && !!i.body?.client_id
+      : i.servicoId && campoOps.has(i.op));
   // Lancamentos e despesas de servico (tem payload) ficam separados das operacoes de campo do servico (op:
   // checklist, foto e aceite), que as telas de lancamentos nao sabem desenhar.
   CC.queue.mine = async () => (await mineAll()).filter((i) => !i.op && permitido(i));
@@ -72,6 +75,12 @@
 
   async function sendOne(item) {
     if (item.op === 'programacao') return CC.programacaoFila.sendOp(item);
+    if (item.op === 'logistica-assinatura') return CC.logistica.sendOp(item);
+    if (item.op === 'logistica-solicitacao') {
+      await CC.api('/logistica/materiais/solicitacoes', { method: 'POST', body: item.body });
+      await CC.store.del('fila', item.client_id);
+      return;
+    }
     // Checklist, foto e aceite do servico: envio em screen-servico-fila.js.
     if (item.op) return CC.sv.sendOp(item);
     // Despesa de servico (lancamento rapido): rota propria, recibo no mesmo envio; o client_id evita duplicar.

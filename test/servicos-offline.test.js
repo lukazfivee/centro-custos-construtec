@@ -257,3 +257,19 @@ test('conflito no relato mantem o texto na fila; legenda e pendencias acompanham
   assert.equal(item.estado, 'erro');
   assert.equal(item.body.descricao, 'Relato local');
 });
+
+test('pedido de material fica na fila offline e envia os mesmos dados uma vez ao reconectar', async () => {
+  const { CC, calls } = ambiente();
+  CC.estado.offline = true;
+  const body = { centroId: 22, materialId: 7, quantidade: 12, observacao: 'Equipe da obra', client_id: 'pedido-offline-7' };
+  await CC.queue.add({ client_id: body.client_id, op: 'logistica-solicitacao', body });
+  let [item] = await CC.queue.ops();
+  assert.equal(item.body.client_id, body.client_id);
+  assert.deepEqual(item.body, body);
+  CC.estado.offline = false;
+  await CC.queue.run();
+  assert.equal(calls.length, 1);
+  assert.equal(calls[0].rota, '/logistica/materiais/solicitacoes');
+  assert.deepEqual(calls[0].body, body);
+  assert.equal((await CC.queue.ops()).length, 0);
+});

@@ -11,6 +11,7 @@
       ['obras', 'buildings', 'Obras', null, 'Obras/centros'],
       ['programacao', 'calendar-blank', 'Programação', 'programacao', null],
       ['cobrancas', 'envelope-simple', 'Cobranças', 'cobrancas', 'Cobranças'],
+      ['logistica', 'wrench', 'Logística', 'logistica', null],
     ]],
     ['Cadastros', [
       ['categorias', 'tag', 'Categorias', null, 'Categorias'],

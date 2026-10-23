@@ -96,6 +96,8 @@
 .abertura-barra i { display: block; width: 40%; height: 100%; border-radius: 3px; background: linear-gradient(90deg, transparent, var(--color-accent-600), transparent); animation: abertura-barra 1.3s ease-in-out infinite; }
 .abertura strong { font-weight: 600; letter-spacing: .01em; }
 .abertura strong::after { content: ""; display: inline-block; width: 1.2em; text-align: left; animation: abertura-pontos 1.4s steps(1, end) infinite; }
+.abertura-lenta { opacity: 0; animation: abertura-aviso .4s ease-out 6s forwards; }
+@keyframes abertura-aviso { to { opacity: 1; } }
 @keyframes abertura-entrada { from { opacity: 0; transform: translateY(8px) scale(.94); } to { opacity: 1; transform: none; } }
 @keyframes abertura-respira { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.045); opacity: .82; } }
 @keyframes abertura-brilho { 0%, 100% { transform: scale(.85); opacity: .6; } 50% { transform: scale(1.1); opacity: 1; } }
@@ -119,4 +121,5 @@
   .abertura-logo { animation: abertura-entrada .7s ease-out both !important; }
   .abertura-barra i { animation: abertura-barra 1.3s ease-in-out infinite !important; }
   .abertura strong::after { animation: abertura-pontos 1.4s steps(1, end) infinite !important; }
+  .abertura-lenta { animation: abertura-aviso .4s ease-out 6s forwards !important; }
 }

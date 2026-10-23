@@ -5,7 +5,7 @@
   const { esc } = CC;
   const O = D.obras = D.obras || {};
   const U = D.ui;
-  const ABAS = [['orcado', 'Orçado × realizado'], ['lancamentos', 'Lançamentos'], ['nf', 'Notas fiscais'], ['medicoes', 'Medições'], ['curva', 'Curva S']];
+  const ABAS = [['resumo', 'Resumo'], ['lancamentos', 'Lançamentos'], ['caixa', 'Caixa'], ['orcado', 'Orçado × realizado'], ['nf', 'Notas fiscais'], ['medicoes', 'Medições'], ['curva', 'Curva S']];
   O.abas = O.abas || {};
 
   // "PROP-031 REV 02": revisao sempre com dois digitos (corrige o "REV010" do sistema atual).
@@ -25,7 +25,7 @@
   }
 
   O.detalhe = async function (el, rota, vivo) {
-    const aba = ABAS.some(([k]) => k === rota.aba) ? rota.aba : 'orcado';
+    const aba = ABAS.some(([k]) => k === rota.aba) ? rota.aba : 'resumo';
     el.innerHTML = `<div class="pagina obra">${U.carregando('Abrindo a obra…')}</div>`;
     let data;
     try {
@@ -44,7 +44,7 @@
     if (!vivo()) return;
     const obra = { ...c, revision: daLista ? daLista.revision : c.revision };
     el.innerHTML = `<div class="pagina obra">${topo(obra)}
-      <div class="abas-pagina" role="tablist">${ABAS.map(([k, t]) => `<a class="tab" role="tab" href="#/obras/${esc(c.id)}${k === 'orcado' ? '' : `/${k}`}" aria-selected="${k === aba ? 'true' : 'false'}">${esc(t)}</a>`).join('')}</div>
+      <div class="abas-pagina" role="tablist">${ABAS.map(([k, t]) => `<a class="tab" role="tab" href="#/obras/${esc(c.id)}${k === 'resumo' ? '' : `/${k}`}" aria-selected="${k === aba ? 'true' : 'false'}">${esc(t)}</a>`).join('')}</div>
       <div data-aba-corpo></div></div>`;
     D.tecnicos.ligar(el, c.id);
     const editar = CC.$('[data-editar-obra]', el);
@@ -53,7 +53,7 @@
     CC.$('[data-relatorio]', el).addEventListener('click', () => O.relatorio(obra));
     const corpo = CC.$('[data-aba-corpo]', el);
     const desenhar = O.abas[aba];
-    if (desenhar) await desenhar(corpo, obra, vivo);
+    if (desenhar) await desenhar(corpo, obra, vivo, data);
     else corpo.innerHTML = `<div class="card">${U.vazio('compass', 'Esta aba não existe.')}</div>`;
   };
 

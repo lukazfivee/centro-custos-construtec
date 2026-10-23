@@ -51,6 +51,17 @@
 .linhas-dl { display: flex; flex-direction: column; gap: 10px; font-size: calc(13px * var(--fs, 1)); }
 .linhas-dl > span { display: flex; justify-content: space-between; gap: 12px; }
 .linhas-dl b { font-weight: 600; text-align: right; }
+.resumo-valor { font: 600 calc(28px * var(--fs, 1))/1.2 var(--font-heading); font-variant-numeric: tabular-nums; }
+.resumo-valor.err, .linhas-dl b.err { color: var(--c-err); }
+.pendencias { display: flex; flex-direction: column; gap: 8px; }
+.pend { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: 12px; padding: 10px 12px; border-radius: 10px; box-shadow: inset 0 0 0 1px var(--color-divider); color: inherit; text-decoration: none; }
+.pend:hover { background: var(--c-muted-soft); }
+.pend .tx { display: flex; flex-direction: column; gap: 2px; min-width: 0; font-size: calc(13px * var(--fs, 1)); }
+.pend .tx b { font-weight: 600; }
+.pend .tx > span { color: var(--color-neutral-300); font-variant-numeric: tabular-nums; }
+.pend.err svg { color: var(--c-err); }
+.pend.warn svg { color: var(--c-warn); }
+.pend-vazio { display: flex; align-items: center; gap: 8px; font-size: calc(13px * var(--fs, 1)); color: var(--color-neutral-300); }
 .sem-vinculo { box-shadow: inset 0 0 0 1px var(--c-warn-bar); }
 .sem-vinculo .bt { color: var(--c-warn); }
 .sem-vinculo .muted { font-size: calc(12.5px * var(--fs, 1)); }

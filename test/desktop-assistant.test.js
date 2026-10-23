@@ -33,11 +33,11 @@ function load({ electron } = {}) {
 
 test('desktop: página carrega o assistente do celular e o adaptador, antes do app.js, com o estilo próprio', () => {
   const html = read('d/index.html');
-  const order = ['../m/ia-config.js', '../m/ia-tools.js', '../m/ia-voz.js', '../m/ia-chat.js', 'ia-desktop.js', 'app.js'].map((f) => html.indexOf(`<script src="${f}">`));
+  const order = ['../m/ia-config.js', '../m/ia-tools.js', '../m/ditado-captura.js', '../m/ditado-motores.js', '../m/ditado-ao-vivo.js', '../m/ia-voz.js', '../m/ia-chat.js', 'ia-desktop.js', 'app.js'].map((f) => html.indexOf(`<script src="${f}">`));
   assert.ok(order.every((i) => i > 0) && [...order].sort((a, b) => a - b).join() === order.join(), 'ordem dos scripts');
   assert.ok(html.indexOf('telas/reports.js') < order[0], 'depois das telas');
   assert.match(html, /<link rel="stylesheet" href="css\/ia\.css">/);
-  for (const ref of ['m/ia-config.js', 'm/ia-tools.js', 'm/ia-voz.js', 'm/ia-chat.js', 'd/ia-desktop.js', 'd/css/ia.css']) assert.ok(fs.existsSync(path.join(PUBLIC, ref)), ref);
+  for (const ref of ['m/ia-config.js', 'm/ia-tools.js', 'm/ditado-captura.js', 'm/ditado-motores.js', 'm/ditado-ao-vivo.js', 'm/ia-voz.js', 'm/ia-chat.js', 'd/ia-desktop.js', 'd/css/ia.css']) assert.ok(fs.existsSync(path.join(PUBLIC, ref)), ref);
 });
 
 test('desktop: assistente abre pelo botão da barra do topo; o flutuante do celular não aparece', () => {

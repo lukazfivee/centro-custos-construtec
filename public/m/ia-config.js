@@ -14,6 +14,8 @@
     },
     // O primeiro e o mais rapido; o segundo entra no limite gratuito ou na sobrecarga do primeiro.
     modelos: [{ nome: 'gemini-3.5-flash-lite', pensar: 'MINIMAL' }, { nome: 'gemini-3.8-flash', pensar: 'LOW' }],
+    // Transcricao ao vivo do ditado (Live API, entrada de audio); se falhar, o ditado segue por trechos com `modelos`.
+    modeloLive: 'gemini-3.1-flash-live-preview',
     sdk: 'https://www.gstatic.com/firebasejs/12.19.0/',
     recaptcha: '6LdWgtItAAAAAJ_uz821H2QiZ2PNzalW5lPOSzLt', // chave do site do reCAPTCHA v3 (pública) do App Check
   };

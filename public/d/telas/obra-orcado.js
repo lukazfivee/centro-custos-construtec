@@ -86,7 +86,7 @@
     const recarregar = () => { if (vivo()) O.abas.orcado(corpo, obra, vivo); };
     if (!cmp.hasBudget) {
       corpo.innerHTML = `<div class="card">${U.vazio('file-text', 'Esta obra ainda não tem orçamento importado.', 'Importe a proposta aprovada do Orçamentos para ver a planilha, o consumo e a Curva S.')}${D.pode('cadastrar') ? '<div class="centro"><button type="button" class="btn btn-p" data-importar-obra>Importar orçamento</button></div>' : ''}</div>
-        <div class="kpis">${U.kpi({ rotulo: 'Realizado', valor: CC.money(obra.total_despesas || 0), icone: 'arrow-up-right', tom: 'saida' })}${U.kpi({ rotulo: 'Contrato', valor: CC.money(obra.valor_contrato || 0), icone: 'handshake' })}${U.kpi({ rotulo: 'Orçamento mensal', valor: CC.money(obra.orcamento || 0), icone: 'calendar-blank' })}</div>`;
+        <div class="kpis">${U.kpi({ rotulo: 'Realizado', valor: CC.money(obra.total_despesas || 0), icone: 'arrow-up-right', tom: 'saida' })}${U.kpi({ rotulo: 'Contrato', valor: CC.money(obra.valor_contrato || 0), icone: 'handshake' })}${U.kpi({ rotulo: 'Orçamento da obra', valor: CC.money(obra.orcamento || 0), icone: 'calendar-blank' })}</div>`;
       const bi = CC.$('[data-importar-obra]', corpo);
       if (bi) bi.addEventListener('click', () => O.importar(obra.id, recarregar));
       // PDF da proposta guardado sem orcamento importado: aparece aqui, senao parece que o envio nao fez nada.

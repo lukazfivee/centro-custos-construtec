@@ -1,0 +1,40 @@
+const test = require('node:test');
+const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const path = require('node:path');
+
+const read = (file) => fs.readFileSync(path.join(__dirname, '..', file), 'utf8');
+
+test('mobile: técnico abre somente o próprio kit e recebe assinatura offline', () => {
+  const app = read('public/m/app.js');
+  const home = read('public/m/screen-home-tecnico.js');
+  const screen = read('public/m/screen-meu-kit.js');
+  const materials = read('public/m/screen-logistica-materiais.js');
+  const fila = read('public/m/screen-logistica-fila.js');
+  const queue = read('public/m/queue.js');
+  const html = read('public/m/index.html');
+  const sw = read('public/m/sw.js');
+  assert.match(app, /'meu-kit'/);
+  assert.match(home, /CC\.go\('meu-kit'\)/);
+  assert.match(screen, /\/logistica\/meu-kit/);
+  assert.match(screen, /CC\.cached\('meu-kit'/);
+  assert.match(screen, /kit\.ferramentas\.filter/);
+  assert.match(screen, /data-falta="\$\{tool\.id\}"/);
+  assert.match(screen, /Sem conexão/);
+  assert.match(screen, /canvas/);
+  assert.match(screen, /dataHora/);
+  assert.match(screen, /falta/);
+  assert.match(materials, /meus-materiais/);
+  assert.match(materials, /opcoes-tecnico/);
+  assert.match(queue, /logistica-solicitacao/);
+  assert.match(app, /'meus-materiais'/);
+  assert.match(fila, /logistica-assinatura/);
+  assert.match(queue, /logistica-assinatura/);
+  assert.match(html, /screen-meu-kit\.js/);
+  assert.match(html, /screen-logistica-fila\.js/);
+  assert.match(html, /screen-logistica-materiais\.js/);
+  assert.match(sw, /screen-logistica-materiais\.js/);
+  assert.match(sw, /screen-meu-kit\.js/);
+  assert.match(sw, /screen-logistica-fila\.js/);
+  assert.match(sw, /cc-celular-v35/);
+});

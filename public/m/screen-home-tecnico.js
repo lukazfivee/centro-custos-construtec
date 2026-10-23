@@ -47,6 +47,7 @@
     const counts = [['Hoje', ativos.filter((s) => s.data === hoje).length], ['Em andamento', ativos.filter((s) => s.situacao === 'em_andamento').length], ['Atrasados', ativos.filter((s) => atrasado(s, hoje)).length]];
     const projetos = (obras.data || []).filter((o) => (o.tipo || 'obra') === 'obra' && o.ativo !== false && o.situacao !== 'concluido');
     const view = CC.render(`${CC.header('')}${saudacao}<h1 class="title">Meu trabalho</h1><p class="sub">Obras e serviços liberados para seu perfil.</p>
+      ${CC.sv.role() === 'tecnico' ? `<div class="tc-kit-links"><button class="btn2 tc-kit-link" type="button" id="tc-meu-kit">${icon('wrench', 18)}Meu kit de ferramentas</button><button class="btn2 tc-kit-link" type="button" id="tc-materiais">${icon('package', 18)}Solicitar materiais</button></div>` : ''}
       ${CC.staleNote(servicos)}<div class="summary tc-totais">${counts.map(([l, n]) => `<span><small>${l}</small><b>${n}</b></span>`).join('')}</div>
       ${fila.length ? `<button class="btn2 tc-fila" type="button" id="tc-fila">${icon('cloud-arrow-up', 18)}${fila.length} registros no celular${fila.some((i) => i.estado === 'erro') ? ' · verificar erros' : ' · ver envios'}</button>` : ''}
       <label class="field"><span>Buscar serviço</span><input id="tc-busca" type="search" placeholder="Serviço, cliente ou local" autocomplete="off"></label>
@@ -55,6 +56,10 @@
       <span class="sec-tit">Obras em acompanhamento</span>${obras.stale ? CC.staleNote(obras) : ''}
       ${obras.error ? '<p class="sub">Não foi possível carregar as obras. Abra a aba Obras para tentar novamente.</p>' : projetos.length ? `<div class="rows">${projetos.map((o) => `<button class="row" type="button" data-tc-obra="${o.id}"><span class="line"><span class="grow"><b>${esc(o.nome)}</b><br><small>${esc(o.cliente || o.codigo || '')}</small></span>${icon('caret-right', 18)}</span></button>`).join('')}</div>` : '<p class="sub">Nenhuma obra em acompanhamento.</p>'}`, false, params);
     const busca = CC.$('#tc-busca', view), destino = CC.$('#tc-lista', view);
+    const meuKit = CC.$('#tc-meu-kit', view);
+    if (meuKit) meuKit.addEventListener('click', () => CC.go('meu-kit'));
+    const materiais = CC.$('#tc-materiais', view);
+    if (materiais) materiais.addEventListener('click', () => CC.go('meus-materiais'));
     const pintar = () => {
       const visiveis = CC.tecnicoAgenda(lista, filtro, busca.value, hoje);
       CC.$('#tc-total', view).textContent = `${visiveis.length} ${visiveis.length === 1 ? 'serviço' : 'serviços'}`;

@@ -33,6 +33,7 @@
 #ia-sheet .ia-input { display: flex; align-items: flex-end; gap: 8px; padding-top: 10px; border-top: 1px solid var(--color-divider); }
 #ia-sheet .ia-input textarea { flex: 1; min-height: 42px; max-height: 120px; padding: 10px 12px; border: 0; border-radius: 12px; resize: none; background: var(--color-bg); color: var(--color-text); box-shadow: inset 0 0 0 1px var(--color-field); font: 400 calc(14px * var(--fs, 1))/1.35 var(--font-body); outline: none; }
 #ia-sheet .ia-input textarea:focus { box-shadow: inset 0 0 0 2px var(--color-focus); }
+#ia-sheet .ia-input textarea.ia-parcial { color: color-mix(in srgb, var(--color-text) 70%, var(--color-bg)); box-shadow: inset 0 0 0 2px var(--c-warn); }
 #ia-sheet .ia-send { flex: none; width: 42px; height: 42px; border: 0; border-radius: 12px; background: var(--color-brand); color: var(--on-brand); display: grid; place-items: center; cursor: pointer; }
 #ia-sheet .ia-send:hover { background: var(--color-accent-700); }
 #ia-sheet .ia-mic { flex: none; width: 42px; height: 42px; border: 0; border-radius: 12px; background: var(--color-bg); color: var(--color-text); box-shadow: inset 0 0 0 1px var(--color-field); display: grid; place-items: center; cursor: pointer; }

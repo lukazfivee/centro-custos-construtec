@@ -35,7 +35,8 @@ body.no-tabs .toast { bottom: calc(24px + var(--sab)); }
 .ia-fab:active { transform: scale(.94); }
 .ia-fab .ico { color: inherit; }
 body.no-tabs .ia-fab { bottom: calc(16px + var(--sab) + var(--fab-lift, 0px)); }
-body:has(input:focus, textarea:focus, select:focus) .ia-fab { opacity: 0; pointer-events: none; }
+body:has(input:focus, textarea:focus, select:focus) .ia-fab, .ia-fab.rolando { opacity: 0; pointer-events: none; }
+.ia-fab.rolando { transform: scale(.9); }
 /* D1 (igual no Orcamentos): o fim da rolagem reserva a altura do botao + 16 px, para a ultima linha nunca ficar
    embaixo dele; em tela com barra de acoes fixa (formularios) o botao some, para nao cobrir o botao principal. */
 body:has(.ia-fab:not([hidden])):not(:has(.actions)) { padding-bottom: calc(var(--barra-topo) + 82px); }

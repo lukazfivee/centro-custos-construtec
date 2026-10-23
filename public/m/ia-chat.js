@@ -42,6 +42,13 @@
     if (root) observer.observe(root, { childList: true });
     observer.observe(document.body, { attributes: true, attributeFilter: ['class'] });
     sync();
+    // Some enquanto a pagina rola e volta quando para (nao cobre o conteudo no meio da rolagem).
+    let parar = 0;
+    document.addEventListener('scroll', () => {
+      fab.classList.add('rolando');
+      clearTimeout(parar);
+      parar = setTimeout(() => fab.classList.remove('rolando'), 220);
+    }, { passive: true, capture: true });
   }
 
   // App Check (reCAPTCHA) so vale em site https de verdade; no app do Windows (127.0.0.1) ele nao se aplica.

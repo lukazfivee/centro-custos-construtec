@@ -36,5 +36,5 @@ test('mobile: técnico abre somente o próprio kit e recebe assinatura offline',
   assert.match(sw, /screen-logistica-materiais\.js/);
   assert.match(sw, /screen-meu-kit\.js/);
   assert.match(sw, /screen-logistica-fila\.js/);
-  assert.match(sw, /cc-celular-v35/);
+  assert.match(sw, /cc-celular-v36/);
 });

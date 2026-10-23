@@ -1,16 +1,18 @@
 .tc-kit-links { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin-block: 8px 16px; }
-.tc-kit-link { margin: 0; padding-inline: 8px; font-size: 12px; }
+.tc-kit-link { margin: 0; min-height: 44px; padding-inline: 8px; font-size: 13px; }
 .lgm-list { display: grid; gap: 10px; margin-block: 10px 20px; }
 .lgm-item { display: grid; gap: 6px; padding: 15px; }
-.lgm-item span, .lgm-recibo span { color: var(--muted, #536b74); font-size: 13px; }
+.lgm-item span, .lgm-recibo span { color: var(--n300); font-size: 13px; overflow-wrap: anywhere; }
 .lgm-item .btn2 { justify-self: start; margin-top: 5px; }
-.lgm-item.falta, .lgm-alert { border-color: var(--warn, #9a6200); background: var(--warn-soft, #fff5d9); }
+.lgm-item.falta, .lgm-alert { background: var(--warn-soft); color: var(--warn-text); box-shadow: inset 0 0 0 1px var(--warn-bar); }
+.lgm-item.falta span { color: var(--warn-text); }
 .lgm-alert { margin-block: 12px; padding: 13px; }
 .lgm-recibo { display: grid; gap: 10px; padding: 15px; }
 .lgm-recibo > div { display: grid; gap: 5px; }
 .lgm-recibo .btn, .lgm-recibo .btn2 { justify-self: start; }
-.lgm-pad { position: relative; height: 220px; margin: 16px 0; border: 1px solid var(--line, #afc3ca); border-radius: 12px; overflow: hidden; background: #fff; touch-action: none; }
+.lgm-pad { position: relative; height: 220px; margin: 16px 0; border-radius: 12px; overflow: hidden; background: #fff; box-shadow: inset 0 0 0 1px var(--divider); touch-action: none; }
 .lgm-pad canvas { display: block; width: 100%; height: 100%; touch-action: none; }
 .lgm-pad > span { position: absolute; top: 50%; left: 0; width: 100%; color: #5d7480; text-align: center; pointer-events: none; transform: translateY(-50%); }
-.lgm-pad button { position: absolute; top: 8px; right: 8px; min-height: 36px; border: 0; border-radius: 8px; padding: 0 10px; background: #eef4f6; color: #203941; }
+.lgm-pad button { position: absolute; top: 8px; right: 8px; min-height: 44px; border: 0; border-radius: 8px; padding: 0 12px; background: #eef4f6; color: #203941; }
 .lgm-full { width: 100%; }
+.tc-kit-link:focus-visible, .lgm-item button:focus-visible, .lgm-recibo button:focus-visible, .lgm-pad button:focus-visible, .lgm-full:focus-visible { outline: 3px solid var(--accent-300); outline-offset: 2px; }

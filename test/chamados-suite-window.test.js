@@ -133,10 +133,15 @@ test('o Chamados abre numa view da mesma janela, com sessão própria e permiss�
   assert.equal(prefs.preload, '/p/chamados-preload.js');
   assert.deepEqual(prefs.additionalArguments, ['--chamados-origin=' + ORIGIN]);
   assert.deepEqual(log.loads, ['about:blank', `${ORIGIN}/#handoff=${CODE}`]);
-  let granted = null;
-  log.perms.request({}, 'media', (value) => { granted = value; });
-  assert.equal(granted, false);
+  const ask = (permission, details) => { let granted = null; log.perms.request({}, permission, (value) => { granted = value; }, details); return granted; };
+  assert.equal(ask('media'), false);
+  assert.equal(ask('media', { mediaTypes: ['audio'], requestingUrl: `${ORIGIN}/` }), true, 'microfone do ditado na página do Chamados');
+  assert.equal(ask('media', { mediaTypes: ['audio', 'video'], requestingUrl: `${ORIGIN}/` }), false, 'câmera não');
+  assert.equal(ask('media', { mediaTypes: ['audio'], requestingUrl: 'https://outro.exemplo.test/' }), false, 'outro site não');
+  assert.equal(ask('notifications', { requestingUrl: `${ORIGIN}/` }), false, 'as demais permissões seguem negadas');
   assert.equal(log.perms.check(), false);
+  assert.equal(log.perms.check({}, 'media', ORIGIN, { mediaType: 'audio', requestingUrl: `${ORIGIN}/` }), true);
+  assert.equal(log.perms.check({}, 'clipboard-read', ORIGIN, { requestingUrl: `${ORIGIN}/` }), false);
 });
 
 test('mesma conta e tela carregada: só mostra, sem pedir outro código', async () => {

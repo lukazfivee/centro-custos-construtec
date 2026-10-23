@@ -13,6 +13,7 @@ const crypto = require('crypto');
 const suiteModules = require('./suite-modules');
 const { applyDefaults: applyChamadosDefaults } = require('./chamados-navigation.cjs');
 const { createChamadosView } = require('./chamados-view.cjs');
+const { instalarMicrofone } = require('./permissoes-microfone.cjs');
 const createCentroRuntime = require('./centro-runtime');
 
 let mainWindow = null;
@@ -307,6 +308,14 @@ if (!gotLock) {
     mainWindow.webContents.once('did-finish-load', () => mainWindow?.webContents.send('suite:active', activeTarget));
     const barTimer = setInterval(() => { void syncBarColor(); }, 250);
     mainWindow.on('closed', () => clearInterval(barTimer));
+
+    // Centro, Orçamentos e a barra de título dividem a sessão padrão: o microfone (só áudio) vale apenas para a
+    // página do Centro (servidor local) e para os arquivos do Orçamentos; as demais permissões seguem o padrão.
+    instalarMicrofone(session.defaultSession, {
+      origens: () => [new URL(CENTRO_URL).origin],
+      pastas: () => [path.dirname(MODULES.orcamentos.renderer)],
+      demais: true,
+    });
 
     centroView = new WebContentsView({
       webPreferences: { nodeIntegration: false, contextIsolation: true, preload: CENTRO_PRELOAD },

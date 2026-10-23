@@ -1,6 +1,7 @@
 // Tela "Chamados e O.S." da Suíte do Windows: uma WebContentsView da mesma janela, com sessão própria e
 // persistente, que só navega dentro da origem configurada. Entra pelo código de uso único (handoff).
 const { requestChamadosHandoff, sameOrigin, externalAllowed } = require('./chamados-navigation.cjs');
+const { instalarMicrofone } = require('./permissoes-microfone.cjs');
 
 const PARTITION = 'persist:suite-chamados';
 const ABORTED = -3; // ERR_ABORTED: a própria página trocou de endereço durante a carga; não é falha.
@@ -32,9 +33,8 @@ function createChamadosView({ electron, host }) {
     contents.on('will-navigate', guard);
     contents.on('will-redirect', guard);
     contents.on('will-attach-webview', (event) => event.preventDefault());
-    const ses = contents.session;
-    ses.setPermissionRequestHandler((_contents, _permission, callback) => callback(false));
-    ses.setPermissionCheckHandler(() => false);
+    // Só o microfone (áudio) do ditado, e só para a página do Chamados; todas as outras permissões são negadas.
+    instalarMicrofone(contents.session, { origens: () => [origin()], demais: false });
   }
 
   function ensureView() {

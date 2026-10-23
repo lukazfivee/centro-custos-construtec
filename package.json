@@ -73,6 +73,7 @@
       "desktop/suite-modules.js",
       "desktop/chamados-navigation.cjs",
       "desktop/chamados-view.cjs",
+      "desktop/permissoes-microfone.cjs",
       "desktop/chamados-preload.js",
       "desktop/preload.js",
       "modules/**/*",

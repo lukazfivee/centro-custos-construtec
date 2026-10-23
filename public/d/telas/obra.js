@@ -13,10 +13,10 @@
 
   function topo(c) {
     const periodo = c.data_inicio || c.data_fim ? `${D.data(c.data_inicio) || '—'} a ${D.data(c.data_fim) || '—'}` : '';
-    const sub = [c.cliente, c.responsavel ? `Resp. ${c.responsavel}` : '', periodo].filter(Boolean).join(' · ');
     const olho = [c.codigo, O.revisao(c.proposta_origem)].filter(Boolean).join(' · ');
+    const sub = [olho, c.cliente, c.responsavel ? `Resp. ${c.responsavel}` : '', periodo].filter(Boolean).join(' · ');
     return `<a class="voltar" href="#/obras">${D.ic('arrow-left')}Obras</a>
-      <div class="cab cab-obra"><div class="tit">${olho ? `<span class="eyebrow">${esc(olho)}</span>` : ''}<h1>${esc(c.nome)}</h1>${sub ? `<span class="sub">${esc(sub)}</span>` : ''}</div>
+      <div class="cab cab-obra"><div class="tit"><h1>${esc(c.nome)}</h1>${sub ? `<span class="sub">${esc(sub)}</span>` : ''}</div>
         <div class="acoes">${O.chipSituacao(c.situacao)}
           ${D.pode('cadastrar') ? `<button type="button" class="btn btn-s" data-editar-obra>${D.ic('pencil-simple')}Editar obra</button>` : ''}
           ${D.tem('p5') ? D.tecnicos.botao() : ''}

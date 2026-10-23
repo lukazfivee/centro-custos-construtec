@@ -62,7 +62,6 @@ input[type="checkbox"], input[type="radio"] { accent-color: var(--accent-300); }
 /* Telas estreitas (360 px): cabecalho cabe inteiro */
 @media (max-width: 380px) {
   .top { gap: 6px; }
-  .top .brand { gap: 6px; letter-spacing: .02em; }
   .suite-pill { padding: 0 12px; }
   .task { gap: 10px; padding: 12px; }
   .summary { padding: 8px 12px; gap: 6px; }

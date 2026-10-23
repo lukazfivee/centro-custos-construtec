@@ -62,7 +62,7 @@
   }
 
   const campo = (rotulo, icone, input, extra = '') => `<label class="fld"><span>${rotulo}</span><span class="lg-inp">${ic(icone)}${input}${extra}</span></label>`;
-  const titulo = (h, p) => `<div class="lg-titulo"><span class="eyebrow">Centro de Custos</span><h2 tabindex="-1">${h}</h2><p>${p}</p></div>`;
+  const titulo = (h, p) => `<div class="lg-titulo"><h2 tabindex="-1">${h}</h2><p>${p}</p></div>`;
 
   function formulario() {
     return `<form class="lg-vista" data-v="login" novalidate>

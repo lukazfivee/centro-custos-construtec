@@ -11,14 +11,14 @@
   const ultimos = new Map();
 
   function topo(sv, fila) {
-    const meta = [sv.cliente, sv.local, D.data(sv.data), sv.responsavel ? `Resp. ${sv.responsavel}` : ''].filter(Boolean).join(' · ');
+    const meta = [`${sv.codigo} · Serviço`, sv.cliente, sv.local, D.data(sv.data), sv.responsavel ? `Resp. ${sv.responsavel}` : ''].filter(Boolean).join(' · ');
     const aberto = sv.situacao !== 'faturado';
     let proximo = '';
     if (sv.situacao === 'agendado' && D.tem('p2')) proximo = `<button type="button" class="btn btn-s" data-iniciar>${D.ic('play')}Iniciar serviço</button>`;
     else if (sv.situacao === 'em_andamento' && D.tem('p2')) proximo = `<button type="button" class="btn btn-s" data-concluir>${D.ic('check-circle')}Concluir</button>`;
     else if (sv.situacao === 'concluido' && D.tem('p6')) proximo = `<button type="button" class="btn btn-s" data-faturar>${D.ic('receipt')}Faturar · cobrança</button>`;
     return `<a class="voltar" href="#/obras">${D.ic('arrow-left')}Obras e serviços</a>
-      <div class="tit-sv"><span class="eyebrow">${esc(sv.codigo)} · Serviço</span><h1>${esc(sv.nome)}</h1>${meta ? `<span class="sub">${esc(meta)}</span>` : ''}</div>
+      <div class="tit-sv"><h1>${esc(sv.nome)}</h1>${meta ? `<span class="sub">${esc(meta)}</span>` : ''}</div>
       <div class="acoes-sv">${S.chip(sv.situacao)}${sv.ativo === false ? U.chip('Inativo', 'neutro') : ''}${fila.length ? U.chip(`Na fila · ${fila.length}`, 'warn', 'cloud-arrow-up') : ''}<span class="espaco"></span>
         ${D.tem('p5') && aberto ? `<button type="button" class="btn btn-s" data-editar>${D.ic('pencil-simple')}Editar</button>` : ''}
         ${D.tem('p5') ? D.tecnicos.botao() : ''}<button type="button" class="btn btn-s" data-relatorio>${D.ic('file-text')}Relatório do serviço</button>${proximo}

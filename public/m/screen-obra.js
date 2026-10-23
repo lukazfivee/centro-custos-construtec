@@ -52,12 +52,12 @@
     return `<div class="card"><span class="label">Resultado até agora</span>
         <div class="big">${esc(CC.signed(Number(c.total_receitas) - Number(c.total_despesas)))}</div>
         ${contract ? `<div class="kv"><span>Contrato (receita)</span><b>${esc(money(contract))}</b></div>` : ''}
-        <div class="kv"><span>Custo orçado</span><b>${budget > 0 ? esc(money(budget)) : 'Sem orçamento'}</b></div>
+        <div class="kv"><span>Orçamento da obra</span><b>${budget > 0 ? esc(money(budget)) : 'Sem orçamento'}</b></div>
         <div class="kv"><span>Gasto (comprometido)</span><b${p !== null && p > 100 ? ' style="color:var(--warn)"' : ''}>${esc(money(spent))}</b></div>
         <div class="kv"><span>Pago</span><b>${esc(money(c.total_despesas))}</b></div>
         <div class="kv"><span>Recebido</span><b>${esc(money(c.total_receitas))}</b></div>
         ${p === null ? '' : `<div class="bar${p > 100 ? ' warn' : ''}" style="margin-top:8px"><span style="width:${Math.min(100, p)}%"></span></div>
-        <small class="muted">Gasto em relação ao custo orçado · ${p}%</small>`}</div>
+        <small class="muted">Gasto em relação ao orçamento da obra · ${p}%</small>`}</div>
       <span class="label">Resolver nesta obra</span>
       ${pend.length ? pend.map(([ic, t, v]) => `<div class="card task hot"><span class="ic">${icon(ic, 18)}</span><span class="txt"><b>${esc(t)}</b><small>${esc(v)}</small></span></div>`).join('')
         : `<div class="empty">${icon('check-circle', 24)}Nada pendente nesta obra.</div>`}`;

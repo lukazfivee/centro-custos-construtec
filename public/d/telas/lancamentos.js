@@ -65,7 +65,7 @@
 
   // Lista (filtros, faixa do mes fechado e tabela) dentro de "raiz". Usada pela tela de Lancamentos
   // e pela aba Lancamentos da obra (obraFixa: filtro de obra travado e nada salvo no navegador).
-  L.montarLista = function (raiz, { f, vivo, obraFixa, aoContar }) {
+  L.montarLista = function (raiz, { f, vivo, obraFixa, aoContar, semFiltros, vazio }) {
     raiz.innerHTML = `<div data-faixa></div><div data-filtros></div><div data-tabela>${U.carregando('Carregando os lançamentos…')}</div>`;
     if (obraFixa) f.obra = String(obraFixa);
     let vez = 0;
@@ -74,8 +74,10 @@
       const minha = ++vez;
       const a = await L.apoio();
       if (!vivo() || minha !== vez) return;
-      CC.$('[data-filtros]', raiz).innerHTML = L.filtrosHtml(f, a, { obraFixa });
-      L.ligarFiltros(CC.$('[data-filtros]', raiz), f, carregar, { salvar: !obraFixa, obraFixa });
+      if (!semFiltros) {
+        CC.$('[data-filtros]', raiz).innerHTML = L.filtrosHtml(f, a, { obraFixa });
+        L.ligarFiltros(CC.$('[data-filtros]', raiz), f, carregar, { salvar: !obraFixa, obraFixa });
+      }
       CC.$('[data-faixa]', raiz).innerHTML = faixaFechado(f);
       const alvo = CC.$('[data-tabela]', raiz);
       let r;
@@ -98,7 +100,7 @@
       const colObra = COLUNAS.findIndex((c) => c.rotulo === 'Obra');
       const semObra = (lista) => (obraFixa ? lista.filter((_, i) => i !== colObra) : lista);
       const linhas = r.itens.map(linha).map((x) => ({ ...x, celulas: semObra(x.celulas) }));
-      alvo.innerHTML = `<div class="card tabela">${U.tabela({ colunas: semObra(COLUNAS), linhas, vazio: 'Nenhum lançamento com esses filtros.' })}
+      alvo.innerHTML = `<div class="card tabela">${U.tabela({ colunas: semObra(COLUNAS), linhas, vazio: vazio || 'Nenhum lançamento com esses filtros.' })}
         <div class="rodape"><span class="muted">Exibindo ${ini}–${fim} de ${p.total}</span>
           <span class="total">Total líquido <b class="${Number(r.totalLiquido) >= 0 ? 'entrada' : ''}">${esc(Number(r.totalLiquido) ? CC.signed(r.totalLiquido) : CC.money(0))}</b></span>
           <span class="pager"><button type="button" class="btn btn-s" data-pag="-1"${p.temAnterior ? '' : ' disabled'} aria-label="Página anterior">${D.ic('caret-left')}</button>

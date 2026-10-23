@@ -18,7 +18,7 @@
       ${U.campo({ rotulo: 'Responsável', name: 'responsavel', valor: o.responsavel })}
       <div class="duas">${U.campo({ rotulo: 'Início', name: 'data_inicio', tipo: 'date', valor: o.data_inicio })}${U.campo({ rotulo: 'Término previsto', name: 'data_fim', tipo: 'date', valor: o.data_fim })}</div>
       <div class="duas">${U.campo({ rotulo: 'Valor contratado (R$)', name: 'valor_contrato', valor: valorBr(o.valor_contrato), placeholder: '0,00' })}
-        ${U.campo({ rotulo: 'Orçamento mensal (R$)', name: 'orcamento', valor: valorBr(o.orcamento), placeholder: '0,00', ajuda: 'Usado na barra realizado × orçado do Início' })}</div>
+        ${U.campo({ rotulo: 'Orçamento da obra (R$)', name: 'orcamento', valor: valorBr(o.orcamento), placeholder: '0,00', ajuda: 'Usado na barra realizado × orçado do Início' })}</div>
       ${U.campo({ rotulo: 'Descrição / escopo', name: 'descricao', tipo: 'textarea', valor: o.descricao, placeholder: 'Opcional' })}
       ${o.id ? D.cad.troca({ titulo: 'Obra ativa', texto: 'Inativas somem das listas de lançamento.', ligado: o.ativo !== false }) : ''}
     </form>`;

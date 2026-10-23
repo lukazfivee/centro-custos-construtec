@@ -87,7 +87,7 @@
       const r = await fetch(`/api/bug-reports/${id}/anexo`, { headers: { Authorization: `Bearer ${CC.session.token()}` }, cache: 'no-store' });
       if (!r.ok) throw new Error('sem print');
       const url = URL.createObjectURL(await r.blob());
-      alvo.innerHTML = `<img class="lanc-foto" src="${url}" alt="Print enviado junto com o report">`;
+      alvo.innerHTML = `<img class="lanc-foto" src="${url}" alt="Imagem da tela enviada junto com o report">`;
     } catch { alvo.innerHTML = '<p class="adm-nota">Não foi possível carregar o print.</p>'; }
   }
 
@@ -109,7 +109,7 @@
         ${kv('Diagnóstico', d ? `Incluído · ${A.diagResumo(d)}` : 'Não incluído')}</div>
       ${acoes.length ? `<details class="card adm-acoes"><summary>Últimas ${acoes.length} ações</summary><ol>${acoes.map((a) => `<li>${esc(a.acao)}</li>`).join('')}</ol></details>` : ''}
       <div class="card"><span class="label">Descrição</span><p class="lanc-obs">${esc(r.descricao)}</p></div>
-      ${r.tem_anexo ? '<div class="card"><span class="label">Print</span><div id="rp-print"><div class="skeleton"></div></div></div>' : ''}
+      ${r.tem_anexo ? '<div class="card"><span class="label">Imagem da tela</span><div id="rp-print"><div class="skeleton"></div></div></div>' : ''}
       ${podeResponder() ? `<div class="card"><label class="field"><span>Resposta da equipe do sistema</span>
         <textarea id="rp-resp" rows="4" maxlength="5000" placeholder="Escreva a resposta para quem enviou o report.">${esc(r.resposta_equipe || '')}</textarea></label>
         <button class="btn2" type="button" id="rp-responder" style="width:100%;margin-top:10px">${icon('paper-plane-right', 18)}${r.resposta_equipe ? 'Atualizar resposta' : 'Responder'}</button></div>`

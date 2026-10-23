@@ -26,7 +26,7 @@
       <div class="grid2">${campo('Contrato', 'o-contrato', o.contrato, ' maxlength="80"')}${campo('Responsável', 'o-resp', o.responsavel, ' maxlength="120"')}</div>
       <div class="grid2">${campo('Início', 'o-ini', o.data_inicio, ' type="date"')}${campo('Término previsto', 'o-fim', o.data_fim, ' type="date"')}</div>
       <div class="grid2">${campo('Valor contratado (R$)', 'o-contr', valorBr(o.valor_contrato), ' inputmode="decimal" placeholder="0,00"')}
-        ${campo('Orçamento mensal (R$)', 'o-orc', valorBr(o.orcamento), ' inputmode="decimal" placeholder="0,00"')}</div>
+        ${campo('Orçamento da obra (R$)', 'o-orc', valorBr(o.orcamento), ' inputmode="decimal" placeholder="0,00"')}</div>
       <label class="field"><span>Descrição / escopo</span><textarea id="o-desc" rows="3" maxlength="2000" placeholder="Opcional">${esc(o.descricao || '')}</textarea></label>
       <label class="menu-item pref"><span>Obra ativa<small>Inativas somem das listas de lançamento</small></span><input type="checkbox" role="switch" id="o-ativo"${o.ativo !== false ? ' checked' : ''}></label>
       <p class="alert" role="alert" id="err"></p>

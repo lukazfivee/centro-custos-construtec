@@ -6,7 +6,7 @@
   const U = D.ui = {};
 
   U.cabecalho = ({ grupo, titulo, sub, acoes }) => `<div class="cab">
-    <div class="tit">${grupo ? `<span class="eyebrow">${esc(grupo)}</span>` : ''}<h1>${esc(titulo)}</h1>${sub ? `<span class="sub">${esc(sub)}</span>` : ''}</div>
+    <div class="tit"><h1>${esc(titulo)}</h1>${sub ? `<span class="sub">${esc(sub)}</span>` : ''}</div>
     <div class="acoes">${acoes || ''}</div></div>`;
 
   // tom: cor do icone (ok, saida, info, warn, err). tomValor: cor do valor (ok, err).

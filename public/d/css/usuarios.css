@@ -51,8 +51,11 @@
 .usu-matriz th.usu-mx b { display: block; font-size: calc(11.5px * var(--fs, 1)); }
 .usu-matriz th.usu-mx span { display: block; font-size: calc(11.5px * var(--fs, 1)); font-weight: 400; text-transform: none; letter-spacing: 0; }
 .usu-grp th { height: 36px; background: var(--color-bg); font-size: calc(11.5px * var(--fs, 1)); color: var(--color-neutral-300); }
-.usu-tk { display: inline-grid; place-items: center; width: 34px; height: 34px; border: 0; border-radius: 10px; background: transparent; color: var(--color-neutral-300); font: inherit; cursor: pointer; }
-.usu-tk.on { background: var(--color-brand); color: var(--on-brand); }
+.usu-tk { display: inline-grid; place-items: center; width: 44px; height: 34px; border: 0; border-radius: 10px; background: transparent; color: var(--color-neutral-300); font: inherit; cursor: pointer; }
+.usu-tk .chave { width: 40px; height: 22px; border-radius: 12px; background: var(--color-field); position: relative; transition: background-color .15s ease; }
+.usu-tk .chave::after { content: ''; position: absolute; top: 3px; left: 3px; width: 16px; height: 16px; border-radius: 50%; background: #fefefe; transition: transform .15s ease; }
+.usu-tk.on .chave { background: var(--color-switch-on); }
+.usu-tk.on .chave::after { transform: translateX(18px); }
 .usu-tk.trava { background: var(--color-neutral-800); cursor: not-allowed; }
 .usu-tk:disabled { cursor: not-allowed; opacity: .6; }
 .usu-tk:focus-visible { outline: 2px solid var(--color-accent-300); outline-offset: 2px; }

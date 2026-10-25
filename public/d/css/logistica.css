@@ -1,15 +1,15 @@
-.logi-pagina { gap: 18px; }
-.logi-abas { display: flex; gap: 6px; overflow-x: auto; border-bottom: 1px solid var(--color-divider); }
-.logi-aba { appearance: none; background: transparent; border: 0; border-bottom: 2px solid transparent; color: var(--color-neutral-300); cursor: pointer; font: inherit; padding: 10px 14px; white-space: nowrap; }
-.logi-aba:hover, .logi-aba:focus-visible { color: var(--color-text); }
+.logi-pagina { gap: 18px; min-width: 0; }
+.logi-abas { display: flex; gap: 6px; min-width: 0; overflow-x: auto; border-bottom: 1px solid var(--color-divider); scrollbar-color: var(--color-neutral-500) transparent; }
+.logi-aba { appearance: none; min-height: 44px; background: transparent; border: 0; border-bottom: 2px solid transparent; color: var(--color-neutral-300); cursor: pointer; font: 600 calc(13px * var(--fs, 1)) var(--font-body); padding: 10px 14px; white-space: nowrap; }
+.logi-aba:hover, .logi-aba:focus-visible { color: var(--color-text); background: var(--color-accent-900); }
 .logi-aba:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; }
 .logi-aba.ativa { border-color: var(--color-brand); color: var(--color-text); font-weight: 600; }
 .logi-resumo { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
 .logi-indicador { display: grid; grid-template-columns: 34px 1fr; align-items: center; gap: 6px 10px; padding: 18px; }
 .logi-indicador > i { grid-row: span 2; font-size: 24px; color: var(--color-brand); }
-.logi-indicador > span { color: var(--c-muted); font-size: 13px; }
-.logi-indicador > b { font-size: 24px; }
-.logi-bloco, .logi-form { display: grid; gap: 18px; padding: 20px; }
+.logi-indicador > span { color: var(--c-muted); font-size: calc(13px * var(--fs, 1)); }
+.logi-indicador > b { font-size: calc(24px * var(--fs, 1)); font-variant-numeric: tabular-nums; }
+.logi-bloco, .logi-form { display: grid; gap: 18px; min-width: 0; padding: 20px; }
 .logi-bloco { grid-template-columns: minmax(0, 1fr) auto; align-items: center; }
 .logi-bloco h2, .logi-form h2 { margin: 0; font-size: 18px; }
 .logi-bloco p, .logi-form > p { color: var(--c-muted); margin: 5px 0 0; }
@@ -17,10 +17,11 @@
 .logi-filtros { display: grid; grid-template-columns: minmax(200px, 1fr) 220px auto; align-items: end; gap: 14px; padding: 16px; }
 .logi-filtros label, .logi-form label, .logi-kit-item label { display: grid; gap: 6px; font-size: 13px; font-weight: 600; }
 .logi-filtros > span { color: var(--c-muted); font-size: 13px; padding: 10px 0; }
-.logi-tabela-wrap { overflow-x: auto; }
+.logi-tabela-wrap { min-width: 0; overflow-x: auto; }
 .logi-tabela { border-collapse: collapse; min-width: 620px; width: 100%; }
 .logi-tabela th, .logi-tabela td { border-bottom: 1px solid var(--color-divider); padding: 12px 14px; text-align: left; }
 .logi-tabela th { color: var(--c-muted); font-size: 12px; font-weight: 600; }
+.logi-tabela td:last-child .btn { margin: 3px 4px 3px 0; }
 .logi-tag { border-radius: 20px; display: inline-flex; font-size: 12px; padding: 4px 9px; text-transform: capitalize; }
 .logi-tag.ok { background: var(--c-ok-soft); color: var(--c-ok); }
 .logi-tag.out { background: var(--c-out-soft); color: var(--c-out); }
@@ -38,10 +39,17 @@
 .logi-recibo th, .logi-recibo td { border: 1px solid #b8c5ca; padding: 9px; text-align: left; }
 .logi-assinatura { margin-top: 55px; }
 @media (max-width: 760px) {
+  .logi-pagina > .cab .acoes { flex: 1 1 100%; flex-wrap: wrap; min-width: 0; }
+  .logi-pagina > .cab .acoes .btn { flex: 1 1 180px; height: auto; min-height: 44px; padding-block: 8px; white-space: normal; }
   .logi-resumo { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .logi-bloco { grid-template-columns: 1fr; }
   .logi-filtros { grid-template-columns: 1fr; }
   .logi-filtros > span { padding: 0; }
+}
+@media (max-width: 520px) {
+  .logi-resumo { grid-template-columns: 1fr; }
+  .logi-kit-item { grid-template-columns: minmax(0, 1fr) 90px 40px; }
+  .logi-acoes, .logi-form-acoes { justify-content: flex-start; }
 }
 @media print {
   body * { visibility: hidden !important; }

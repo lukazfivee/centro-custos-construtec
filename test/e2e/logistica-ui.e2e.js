@@ -18,10 +18,11 @@ test('logística: troca de seção mantém o foco e cabe na largura estreita', a
     await driver.wait(until.elementLocated(By.css('#home-mais')), 10000);
 
     await driver.get(ctx.baseUrl + '/d/#/logistica');
-    await driver.wait(until.elementLocated(By.css('.logi-abas [data-aba="ferramentas"]')), 10000);
-    await driver.findElement(By.css('.logi-abas [data-aba="ferramentas"]')).click();
-    await driver.wait(async () => driver.executeScript('return document.activeElement?.dataset.aba === "ferramentas"'), 10000);
-    assert.equal(await driver.executeScript('return document.activeElement?.getAttribute("aria-current")'), 'page');
+    await driver.wait(until.elementLocated(By.css('.logi-abas [data-aba="ferramental"]')), 10000);
+    await driver.findElement(By.css('.logi-abas [data-aba="ferramental"]')).click();
+    await driver.wait(async () => driver.executeScript('return document.activeElement?.dataset.aba === "ferramental"'), 10000);
+    assert.equal(await driver.executeScript('return document.activeElement?.getAttribute("aria-selected")'), 'true');
+    assert.equal(await driver.executeScript('return document.querySelector(".logi-abas").getAttribute("role")'), 'tablist');
 
     await driver.manage().window().setRect({ width: 760, height: 844 });
     const widths = await driver.executeScript('const el=document.querySelector(".logi-pagina");return [el.clientWidth,el.scrollWidth]');

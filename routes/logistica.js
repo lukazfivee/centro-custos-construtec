@@ -88,6 +88,12 @@ router.get('/faltas', manager, asyncRoute(async (_req, res) => {
     WHERE m.estado='aberta' ORDER BY m.criada_em DESC`);
   res.json(rows);
 }));
+router.get('/recibos-pendentes', manager, asyncRoute(async (_req, res) => {
+  const { rows } = await getDb().query(`SELECT r.id,r.tipo,r.status,r.criado_em,r.divergencia,u.name AS tecnico,c.name AS centro
+    FROM logistica_recibos r JOIN users u ON u.id=r.tecnico_id LEFT JOIN cost_centers c ON c.id=r.centro_id
+    WHERE r.status IN ('aguardando_assinatura','divergencia') ORDER BY (r.status='divergencia') DESC,r.criado_em DESC`);
+  res.json(rows);
+}));
 router.post('/faltas/:id/apuracao', manager, asyncRoute(async (req, res) => {
   res.json(await getDb().transaction((tx) => service.apurarFalta(tx, { faltaId: req.params.id, apuracao: req.body?.apuracao, ator: req.usuario })));
 }));

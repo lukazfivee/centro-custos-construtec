@@ -1,60 +1,94 @@
+/* Logistica: so o que a suite ainda nao tem. Tabela, chip, KPI, segmentado e abas vem de base.css, componentes.css e obras.css. */
 .logi-pagina { gap: 18px; min-width: 0; }
-.logi-abas { display: flex; gap: 6px; min-width: 0; overflow-x: auto; border-bottom: 1px solid var(--color-divider); scrollbar-color: var(--color-neutral-500) transparent; }
-.logi-aba { appearance: none; min-height: 44px; background: transparent; border: 0; border-bottom: 2px solid transparent; color: var(--color-neutral-300); cursor: pointer; font: 600 calc(13px * var(--fs, 1)) var(--font-body); padding: 10px 14px; white-space: nowrap; }
-.logi-aba:hover, .logi-aba:focus-visible { color: var(--color-text); background: var(--color-accent-900); }
-.logi-aba:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; }
-.logi-aba.ativa { border-color: var(--color-brand); color: var(--color-text); font-weight: 600; }
-.logi-resumo { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
-.logi-indicador { display: grid; grid-template-columns: 34px 1fr; align-items: center; gap: 6px 10px; padding: 18px; }
-.logi-indicador > i { grid-row: span 2; font-size: 24px; color: var(--color-brand); }
-.logi-indicador > span { color: var(--c-muted); font-size: calc(13px * var(--fs, 1)); }
-.logi-indicador > b { font-size: calc(24px * var(--fs, 1)); font-variant-numeric: tabular-nums; }
-.logi-bloco, .logi-form { display: grid; gap: 18px; min-width: 0; padding: 20px; }
-.logi-bloco { grid-template-columns: minmax(0, 1fr) auto; align-items: center; }
-.logi-bloco h2, .logi-form h2 { margin: 0; font-size: 18px; }
-.logi-bloco p, .logi-form > p { color: var(--c-muted); margin: 5px 0 0; }
-.logi-acoes, .logi-form-acoes { display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-end; }
+.logi-abas { overflow-x: auto; scrollbar-width: thin; scrollbar-color: var(--color-neutral-500) transparent; }
+.logi-abas .tab { flex: none; padding: 0 4px; }
+.logi-abas.rola-fim { mask-image: linear-gradient(to right, #000 calc(100% - 32px), transparent); }
+.logi-abas.rola-ini { mask-image: linear-gradient(to right, transparent, #000 32px); }
+.logi-abas.rola-ini.rola-fim { mask-image: linear-gradient(to right, transparent, #000 32px, #000 calc(100% - 32px), transparent); }
+.logi-abas .tab:focus-visible, .logi-painel:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; border-radius: 8px; }
+.logi-painel, .logi-painel-int, .logi-sub-corpo, .logi-secao { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+.logi-secao { gap: 10px; }
+.logi-sub { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; }
+.logi-titulo { display: flex; align-items: center; gap: 10px; margin: 0; font: 600 calc(17px * var(--fs, 1))/1.25 var(--font-heading); }
+.logi-nota { margin: 0; font-size: calc(12.5px * var(--fs, 1)); }
+
+/* Indicadores que abrem a lista: o cartao da suite dentro de um botao sem cara de botao. */
+.logi-atalho { appearance: none; display: block; width: 100%; padding: 0; border: 0; border-radius: 14px; background: none; color: inherit; font: inherit; text-align: left; cursor: pointer; }
+.logi-atalho .kpi { height: 100%; transition: box-shadow .15s ease; }
+.logi-atalho:hover .kpi { box-shadow: 0 0 0 1px var(--color-focus); }
+.logi-atalho:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; }
+
+.logi-atencao { display: flex; flex-direction: column; gap: 6px; padding: 16px; }
+.logi-pend-lista { margin: 0; padding: 0; list-style: none; }
+.logi-pend { display: grid; grid-template-columns: 96px minmax(0, 1fr) auto; align-items: center; gap: 12px; padding: 10px 0; border-top: 1px solid var(--color-divider); }
+.logi-pend:first-child { border-top: 0; }
+.logi-pend .chip { justify-self: start; }
+.logi-pend-txt { min-width: 0; font-size: calc(13.5px * var(--fs, 1)); overflow-wrap: anywhere; }
+
+/* Tabelas: o cartao rola de lado so se a tabela nao couber; no celular cada linha vira um cartao. */
+.logi-tabela { overflow-x: auto; min-width: 0; }
+.logi-tabela.ult-acao td:last-child, .logi-tabela.ult-acao th:last-child { text-align: right; }
+.logi-tabela td .btn + .btn { margin-left: 6px; }
+.logi-rolagem { overflow-x: auto; min-width: 0; }
+
 .logi-filtros { display: grid; grid-template-columns: minmax(200px, 1fr) 220px auto; align-items: end; gap: 14px; padding: 16px; }
-.logi-filtros label, .logi-form label, .logi-kit-item label { display: grid; gap: 6px; font-size: 13px; font-weight: 600; }
-.logi-filtros > span { color: var(--c-muted); font-size: 13px; padding: 10px 0; }
-.logi-tabela-wrap { min-width: 0; overflow-x: auto; }
-.logi-tabela { border-collapse: collapse; min-width: 620px; width: 100%; }
-.logi-tabela th, .logi-tabela td { border-bottom: 1px solid var(--color-divider); padding: 12px 14px; text-align: left; }
-.logi-tabela th { color: var(--c-muted); font-size: 12px; font-weight: 600; }
-.logi-tabela td:last-child .btn { margin: 3px 4px 3px 0; }
-.logi-tag { border-radius: 20px; display: inline-flex; font-size: 12px; padding: 4px 9px; text-transform: capitalize; }
-.logi-tag.ok { background: var(--c-ok-soft); color: var(--c-ok); }
-.logi-tag.out { background: var(--c-out-soft); color: var(--c-out); }
-.logi-tag.warn { background: var(--c-warn-soft); color: var(--c-warn); }
+.logi-filtros > span { padding: 10px 0; font-size: calc(13px * var(--fs, 1)); }
+
+.logi-kit { display: flex; flex-direction: column; gap: 16px; padding: 20px; }
+.logi-kit p { margin: 4px 0 0; }
+.logi-kit form { display: grid; gap: 16px; max-width: 680px; }
 .logi-kit-lista { display: grid; gap: 10px; }
-.logi-kit-item { align-items: end; display: grid; grid-template-columns: minmax(0, 1fr) 110px 40px; gap: 10px; }
+.logi-kit-item { display: grid; grid-template-columns: minmax(0, 1fr) 110px 40px; align-items: end; gap: 10px; }
 .logi-kit-item .ibtn { margin-bottom: 3px; }
-.logi-form form { display: grid; gap: 16px; max-width: 680px; }
-.logi-form fieldset { border: 1px solid var(--color-divider); border-radius: 10px; display: grid; gap: 8px; max-height: 320px; overflow-y: auto; padding: 12px; }
-.logi-form legend { font-weight: 600; padding: 0 5px; }
-.logi-escolha { align-items: center; display: flex !important; gap: 9px !important; font-weight: 400 !important; }
-.logi-recibo { background: white; color: #15272d; margin: 30px auto; max-width: 760px; padding: 35px; }
-.logi-recibo h1 { font-size: 24px; }
-.logi-recibo table { border-collapse: collapse; margin-top: 20px; width: 100%; }
-.logi-recibo th, .logi-recibo td { border: 1px solid #b8c5ca; padding: 9px; text-align: left; }
-.logi-assinatura { margin-top: 55px; }
+.logi-form-acoes { display: flex; flex-wrap: wrap; gap: 8px; }
+
+/* Dialogos */
+.logi-lista { display: grid; gap: 8px; min-width: 0; margin: 0; padding: 12px; border: 1px solid var(--color-divider); border-radius: 10px; }
+.logi-lista legend { padding: 0 5px; font-weight: 600; font-size: calc(13px * var(--fs, 1)); }
+.logi-checklist { display: grid; gap: 2px; max-height: 240px; overflow-y: auto; }
+.logi-escolha { display: flex; align-items: center; gap: 10px; min-height: 36px; font-size: calc(13.5px * var(--fs, 1)); }
+.logi-escolha[hidden] { display: none; }
+.logi-info { width: min(720px, 100%); }
+.logi-ficha-dlg { width: min(720px, 100%); max-height: calc(100vh - 48px); overflow-y: auto; }
+
+/* Ficha: na tela segue o tema; so na impressao vira papel branco com tinta escura. */
+.logi-recibo { --papel: var(--color-surface); --tinta-papel: var(--color-text); --linha-papel: var(--color-divider); max-width: 680px; padding: 28px; border-radius: 10px; background: var(--papel); box-shadow: 0 0 0 1px var(--color-divider); color: var(--tinta-papel); text-align: left; }
+.logi-recibo b { font-size: inherit; }
+.logi-recibo h1 { margin: 0 0 12px; font-size: calc(22px * var(--fs, 1)); }
+.logi-recibo p { margin: 4px 0; font-size: calc(13.5px * var(--fs, 1)); }
+.logi-recibo table { width: 100%; margin-top: 16px; border-collapse: collapse; font-size: calc(13.5px * var(--fs, 1)); }
+.logi-recibo th, .logi-recibo td { padding: 8px; border: 1px solid var(--linha-papel); text-align: left; }
+.logi-assinatura { margin-top: 48px; }
+
 @media (max-width: 760px) {
   .logi-pagina > .cab .acoes { flex: 1 1 100%; flex-wrap: wrap; min-width: 0; }
-  .logi-pagina > .cab .acoes .btn { flex: 1 1 180px; height: auto; min-height: 44px; padding-block: 8px; white-space: normal; }
-  .logi-resumo { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .logi-bloco { grid-template-columns: 1fr; }
+  .logi-pagina > .cab .acoes .btn { flex: 1 1 110px; height: auto; min-height: 44px; padding-block: 8px; white-space: normal; }
+  .logi-pagina > .cab .acoes .btn-p { flex-basis: 100%; }
+  .logi-abas .tab { min-height: 44px; }
   .logi-filtros { grid-template-columns: 1fr; }
   .logi-filtros > span { padding: 0; }
+  .logi-pend { grid-template-columns: minmax(0, 1fr) auto; }
+  .logi-pend .chip { grid-column: 1 / -1; }
+  .logi-cards thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+  .logi-cards, .logi-cards tbody, .logi-cards tr, .logi-cards td { display: block; }
+  .logi-cards tr { padding: 10px 14px; border-bottom: 1px solid var(--color-divider); }
+  .logi-cards tr:last-child { border-bottom: 0; }
+  .logi-cards td { display: flex; justify-content: space-between; gap: 12px; height: auto; padding: 4px 0; border: 0; text-align: right; overflow-wrap: anywhere; }
+  .logi-cards td::before { content: attr(data-label); flex: none; color: var(--color-neutral-300); font-size: calc(12px * var(--fs, 1)); font-weight: 600; text-align: left; }
+  .logi-cards td:last-child { justify-content: flex-end; padding-top: 8px; }
+  .logi-cards td:last-child::before { content: none; }
+  .logi-tabela.ult-acao td:last-child { text-align: left; }
+  .logi-cards td .btn { min-height: 44px; }
 }
 @media (max-width: 520px) {
-  .logi-resumo { grid-template-columns: 1fr; }
   .logi-kit-item { grid-template-columns: minmax(0, 1fr) 90px 40px; }
-  .logi-acoes, .logi-form-acoes { justify-content: flex-start; }
 }
 @media print {
-  body * { visibility: hidden !important; }
-  [data-print], [data-print] * { visibility: visible !important; }
-  [data-print] { background: white !important; display: block !important; left: 0; position: absolute; top: 0; width: 100%; }
-  .logi-recibo { margin: 0; max-width: none; }
-  .logi-recibo [data-imprimir] { display: none; }
+  body * { visibility: hidden; }
+  .logi-recibo, .logi-recibo *, .logi-imprimir, .logi-imprimir * { visibility: visible; }
+  .logi-imprimir .bts { display: none; }
+  .logi-imprimir, .logi-imprimir .logi-info { position: static; display: block; width: auto; max-height: none; overflow: visible; padding: 0; background: #fff; color: #15272d; box-shadow: none; }
+  .logi-imprimir .tbl th, .logi-imprimir .tbl td { height: auto; color: #15272d; border-bottom: 1px solid #b8c5ca; }
+  .logi-ficha-camada, .logi-ficha-camada .logi-ficha-dlg { position: static; display: block; width: auto; max-height: none; overflow: visible; padding: 0; background: none; box-shadow: none; }
+  .logi-recibo { --papel: #fff; --tinta-papel: #15272d; --linha-papel: #b8c5ca; position: absolute; left: 0; top: 0; width: 100%; max-width: none; margin: 0; border-radius: 0; box-shadow: none; }
 }

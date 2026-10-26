@@ -85,7 +85,10 @@
 }
 @media print {
   body * { visibility: hidden; }
-  .logi-recibo, .logi-recibo * { visibility: visible; }
+  .logi-recibo, .logi-recibo *, .logi-imprimir, .logi-imprimir * { visibility: visible; }
+  .logi-imprimir .bts { display: none; }
+  .logi-imprimir, .logi-imprimir .logi-info { position: static; display: block; width: auto; max-height: none; overflow: visible; padding: 0; background: #fff; color: #15272d; box-shadow: none; }
+  .logi-imprimir .tbl th, .logi-imprimir .tbl td { height: auto; color: #15272d; border-bottom: 1px solid #b8c5ca; }
   .logi-ficha-camada, .logi-ficha-camada .logi-ficha-dlg { position: static; display: block; width: auto; max-height: none; overflow: visible; padding: 0; background: none; box-shadow: none; }
   .logi-recibo { --papel: #fff; --tinta-papel: #15272d; --linha-papel: #b8c5ca; position: absolute; left: 0; top: 0; width: 100%; max-width: none; margin: 0; border-radius: 0; box-shadow: none; }
 }

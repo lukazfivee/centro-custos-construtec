@@ -66,13 +66,18 @@
   };
 
   function estoque(ctx, corpo) {
-    const lista = [...ctx.dados.materiais].sort((a, b) => Number(b.estoque_baixo) - Number(a.estoque_baixo) || a.nome.localeCompare(b.nome, 'pt-BR'));
-    corpo.innerHTML = L.cartao(U.tabela({
-      vazio: 'Nenhum material cadastrado. Cadastre itens como RJ45, parafusos ou consumíveis.', vazioIcone: 'package',
+    const baixo = ctx.estado.estoque === 'baixo';
+    const lista = ctx.dados.materiais.filter((m) => !baixo || m.estoque_baixo).sort((a, b) => Number(b.estoque_baixo) - Number(a.estoque_baixo) || a.nome.localeCompare(b.nome, 'pt-BR'));
+    corpo.innerHTML = (baixo ? '<p class="muted logi-nota">Mostrando só os materiais abaixo do mínimo. <button type="button" class="btn btn-g" data-limpar>Mostrar todos</button></p>' : '') + L.cartao(U.tabela({
+      vazio: baixo ? 'Nenhum material abaixo do mínimo.' : 'Nenhum material cadastrado. Cadastre itens como RJ45, parafusos ou consumíveis.', vazioIcone: baixo ? 'check-circle' : 'package',
       colunas: [{ rotulo: 'Material' }, { rotulo: 'Saldo', num: true }, { rotulo: 'Mínimo', num: true }, { rotulo: 'Sobra' }, { rotulo: 'Ação' }],
       linhas: lista.map((m) => ({ celulas: [`${esc(m.nome)} ${m.estoque_baixo ? U.chip('Estoque baixo', 'warn', 'warning') : ''}`, `${esc(L.qtd(m.saldo))} ${esc(m.unidade)}`, esc(L.qtd(m.estoque_minimo)), m.exige_retorno ? U.chip('Devolver', 'info', 'arrow-u-up-left') : '—', L.botaoLinha('repor', m.id, 'Dar entrada', m.nome)] })),
     }), true, 'Saldo e estoque mínimo dos materiais');
-    corpo.addEventListener('click', (ev) => { const b = ev.target.closest('[data-repor]'); if (b) L.entradaMaterial(ctx, b.dataset.repor); });
+    corpo.addEventListener('click', (ev) => {
+      const b = ev.target.closest('[data-repor]');
+      if (b) L.entradaMaterial(ctx, b.dataset.repor);
+      else if (ev.target.closest('[data-limpar]')) ctx.ir('materiais', 'estoque', { estoque: '' });
+    });
   }
 
   function pedidos(ctx, corpo) {

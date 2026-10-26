@@ -93,13 +93,15 @@
   });
 
   // Dialogo so de leitura, com um botao Fechar.
-  L.dialogoInfo = ({ titulo, corpo }) => {
+  // imprimir: acrescenta o botao Imprimir e deixa so este dialogo visivel na impressao.
+  L.dialogoInfo = ({ titulo, corpo, imprimir }) => {
     const anterior = document.activeElement;
-    const camada = D.el(`<div class="dialogo-camada"><div class="card dialogo lista logi-info" role="dialog" aria-modal="true" aria-labelledby="logi-info-titulo">
-      <b id="logi-info-titulo">${esc(titulo)}</b>${corpo}<div class="bts"><button type="button" class="btn btn-s" data-fechar>Fechar</button></div></div></div>`);
+    const camada = D.el(`<div class="dialogo-camada${imprimir ? ' logi-imprimir' : ''}"><div class="card dialogo lista logi-info" role="dialog" aria-modal="true" aria-labelledby="logi-info-titulo">
+      <b id="logi-info-titulo">${esc(titulo)}</b>${corpo}<div class="bts">${imprimir ? `<button type="button" class="btn btn-s" data-imprimir>${D.ic('printer')}Imprimir</button>` : ''}<button type="button" class="btn btn-s" data-fechar>Fechar</button></div></div></div>`);
     const fechar = () => { document.removeEventListener('keydown', teclas, true); camada.remove(); anterior?.focus?.(); };
     const teclas = (event) => { if (event.key === 'Escape') { event.preventDefault(); fechar(); } else D.prenderFoco(camada, event); };
     CC.$('[data-fechar]', camada).addEventListener('click', fechar);
+    if (imprimir) CC.$('[data-imprimir]', camada).addEventListener('click', () => window.print());
     abrirCamada(camada, fechar, teclas);
     L.rotular(camada);
     CC.$('[data-fechar]', camada).focus();

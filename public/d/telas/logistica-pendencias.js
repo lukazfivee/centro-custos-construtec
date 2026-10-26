@@ -32,15 +32,42 @@
     if (feito) ctx.atualizar();
   }
 
+  async function revisar(ctx, id, contexto) {
+    const feito = await L.dialogoFormulario({
+      titulo: 'Registrar revisão da divergência', ok: 'Salvar revisão',
+      corpo: `<p class="muted">${esc(contexto)}</p>${U.campo({ rotulo: 'O que a Logística conferiu?', name: 'revisao', tipo: 'textarea', obrigatorio: true })}`,
+      aoAbrir: (form) => Object.assign(form.elements.revisao, { minLength: 5, maxLength: 2000 }),
+      aoEnviar: async (form) => {
+        await CC.api(`/logistica/entregas/${id}/revisao`, { method: 'POST', body: { revisao: form.elements.revisao.value.trim() } });
+        CC.toast('Revisão registrada; a ficha volta para assinatura');
+      },
+    });
+    if (feito) ctx.atualizar();
+  }
+
+  async function verFicha(id) {
+    try { L.ficha((await CC.api(`/logistica/entregas/${id}`)).data, 'Ficha para impressão'); }
+    catch (error) { CC.toast(error.message || 'Não foi possível abrir a ficha.'); }
+  }
+
+  const TIPOS_FICHA = { entrega_ferramenta: 'Ferramentas', conferencia_inicial: 'Conferência inicial', entrega_material: 'Material' };
+  const SITUACAO_FICHA = { aguardando_assinatura: ['Aguardando assinatura', 'warn', 'signature'], divergencia: ['Divergência', 'err', 'warning-circle'] };
+
   L.modulos.pendencias = {
-    dados: () => ['resumo', 'faltas', 'devolucoes'],
+    dados: () => ['fichas', 'faltas', 'devolucoes'],
     acoes: [],
     desenhar(ctx) {
-      const { resumo, faltas, devolucoes } = ctx.dados;
-      const fichas = [];
-      if (resumo.aguardando_assinatura) fichas.push(`${resumo.aguardando_assinatura} ficha${resumo.aguardando_assinatura > 1 ? 's' : ''} aguardando assinatura do técnico`);
-      if (resumo.divergencias) fichas.push(`${resumo.divergencias} ficha${resumo.divergencias > 1 ? 's' : ''} com divergência para revisar`);
-      ctx.corpo.innerHTML = `<div class="logi-painel-int" data-pend>${fichas.length ? U.faixa('warn', 'signature', fichas.join(' · ')) : ''}
+      const { faltas, devolucoes } = ctx.dados;
+      const filtro = ctx.estado.fichas;
+      const fichas = ctx.dados.fichas.filter((f) => !filtro || f.status === filtro);
+      const nota = filtro ? `<p class="muted logi-nota">Mostrando só: ${esc(SITUACAO_FICHA[filtro][0].toLowerCase())}. <button type="button" class="btn btn-g" data-limpar-fichas>Mostrar todas</button></p>` : '';
+      ctx.corpo.innerHTML = `<div class="logi-painel-int" data-pend>
+        <section class="logi-secao">${L.titulo('Fichas pendentes', fichas.length ? String(fichas.length) : '')}${nota}${L.cartao(U.tabela({
+          vazio: filtro ? 'Nenhuma ficha neste filtro.' : 'Nenhuma ficha pendente. Fichas aguardando assinatura ou revisão aparecem aqui.', vazioIcone: 'check-circle',
+          colunas: [{ rotulo: 'Ficha' }, { rotulo: 'Técnico' }, { rotulo: 'Obra/serviço' }, { rotulo: 'Situação' }, { rotulo: 'Relato do técnico' }, { rotulo: 'Ação' }],
+          linhas: fichas.map((f) => { const s = SITUACAO_FICHA[f.status]; const nome = `ficha ${f.id} de ${f.tecnico}`; return { celulas: [`Nº ${esc(f.id)} · ${esc(TIPOS_FICHA[f.tipo] || L.rotulo(f.tipo))} · ${esc(L.data(f.criado_em))}`, esc(f.tecnico), esc(f.centro || '—'), U.chip(s[0], s[1], s[2]), f.divergencia ? esc(f.divergencia) : '—',
+            f.status === 'divergencia' ? L.botaoLinha('revisar', f.id, 'Registrar revisão', nome, ` data-contexto="${esc(`Ficha ${f.id}: ${f.divergencia || ''}`)}"`) : L.botaoLinha('ficha', f.id, 'Ver ficha', nome)] }; }),
+        }), true, 'Fichas aguardando assinatura ou revisão')}</section>
         <section class="logi-secao">${L.titulo('Faltas de ferramenta', faltas.length ? String(faltas.length) : '')}${L.cartao(U.tabela({
           vazio: 'Nenhuma falta pendente. Faltas relatadas pelos técnicos aparecem aqui.', vazioIcone: 'check-circle',
           colunas: [{ rotulo: 'Data' }, { rotulo: 'Técnico' }, { rotulo: 'Ferramenta' }, { rotulo: 'Relato' }, { rotulo: 'Apuração' }, { rotulo: 'Ação' }],
@@ -53,7 +80,10 @@
             L.botaoLinha('devolucao', d.recibo_id, 'Registrar retorno', d.material, ` data-material="${esc(d.material_id)}" data-nome="${esc(d.material)}" data-restante="${esc(d.pendente)}"`)] })),
         }), true, 'Devoluções de material pendentes')}</section></div>`;
       CC.$('[data-pend]', ctx.corpo).addEventListener('click', (ev) => {
-        const a = ev.target.closest('[data-apurar]'), d = ev.target.closest('[data-devolucao]');
+        const a = ev.target.closest('[data-apurar]'), d = ev.target.closest('[data-devolucao]'), r = ev.target.closest('[data-revisar]'), v = ev.target.closest('[data-ficha]');
+        if (ev.target.closest('[data-limpar-fichas]')) ctx.ir('pendencias', undefined, { fichas: '' });
+        if (r) revisar(ctx, r.dataset.revisar, r.dataset.contexto);
+        if (v) verFicha(v.dataset.ficha);
         if (a) apurar(ctx, a.dataset.apurar, a.dataset.contexto);
         if (d) devolver(ctx, { recibo: d.dataset.devolucao, material: d.dataset.material, nome: d.dataset.nome, restante: d.dataset.restante });
       });

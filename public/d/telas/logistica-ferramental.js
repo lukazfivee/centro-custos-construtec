@@ -37,7 +37,7 @@
   async function historico(id, nome) {
     try {
       const { data } = await CC.api(`/logistica/ferramentas/${id}/historico`);
-      L.dialogoInfo({ titulo: `Histórico: ${nome}`, corpo: `<div class="logi-rolagem" data-legenda="${esc(`Movimentações de ${nome}`)}">${U.tabela({ vazio: 'Sem movimentações.', vazioIcone: 'clock-counter-clockwise', colunas: [{ rotulo: 'Data' }, { rotulo: 'Movimento' }, { rotulo: 'Responsável' }, { rotulo: 'Detalhe' }],
+      L.dialogoInfo({ titulo: `Histórico: ${nome}`, imprimir: true, corpo: `<div class="logi-rolagem" data-legenda="${esc(`Movimentações de ${nome}`)}">${U.tabela({ vazio: 'Sem movimentações.', vazioIcone: 'clock-counter-clockwise', colunas: [{ rotulo: 'Data' }, { rotulo: 'Movimento' }, { rotulo: 'Responsável' }, { rotulo: 'Detalhe' }],
         linhas: data.map((r) => ({ celulas: [esc(L.data(r.criado_em)), esc(L.movimento(r.tipo)), esc(r.ator || '—'), esc(L.detalhe(r.detalhe))] })) })}</div>` });
     } catch (error) { CC.toast(error.message || 'Não foi possível abrir o histórico.'); }
   }

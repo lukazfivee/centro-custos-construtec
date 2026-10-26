@@ -5,7 +5,7 @@
   const { esc } = CC;
   const TITULOS = { entrega_material: 'Ficha de entrega de materiais', conferencia_inicial: 'Conferência inicial de ferramentas', entrega_ferramenta: 'Ficha de entrega de ferramentas' };
 
-  L.ficha = (recibo) => {
+  L.ficha = (recibo, titulo) => {
     const anterior = document.activeElement;
     const material = recibo.tipo === 'entrega_material';
     const linhas = [
@@ -13,7 +13,7 @@
       ...(recibo.materiais || []).map((item) => `<tr><td>${esc(item.nome)}</td><td>${esc(L.qtd(item.quantidade))} ${esc(item.unidade)}</td></tr>`),
     ].join('');
     const camada = D.el(`<div class="dialogo-camada logi-ficha-camada"><div class="card dialogo lista logi-ficha-dlg" role="dialog" aria-modal="true" aria-labelledby="logi-ficha-titulo">
-      <b id="logi-ficha-titulo">Registro feito. Imprima a ficha para o técnico assinar.</b>
+      <b id="logi-ficha-titulo">${esc(titulo || 'Registro feito. Imprima a ficha para o técnico assinar.')}</b>
       <article class="logi-recibo"><h1>${esc(TITULOS[recibo.tipo] || TITULOS.entrega_ferramenta)}</h1>
         <p><b>Técnico:</b> ${esc(recibo.tecnico)}</p>${recibo.centro ? `<p><b>Obra/serviço:</b> ${esc(recibo.centro)}</p>` : ''}
         <p><b>Entregue por:</b> ${esc(recibo.emissor || '—')}</p><p><b>Data e hora:</b> ${esc(L.data(recibo.criado_em))}</p>

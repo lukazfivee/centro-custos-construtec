@@ -12,9 +12,9 @@
   const API = {
     resumo: '/logistica/resumo', ferramentas: '/logistica/ferramentas', kit: '/logistica/kits/padrao', movFerr: '/logistica/movimentacoes',
     materiais: '/logistica/materiais', pedidos: '/logistica/materiais/solicitacoes', opcoes: '/logistica/materiais/opcoes-entrega',
-    movMat: '/logistica/materiais/movimentacoes', faltas: '/logistica/faltas', devolucoes: '/logistica/materiais/devolucoes-pendentes',
+    movMat: '/logistica/materiais/movimentacoes', faltas: '/logistica/faltas', devolucoes: '/logistica/materiais/devolucoes-pendentes', fichas: '/logistica/recibos-pendentes',
   };
-  const estado = { aba: 'resumo', sub: { ferramental: 'inventario', materiais: 'estoque', historico: 'ferramentas' }, busca: '', status: '' };
+  const estado = { aba: 'resumo', sub: { ferramental: 'inventario', materiais: 'estoque', historico: 'ferramentas' }, busca: '', status: '', fichas: '', estoque: '' };
 
   async function render(el, rota, vivo) {
     if (!D.podeTela(rota.nome)) return D.telaEmConstrucao(el, rota, vivo);
@@ -33,12 +33,14 @@
         await Promise.all(chaves.filter((chave) => !(chave in cache)).map(async (chave) => { cache[chave] = (await CC.api(API[chave])).data; }));
         return cache;
       },
-      // Troca de aba ou de visao; filtro opcional { status, busca } para abrir a lista ja filtrada.
+      // Troca de aba ou de visao; filtro opcional { status, busca, fichas, estoque } para abrir a lista ja filtrada.
       ir: (aba, sub, filtro) => {
         estado.aba = aba;
         if (sub) estado.sub[aba] = sub;
         if (filtro && 'status' in filtro) estado.status = filtro.status;
         if (filtro && 'busca' in filtro) estado.busca = filtro.busca;
+        if (filtro && 'fichas' in filtro) estado.fichas = filtro.fichas;
+        if (filtro && 'estoque' in filtro) estado.estoque = filtro.estoque;
         return mostrar();
       },
       // Depois de registrar algo: descarta os dados guardados e refaz a aba atual.

@@ -6,16 +6,16 @@
   const { esc } = CC;
   const LIMITE = 8;
 
-  // destino: [aba, visao, situacao da ferramenta].
+  // destino: [aba, visao, filtro que a lista de destino ja abre aplicado].
   function indicadores(r, abaixo) {
     const alerta = (n, tom) => (n ? tom : 'info');
     return [
-      { rotulo: 'Aguardando assinatura', valor: r.aguardando_assinatura, det: 'fichas com o técnico', icone: 'signature', tom: alerta(r.aguardando_assinatura, 'warn'), destino: ['pendencias'] },
-      { rotulo: 'Divergências', valor: r.divergencias, det: 'fichas contestadas', icone: 'warning-circle', tom: alerta(r.divergencias, 'err'), tomValor: r.divergencias ? 'err' : '', destino: ['pendencias'] },
-      { rotulo: 'Abaixo do mínimo', valor: abaixo, det: 'materiais para repor', icone: 'warning', tom: alerta(abaixo, 'warn'), destino: ['materiais', 'estoque'] },
-      { rotulo: 'Em avaliação', valor: r.em_avaliacao, det: 'ferramentas com avaria', icone: 'wrench', tom: alerta(r.em_avaliacao, 'warn'), destino: ['ferramental', 'inventario', 'em_avaliacao'] },
-      { rotulo: 'Com técnicos', valor: r.com_tecnicos, det: 'ferramentas em campo', icone: 'users', destino: ['ferramental', 'inventario', 'com_tecnico'] },
-      { rotulo: 'Disponíveis', valor: r.disponiveis, det: 'prontas para entrega', icone: 'check-circle', tom: 'ok', destino: ['ferramental', 'inventario', 'disponivel'] },
+      { rotulo: 'Aguardando assinatura', valor: r.aguardando_assinatura, det: 'fichas com o técnico', icone: 'signature', tom: alerta(r.aguardando_assinatura, 'warn'), destino: ['pendencias', undefined, { fichas: 'aguardando_assinatura' }] },
+      { rotulo: 'Divergências', valor: r.divergencias, det: 'fichas contestadas', icone: 'warning-circle', tom: alerta(r.divergencias, 'err'), tomValor: r.divergencias ? 'err' : '', destino: ['pendencias', undefined, { fichas: 'divergencia' }] },
+      { rotulo: 'Abaixo do mínimo', valor: abaixo, det: 'materiais para repor', icone: 'warning', tom: alerta(abaixo, 'warn'), destino: ['materiais', 'estoque', { estoque: 'baixo' }] },
+      { rotulo: 'Em avaliação', valor: r.em_avaliacao, det: 'ferramentas com avaria', icone: 'wrench', tom: alerta(r.em_avaliacao, 'warn'), destino: ['ferramental', 'inventario', { status: 'em_avaliacao', busca: '' }] },
+      { rotulo: 'Com técnicos', valor: r.com_tecnicos, det: 'ferramentas em campo', icone: 'users', destino: ['ferramental', 'inventario', { status: 'com_tecnico', busca: '' }] },
+      { rotulo: 'Disponíveis', valor: r.disponiveis, det: 'prontas para entrega', icone: 'check-circle', tom: 'ok', destino: ['ferramental', 'inventario', { status: 'disponivel', busca: '' }] },
     ];
   }
 
@@ -23,8 +23,8 @@
   function pendencias(ctx) {
     const { resumo: r, materiais, pedidos, faltas, devolucoes } = ctx.dados;
     const linhas = [];
-    if (r.divergencias) linhas.push(['err', 'Divergência', `${r.divergencias} ficha${r.divergencias > 1 ? 's' : ''} contestada${r.divergencias > 1 ? 's' : ''} pelo técnico, aguardando revisão`, 'Ver', 'ir:pendencias']);
-    if (r.aguardando_assinatura) linhas.push(['warn', 'Assinatura', `${r.aguardando_assinatura} ficha${r.aguardando_assinatura > 1 ? 's' : ''} aguardando assinatura do técnico`, 'Ver', 'ir:pendencias']);
+    if (r.divergencias) linhas.push(['err', 'Divergência', `${r.divergencias} ficha${r.divergencias > 1 ? 's' : ''} contestada${r.divergencias > 1 ? 's' : ''} pelo técnico, aguardando revisão`, 'Revisar', 'ir:pendencias::divergencia']);
+    if (r.aguardando_assinatura) linhas.push(['warn', 'Assinatura', `${r.aguardando_assinatura} ficha${r.aguardando_assinatura > 1 ? 's' : ''} aguardando assinatura do técnico`, 'Ver', 'ir:pendencias::aguardando_assinatura']);
     faltas.forEach((f) => linhas.push(['err', 'Falta', `${f.ferramenta} (${f.codigo}) relatada por ${f.tecnico}${f.apuracao ? '' : ', sem apuração'}`, 'Apurar', 'ir:pendencias']));
     pedidos.filter((p) => ['solicitada', 'parcial'].includes(p.status)).forEach((p) => linhas.push(['info', 'Pedido', `${L.qtd(Number(p.solicitada) - Number(p.entregue))} ${p.unidade} de ${p.material} para ${p.centro}, pedido por ${p.tecnico}`, 'Entregar', 'ir:materiais:pedidos']));
     devolucoes.forEach((d) => linhas.push(['info', 'Devolução', `${L.qtd(d.pendente)} ${d.unidade} de ${d.material} com ${d.tecnico}`, 'Ver', 'ir:pendencias']));
@@ -49,10 +49,10 @@
       const raiz = CC.$('[data-resumo]', ctx.corpo);
       raiz.addEventListener('click', (ev) => {
         const kpi = ev.target.closest('[data-kpi]'), alvo = ev.target.closest('[data-alvo]');
-        if (kpi) { const [aba, sub, status] = itens[Number(kpi.dataset.kpi)].destino; ctx.ir(aba, sub, status ? { status, busca: '' } : {}); }
+        if (kpi) { const [aba, sub, filtro] = itens[Number(kpi.dataset.kpi)].destino; ctx.ir(aba, sub, filtro); }
         else if (alvo) {
-          const [tipo, aba, sub] = alvo.dataset.alvo.split(':');
-          if (tipo === 'entrada') L.entradaMaterial(ctx, aba); else ctx.ir(aba, sub);
+          const [tipo, aba, sub, fichas] = alvo.dataset.alvo.split(':');
+          if (tipo === 'entrada') L.entradaMaterial(ctx, aba); else ctx.ir(aba, sub || undefined, { fichas: fichas || '' });
         }
       });
     },

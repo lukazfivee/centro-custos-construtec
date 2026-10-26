@@ -142,4 +142,22 @@ test('logística controla ferramentas, escopo do técnico e entregas idempotente
     assert.ok(history.some((item) => item.tipo === 'devolucao_avariada'));
     assert.ok(history.some((item) => item.tipo === 'reparada'));
   });
+
+  await t.test('fichas pendentes listam assinatura e divergência para a logística, nunca para o técnico', async () => {
+    const tool = await call('/ferramentas', 'POST', { nome: 'Trena', codigo: 'PAT-FICHAS' }, 201);
+    const receipt = await call('/entregas', 'POST', { tecnicoId: ids.tecB, ferramentaIds: [tool.id], client_id: 'entrega-fichas' }, 201);
+    await call('/recibos-pendentes', 'GET', undefined, 403, 'tecA');
+    const aguardando = (await call('/recibos-pendentes')).find((item) => item.id === receipt.id);
+    assert.equal(aguardando.status, 'aguardando_assinatura');
+    assert.equal(aguardando.tecnico, 'Técnico B');
+
+    await call(`/entregas/${receipt.id}/divergencia`, 'POST', { relato: 'Falta a trena de 5 metros' }, 200, 'tecB');
+    const lista = await call('/recibos-pendentes');
+    assert.equal(lista[0].id, receipt.id, 'divergência vem primeiro');
+    assert.equal(lista[0].status, 'divergencia');
+    assert.equal(lista[0].divergencia, 'Falta a trena de 5 metros');
+
+    await call(`/entregas/${receipt.id}/revisao`, 'POST', { revisao: 'Conferido com o técnico; ficha correta' }, 200);
+    assert.equal((await call('/recibos-pendentes')).find((item) => item.id === receipt.id).status, 'aguardando_assinatura');
+  });
 });

@@ -4,7 +4,9 @@ const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
 const { pathToFileURL } = require('node:url');
-const { DatabaseSync } = require('node:sqlite');
+// node:sqlite so existe a partir do Node 22.13 sem flag; no Node 22 mais antigo os testes do Worker sao pulados.
+let DatabaseSync = null;
+try { ({ DatabaseSync } = require('node:sqlite')); } catch {}
 
 const root = path.join(__dirname, '..');
 const UUID_A = '11111111-1111-4111-8111-111111111111';
@@ -43,7 +45,7 @@ function obra(publicId, updatedAt) {
   return { publicId, code: `C-${publicId.slice(0, 4)}`, name: `Obra ${publicId.slice(0, 4)}`, revision: 1, active: true, createdAt: updatedAt, updatedAt };
 }
 
-for (const alvo of ['cloudflare-sync-worker', 'cloudflare/center-container']) test(`Worker ${alvo}: exclusão feita em uma instalação some do snapshot e não é recriada por pacote antigo`, async () => {
+for (const alvo of ['cloudflare-sync-worker', 'cloudflare/center-container']) test(`Worker ${alvo}: exclusão feita em uma instalação some do snapshot e não é recriada por pacote antigo`, { skip: !DatabaseSync && 'node:sqlite indisponível' }, async () => {
   const worker = await loadWorker(alvo);
   const env = { DB: fakeD1(fs.readFileSync(path.join(root, 'cloudflare-sync-worker', 'schema.sql'), 'utf8')), SYNC_SHARED_KEY: 'chave-de-teste' };
   const sync = async (payload) => {

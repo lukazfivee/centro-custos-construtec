@@ -82,7 +82,7 @@ async function request(path, options, user) {
 function snapshotHasData(snapshot) {
   const payload = snapshot?.payload;
   if (!payload) return false;
-  return ['categories','costCenters','suppliers','transactions']
+  return ['categories','costCenters','suppliers','transactions','deletedCostCenters']
     .some((key) => Array.isArray(payload[key]) && payload[key].length > 0);
 }
 

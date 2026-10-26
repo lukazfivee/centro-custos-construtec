@@ -4,9 +4,12 @@ const { httpError } = require('../lib/http');
 const { recordAudit } = require('./audit');
 const { readTransactions, normalizeTransaction, sameBusiness, mutationError, writeTransaction } = require('./syncTransactions');
 const jobs = require('../lib/jobs');
+const { LINKED_TABLES } = require('./costCenterLinks');
 
 const FORMAT_VERSION = 3;
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+// Obras que o proprio pacote declara excluidas: o item da obra no mesmo pacote e ignorado sem abrir conflito.
+const deletedByPackage = new WeakMap();
 const FINANCIAL_STATUSES = new Set(['pendente','liquidado']);
 
 function stableHash(value) {
@@ -35,13 +38,14 @@ function financialStatusError(item, label) {
 async function buildPackage() {
   const db = getDb();
   const instance = getInstanceIdentity();
-  const [categories, centers, suppliers, transactions] = await Promise.all([
+  const [categories, centers, suppliers, transactions, tombstones] = await Promise.all([
     db.query(`SELECT public_id,name,type,active,revision,created_at,updated_at FROM categories ORDER BY public_id`),
     db.query(`SELECT public_id,code,name,responsible,monthly_budget,active,client,contract_number,start_date,end_date,
       contract_amount,project_status,description,kind,revision,created_at,updated_at FROM cost_centers ORDER BY public_id`),
     db.query(`SELECT public_id,name,document,contact_name,email,phone,notes,active,revision,created_at,updated_at
       FROM suppliers ORDER BY public_id`),
     readTransactions(db),
+    db.query('SELECT public_id FROM cost_center_tombstones ORDER BY public_id'),
   ]);
 
   const payload = {
@@ -55,6 +59,8 @@ async function buildPackage() {
       contractAmount:Number(r.contract_amount || 0),projectStatus:r.project_status,description:r.description,kind:r.kind || 'obra',
       revision:Number(r.revision || 1),createdAt:iso(r.created_at),updatedAt:iso(r.updated_at),
     })),
+    // Centros excluidos: a nuvem e as outras instalacoes precisam saber, senao recriam o centro no proximo pacote.
+    deletedCostCenters: tombstones.rows.map((r) => r.public_id),
     suppliers: suppliers.rows.map((r) => ({
       publicId:r.public_id,name:r.name,document:r.document,contactName:r.contact_name,email:r.email,phone:r.phone,
       notes:r.notes,active:r.active,revision:Number(r.revision || 1),createdAt:iso(r.created_at),updatedAt:iso(r.updated_at),
@@ -130,6 +136,9 @@ async function importSimpleEntity(tx, options) {
   if (!UUID.test(String(item.publicId || ''))) throw httpError(400, `${type}: publicId inválido.`);
   if (type === 'obra') {
     const deleted = await tx.query('SELECT 1 FROM cost_center_tombstones WHERE public_id=$1', [item.publicId]);
+    if (deleted.rows.length && deletedByPackage.get(result)?.has(item.publicId)) {
+      result.ignorados += 1; result.porTipo[type].ignorados += 1; return;
+    }
     if (deleted.rows.length) {
       await addConflict(tx, packageImportId, type, item.publicId,
         'Esta obra foi excluída nesta instalação. Mantenha a versão local; o pacote não pode recriá-la.', null, item, result);
@@ -170,6 +179,34 @@ function packageItemCount(pack) {
   return (p.categories?.length || 0) + (p.costCenters?.length || 0) + (p.suppliers?.length || 0) + (p.transactions?.length || 0);
 }
 
+// Aplica as exclusoes de centro de custo feitas em outra instalacao: grava a lapide local (para o centro nao ser
+// recriado) e remove o centro se ele estiver sem movimento. Com movimento, mantem o centro e abre um conflito.
+async function applyDeletedCostCenters(tx, ids, packageImportId, result) {
+  if (!Array.isArray(ids)) return;
+  result.excluidos = 0;
+  const declared = new Set();
+  deletedByPackage.set(result, declared);
+  for (const publicId of [...new Set(ids.map(String))].filter((id) => UUID.test(id)).slice(0, 5000)) {
+    const center = (await tx.query('SELECT id,code,name FROM cost_centers WHERE public_id=$1 FOR UPDATE', [publicId])).rows[0];
+    if (center) {
+      let blocker = null;
+      for (const [table, label] of LINKED_TABLES) {
+        if ((await tx.query(`SELECT 1 FROM ${table} WHERE cost_center_id=$1 LIMIT 1`, [center.id])).rows.length) { blocker = label; break; }
+      }
+      if (blocker) {
+        await addConflict(tx, packageImportId, 'obra', publicId,
+          `Esta obra foi excluída em outra instalação, mas aqui tem ${blocker} vinculados. Ela foi mantida; inative-a se não for mais usada.`,
+          { code:center.code,name:center.name }, { publicId }, result);
+        continue;
+      }
+      await tx.query('DELETE FROM cost_centers WHERE id=$1', [center.id]);
+      result.excluidos += 1;
+    }
+    await tx.query('INSERT INTO cost_center_tombstones (public_id) VALUES ($1) ON CONFLICT (public_id) DO NOTHING', [publicId]);
+    declared.add(publicId);
+  }
+}
+
 const noopJobContext = { updateProgress: async () => {}, checkDeadline: () => {} };
 
 async function runImport(pack, filename, user, ctx = noopJobContext) {
@@ -189,6 +226,8 @@ async function runImport(pack, filename, user, ctx = noopJobContext) {
       [pack.packageId,String(filename || 'sincronizacao.ccsync').slice(0,240),pack.source.id,
         String(pack.source.name || 'Instalação desconhecida').slice(0,120),pack.payloadHash,user.id]);
     const packageImportId = inserted.rows[0].id;
+
+    await applyDeletedCostCenters(tx, pack.payload.deletedCostCenters, packageImportId, result);
 
     for (const item of pack.payload.categories) {
       const clean = {...item,revision:validRevision(item),active:item.active !== false};

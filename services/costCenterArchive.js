@@ -181,6 +181,8 @@ async function restoreCostCenter(db, discardId, user) {
     }
     await toggleGuards(tx, true);
     await tx.query('DELETE FROM cost_center_tombstones WHERE public_id=$1', [center.public_id]);
+    // Obra restaurada passa a ser mais nova que a exclusao registrada na nuvem; sem isso a nuvem a descartaria.
+    await tx.query('UPDATE cost_centers SET updated_at=NOW(), revision=revision+1 WHERE public_id=$1', [center.public_id]);
     await tx.query('UPDATE discarded_cost_centers SET restored_at=NOW(), restored_by_name=$2 WHERE id=$1', [discardId, user?.name || 'Sistema']);
     // Mantem a sequencia de ids acima do maior restaurado.
     await tx.query("SELECT setval(pg_get_serial_sequence('cost_centers','id'), GREATEST((SELECT MAX(id) FROM cost_centers), 1))");

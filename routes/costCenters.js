@@ -1,5 +1,6 @@
 const { allocatedTransactionsSql } = require('../services/financialProjection');
 const express = require('express');
+const { LINKED_TABLES } = require('../services/costCenterLinks');
 const crypto = require('crypto');
 const { getDb } = require('../db');
 const { autenticar, exigirPapel } = require('../middleware/auth');
@@ -187,19 +188,7 @@ router.put('/:id', exigirPermissao('p5'), asyncRoute(async (req, res) => {
 router.delete('/:id', exigirPapel('admin', 'gestor'), asyncRoute(async (req, res) => {
   const id = positiveId(req.params.id);
   await assertObra(req, id);
-  const vinculados = [
-    ['transactions', 'lançamentos'],
-    ['transaction_allocations', 'rateios de lançamentos'],
-    ['recurring_templates', 'recorrências'],
-    ['project_contracts', 'contratos ou orçamentos'],
-    ['expense_allocations', 'apropriações de despesas'],
-    ['cost_recognitions', 'reconhecimentos de custos'],
-    ['labor_measurements', 'medições de mão de obra'],
-    ['contract_measurements', 'medições contratuais'],
-    ['cost_center_invoices', 'notas fiscais vinculadas'],
-    ['cost_center_invoices_ledger', 'notas fiscais'],
-    ['cost_center_proposals', 'propostas'],
-  ];
+  const vinculados = LINKED_TABLES;
   try {
     await getDb().transaction(async (db) => {
       // O lock impede que outro pedido vincule dados enquanto verificamos a exclusão.

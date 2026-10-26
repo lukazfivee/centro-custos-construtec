@@ -53,6 +53,7 @@
 
 /* Ficha: na tela segue o tema; so na impressao vira papel branco com tinta escura. */
 .logi-recibo { --papel: var(--color-surface); --tinta-papel: var(--color-text); --linha-papel: var(--color-divider); max-width: 680px; padding: 28px; border-radius: 10px; background: var(--papel); box-shadow: 0 0 0 1px var(--color-divider); color: var(--tinta-papel); text-align: left; }
+.logi-recibo b { font-size: inherit; }
 .logi-recibo h1 { margin: 0 0 12px; font-size: calc(22px * var(--fs, 1)); }
 .logi-recibo p { margin: 4px 0; font-size: calc(13.5px * var(--fs, 1)); }
 .logi-recibo table { width: 100%; margin-top: 16px; border-collapse: collapse; font-size: calc(13.5px * var(--fs, 1)); }

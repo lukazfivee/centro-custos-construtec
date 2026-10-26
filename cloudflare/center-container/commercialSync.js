@@ -174,6 +174,8 @@ async function buildSnapshot(env, orgId) {
     else if (row.entity_type === 'lancamento') payload.transactions.push(item);
     cursor = Math.max(cursor, Number(row.event_id || 0));
   }
+  const deleted = (await env.DB.prepare('SELECT public_id FROM sync_deleted_obras WHERE org_id=? ORDER BY public_id').bind(orgId).all()).results || [];
+  payload.deletedCostCenters = deleted.map((row) => row.public_id);
   return { formatVersion: 3, packageId: crypto.randomUUID(), generatedAt: new Date().toISOString(), source: { id: '00000000-0000-4000-8000-000000000001', name: 'Construtec Cloud' }, payload, payloadHash: await sha256(payload), cursor };
 }
 
@@ -612,7 +614,27 @@ export async function handleCommercialSync(request, env) {
       let entities;
       try { entities = packageEntities(body); } catch (error) { return json({ ok: false, error: error.message }, 400); }
       const results = [];
-      for (const entity of entities) results.push(await upsertEntity(env, meta, entity.type, entity.item));
+      const deletedIds = [...new Set((Array.isArray(body.payload.deletedCostCenters) ? body.payload.deletedCostCenters : []).map(String))].filter(validUuid).slice(0, 5000);
+      for (const entity of entities) {
+        if (entity.type === 'obra') {
+          const gone = await env.DB.prepare('SELECT deleted_at FROM sync_deleted_obras WHERE org_id=? AND public_id=?').bind(meta.orgId, entity.item.publicId).first();
+          if (gone) {
+            // So uma alteracao posterior a exclusao (obra restaurada) reabre o centro; pacote antigo nao ressuscita.
+            if (deletedIds.includes(entity.item.publicId) || dateValue(entity.item.updatedAt) <= dateValue(gone.deleted_at)) {
+              results.push({ action: 'deleted', publicId: entity.item.publicId });
+              continue;
+            }
+            await env.DB.prepare('DELETE FROM sync_deleted_obras WHERE org_id=? AND public_id=?').bind(meta.orgId, entity.item.publicId).run();
+          }
+        }
+        results.push(await upsertEntity(env, meta, entity.type, entity.item));
+      }
+      for (const publicId of deletedIds) {
+        await env.DB.prepare('INSERT OR IGNORE INTO sync_deleted_obras(org_id,public_id,deleted_at,source_instance_id,source_user_email) VALUES(?,?,?,?,?)')
+          .bind(meta.orgId, publicId, new Date().toISOString(), meta.instanceId, meta.userEmail).run();
+        await env.DB.prepare("DELETE FROM sync_entities WHERE org_id=? AND entity_type='obra' AND public_id=?").bind(meta.orgId, publicId).run();
+        results.push({ action: 'deleted', publicId });
+      }
       return json({ ok: true, results, snapshot: await buildSnapshot(env, meta.orgId) });
     }
   }

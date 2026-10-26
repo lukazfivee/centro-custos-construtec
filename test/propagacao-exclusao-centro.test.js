@@ -3,6 +3,7 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
+const { pathToFileURL } = require('node:url');
 const { DatabaseSync } = require('node:sqlite');
 
 const root = path.join(__dirname, '..');
@@ -28,17 +29,22 @@ function fakeD1(sql) {
   };
 }
 
-async function loadWorker() {
-  const source = fs.readFileSync(path.join(root, 'cloudflare-sync-worker', 'src', 'index.js'), 'utf8');
-  return import(`data:text/javascript;base64,${Buffer.from(source).toString('base64')}`);
+// O Worker de producao e o center-container (commercialSync.js); o cloudflare-sync-worker e a copia autonoma.
+async function loadWorker(alvo) {
+  if (alvo === 'cloudflare-sync-worker') {
+    const source = fs.readFileSync(path.join(root, alvo, 'src', 'index.js'), 'utf8');
+    return (await import(`data:text/javascript;base64,${Buffer.from(source).toString('base64')}`)).default;
+  }
+  const { handleCommercialSync } = await import(pathToFileURL(path.join(root, alvo, 'commercialSync.js')).href);
+  return { fetch: handleCommercialSync };
 }
 
 function obra(publicId, updatedAt) {
   return { publicId, code: `C-${publicId.slice(0, 4)}`, name: `Obra ${publicId.slice(0, 4)}`, revision: 1, active: true, createdAt: updatedAt, updatedAt };
 }
 
-test('Worker: exclusão feita em uma instalação some do snapshot e não é recriada por pacote antigo', async () => {
-  const worker = (await loadWorker()).default;
+for (const alvo of ['cloudflare-sync-worker', 'cloudflare/center-container']) test(`Worker ${alvo}: exclusão feita em uma instalação some do snapshot e não é recriada por pacote antigo`, async () => {
+  const worker = await loadWorker(alvo);
   const env = { DB: fakeD1(fs.readFileSync(path.join(root, 'cloudflare-sync-worker', 'schema.sql'), 'utf8')), SYNC_SHARED_KEY: 'chave-de-teste' };
   const sync = async (payload) => {
     const response = await worker.fetch(new Request('https://sync.test/v1/sync', {

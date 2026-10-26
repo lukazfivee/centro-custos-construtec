@@ -9,12 +9,14 @@ const read = (file) => fs.readFileSync(path.join(root, file), 'utf8');
 test('desktop: Logística usa p5 e traz resumo, inventário, kits e conferência inicial', () => {
   const shell = read('public/d/shell.js');
   const html = read('public/d/index.html');
-  const screen = read('public/d/telas/logistica.js');
+  const arquivos = fs.readdirSync(path.join(root, 'public/d/telas')).filter((nome) => /^logistica(-[a-z-]+)?\.js$/.test(nome));
+  const screen = arquivos.map((nome) => read(`public/d/telas/${nome}`)).join('\n');
   assert.match(shell, /\['logistica',[^\]]*'Logística',[^\]]*'logistica'/);
   assert.match(read('public/d/d-core.js'), /logistica: \(\) => D\.tem\('p5'\)/);
-  assert.match(html, /telas\/logistica\.js/);
+  for (const nome of arquivos) assert.ok(html.includes(`telas/${nome}`), `index.html não carrega ${nome}`);
   assert.match(html, /css\/logistica\.css/);
-  for (const text of ['Resumo', 'Ferramentas', 'Kits dos técnicos', 'Conferência inicial', 'Movimentações', 'Abaixo do mínimo', 'Materiais', 'Solicitações', 'Registrar devolução', 'Faltas']) {
+  for (const nome of arquivos) assert.ok(read(`public/d/telas/${nome}`).split('\n').length <= 350, `${nome} passa de 350 linhas`);
+  for (const text of ['Resumo', 'Ferramental', 'Kit padrão', 'Conferência inicial', 'Histórico', 'Abaixo do mínimo', 'Materiais', 'Pedidos', 'Pendências', 'Registrar devolução', 'Faltas']) {
     assert.ok(screen.includes(text), `falta ${text}`);
   }
   assert.match(screen, /\/logistica\/resumo/);

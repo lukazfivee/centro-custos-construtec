@@ -2,6 +2,9 @@
 .logi-pagina { gap: 18px; min-width: 0; }
 .logi-abas { overflow-x: auto; scrollbar-width: thin; scrollbar-color: var(--color-neutral-500) transparent; }
 .logi-abas .tab { flex: none; padding: 0 4px; }
+.logi-abas.rola-fim { mask-image: linear-gradient(to right, #000 calc(100% - 32px), transparent); }
+.logi-abas.rola-ini { mask-image: linear-gradient(to right, transparent, #000 32px); }
+.logi-abas.rola-ini.rola-fim { mask-image: linear-gradient(to right, transparent, #000 32px, #000 calc(100% - 32px), transparent); }
 .logi-abas .tab:focus-visible, .logi-painel:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; border-radius: 8px; }
 .logi-painel, .logi-painel-int, .logi-sub-corpo, .logi-secao { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
 .logi-secao { gap: 10px; }

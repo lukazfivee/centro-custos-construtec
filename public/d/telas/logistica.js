@@ -49,6 +49,7 @@
       const modulo = L.modulos[estado.aba], id = ++sequencia;
       abas.forEach((aba) => { const ativa = aba.dataset.aba === estado.aba; aba.setAttribute('aria-selected', ativa ? 'true' : 'false'); aba.tabIndex = ativa ? 0 : -1; });
       corpo.setAttribute('aria-labelledby', `logi-aba-${estado.aba}`);
+      abas.find((aba) => aba.dataset.aba === estado.aba)?.scrollIntoView({ block: 'nearest', inline: 'nearest' });
       barra.innerHTML = modulo.acoes.map(([chave, tipo, icone, rotulo]) => `<button type="button" class="btn btn-${tipo}" data-acao="${chave}">${D.ic(icone)}${esc(rotulo)}</button>`).join('');
       CC.$$('[data-acao]', barra).forEach((botao, i) => botao.addEventListener('click', () => modulo.acoes[i][4](ctx)));
       const chaves = modulo.dados(estado);
@@ -66,6 +67,13 @@
     }
 
     const lista = CC.$('[role=tablist]', el);
+    // Quando as abas nao cabem (celular), a borda com mais abas esmaece para mostrar que a barra rola.
+    const dica = () => {
+      lista.classList.toggle('rola-ini', lista.scrollLeft > 4);
+      lista.classList.toggle('rola-fim', lista.scrollWidth - lista.clientWidth - lista.scrollLeft > 4);
+    };
+    lista.addEventListener('scroll', dica, { passive: true });
+    new ResizeObserver(dica).observe(lista);
     lista.addEventListener('click', (event) => { const aba = event.target.closest('[data-aba]'); if (aba && aba.dataset.aba !== estado.aba) ctx.ir(aba.dataset.aba); });
     lista.addEventListener('keydown', (event) => {
       const atual = ABAS.findIndex(([chave]) => chave === estado.aba);

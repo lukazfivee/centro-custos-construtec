@@ -20,8 +20,8 @@ jobs:
       # Unico lugar que muda a cada pre-lancamento: o numero da RC. O versionCode do
       # Android sai dele (3.1.0-rc.N -> 31000+N; ver versionCodeFor no Worker) e o app
       # instalado so oferece a atualizacao quando o codigo da release for maior.
-      RC_NUMBER: '51'
-      APP_NOTES: 'Obras excluidas ou descartadas agora somem tambem nas outras instalacoes e na nuvem, e nao voltam por pacote antigo de sincronizacao; obra restaurada volta em todas.'
+      RC_NUMBER: '52'
+      APP_NOTES: 'Tela de Logistica refeita no Centro de Custos: resumo com indicadores que abrem a lista, abas Ferramental, Materiais, Pendencias e Historico, fichas pendentes com revisao da divergencia, historico da ferramenta com impressao e tabelas em cartoes no celular.'
     steps:
       - name: Baixar codigo
         uses: actions/checkout@v7

@@ -45,13 +45,13 @@
           vazio: 'Nenhuma falta pendente. Faltas relatadas pelos técnicos aparecem aqui.', vazioIcone: 'check-circle',
           colunas: [{ rotulo: 'Data' }, { rotulo: 'Técnico' }, { rotulo: 'Ferramenta' }, { rotulo: 'Relato' }, { rotulo: 'Apuração' }, { rotulo: 'Ação' }],
           linhas: faltas.map((f) => ({ celulas: [esc(L.data(f.criada_em)), esc(f.tecnico), `${esc(f.ferramenta)} (${esc(f.codigo)})`, esc(f.relato), f.apuracao ? esc(f.apuracao) : U.chip('Pendente', 'warn', 'clock'), L.botaoLinha('apurar', f.id, 'Registrar apuração', `${f.ferramenta}, ${f.tecnico}`, ` data-contexto="${esc(`${f.ferramenta} (${f.codigo}), ${f.tecnico}`)}"`)] })),
-        }), true)}${faltas.length ? '<p class="muted logi-nota">A ocorrência fica aberta até a reposição da ferramenta; a apuração preserva o histórico.</p>' : ''}</section>
+        }), true, 'Faltas de ferramenta')}${faltas.length ? '<p class="muted logi-nota">A ocorrência fica aberta até a reposição da ferramenta; a apuração preserva o histórico.</p>' : ''}</section>
         <section class="logi-secao">${L.titulo('Devoluções pendentes', devolucoes.length ? String(devolucoes.length) : '')}${L.cartao(U.tabela({
           vazio: 'Nenhuma devolução pendente. Sobras de material aparecem aqui até serem devolvidas.', vazioIcone: 'check-circle',
           colunas: [{ rotulo: 'Entrega' }, { rotulo: 'Material' }, { rotulo: 'Em aberto', num: true }, { rotulo: 'Técnico / obra' }, { rotulo: 'Ação' }],
           linhas: devolucoes.map((d) => ({ celulas: [`${esc(L.data(d.criado_em))} · ficha ${esc(d.recibo_id)}`, esc(d.material), `${esc(L.qtd(d.pendente))} ${esc(d.unidade)}`, `${esc(d.tecnico)} · ${esc(d.centro || '—')}`,
             L.botaoLinha('devolucao', d.recibo_id, 'Registrar retorno', d.material, ` data-material="${esc(d.material_id)}" data-nome="${esc(d.material)}" data-restante="${esc(d.pendente)}"`)] })),
-        }), true)}</section></div>`;
+        }), true, 'Devoluções de material pendentes')}</section></div>`;
       CC.$('[data-pend]', ctx.corpo).addEventListener('click', (ev) => {
         const a = ev.target.closest('[data-apurar]'), d = ev.target.closest('[data-devolucao]');
         if (a) apurar(ctx, a.dataset.apurar, a.dataset.contexto);
@@ -69,11 +69,11 @@
         vazio: 'Sem movimentações de material ainda. Entradas, entregas e devoluções aparecem aqui.', vazioIcone: 'clock-counter-clockwise',
         colunas: [{ rotulo: 'Data e hora' }, { rotulo: 'Movimento' }, { rotulo: 'Material' }, { rotulo: 'Quantidade', num: true }, { rotulo: 'Técnico / obra' }, { rotulo: 'Motivo' }],
         linhas: ctx.dados.movMat.slice(0, 100).map((m) => ({ celulas: [esc(L.data(m.criado_em)), esc(L.movimento(m.tipo)), esc(m.material), `${esc(L.qtd(m.quantidade))} ${esc(m.unidade)}`, m.tecnico ? `${esc(m.tecnico)} · ${esc(m.centro || '—')}` : '—', esc(m.motivo || '—')] })),
-      })) + (ctx.dados.movMat.length > 100 ? '<p class="muted logi-nota">Mostrando os 100 movimentos mais recentes.</p>' : '') : L.cartao(U.tabela({
+      }), false, 'Movimentações de material') + (ctx.dados.movMat.length > 100 ? '<p class="muted logi-nota">Mostrando os 100 movimentos mais recentes.</p>' : '') : L.cartao(U.tabela({
         vazio: 'Ainda não há movimentações de ferramenta. Entradas, entregas e devoluções aparecem aqui.', vazioIcone: 'clock-counter-clockwise',
         colunas: [{ rotulo: 'Data e hora' }, { rotulo: 'Movimento' }, { rotulo: 'Ferramenta' }, { rotulo: 'Técnico' }, { rotulo: 'Detalhe' }],
         linhas: ctx.dados.movFerr.map((m) => ({ celulas: [esc(L.data(m.criado_em)), esc(L.movimento(m.tipo)), m.ferramenta ? `${esc(m.ferramenta)}${m.codigo ? ` (${esc(m.codigo)})` : ''}` : '—', esc(m.tecnico || '—'), esc(L.detalhe(m.detalhe))] })),
-      }))}</div>`;
+      }), false, 'Movimentações de ferramenta')}</div>`;
       L.ligarVisoes(ctx, 'historico');
     },
   };

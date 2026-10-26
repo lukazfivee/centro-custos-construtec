@@ -71,7 +71,7 @@
       vazio: 'Nenhum material cadastrado. Cadastre itens como RJ45, parafusos ou consumíveis.', vazioIcone: 'package',
       colunas: [{ rotulo: 'Material' }, { rotulo: 'Saldo', num: true }, { rotulo: 'Mínimo', num: true }, { rotulo: 'Sobra' }, { rotulo: 'Ação' }],
       linhas: lista.map((m) => ({ celulas: [`${esc(m.nome)} ${m.estoque_baixo ? U.chip('Estoque baixo', 'warn', 'warning') : ''}`, `${esc(L.qtd(m.saldo))} ${esc(m.unidade)}`, esc(L.qtd(m.estoque_minimo)), m.exige_retorno ? U.chip('Devolver', 'info', 'arrow-u-up-left') : '—', L.botaoLinha('repor', m.id, 'Dar entrada', m.nome)] })),
-    }), true);
+    }), true, 'Saldo e estoque mínimo dos materiais');
     corpo.addEventListener('click', (ev) => { const b = ev.target.closest('[data-repor]'); if (b) L.entradaMaterial(ctx, b.dataset.repor); });
   }
 
@@ -81,7 +81,7 @@
       vazio: 'Nenhum pedido pendente. Os pedidos feitos pelos técnicos aparecem aqui.', vazioIcone: 'check-circle',
       colunas: [{ rotulo: 'Situação' }, { rotulo: 'Material' }, { rotulo: 'Falta entregar', num: true }, { rotulo: 'Obra/serviço' }, { rotulo: 'Solicitante' }, { rotulo: 'Ação' }],
       linhas: abertos.map((p) => { const s = PEDIDO[p.status]; return { celulas: [U.chip(s[0], s[1], s[2]), esc(p.material), `${esc(L.qtd(restante(p)))} ${esc(p.unidade)}`, esc(p.centro), esc(p.tecnico), L.botaoLinha('atender', p.id, 'Entregar', `${p.material} para ${p.tecnico}`)] }; }),
-    }), true);
+    }), true, 'Pedidos de material pendentes');
     corpo.addEventListener('click', (ev) => { const b = ev.target.closest('[data-atender]'); if (b) L.entregarMaterial(ctx, abertos.find((p) => String(p.id) === b.dataset.atender)); });
   }
 

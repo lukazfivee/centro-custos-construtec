@@ -37,7 +37,7 @@
   async function historico(id, nome) {
     try {
       const { data } = await CC.api(`/logistica/ferramentas/${id}/historico`);
-      L.dialogoInfo({ titulo: `Histórico: ${nome}`, corpo: `<div class="logi-rolagem">${U.tabela({ vazio: 'Sem movimentações.', vazioIcone: 'clock-counter-clockwise', colunas: [{ rotulo: 'Data' }, { rotulo: 'Movimento' }, { rotulo: 'Responsável' }, { rotulo: 'Detalhe' }],
+      L.dialogoInfo({ titulo: `Histórico: ${nome}`, corpo: `<div class="logi-rolagem" data-legenda="${esc(`Movimentações de ${nome}`)}">${U.tabela({ vazio: 'Sem movimentações.', vazioIcone: 'clock-counter-clockwise', colunas: [{ rotulo: 'Data' }, { rotulo: 'Movimento' }, { rotulo: 'Responsável' }, { rotulo: 'Detalhe' }],
         linhas: data.map((r) => ({ celulas: [esc(L.data(r.criado_em)), esc(L.movimento(r.tipo)), esc(r.ator || '—'), esc(L.detalhe(r.detalhe))] })) })}</div>` });
     } catch (error) { CC.toast(error.message || 'Não foi possível abrir o histórico.'); }
   }
@@ -52,7 +52,7 @@
         colunas: [{ rotulo: 'Ferramenta' }, { rotulo: 'Código' }, { rotulo: 'Situação' }, { rotulo: 'Local / responsável' }, { rotulo: 'Ações' }],
         linhas: visiveis.map((i) => ({ celulas: [esc(i.nome), esc(i.codigo), L.situacao(i.situacao), esc(i.tecnico_id ? i.tecnico : L.local(i.localizacao)),
           `${i.situacao === 'com_tecnico' ? L.botaoLinha('devolver', i.id, 'Devolução', i.nome, ` data-nome="${esc(i.nome)}"`) : ''}${i.situacao === 'em_avaliacao' ? L.botaoLinha('avaliar', i.id, 'Avaliar', i.nome, ` data-nome="${esc(i.nome)}"`) : ''}${L.botaoLinha('historico', i.id, 'Histórico', i.nome, ` data-nome="${esc(i.nome)}"`)}`] })),
-      }), true);
+      }), true, 'Ferramentas do inventário');
       L.rotular(ctx.corpo);
       CC.$('[data-contagem]', ctx.corpo).textContent = `${visiveis.length} de ${lista.length} ferramentas`;
     };

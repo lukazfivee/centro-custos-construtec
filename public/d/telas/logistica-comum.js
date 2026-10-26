@@ -44,10 +44,13 @@
   // Botao de linha: o texto e curto, o nome acessivel diz de qual item se trata.
   L.botaoLinha = (acao, id, rotulo, contexto, extra) => `<button type="button" class="btn btn-s" data-${acao}="${esc(id)}"${extra || ''} aria-label="${esc(`${rotulo}: ${contexto}`)}">${esc(rotulo)}</button>`;
   // Cartao com a tabela da casa dentro; ultima = a ultima coluna e de acoes.
-  L.cartao = (html, ultimaAcao) => `<section class="card logi-tabela${ultimaAcao ? ' ult-acao' : ''}">${html}</section>`;
+  L.cartao = (html, ultimaAcao, legenda) => `<section class="card logi-tabela${ultimaAcao ? ' ult-acao' : ''}"${legenda ? ` data-legenda="${esc(legenda)}"` : ''}>${html}</section>`;
   L.titulo = (texto, contagem) => `<h2 class="logi-titulo">${esc(texto)}${contagem ? ` <span class="chip warn">${esc(contagem)}</span>` : ''}</h2>`;
   // Abaixo de 760 px a CSS vira cada linha em cartao; precisa do rotulo da coluna em cada celula.
+  // A legenda (data-legenda do cartao) vira o <caption> que o leitor de tela anuncia.
   L.rotular = (raiz) => raiz.querySelectorAll('table.tbl').forEach((tabela) => {
+    const legenda = tabela.closest('[data-legenda]')?.dataset.legenda;
+    if (legenda && !tabela.querySelector('caption')) tabela.insertAdjacentHTML('afterbegin', `<caption class="sr">${esc(legenda)}</caption>`);
     const rotulos = [...tabela.querySelectorAll('thead th')].map((th) => th.textContent.trim());
     tabela.classList.add('logi-cards');
     tabela.querySelectorAll('tbody tr').forEach((tr) => [...tr.children].forEach((td, i) => { if (rotulos[i]) td.dataset.label = rotulos[i]; }));

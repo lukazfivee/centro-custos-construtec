@@ -42,10 +42,10 @@
         return mostrar();
       },
       // Depois de registrar algo: descarta os dados guardados e refaz a aba atual.
-      atualizar: () => { cache = {}; return mostrar(); },
+      atualizar: () => { cache = {}; return mostrar({ recuperarFoco: true }); },
     };
 
-    async function mostrar() {
+    async function mostrar({ recuperarFoco } = {}) {
       const modulo = L.modulos[estado.aba], id = ++sequencia;
       abas.forEach((aba) => { const ativa = aba.dataset.aba === estado.aba; aba.setAttribute('aria-selected', ativa ? 'true' : 'false'); aba.tabIndex = ativa ? 0 : -1; });
       corpo.setAttribute('aria-labelledby', `logi-aba-${estado.aba}`);
@@ -58,6 +58,8 @@
         if (!vivo() || id !== sequencia) return;
         modulo.desenhar(ctx);
         L.rotular(corpo);
+        // O botao que abriu o dialogo some ao redesenhar; sem isso o foco cai no <body> e o teclado recomeca do topo.
+        if (recuperarFoco && (!document.activeElement || document.activeElement === document.body)) corpo.focus({ preventScroll: true });
       } catch (error) {
         if (vivo() && id === sequencia) corpo.innerHTML = U.faixa('err', 'warning-circle', error.message || 'Não foi possível carregar a logística.');
       }

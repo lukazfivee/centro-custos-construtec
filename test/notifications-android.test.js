@@ -32,6 +32,8 @@ test('site do celular tem o sino e a central de notificacoes', () => {
   const avisos = read('public/m/screen-avisos.js');
   assert.match(avisos, /CC\.screens\.avisos = async function/);
   assert.match(avisos, /\/notificacoes\/teste/);
+  assert.match(avisos, /Number\.isNaN\(date\.getTime\(\)\) \? null/);
+  assert.match(avisos, /Number\.isNaN\(date\.getTime\(\)\) \? '' : date\.toLocaleString/);
   assert.match(read('public/m/screen-home.js'), /CC\.bellBtn/);
   assert.match(read('public/m/icons.js'), /"bell":/);
   assert.match(read('cloudflare/center-container/wrangler.jsonc'), /"crons": \["0 11 \* \* \*"\]/);

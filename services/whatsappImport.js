@@ -3,7 +3,7 @@ const crypto = require('crypto');
 const { getDb } = require('../db');
 const { insertTransaction } = require('../lib/transactionInsert');
 const { can } = require('./permissions');
-const { assertObra, escopado } = require('./obraScope');
+const { assertObra, escopado, obrasPermitidas } = require('./obraScope');
 const { isMonthClosed } = require('./financialPolicy');
 const { recordAudit } = require('./audit');
 const { todayIso } = require('../lib/dates');
@@ -54,13 +54,26 @@ async function processItem(db, req, item, ctx) {
   if (await isMonthClosed(ctx.date)) throw pending('Competência fechada.');
   if (item.centavos > 99999999999999) throw pending('Valor fora do limite permitido.');
   const clientId = lineClientId(ctx.hash, 'source', item.sourceIndex);
+  const allowed = await obrasPermitidas(req);
   return db.transaction(async tx => {
     await tx.query('LOCK TABLE monthly_closings IN SHARE MODE');
+    await tx.query('LOCK TABLE cost_centers IN SHARE ROW EXCLUSIVE MODE');
+    const matching = (await tx.query('SELECT id,code,name,active FROM cost_centers')).rows.filter(c => normalizeCenterName(c.name).chave === key.chave);
+    if (matching.length > 1) throw pending('Mais de um centro corresponde ao nome.');
+    center = matching[0];
+    if (center && allowed && !allowed.includes(Number(center.id))) throw pending('Sem acesso a este centro.');
+    if (!center && (!ctx.mayCreate || escopado(req.usuario))) throw pending('Centro não existe; peça a admin ou gestor.');
     let created = null;
     const existing = (await tx.query('SELECT id,public_id,deleted_at FROM transactions WHERE created_by=$1 AND client_id=$2',[req.usuario.id,clientId])).rows[0];
     if (existing) return { transaction:{id:existing.id,public_id:existing.public_id,replayed:true,excluido:Boolean(existing.deleted_at)} };
     if ((await tx.query('SELECT 1 FROM whatsapp_import_items WHERE source_hash=$1 AND line_key=$2',[ctx.hash,String(item.sourceIndex)])).rows.length) throw pending('Linha já importada por outra pessoa.');
     if (await isMonthClosed(ctx.date, tx)) throw pending('Competência fechada.');
+    const currentCategory = (await tx.query("SELECT active,type FROM categories WHERE id=$1 FOR SHARE",[category.id])).rows[0];
+    if (!currentCategory || !currentCategory.active || !['despesa','ambos'].includes(currentCategory.type)) throw pending('Categoria de despesa indisponível.');
+    if (center) {
+      const currentCenter = (await tx.query('SELECT active FROM cost_centers WHERE id=$1 FOR SHARE',[center.id])).rows[0];
+      if (!currentCenter || !currentCenter.active) throw pending('Centro de custo inativo.');
+    }
     if (!center) {
       const code = `WA-${crypto.createHash('sha256').update(key.chave).digest('hex').slice(0,24)}`;
       const inserted = await tx.query('INSERT INTO cost_centers(public_id,code,name,kind) VALUES($1,$2,$3,$4) ON CONFLICT DO NOTHING RETURNING id,code,name', [crypto.randomUUID(),code,key.nomeExibicao,'obra']);

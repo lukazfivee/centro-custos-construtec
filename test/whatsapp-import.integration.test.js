@@ -93,6 +93,12 @@ test('importação registra despesas pendentes, evita duplicação e permite des
   const attempts = await Promise.all([1,2,3].map(() => call('/importacoes/whatsapp','POST',{texto:concurrentText,itens:[concurrentItem]})));
   assert.ok(attempts.every(a => a.status === 201));
   assert.equal((await getDb().query("SELECT count(*)::int n FROM transactions WHERE description='VALVULA'")).rows[0].n,1);
+  const parallel = await Promise.all([11,12].map(n => {
+    const text = `R$ ${n},00 - MATERIAL ${n}\nCENTRO DE CUSTO: NOVO CONCORRENTE`;
+    return call('/importacoes/whatsapp','POST',{texto:text,itens:[{bloco:1,linha:1,centro:'NOVO CONCORRENTE',descricao:`MATERIAL ${n}`,valor_texto:`R$ ${n},00`,categoria_id:category}]});
+  }));
+  assert.ok(parallel.every(a => a.body.lancados.length === 1),JSON.stringify(parallel));
+  assert.equal((await getDb().query("SELECT count(*)::int n FROM cost_centers WHERE name='NOVO CONCORRENTE'")).rows[0].n,1);
   await getDb().query("UPDATE categories SET active=false WHERE lower(name)='outros'");
   const noCategory = await call('/importacoes/whatsapp','POST',{texto:'R$ 19,00 - PARAFUSO\nCENTRO DE CUSTO: DESTINO DOIS',itens:[{...concurrentItem,descricao:'PARAFUSO',valor_texto:'R$ 19,00',categoria_id:999999}]});
   assert.equal(noCategory.body.lancados.length,0); assert.match(noCategory.body.pendencias[0].motivo,/Categoria/);

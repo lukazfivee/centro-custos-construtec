@@ -114,7 +114,7 @@ test('importação registra despesas pendentes, evita duplicação e permite des
   await getDb().query("UPDATE categories SET active=false WHERE lower(name)='outros'");
   const noCategory = await call('/importacoes/whatsapp','POST',{texto:'R$ 19,00 - PARAFUSO\nCENTRO DE CUSTO: DESTINO DOIS',itens:[{...concurrentItem,descricao:'PARAFUSO',valor_texto:'R$ 19,00',categoria_id:999999}]});
   assert.equal(noCategory.body.lancados.length,0); assert.match(noCategory.body.pendencias[0].motivo,/Categoria/);
-  const original = 'PAGAMENTO FORNECEDOR C\nR$ 123,45 - PECA A\nCENTRO DE CUSTO: REPOSICAO INTERNA - DISTRIBUIR NOS CENTROS\nDE CUSTO DA EMPRESA\n\nR$ 200,00 - PECA B\nCENTRO DE CUSTO: DESTINO DOIS';
+  const original = '  \nPAGAMENTO FORNECEDOR C\nR$ 123,45 - PECA A\nCENTRO DE CUSTO: REPOSICAO INTERNA - DISTRIBUIR NOS CENTROS\nDE CUSTO DA EMPRESA\n\nR$ 200,00 - PECA B\nCENTRO DE CUSTO: DESTINO DOIS\n  ';
   const entries = [
     {bloco:1,linha:1,valor_texto:'R$ 123,45',descricao:'PECA A',centro:'REPOSICAO INTERNA - DISTRIBUIR NOS CENTROS DE CUSTO DA EMPRESA',categoria_id:category,fornecedor:'FORNECEDOR C'},
     {bloco:1,linha:2,valor_texto:'R$ 200,00',descricao:'PECA B',centro:'DESTINO DOIS',categoria_id:category,fornecedor:'FORNECEDOR C'},

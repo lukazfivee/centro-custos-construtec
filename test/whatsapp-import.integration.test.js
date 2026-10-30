@@ -55,6 +55,9 @@ test('importação registra despesas pendentes, evita duplicação e permite des
   await getDb().query("INSERT INTO users(name,email,password_hash,role,suite_role,all_cost_centers) VALUES($1,$2,$3,'supervisor',$4,false)", ['Tecnico','tecnico@teste.local',password,'tecnico']);
   token = (await call('/auth/login','POST',{email:'tecnico@teste.local',senha:'senha-teste-123'})).body.token;
   assert.equal((await call('/importacoes/whatsapp','POST',{texto,itens})).status,403);
+  await getDb().query("INSERT INTO users(name,email,password_hash,role,suite_role,all_cost_centers) VALUES($1,$2,$3,'supervisor',$4,true)", ['Comercial','comercial@teste.local',password,'comercial']);
+  token = (await call('/auth/login','POST',{email:'comercial@teste.local',senha:'senha-teste-123'})).body.token;
+  assert.equal((await call('/importacoes/whatsapp','POST',{texto,itens})).status,403);
   await getDb().query("INSERT INTO users(name,email,password_hash,role,suite_role,all_cost_centers) VALUES($1,$2,$3,'supervisor',$4,false)", ['Engenharia','engenharia@teste.local',password,'engenharia']);
   token = (await call('/auth/login','POST',{email:'engenharia@teste.local',senha:'senha-teste-123'})).body.token;
   const scoped = await call('/importacoes/whatsapp','POST',{texto,itens});
@@ -80,6 +83,8 @@ test('importação registra despesas pendentes, evita duplicação e permite des
   assert.equal(undo.body.centrosInativados.length,1);
   const rateioTexto = 'PAGAMENTO FORNECEDOR B\nR$ 300,00\nDESTINO UM – CABO – R$ 100,00\nDESTINO DOIS – TUBO – R$ 150,00\nDESTINO TRES – PECA – R$ 50,00';
   const rateioItens = [['DESTINO UM','CABO','R$ 100,00'],['DESTINO DOIS','TUBO','R$ 150,00'],['DESTINO TRES','PECA','R$ 50,00']].map(([centro,descricao,valor_texto],i)=>({bloco:2,linha:i+1,centro,descricao,valor_texto,total_bloco_texto:'R$ 300,00',categoria_id:category,fornecedor:'FORNECEDOR B'}));
+  const mismatch = await call('/importacoes/whatsapp','POST',{texto:rateioTexto.replace('300,00','301,00'),itens:rateioItens.map(i => ({...i,total_bloco_texto:'R$ 301,00'}))});
+  assert.equal(mismatch.body.lancados.length,0); assert.equal(mismatch.body.pendencias.length,3);
   const partial = await call('/importacoes/whatsapp','POST',{texto:rateioTexto,itens:rateioItens.slice(0,2)});
   assert.equal(partial.body.lancados.length,0); assert.ok(partial.body.pendencias.length >= 3);
   const rateio = await call('/importacoes/whatsapp','POST',{texto:rateioTexto,itens:rateioItens});

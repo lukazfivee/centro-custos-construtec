@@ -6,6 +6,7 @@
       <div class="card" style="padding:24px"><label for="whatsapp-texto">Mensagem</label><textarea id="whatsapp-texto" rows="14" maxlength="20000" style="display:block;width:100%;margin:12px 0" placeholder="Cole a mensagem aqui"></textarea>
       <p>O texto será enviado ao serviço de IA para identificar os itens.</p><button type="button" class="btn btn-p" data-importar>Importar</button></div><div data-resultado aria-live="polite"></div><section class="card" style="padding:24px;margin-top:16px"><h2>Importações recentes</h2><div data-historico>Carregando…</div></section></div>`;
     const input = CC.$('#whatsapp-texto',el), button = CC.$('[data-importar]',el), result = CC.$('[data-resultado]',el);
+    let originalCarregado = null;
     async function historico() {
       const target = CC.$('[data-historico]',el);
       try {
@@ -20,7 +21,7 @@
     }
     historico();
     button.addEventListener('click', async () => {
-      const texto = input.value;
+      const texto = originalCarregado !== null && input.value === originalCarregado ? originalCarregado : input.value.trim();
       if (!texto.trim()) { CC.toast('Cole uma mensagem para importar.', 'warning'); return; }
       button.disabled = true; result.innerHTML = U.carregando('Identificando e lançando os itens…');
       try {
@@ -47,7 +48,7 @@
         } catch (error) { CC.toast(error.message,'warning'); }
       }
       const reprocessar = CC.$('[data-reprocessar]',result);
-      if (reprocessar) reprocessar.addEventListener('click', () => { input.value = data.texto; input.focus(); input.scrollIntoView({behavior:'smooth',block:'center'}); });
+      if (reprocessar) reprocessar.addEventListener('click', () => { originalCarregado = data.texto; input.value = data.texto; input.focus(); input.scrollIntoView({behavior:'smooth',block:'center'}); });
       const all = CC.$('[data-desfazer]',result); if (all) all.addEventListener('click', () => undo());
       CC.$$('[data-item]',result).forEach(b => b.addEventListener('click', () => undo(b.dataset.item)));
     }

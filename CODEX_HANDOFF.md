@@ -1,11 +1,11 @@
 # Handoff — Centro de Custos
 
-## 2026-10-30 BRT — importação WhatsApp em andamento (Codex)
+## 2026-10-30 11:00 BRT — importação WhatsApp publicada (Codex)
 
-- Base: `origin/main` em `5ccaf3e`, branch `feat/importar-whatsapp`; alterações ainda sem commit.
-- Serviço, migração 120, rotas, extração Gemini, tela e histórico implementados. Compras ficam pendentes; validação associa valor, descrição e centro à origem, confere blocos, assinala valores não reconhecidos e deduplica entre usuários. Desfazer preserva lançamentos na lixeira e inativa centro novo sem vínculos ativos; não o exclui fisicamente.
-- Testes unitários e integração passaram em execuções parciais; `npm run verify` foi iniciado, porém houve alterações posteriores: repetir na versão final. Fluxo completo foi exercitado com dados fictícios no navegador; após mudanças de migração, testar novamente com banco isolado novo.
-- Pendente: revisar concorrência e retenção de dados, completar cenários A/B, permissão e regressão, validar tela final e Gemini, revisar a divergência da remoção física de centro, atualizar este registro, criar PR e acompanhar CI antes da publicação.
+- PR #225 mesclado em `1a947947df8c25423646135f14b55e36f4c1a103`; Worker `centro-custos-api` versão `7fc49c00-44af-451e-86be-9326896b2914`. Após troca de imagem, `/d/` inclui a tela, o script é servido como JavaScript, a API exige autenticação e `/api/health/ready` informa banco conectado à instância `027af419-27bb-4e80-a312-187421bc1ec5`.
+- Importa compras como pendentes, confere valores e centros na origem, totais e permissões, evita duplicações e oferece histórico e desfazer. A exclusão de lançamentos usa lixeira; centro novo sem vínculos ativos é inativado, preservando o histórico, em vez de apagado fisicamente.
+- Validação: `npm run verify` no head do PR, 778 testes aprovados; CI Node 20, Node 24 e Android verdes. Integração em PostgreSQL isolado aprovada usando sessões de teste assinadas localmente; fluxo com Gemini, dois formatos e desfazer testado em navegador com dados fictícios. Backup PostgreSQL do dia concluído antes do deploy.
+- Limite: não foi criado lançamento com conta corporativa no banco de produção. Próximo passo: acompanhar o primeiro uso real e tratar formatos marcados como pendência; não registrar dados reais em fixtures públicas.
 
 ## 2026-10-20 BRT - Otimizacao fase 1: logs de invocacao desligados (Claude Code)
 

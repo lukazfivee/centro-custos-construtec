@@ -1,5 +1,12 @@
 # Handoff — Centro de Custos
 
+## 2026-10-30 BRT — correção de centros e pendências da importação em validação
+
+- Cartões de obras mostram o valor comprometido (despesas aprovadas, pagas e a pagar) separadamente do realizado liquidado, sem alterar a situação dos lançamentos.
+- A validação da mensagem aceita continuação do centro em linhas sucessivas; itens rejeitados com origem identificável não geram pendência duplicada. O histórico permite ao próprio usuário sem restrição de obras reutilizar a mensagem original, preservando a chave de deduplicação dos lançamentos.
+- Testes com dados fictícios: quebra de linha, recuperação do texto exato, reenvio sem duplicação e preservação do escopo; interface testada com IA e banco isolado. Ainda validar suíte completa, CI e publicação.
+
+
 ## 2026-10-30 11:54 BRT — correção da resposta de IA do WhatsApp publicada
 
 - A extração agora solicita esquema JSON explícito, aceita também lista de itens e tenta o modelo reserva após falha, sem enviar lançamentos se nenhum modelo retornar resposta válida. O prompt esclarece que o destino anterior ao travessão é o centro no rateio.

@@ -26,6 +26,8 @@ test('importação registra despesas pendentes, evita duplicação e permite des
   const itens = [{bloco:1,linha:1,descricao:'CABO',centro:'OBRA EXEMPLO',valor_texto:'R$ 100,00',categoria_id:category,fornecedor:'Fornecedor A'}];
   const malformed = await call('/importacoes/whatsapp','POST',{texto,itens:[null]});
   assert.equal(malformed.status,400);
+  const semCentro = await call('/importacoes/whatsapp','POST',{texto:'PAGAMENTO A\nR$ 75,00 - MATERIAL TESTE',itens:[{bloco:1,linha:1,valor_texto:'R$ 75,00',descricao:'MATERIAL TESTE',centro:''}]});
+  assert.equal(semCentro.body.pendencias.length,1); assert.equal(semCentro.body.pendencias[0].linha,2);
   const missing = await call('/importacoes/whatsapp','POST',{texto,itens:[]});
   assert.equal(missing.body.pendencias.length,1);
   assert.equal((await call(`/importacoes/whatsapp/${missing.body.importId}`)).body.pendencias.length,1);
@@ -36,6 +38,10 @@ test('importação registra despesas pendentes, evita duplicação e permite des
   assert.ok(historico.body.some(i => i.id === first.body.importId));
   const detalhe = await call(`/importacoes/whatsapp/${first.body.importId}`);
   assert.equal(detalhe.status,200); assert.equal(detalhe.body.lancados[0].descricao,'CABO');
+  assert.equal(detalhe.body.texto,texto);
+  const carteira = await call('/centros-custo');
+  const criado = carteira.body.find(c => c.id === first.body.centrosCriados[0].id);
+  assert.equal(Number(criado.total_comprometido),100); assert.equal(Number(criado.total_despesas),0);
   assert.equal(detalhe.body.lancados[0].itemId,first.body.lancados[0].itemId);
   const row = (await getDb().query('SELECT financial_status,amount FROM transactions WHERE id=$1',[first.body.lancados[0].id])).rows[0];
   assert.equal(row.financial_status,'pendente'); assert.equal(Number(row.amount),100);
@@ -62,6 +68,7 @@ test('importação registra despesas pendentes, evita duplicação e permite des
   token = (await call('/auth/login','POST',{email:'engenharia@teste.local',senha:'senha-teste-123'})).body.token;
   const scoped = await call('/importacoes/whatsapp','POST',{texto,itens});
   assert.equal(scoped.body.lancados.length,0); assert.match(scoped.body.pendencias[0].motivo,/Sem acesso/);
+  assert.equal((await call(`/importacoes/whatsapp/${scoped.body.importId}`)).body.texto,null);
   token = adminToken;
   await getDb().query("UPDATE transactions SET financial_status='liquidado' WHERE id=$1",[first.body.lancados[0].id]);
   const paid = await call(`/importacoes/whatsapp/${first.body.importId}`,'DELETE');
@@ -107,6 +114,20 @@ test('importação registra despesas pendentes, evita duplicação e permite des
   await getDb().query("UPDATE categories SET active=false WHERE lower(name)='outros'");
   const noCategory = await call('/importacoes/whatsapp','POST',{texto:'R$ 19,00 - PARAFUSO\nCENTRO DE CUSTO: DESTINO DOIS',itens:[{...concurrentItem,descricao:'PARAFUSO',valor_texto:'R$ 19,00',categoria_id:999999}]});
   assert.equal(noCategory.body.lancados.length,0); assert.match(noCategory.body.pendencias[0].motivo,/Categoria/);
+  const original = '  \nPAGAMENTO FORNECEDOR C\nR$ 123,45 - PECA A\nCENTRO DE CUSTO: REPOSICAO INTERNA - DISTRIBUIR NOS CENTROS\nDE CUSTO DA EMPRESA\n\nR$ 200,00 - PECA B\nCENTRO DE CUSTO: DESTINO DOIS\n  ';
+  const entries = [
+    {bloco:1,linha:1,valor_texto:'R$ 123,45',descricao:'PECA A',centro:'REPOSICAO INTERNA - DISTRIBUIR NOS CENTROS DE CUSTO DA EMPRESA',categoria_id:category,fornecedor:'FORNECEDOR C'},
+    {bloco:1,linha:2,valor_texto:'R$ 200,00',descricao:'PECA B',centro:'DESTINO DOIS',categoria_id:category,fornecedor:'FORNECEDOR C'},
+  ];
+  const firstAttempt = await call('/importacoes/whatsapp','POST',{texto:original,itens:[entries[1]]});
+  assert.equal(firstAttempt.body.lancados.length,1); assert.equal(firstAttempt.body.pendencias.length,1);
+  const saved = (await call(`/importacoes/whatsapp/${firstAttempt.body.importId}`)).body.texto;
+  assert.equal(saved,original);
+  const retry = await call('/importacoes/whatsapp','POST',{texto:saved,itens:entries});
+  assert.equal(retry.body.lancados.length,2); assert.equal(retry.body.pendencias.length,0);
+  assert.equal(retry.body.lancados.filter(x => x.replayed).length,1);
+  assert.equal((await getDb().query("SELECT count(*)::int n FROM transactions WHERE description IN ('PECA A','PECA B')")).rows[0].n,2);
+
 
 
 });

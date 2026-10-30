@@ -13,7 +13,8 @@ const { csvLine, decimalBr } = require('../lib/csv');
 const { recordAudit } = require('../services/audit');
 const { marcarOrigem } = require('../lib/auditContext');
 const { recordExpenseAllocation } = require('../services/budgets/budgetAllocations');
-const { readClientId, findReplay, isClientIdConflict, ensureCreatedAudit } = require('../lib/transactionIdempotency');
+const { readClientId, findReplay, ensureCreatedAudit } = require('../lib/transactionIdempotency');
+const { insertTransaction } = require('../lib/transactionInsert');
 const { transactionOrder, validatePayload, validateRelations } = require('../lib/transactionPayload');
 
 const router = express.Router();
@@ -106,26 +107,11 @@ router.post('/', exigirPermissao('p2'), asyncRoute(async (req, res) => {
     throw httpError(403, 'Esta competência está fechada. Não é possível criar lançamentos nela.');
   }
   await validateRelations(data, true);
-  const instance = getInstanceIdentity();
-  const { rows } = await getDb().query(
-    `INSERT INTO transactions
-      (public_id,type,cost_center_id,category_id,description,counterparty,amount,transaction_date,notes,
-       due_date,settlement_date,financial_status,document_number,payment_method,
-       origin_instance_id,origin_instance_name,last_modified_instance_id,last_modified_instance_name,
-       origin_user_name,created_by,client_id)
-     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$15,$16,$17,$18,$19)
-     RETURNING id,public_id`,
-    [crypto.randomUUID(),data.type,data.costCenterId,data.categoryId,data.description,data.counterparty,
-      data.amount,data.date,data.notes,data.dueDate,data.settlementDate,data.financialStatus,
-      data.documentNumber,data.paymentMethod,instance.id,instance.name,req.usuario.name,req.usuario.id,clientId]
-  ).catch(async (error) => { // reenvio simultâneo do mesmo lançamento: devolve o primeiro
-    if (!isClientIdConflict(error)) throw error;
-    return { rows: [await findReplay(getDb(), req.usuario.id, clientId, data)] };
-  });
-  if (rows[0].replayed) return res.status(200).json(rows[0]);
-  await ensureCreatedAudit(rows[0].public_id, data, req.usuario);
-  await maybeAutoAllocateExpense(data, rows[0].id);
-  res.status(201).json(rows[0]);
+  const inserted = await insertTransaction(data, req.usuario, clientId);
+  if (inserted.replayed) return res.status(200).json(inserted);
+  await ensureCreatedAudit(inserted.public_id, data, req.usuario);
+  await maybeAutoAllocateExpense(data, inserted.id);
+  res.status(201).json(inserted);
 }));
 
 router.post('/:id/estornar', exigirPermissao('p4'), asyncRoute(async (req, res) => {

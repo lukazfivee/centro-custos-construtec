@@ -69,6 +69,7 @@
     }
     return { ai, backend: ai.getAI(fb, { backend: new ai.GoogleAIBackend() }) };
   }
+  IA.backend = sdk;
   // Pre-carrega o SDK e o token do App Check para a primeira pergunta nao esperar por eles.
   IA.warm = async () => { if (IA.ready() && !CC.offline() && await context()) await sdk().catch(() => {}); };
 

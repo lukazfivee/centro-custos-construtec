@@ -127,8 +127,9 @@
     const f = L.lerFiltros();
     L.esquecerApoio(); // ao abrir a tela, le de novo obras, categorias e meses fechados
     el.innerHTML = `<div class="pagina lancamentos">
-      ${U.cabecalho({ grupo: 'Operação', titulo: 'Lançamentos', sub: ' ', acoes: `<button type="button" class="btn btn-s" data-csv>${D.ic('download-simple')}Exportar CSV</button><button type="button" class="btn btn-p" data-novo>${D.ic('plus')}Novo lançamento</button>` })}
+      ${U.cabecalho({ grupo: 'Operação', titulo: 'Lançamentos', sub: ' ', acoes: `${D.tem('p2') ? `<button type="button" class="btn btn-s" data-whatsapp>${D.ic('clipboard-text')}Importar do WhatsApp</button>` : ''}<button type="button" class="btn btn-s" data-csv>${D.ic('download-simple')}Exportar CSV</button><button type="button" class="btn btn-p" data-novo>${D.ic('plus')}Novo lançamento</button>` })}
       <div data-lista></div></div>`;
+    const importar = CC.$('[data-whatsapp]', el); if (importar) importar.addEventListener('click', () => D.ir('importar-whatsapp'));
     CC.$('[data-csv]', el).addEventListener('click', () => baixarCsv(f));
     CC.$('[data-novo]', el).addEventListener('click', () => L.formulario(null));
     await L.montarLista(CC.$('[data-lista]', el), { f, vivo, aoContar: (t) => { CC.$('.cab .sub', el).textContent = t; } });

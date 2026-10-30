@@ -105,6 +105,7 @@ function createApp({ orcamentosApp } = {}) {
   app.use('/api/fornecedores', require('./routes/suppliers'));
   app.use('/api/historico', require('./routes/history'));
   app.use('/api/lancamentos', require('./routes/transactions'));
+  app.use('/api/importacoes/whatsapp', require('./routes/whatsappImport'));
   app.use('/api/anexos', require('./routes/attachments'));
   app.use('/api/produtividade', require('./routes/productivity'));
   app.use('/api/bancos', require('./routes/banking'));

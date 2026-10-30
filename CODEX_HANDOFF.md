@@ -1,5 +1,12 @@
 # Handoff — Centro de Custos
 
+## 2026-10-30 BRT — importação WhatsApp em andamento (Codex)
+
+- Base: `origin/main` em `5ccaf3e`, branch `feat/importar-whatsapp`; alterações ainda sem commit.
+- Serviço, migração 120, rotas, extração Gemini, tela e histórico implementados. Compras ficam pendentes; validação associa valor, descrição e centro à origem, confere blocos, assinala valores não reconhecidos e deduplica entre usuários. Desfazer preserva lançamentos na lixeira e inativa centro novo sem vínculos ativos; não o exclui fisicamente.
+- Testes unitários e integração passaram em execuções parciais; `npm run verify` foi iniciado, porém houve alterações posteriores: repetir na versão final. Fluxo completo foi exercitado com dados fictícios no navegador; após mudanças de migração, testar novamente com banco isolado novo.
+- Pendente: revisar concorrência e retenção de dados, completar cenários A/B, permissão e regressão, validar tela final e Gemini, revisar a divergência da remoção física de centro, atualizar este registro, criar PR e acompanhar CI antes da publicação.
+
 ## 2026-10-20 BRT - Otimizacao fase 1: logs de invocacao desligados (Claude Code)
 
 - Base: `origin/main` em `8e291f8`, branch `perf/fase1-logs`. Plano geral de reducao de atraso e de custo na Cloudflare (Orcamentos, Centro e Chamados).

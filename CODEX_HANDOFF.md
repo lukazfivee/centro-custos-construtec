@@ -1,10 +1,10 @@
 # Handoff — Centro de Custos
 
-## 2026-10-30 BRT — correção da resposta de IA do WhatsApp em validação
+## 2026-10-30 11:54 BRT — correção da resposta de IA do WhatsApp publicada
 
 - A extração agora solicita esquema JSON explícito, aceita também lista de itens e tenta o modelo reserva após falha, sem enviar lançamentos se nenhum modelo retornar resposta válida. O prompt esclarece que o destino anterior ao travessão é o centro no rateio.
 - Testes unitários cobrem formato, reserva e troca de sessão. Em navegador, mensagem fictícia com compras e rateio gerou os cinco lançamentos esperados em banco isolado.
-- Após testes e CI, publicar e confirmar que a nova versão do script está ativa. Não incluir mensagens reais em fixtures ou logs.
+- PR #227 mesclado em `79fbd1a8897b8b86220b4896b815c07ee266567a`; Worker versão `6f7988e8-ad67-47fa-9165-0611e096d438`. `npm run verify`: 782 testes aprovados; CI Node 20, Node 24 e Android verdes. Em produção, o script com esquema e modelo reserva é servido e o banco responde. Não incluir mensagens reais em fixtures ou logs.
 
 
 ## 2026-10-30 11:00 BRT — importação WhatsApp publicada (Codex)

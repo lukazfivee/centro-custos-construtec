@@ -82,6 +82,7 @@
       ${barra('Consumo do orçado', uso, uso == null ? '' : O.faixaUso(uso))}
       ${barra('Medido ao cliente', medido, 'medido')}
       <div class="valores"><span><span class="lbl">Realizado</span><b>${esc(CC.moneyShort(real))}</b></span>
+        <span><span class="lbl" title="Despesas pagas e a pagar">Comprometido</span><b>${esc(CC.money(Number(o.total_comprometido || 0)))}</b></span>
         <span><span class="lbl">Contratado</span><b>${esc(CC.moneyShort(Number(o.valor_contrato || n.contractValue || 0)))}</b></span></div></article>`;
   }
 

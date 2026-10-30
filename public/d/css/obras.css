@@ -21,9 +21,9 @@
 .uso-linha .topo b { color: var(--color-text); }
 .uso-linha .topo b.err { color: var(--c-err); }
 .bar > .medido { background: var(--graf-ok); }
-.cartao-obra .valores { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding-top: 10px; border-top: 1px solid var(--color-divider); }
-.cartao-obra .valores > span { display: flex; flex-direction: column; gap: 2px; }
-.cartao-obra .valores b { font-size: calc(14px * var(--fs, 1)); font-weight: 600; }
+.cartao-obra .valores { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; padding-top: 10px; border-top: 1px solid var(--color-divider); }
+.cartao-obra .valores > span { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.cartao-obra .valores b { font-size: calc(14px * var(--fs, 1)); font-weight: 600; overflow-wrap: anywhere; }
 
 .voltar { display: inline-flex; align-items: center; gap: 6px; font-size: calc(13.5px * var(--fs, 1)); font-weight: 600; color: var(--color-accent-300); text-decoration: none; align-self: flex-start; }
 .cab-obra { align-items: center; }

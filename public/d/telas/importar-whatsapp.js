@@ -20,8 +20,8 @@
     }
     historico();
     button.addEventListener('click', async () => {
-      const texto = input.value.trim();
-      if (!texto) { CC.toast('Cole uma mensagem para importar.', 'warning'); return; }
+      const texto = input.value;
+      if (!texto.trim()) { CC.toast('Cole uma mensagem para importar.', 'warning'); return; }
       button.disabled = true; result.innerHTML = U.carregando('Identificando e lançando os itens…');
       try {
         const cats = (await CC.api('/categorias')).data.filter(c => c.ativo && ['despesa','ambos'].includes(c.tipo));
@@ -36,7 +36,7 @@
       const lancados = data.lancados.map(l => `<li>${esc(l.descricao || 'Lançamento já importado')} ${l.centro ? `— ${esc(l.centro)}` : ''}${l.valor != null ? ` — ${esc(Number(l.valor).toLocaleString('pt-BR',{style:'currency',currency:'BRL'}))}` : ''}${l.excluido ? ' (desfeito)' : l.replayed ? ' (já importado)' : ''}${l.itemId && !l.excluido ? ` <button type="button" class="btn btn-s" data-item="${Number(l.itemId)}">Desfazer</button>` : ''}</li>`).join('');
       const pendencias = data.pendencias.map(p => `<li>Linha ${esc(p.linha ?? '—')}: ${esc(p.motivo)}</li>`).join('');
       const centros = data.centrosCriados.map(c => `<li>${esc(c.nome)}</li>`).join('');
-      result.innerHTML = `<section class="card" style="padding:24px;margin-top:16px"><h2>Resultado</h2>${anterior ? '<p>Resultado registrado na importação.</p>' : ''}<h3>Lançamentos (${data.lancados.length})</h3><ul>${lancados || '<li>Nenhum lançamento novo.</li>'}</ul><h3>Pendências (${data.pendencias.length})</h3><ul>${pendencias || '<li>Nenhuma pendência.</li>'}</ul><h3>Centros criados</h3><ul>${centros || '<li>Nenhum centro novo.</li>'}</ul>${data.lancados.some(l => l.itemId && !l.excluido) ? '<button type="button" class="btn btn-s" data-desfazer>Desfazer importação</button>' : ''}</section>`;
+      result.innerHTML = `<section class="card" style="padding:24px;margin-top:16px"><h2>Resultado</h2>${anterior ? '<p>Resultado registrado na importação.</p>' : ''}<h3>Lançamentos (${data.lancados.length})</h3><ul>${lancados || '<li>Nenhum lançamento novo.</li>'}</ul><h3>Pendências (${data.pendencias.length})</h3><ul>${pendencias || '<li>Nenhuma pendência.</li>'}</ul>${anterior && data.texto && data.pendencias.length ? '<button type="button" class="btn btn-s" data-reprocessar>Usar mensagem original</button><p>Use a mensagem original para tentar novamente sem duplicar os lançamentos já feitos.</p>' : ''}<h3>Centros criados</h3><ul>${centros || '<li>Nenhum centro novo.</li>'}</ul>${data.lancados.some(l => l.itemId && !l.excluido) ? '<button type="button" class="btn btn-s" data-desfazer>Desfazer importação</button>' : ''}</section>`;
       async function undo(itemId) {
         if (!await D.confirmar({titulo:'Desfazer lançamento?',texto:'Os lançamentos pendentes em competência aberta serão enviados para a lixeira.',ok:'Desfazer',tom:'aviso'})) return;
         try {
@@ -46,6 +46,8 @@
           if (vivo()) { result.innerHTML = ''; historico(); }
         } catch (error) { CC.toast(error.message,'warning'); }
       }
+      const reprocessar = CC.$('[data-reprocessar]',result);
+      if (reprocessar) reprocessar.addEventListener('click', () => { input.value = data.texto; input.focus(); input.scrollIntoView({behavior:'smooth',block:'center'}); });
       const all = CC.$('[data-desfazer]',result); if (all) all.addEventListener('click', () => undo());
       CC.$$('[data-item]',result).forEach(b => b.addEventListener('click', () => undo(b.dataset.item)));
     }

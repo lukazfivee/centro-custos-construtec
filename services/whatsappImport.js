@@ -21,7 +21,7 @@ async function importar(req, texto, itens) {
   const { rows:imports } = await db.query('INSERT INTO whatsapp_imports(public_id,user_id,text_hash,source_text) VALUES($1,$2,$3,$4) RETURNING id', [importId,req.usuario.id,hash,texto]);
   const out = { importId, lancados:[], pendencias:[], centrosCriados:[] };
   for (const item of checked) {
-    if (!item.ok) { out.pendencias.push({linha:item.linha,motivo:item.motivo}); continue; }
+    if (!item.ok) { out.pendencias.push({linha:item.sourceIndex == null ? item.linha : item.sourceIndex + 1,motivo:item.motivo}); continue; }
     try {
       const result = await processItem(db, req, item, {hash,date,mayCreate,importDbId:imports[0].id});
       if (result.centerCreated) out.centrosCriados.push(result.centerCreated);

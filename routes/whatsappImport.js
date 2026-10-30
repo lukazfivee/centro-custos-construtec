@@ -18,7 +18,7 @@ router.get('/', asyncRoute(async (req,res) => {
 }));
 router.get('/:id', asyncRoute(async (req,res) => {
   const db = getDb();
-  const owner = (await db.query('SELECT id,public_id,pending_items FROM whatsapp_imports WHERE public_id::text=$1 AND user_id=$2',[req.params.id,req.usuario.id])).rows[0];
+  const owner = (await db.query('SELECT id,public_id,pending_items,source_text FROM whatsapp_imports WHERE public_id::text=$1 AND user_id=$2',[req.params.id,req.usuario.id])).rows[0];
   if (!owner) throw httpError(404,'Importação não encontrada.');
   const allowed = await obrasPermitidas(req);
   const rows = (await db.query(`SELECT wi.id AS "itemId",t.id,t.public_id,t.description AS descricao,t.amount AS valor,
@@ -26,7 +26,7 @@ router.get('/:id', asyncRoute(async (req,res) => {
     FROM whatsapp_import_items wi JOIN transactions t ON t.id=wi.transaction_id
     JOIN cost_centers cc ON cc.id=t.cost_center_id WHERE wi.import_id=$1 ORDER BY wi.id`,[owner.id])).rows
     .filter(row => !allowed || allowed.includes(Number(row.center_id)));
-  res.json({importId:owner.public_id,lancados:rows.map(row => ({...row,excluido:Boolean(row.deleted_at)})),pendencias:owner.pending_items || [],centrosCriados:rows.filter(row => row.created_cost_center_id).map(row => ({id:row.center_id,nome:row.centro}))});
+  res.json({importId:owner.public_id,texto:allowed === null ? owner.source_text : null,lancados:rows.map(row => ({...row,excluido:Boolean(row.deleted_at)})),pendencias:owner.pending_items || [],centrosCriados:rows.filter(row => row.created_cost_center_id).map(row => ({id:row.center_id,nome:row.centro}))});
 }));
 async function undo(req,res) {
   const db = getDb();

@@ -13,4 +13,4 @@ Aplicação web e local-first de Gestão Financeira de Obras da Construtec Engen
   - Todos os cálculos monetários devem respeitar precisão em centavos com arredondamento HALF_UP.
 - **Clean Code & Quality Gates**:
   - Respeitar rigorosamente o limite de linhas por arquivo (`MAX_LINES <= 350`).
-  - Validar todos os 89 testes com `npm test` antes de considerar qualquer alteração concluída.
+  - Validar toda a suíte com `npm run verify` (verificação de sintaxe e testes) antes de considerar qualquer alteração concluída.

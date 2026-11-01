@@ -1,5 +1,12 @@
 # Handoff — Centro de Custos
 
+## 2026-11-01 BRT — importação WhatsApp aceita linhas idênticas (Claude Code)
+
+- Base: `origin/main` em `9fa047b`, branch `feat/whatsapp-linhas-identicas`, sem push. Duas linhas iguais na mesma mensagem (valor, descrição e centro) viravam pendência; agora cada item fica com uma linha, na ordem, quando a extração traz exatamente a mesma quantidade de linhas iguais que a mensagem. Quantidade diferente continua pendência.
+- Mudou: `lib/whatsappImport/source.js` (`matchSources`), `lib/whatsappImport/check.js` e `test/whatsapp-import-duplicate.test.js` (3 casos). Só `lib/whatsappImport/` e teste; nada de interface.
+- Validação: `node --test test/whatsapp-import-*.test.js` com 26 testes aprovados e `node scripts/check-syntax.js`. Não rodei `npm run verify` nem a integração com banco e Gemini (clone sem `node_modules`).
+- Próximo passo: rodar `npm run verify` e abrir PR quando o Lucas pedir o push.
+
 ## 2026-10-30 BRT — correção de centros e pendências da importação publicada
 
 - Cartões de obras mostram o valor comprometido (despesas aprovadas, pagas e a pagar) separadamente do realizado liquidado, sem alterar a situação dos lançamentos.

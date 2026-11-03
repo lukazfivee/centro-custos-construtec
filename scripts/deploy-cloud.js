@@ -67,9 +67,12 @@ if (!fs.existsSync(configDir)) {
 }
 
 const wrangler = path.join(appRoot, 'node_modules', 'wrangler', 'bin', 'wrangler.js');
-const wranglerArgs = fs.existsSync(wrangler)
-  ? [wrangler]
-  : ['--yes', 'wrangler@4.131.2'];
+if (!fs.existsSync(wrangler)) {
+  console.error('O wrangler nao esta instalado neste computador (node_modules/wrangler).');
+  console.error('Rode "npm ci" na raiz do projeto e tente novamente.');
+  process.exit(1);
+}
+const wranglerArgs = [wrangler];
 
 const args = [
   ...wranglerArgs,

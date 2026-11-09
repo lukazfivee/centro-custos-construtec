@@ -17,7 +17,7 @@
   let atividade = 'ativas';
   // Aba Obras / Servicos / Todos: lembrada no navegador (sem armazenamento, volta para Obras).
   const TIPO_CHAVE = 'cc.d.obras.tipo';
-  const TIPOS = [{ valor: 'obra', rotulo: 'Obras' }, { valor: 'servico', rotulo: 'Serviços' }, { valor: 'todos', rotulo: 'Todos' }];
+  const TIPOS = [{ valor: 'obra', rotulo: 'Obras' }, { valor: 'servico', rotulo: 'Serviços' }, { valor: 'contrato_manutencao', rotulo: 'Manutenção' }, { valor: 'todos', rotulo: 'Todos' }];
   const NOME_TIPO = { obra: 'obras', servico: 'serviços', todos: 'obras e serviços' };
   let tipo = 'obra';
   try { const salvo = localStorage.getItem(TIPO_CHAVE); if (TIPOS.some((t) => t.valor === salvo)) tipo = salvo; } catch (e) { /* sem armazenamento */ }
@@ -86,7 +86,7 @@
         <span><span class="lbl">Contratado</span><b>${esc(CC.moneyShort(Number(o.valor_contrato || n.contractValue || 0)))}</b></span></div></article>`;
   }
 
-  const TITULOS = { obra: ['Obras e centros de custo', 'Carteira da Construtec · orçado, realizado e medição por obra'], servico: ['Serviços', 'Serviços curtos: valor cobrado, gastos e resultado, sem orçamento importado'], todos: ['Obras e serviços', 'Tudo o que tem centro de custo, obras e serviços juntos'] };
+  const TITULOS = { obra: ['Obras e centros de custo', 'Carteira da Construtec · orçado, realizado e medição por obra'], servico: ['Serviços', 'Serviços curtos: valor cobrado, gastos e resultado, sem orçamento importado'], contrato_manutencao: ['Contratos de manutenção', 'Contratos mensais e suas competências'], todos: ['Obras e serviços', 'Tudo o que tem centro de custo, obras e serviços juntos'] };
   const FILTROS_SV = [['', 'Todos'], ['agendado', 'Agendados'], ['em_andamento', 'Em andamento'], ['concluido', 'Concluídos'], ['faturado', 'Faturados']];
   let filtroSv = '';
 
@@ -94,16 +94,22 @@
     const [titulo, sub] = TITULOS[tipo];
     el.innerHTML = `<div class="pagina obras">
       ${U.cabecalho({ grupo: 'Operação', titulo, sub,
-        acoes: `${D.papel() === 'admin' && tipo !== 'servico' ? `<button type="button" class="btn btn-s" data-descartadas>${D.ic('arrow-counter-clockwise')}Obras descartadas</button>` : ''}${D.pode('cadastrar') ? `${tipo !== 'servico' ? `<button type="button" class="btn btn-s" data-importar>${D.ic('file-arrow-up')}Importar orçamento</button>` : ''}<button type="button" class="btn btn-p" data-nova>${D.ic('plus')}Novo</button>` : ''}` })}
+        acoes: `${D.papel() === 'admin' && tipo !== 'servico' && tipo !== 'contrato_manutencao' ? `<button type="button" class="btn btn-s" data-descartadas>${D.ic('arrow-counter-clockwise')}Obras descartadas</button>` : ''}${D.pode('cadastrar') ? `${tipo !== 'servico' && tipo !== 'contrato_manutencao' ? `<button type="button" class="btn btn-s" data-importar>${D.ic('file-arrow-up')}Importar orçamento</button>` : ''}<button type="button" class="btn btn-p" data-nova>${D.ic('plus')}Novo</button>` : ''}` })}
       <div data-corpo>${U.carregando('Carregando a carteira…')}</div></div>`;
     const recarregar = () => render(el, rota, vivo);
     const nova = CC.$('[data-nova]', el);
-    if (nova) nova.addEventListener('click', () => D.serv.novo(tipo === 'servico' ? 'servico' : 'obra', recarregar));
+    if (nova) nova.addEventListener('click', () => tipo === 'contrato_manutencao' ? O.formulario({ tipo }, recarregar) : D.serv.novo(tipo === 'servico' ? 'servico' : 'obra', recarregar));
     const descartadas = CC.$('[data-descartadas]', el);
     if (descartadas) descartadas.addEventListener('click', () => O.descartadas(recarregar));
     const importar = CC.$('[data-importar]', el);
     if (importar) importar.addEventListener('click', () => O.importar(null, (r) => (r && r.costCenterId ? D.ir(`obras/${r.costCenterId}`) : recarregar())));
     const abas = `<div class="abas-tipo">${U.seg('tipo', TIPOS, tipo, 'Obra ou serviço')}</div>`;
+    if (tipo === 'contrato_manutencao') {
+      ligarTipo(el, rota, vivo);
+      await O.manutencao.lista(CC.$('[data-corpo]', el), abas, vivo);
+      ligarTipo(el, rota, vivo);
+      return;
+    }
     let lista; let resumo; let servicos;
     try {
       [lista, resumo, servicos] = await Promise.all([
@@ -169,16 +175,17 @@
     const recarregar = () => render(el, rota, vivo);
     const numeros = new Map(((resumo && resumo.porObra) || []).map((x) => [x.id, x]));
     const obras = lista.filter((o) => (o.tipo || 'obra') === 'obra' && o.ativo !== false);
+    const contratos = lista.filter((o) => o.tipo === 'contrato_manutencao' && o.ativo !== false);
     const svAtivos = servicos.filter((v) => v.ativo !== false);
     const todos = tipo === 'todos';
-    CC.$('[data-corpo]', el).innerHTML = `${abas}<div class="kpis seis">${todos ? S.kpisTodos(obras, numeros, svAtivos) : S.kpisServicos(svAtivos)}</div>
+    CC.$('[data-corpo]', el).innerHTML = `${abas}<div class="kpis seis">${todos ? S.kpisTodos(obras, numeros, svAtivos) : S.kpisServicos(svAtivos)}</div>${todos && contratos.length ? '<p class="muted">Os indicadores acima consideram obras e serviços; os contratos mensais aparecem na lista.</p>' : ''}
       <div class="barra-filtro">${todos ? '<span></span>' : U.seg('situacao-sv', FILTROS_SV.map(([valor, rotulo]) => ({ valor, rotulo })), filtroSv, 'Situação do serviço')}<span class="muted" data-conta></span></div>
       <div class="grade-obras" data-cartoes></div>`;
     const pintar = () => {
       const vis = todos ? svAtivos : svAtivos.filter((v) => !filtroSv || v.situacao === filtroSv);
-      const html = (todos ? obras.map((o) => cartao(o, numeros)) : []).concat(vis.map(S.cartao));
+      const html = (todos ? obras.map((o) => cartao(o, numeros)) : []).concat(vis.map(S.cartao)).concat(todos ? contratos.map(O.manutencao.cartao) : []);
       CC.$('[data-cartoes]', el).innerHTML = html.length ? html.join('') : U.vazio('wrench', todos ? 'Nenhuma obra ou serviço ainda.' : 'Nenhum serviço nesta situação.', D.pode('cadastrar') ? 'Use Novo para criar um serviço.' : '');
-      CC.$('[data-conta]', el).textContent = todos ? `${obras.length} obras · ${svAtivos.length} serviços` : `${vis.length} de ${svAtivos.length} serviços`;
+      CC.$('[data-conta]', el).textContent = todos ? `${obras.length} obras · ${svAtivos.length} serviços · ${contratos.length} contratos de manutenção` : `${vis.length} de ${svAtivos.length} serviços`;
       S.ligarCartoes(el, servicos, recarregar);
       CC.$$('[data-editar]', el).forEach((b) => b.addEventListener('click', () => O.formulario(lista.find((o) => String(o.id) === b.dataset.editar), recarregar)));
     };

@@ -160,7 +160,14 @@ async function importCostCenter(tx, row, instance, result) {
   const status = ['planejamento','execucao','pausado','concluido'].includes(row.situacao) ? row.situacao : 'planejamento';
   const budget = Number(row.orcamento_mensal) || 0;
   // Na secao obras, a coluna tipo diz se e obra ou servico (CSV antigo vem vazio: obra).
-  const kind = row.tipo === 'servico' ? 'servico' : 'obra';
+  const kind = ['servico', 'contrato_manutencao'].includes(row.tipo) ? row.tipo : 'obra';
+  // O CSV de cadastros não contém competências nem destinações. Aceitá-lo
+  // para contratos poderia recriar ou reprecificar meses sem seu histórico.
+  if (kind === 'contrato_manutencao' || existing?.kind === 'contrato_manutencao') {
+    result.erros++;
+    addDetail(result, row.line, 'erro', `Contrato "${name}" deve ser transferido pela sincronização inteligente, que preserva o histórico mensal.`);
+    return;
+  }
   if (!existing) {
     await tx.query(`INSERT INTO cost_centers (public_id,code,name,responsible,monthly_budget,client,contract_number,project_status,active,description,revision,updated_at,kind)
       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13)`,

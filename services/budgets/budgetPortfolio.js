@@ -5,7 +5,7 @@
 
 // kind opcional ('obra' ou 'servico'): os numeros ficam so desse tipo (abas da tela Obras).
 async function getPortfolioSummary(pool, { kind = null } = {}) {
-  const k = kind === 'obra' || kind === 'servico' ? kind : null;
+  const k = ['obra', 'servico', 'contrato_manutencao'].includes(kind) ? kind : null;
   const params = k ? [k] : [];
   const ofKind = (column) => (k ? ` AND ${column} IN (SELECT id FROM cost_centers WHERE kind = $1)` : '');
   // 1. Obras cadastradas e situações

@@ -77,6 +77,38 @@ for (const alvo of ['cloudflare-sync-worker', 'cloudflare/center-container']) te
   assert.deepEqual(restaurado.snapshot.payload.deletedCostCenters, []);
 });
 
+for (const alvo of ['cloudflare-sync-worker', 'cloudflare/center-container']) test(`Worker ${alvo}: preserva competências e destinações de manutenção`, { skip: !DatabaseSync && 'node:sqlite indisponível' }, async () => {
+  const worker = await loadWorker(alvo);
+  const env = { DB: fakeD1(fs.readFileSync(path.join(root, 'cloudflare-sync-worker', 'schema.sql'), 'utf8')), SYNC_SHARED_KEY: 'chave-de-teste' };
+  const sync = async (payload) => {
+    const response = await worker.fetch(new Request('https://sync.test/v1/sync', {
+      method:'POST', headers:{ 'content-type':'application/json','x-sync-key':'chave-de-teste','x-instance-id':INSTANCE,'x-user-email':'teste@rcconstrutec.com.br' },
+      body:JSON.stringify({ formatVersion:4,payload:{ categories:[],costCenters:[],suppliers:[],transactions:[],maintenancePeriods:[],maintenanceMovements:[],...payload } }),
+    }), env);
+    assert.equal(response.status,200);
+    return response.json();
+  };
+  const data = '2026-10-01T00:00:00.000Z';
+  const center = { ...obra(UUID_A,data),kind:'contrato_manutencao' };
+  const period = { publicId:UUID_B,center:UUID_A,month:'2026-10',amount:'1000.00',paid:false,revision:1,createdAt:data,updatedAt:data };
+  const movement = { publicId:INSTANCE,center:UUID_A,destination:UUID_B,transaction:null,amount:'100.00',date:'2026-10-01',reversalOf:null,revision:1,updatedAt:data };
+  const financialId = '44444444-4444-4444-8444-444444444444';
+  const financial = { publicId:financialId,type:'receita',amount:50,costCenterPublicId:UUID_A,transactionDate:'2026-10-01',approvalStatus:'aprovado',revision:1,updatedAt:data };
+  const financeMovement = { ...movement, publicId:'55555555-5555-4555-8555-555555555555',destination:null,transaction:financialId,amount:'50.00' };
+  const saved = await sync({ costCenters:[center,obra(UUID_B,data)],transactions:[financial],maintenancePeriods:[period],maintenanceMovements:[movement,financeMovement] });
+  assert.equal(saved.snapshot.formatVersion,4);
+  assert.equal(saved.snapshot.payload.maintenancePeriods[0].amount,'1000.00');
+  assert.ok(saved.snapshot.payload.maintenanceMovements.some((m) => m.amount === '100.00'));
+  const conflict = await sync({ maintenancePeriods:[{ ...period,amount:'900.00' }],maintenanceMovements:[] });
+  assert.ok(conflict.results.some((r) => r.action === 'conflict'));
+  assert.equal(conflict.snapshot.payload.maintenancePeriods[0].amount,'1000.00');
+  const altered = await sync({ transactions:[{ ...financial,amount:60,revision:2 }],maintenanceMovements:[] });
+  assert.ok(altered.results.some((r) => r.publicId === financialId && r.action === 'conflict'));
+  const deleted = await sync({ deletedCostCenters:[UUID_A] });
+  assert.ok(deleted.results.some((r) => r.publicId === UUID_A && r.action === 'conflict'));
+  assert.ok(deleted.snapshot.payload.costCenters.some((c) => c.publicId === UUID_A));
+});
+
 test('Centro: pacote leva as exclusões e a importação apaga o centro vazio, sem recriá-lo', async (context) => {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'cc-prop-'));
   process.env.PGLITE_DATA_DIR = path.join(dir, 'database');

@@ -12,6 +12,7 @@
   O.abas.resumo = (corpo, obra, vivo, dados) => {
     const lista = (dados && dados.lancamentos) || [];
     const orcamento = Number(obra.orcamento) || 0;
+    const verbaManutencao = Number(obra.verba_realocada_manutencao) || 0;
     const gasto = Number(obra.total_comprometido) || 0;
     const contrato = Number(obra.valor_contrato) || 0;
     const p = orcamento > 0 ? Math.round((gasto / orcamento) * 100) : null;
@@ -26,7 +27,7 @@
     corpo.innerHTML = `<div class="grade-obra"><div class="principal">
       <section class="card bloco"><span class="lbl">Resultado até agora</span>
         <b class="resumo-valor ${resultado < 0 ? 'err' : ''}">${esc(CC.signed(resultado))}</b>
-        <div class="linhas-dl">${contrato ? linha('Contrato (receita)', CC.money(contrato)) : ''}${linha('Orçamento da obra', orcamento > 0 ? CC.money(orcamento) : 'Sem orçamento')}
+        <div class="linhas-dl">${contrato ? linha('Contrato (receita)', CC.money(contrato)) : ''}${linha('Orçamento da obra', orcamento > 0 ? CC.money(orcamento) : 'Sem orçamento')}${verbaManutencao ? `${linha('Verba recebida de manutenção', CC.money(verbaManutencao))}${linha('Saldo estimado da verba', CC.money(orcamento + verbaManutencao - gasto))}` : ''}
           ${linha('Gasto (comprometido)', CC.money(gasto), p !== null && p > 100 ? 'err' : '')}${linha('Pago', CC.money(obra.total_despesas))}${linha('Recebido', CC.money(obra.total_receitas))}</div>
         ${p === null ? '' : `<span class="bar"><span class="${O.faixaUso ? O.faixaUso(p / 100) : ''}" style="width:${Math.min(100, p)}%"></span></span>
         <span class="muted">Gasto em relação ao orçamento da obra · ${p}%</span>`}</section></div>

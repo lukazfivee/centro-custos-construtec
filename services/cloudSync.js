@@ -108,8 +108,11 @@ async function alignNaturalKeys(snapshot) {
       if (!publicId || !code) continue;
       const sameId = await tx.query('SELECT id FROM cost_centers WHERE public_id=$1 LIMIT 1', [publicId]);
       if (sameId.rows[0]) continue;
-      const sameCode = await tx.query('SELECT id,public_id FROM cost_centers WHERE LOWER(code)=LOWER($1) LIMIT 1', [code]);
+      const sameCode = await tx.query('SELECT id,public_id,kind FROM cost_centers WHERE LOWER(code)=LOWER($1) LIMIT 1', [code]);
       if (sameCode.rows[0] && String(sameCode.rows[0].public_id) !== publicId) {
+        if (item.kind === 'contrato_manutencao' || sameCode.rows[0].kind === 'contrato_manutencao') {
+          throw requestError(409, `O código ${code} identifica contratos diferentes nas instalações. Resolva a divergência antes de sincronizar.`);
+        }
         await tx.query('UPDATE cost_centers SET public_id=$1 WHERE id=$2', [publicId, sameCode.rows[0].id]);
       }
     }
@@ -132,6 +135,7 @@ async function syncNow(user) {
   const pack = await buildPackage();
   const cloud = await request('/v1/sync', { method:'POST', body:JSON.stringify(pack) }, user);
   if (!cloud.snapshot) throw new Error('A nuvem não devolveu o snapshot compartilhado.');
+  if ((cloud.results || []).some((item) => item.action === 'conflict')) throw requestError(409, 'A nuvem identificou dados divergentes. Revise os conflitos antes de sincronizar novamente; outros itens podem ter sido enviados.');
   const imported = await importSnapshot(cloud.snapshot, user, 'cloud') || receivedBefore;
   return {
     ok:true,

@@ -91,6 +91,8 @@ function createApp({ orcamentosApp } = {}) {
   app.use('/api/usuarios', require('./routes/users'));
   app.use('/api/centros-custo', require('./routes/costCenterTechnicians'));
   app.use('/api/centros-custo', require('./routes/costCenterDiscard'));
+  app.use('/api/centros-custo', require('./routes/maintenancePeriods'));
+  app.use('/api/centros-custo', require('./routes/maintenanceMovements'));
   app.use('/api/centros-custo', require('./routes/costCenters'));
   app.use('/api/centros-custo', require('./routes/costCenterBudget'));
   app.use('/api/notas-fiscais-centro', require('./routes/costCenterInvoices'));

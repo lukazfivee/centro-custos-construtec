@@ -386,11 +386,17 @@ function packageEntities(pack) {
     ['fornecedor', pack.payload?.suppliers],
     ['lancamento', pack.payload?.transactions],
   ];
+  if (Number(pack.formatVersion) === 4) {
+    mapping.push(['manutencao_periodo', pack.payload?.maintenancePeriods]);
+    mapping.push(['manutencao_movimento', pack.payload?.maintenanceMovements]);
+  }
   const entities = [];
   for (const [type, items] of mapping) {
     if (!Array.isArray(items)) throw new Error(`Secao ausente: ${type}`);
     for (const item of items) {
       if (!validUuid(item?.publicId)) throw new Error(`${type} com publicId invalido`);
+      if (type === 'manutencao_periodo' && (!validUuid(item.center) || !/^\d{4}-(0[1-9]|1[0-2])$/.test(item.month || '') || !/^\d{1,12}(\.\d{1,2})?$/.test(String(item.amount)) || typeof item.paid !== 'boolean' || !Number.isInteger(item.revision) || item.revision < 1 || !Number.isFinite(Date.parse(item.updatedAt)) || !Number.isFinite(Date.parse(item.createdAt)))) throw new Error('Competência de manutenção inválida');
+      if (type === 'manutencao_movimento' && (!validUuid(item.center) || Boolean(item.destination) === Boolean(item.transaction) || !validUuid(item.destination || item.transaction) || !/^\d{1,12}(\.\d{1,2})?$/.test(String(item.amount)) || Number(item.amount) <= 0 || !/^\d{4}-\d{2}-\d{2}$/.test(item.date || '') || (item.reversalOf && !validUuid(item.reversalOf)) || item.revision !== 1 || !Number.isFinite(Date.parse(item.updatedAt)))) throw new Error('Destinação de manutenção inválida');
       entities.push({ type, item });
     }
   }
@@ -421,6 +427,16 @@ async function upsertEntity(env, meta, type, incomingItem) {
     return { action: 'created', publicId: incoming.publicId, revision: incoming.revision };
   }
   if (existing.payload_hash === incomingHash) return { action: 'unchanged', publicId: incoming.publicId, revision: Number(existing.revision) };
+  const previous = JSON.parse(existing.payload);
+  if (type === 'lancamento') {
+    const linked = await env.DB.prepare("SELECT 1 AS found FROM sync_entities WHERE org_id=? AND entity_type='manutencao_movimento' AND json_extract(payload,'$.transaction')=? LIMIT 1").bind(meta.orgId,incoming.publicId).first();
+    if (linked && (previous.type !== incoming.type || Number(previous.amount) !== Number(incoming.amount) || previous.costCenterPublicId !== incoming.costCenterPublicId || previous.transactionDate !== incoming.transactionDate || previous.approvalStatus !== incoming.approvalStatus)) return { action:'conflict', publicId:incoming.publicId, reason:'receita de manutenção vinculada' };
+  }
+  if (type === 'obra' && previous.kind === 'contrato_manutencao' && incoming.kind !== previous.kind) return { action:'conflict', publicId:incoming.publicId, reason:'tipo de contrato divergente' };
+  if (type === 'manutencao_periodo' && (previous.center !== incoming.center || previous.month !== incoming.month || Number(previous.amount) !== Number(incoming.amount) ||
+    (Number(previous.revision) === Number(incoming.revision) && previous.paid !== incoming.paid))) return { action:'conflict', publicId:incoming.publicId, reason:'competência divergente' };
+  if (type === 'manutencao_periodo' && previous.paid === incoming.paid && Number(incoming.revision) <= Number(previous.revision)) return { action:'unchanged', publicId:incoming.publicId, revision:Number(previous.revision) };
+  if (type === 'manutencao_movimento') return { action:'conflict', publicId:incoming.publicId, reason:'destinação imutável divergente' };
   const localRevision = Number(existing.revision || 1);
   const incomingRevision = Number(incoming.revision || 1);
   let winner = incoming;
@@ -446,6 +462,7 @@ async function upsertEntity(env, meta, type, incomingItem) {
 async function buildSnapshot(env, orgId) {
   const rows = (await env.DB.prepare('SELECT entity_type,payload,event_id FROM sync_entities WHERE org_id=? ORDER BY entity_type,public_id').bind(orgId).all()).results || [];
   const payload = { categories: [], costCenters: [], suppliers: [], transactions: [] };
+  const maintenancePeriods = [], maintenanceMovements = [];
   let cursor = 0;
   for (const row of rows) {
     const item = JSON.parse(row.payload);
@@ -453,11 +470,15 @@ async function buildSnapshot(env, orgId) {
     else if (row.entity_type === 'obra') payload.costCenters.push(item);
     else if (row.entity_type === 'fornecedor') payload.suppliers.push(item);
     else if (row.entity_type === 'lancamento') payload.transactions.push(item);
+    else if (row.entity_type === 'manutencao_periodo') maintenancePeriods.push(item);
+    else if (row.entity_type === 'manutencao_movimento') maintenanceMovements.push(item);
     cursor = Math.max(cursor, Number(row.event_id || 0));
   }
   const deleted = (await env.DB.prepare('SELECT public_id FROM sync_deleted_obras WHERE org_id=? ORDER BY public_id').bind(orgId).all()).results || [];
   payload.deletedCostCenters = deleted.map((row) => row.public_id);
-  return { formatVersion: 3, packageId: crypto.randomUUID(), generatedAt: new Date().toISOString(), source: { id: '00000000-0000-4000-8000-000000000001', name: 'Construtec Cloud' }, payload, payloadHash: await sha256(payload), cursor };
+  const hasMaintenance = maintenancePeriods.length || maintenanceMovements.length || payload.costCenters.some((c) => c.kind === 'contrato_manutencao');
+  if (hasMaintenance) { payload.maintenancePeriods = maintenancePeriods; payload.maintenanceMovements = maintenanceMovements; }
+  return { formatVersion: hasMaintenance ? 4 : 3, packageId: crypto.randomUUID(), generatedAt: new Date().toISOString(), source: { id: '00000000-0000-4000-8000-000000000001', name: 'Construtec Cloud' }, payload, payloadHash: await sha256(payload), cursor };
 }
 
 async function authorizeSync(request, env) {
@@ -842,7 +863,7 @@ export default {
     if (request.method === 'POST' && url.pathname === '/v1/sync') {
       let body;
       try { body = await request.json(); } catch { return json({ ok: false, error: 'JSON invalido.' }, 400); }
-      if (Number(body?.formatVersion) !== 3 || !body?.payload) return json({ ok: false, error: 'Pacote de sincronizacao invalido.' }, 400);
+      if (![3,4].includes(Number(body?.formatVersion)) || !body?.payload) return json({ ok: false, error: 'Pacote de sincronizacao invalido.' }, 400);
       let entities;
       try { entities = packageEntities(body); } catch (error) { return json({ ok: false, error: error.message }, 400); }
       const results = [];
@@ -862,6 +883,8 @@ export default {
         results.push(await upsertEntity(env, meta, entity.type, entity.item));
       }
       for (const publicId of deletedIds) {
+        const maintenance = await env.DB.prepare("SELECT 1 AS found FROM sync_entities WHERE org_id=? AND entity_type IN ('manutencao_periodo','manutencao_movimento') AND (json_extract(payload,'$.center')=? OR json_extract(payload,'$.destination')=?) LIMIT 1").bind(meta.orgId,publicId,publicId).first();
+        if (maintenance) { results.push({ action:'conflict', publicId, reason:'centro possui histórico de manutenção' }); continue; }
         await env.DB.prepare('INSERT OR IGNORE INTO sync_deleted_obras(org_id,public_id,deleted_at,source_instance_id,source_user_email) VALUES(?,?,?,?,?)')
           .bind(meta.orgId, publicId, new Date().toISOString(), meta.instanceId, meta.userEmail).run();
         await env.DB.prepare("DELETE FROM sync_entities WHERE org_id=? AND entity_type='obra' AND public_id=?").bind(meta.orgId, publicId).run();

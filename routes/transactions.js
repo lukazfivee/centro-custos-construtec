@@ -210,6 +210,10 @@ router.put('/:id', exigirPermissao('p3'), asyncRoute(async (req, res) => {
   );
   const existing = existingResult.rows[0];
   if (!existing) throw httpError(404, 'Lançamento não encontrado.');
+  const maintenanceLink = await getDb().query('SELECT 1 FROM maintenance_movements WHERE financial_transaction_id=$1', [id]);
+  if (maintenanceLink.rows.length && (data.type !== existing.type || data.costCenterId !== Number(existing.cost_center_id) || data.amount !== Number(existing.amount) || data.date !== existing.data)) {
+    throw httpError(409, 'Valor, tipo, centro e competência de uma receita de manutenção não podem ser alterados.');
+  }
   await assertObra(req, existing.cost_center_id);
   await assertObra(req, data.costCenterId);
   if (existing.deleted_at) {

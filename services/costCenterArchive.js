@@ -14,6 +14,8 @@ const MOVEMENT = [
   ['transactions', 'lançamentos', 'deleted_at IS NULL'],
   ['transaction_allocations', 'rateios de lançamentos', LIVE_TX],
   ['recurring_templates', 'recorrências'],
+  ['maintenance_periods', 'competências de manutenção'],
+  ['maintenance_movements', 'destinações de manutenção'],
   ['expense_allocations', 'apropriações de despesas', LIVE_TX],
   // Medicoes e reconhecimentos de custo vao guardados com a obra (decisao do Lucas, 03/10/2026). So impedem
   // quando presos a dinheiro ativo: reconhecimento de uma apropriacao de lancamento ativo, medicao faturada em lancamento ativo.
@@ -77,6 +79,7 @@ async function movements(db, id) {
     const { rows } = await db.query(`SELECT 1 FROM ${table} WHERE ${movementWhere(extra)} LIMIT 1`, [id]);
     if (rows.length) found.push(label);
   }
+  if ((await db.query('SELECT 1 FROM maintenance_movements WHERE destination_id=$1 LIMIT 1', [id])).rows.length) found.push('verba recebida de manutenção');
   if ((await db.query(RECONCILED, [id])).rows.length) found.push('lançamentos excluídos já conciliados com o extrato');
   return found;
 }
@@ -84,8 +87,8 @@ async function movements(db, id) {
 // O que impede o descarte, agrupado como o celular mostra (so leitura).
 const GROUPS = [
   ['lancamentos', ['transactions']],
-  ['rateios', ['transaction_allocations', 'expense_allocations', 'cost_recognitions']],
-  ['recorrentes', ['recurring_templates']],
+  ['rateios', ['transaction_allocations', 'expense_allocations', 'cost_recognitions', 'maintenance_movements']],
+  ['recorrentes', ['recurring_templates', 'maintenance_periods']],
   ['medicoes', ['labor_measurements', 'contract_measurements']],
   ['notas', ['cost_center_invoices', 'cost_center_invoices_ledger']],
 ];
@@ -100,6 +103,7 @@ async function movementSummary(db, id) {
       out[key] += (await db.query(`SELECT COUNT(*)::int AS n FROM ${table} WHERE ${movementWhere(extra)}`, [id])).rows[0].n;
     }
   }
+  out.rateios += Number((await db.query('SELECT COUNT(*)::int AS n FROM maintenance_movements WHERE destination_id=$1', [id])).rows[0].n);
   return out;
 }
 
@@ -117,7 +121,7 @@ async function movementCount(db, id) {
     const { rows } = await db.query(`SELECT COUNT(*)::int AS n FROM ${table} WHERE ${movementWhere(extra)}`, [id]);
     total += rows[0].n;
   }
-  return total + (await db.query(RECONCILED, [id])).rows.length;
+  return total + (await db.query(RECONCILED, [id])).rows.length + Number((await db.query('SELECT COUNT(*)::int AS n FROM maintenance_movements WHERE destination_id=$1', [id])).rows[0].n);
 }
 
 async function discardCostCenter(db, id, user, reason) {
@@ -176,7 +180,7 @@ async function restoreCostCenter(db, discardId, user) {
       let rows = payload[table] || [];
       if (!rows.length) continue;
       // Descartes anteriores ao tipo (obra ou servico) nao trazem kind: voltam como obra.
-      if (table === 'cost_centers') rows = rows.map((r) => ({ ...r, kind: r.kind === 'servico' ? 'servico' : 'obra' }));
+      if (table === 'cost_centers') rows = rows.map((r) => ({ ...r, kind: ['servico', 'contrato_manutencao'].includes(r.kind) ? r.kind : 'obra' }));
       await tx.query(`INSERT INTO ${table} SELECT * FROM jsonb_populate_recordset(NULL::${table}, $1::jsonb) ON CONFLICT DO NOTHING`, [JSON.stringify(rows)]);
     }
     await toggleGuards(tx, true);

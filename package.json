@@ -1,6 +1,6 @@
 {
   "name": "centro-de-custos",
-  "version": "3.0.0",
+  "version": "3.1.0-rc.53",
   "private": true,
   "description": "Suíte desktop integrada da Construtec Engenharia",
   "main": "desktop/main-unified.js",

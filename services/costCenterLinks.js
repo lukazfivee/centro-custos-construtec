@@ -3,6 +3,8 @@ const LINKED_TABLES = [
   ['transactions', 'lançamentos'],
   ['transaction_allocations', 'rateios de lançamentos'],
   ['recurring_templates', 'recorrências'],
+  ['maintenance_periods', 'competências de manutenção'],
+  ['maintenance_movements', 'destinações de manutenção'],
   ['project_contracts', 'contratos ou orçamentos'],
   ['expense_allocations', 'apropriações de despesas'],
   ['cost_recognitions', 'reconhecimentos de custos'],

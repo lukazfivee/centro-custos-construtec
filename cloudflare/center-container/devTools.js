@@ -56,7 +56,7 @@ async function targetOf(env, dev, body, { allowSelf = false } = {}) {
 
 async function listAudit(request, env, dev) {
   const limit = Math.min(Math.max(Number(new URL(request.url).searchParams.get('limit')) || 100, 1), AUDIT_MAX);
-  const rows = (await env.DB.prepare('SELECT * FROM dev_audit WHERE org_id=? ORDER BY created_at DESC LIMIT ?').bind(dev.org_id, limit).all().catch(() => ({ results: [] }))).results || [];
+  const rows = (await env.DB.prepare('SELECT * FROM dev_audit WHERE org_id=? ORDER BY created_at DESC, rowid DESC LIMIT ?').bind(dev.org_id, limit).all().catch(() => ({ results: [] }))).results || [];
   return json({ ok: true, entries: rows.map((r) => ({
     id: r.id, actorEmail: r.actor_email, action: r.action, targetEmail: r.target_email,
     detail: r.detail ? JSON.parse(r.detail) : null, createdAt: r.created_at,

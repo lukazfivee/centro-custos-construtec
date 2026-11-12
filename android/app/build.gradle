@@ -5,7 +5,7 @@ plugins {
 
 // Enderecos da nuvem vem da configuracao de build (contrato, cabecalho): -PcentralApiBase=... -PcentralWebBase=...
 // Para testar com o mock no emulador: -PcentralApiBase=http://10.0.2.2:8787
-def centralApiBase = (project.findProperty('centralApiBase') ?: 'https://centro-custos-api.construtec-reports.workers.dev').toString().replaceAll('/+$', '')
+def centralApiBase = (project.findProperty('centralApiBase') ?: 'https://rcconstrutec.online').toString().replaceAll('/+$', '')
 def centralWebBase = (project.findProperty('centralWebBase') ?: centralApiBase).toString().replaceAll('/+$', '')
 def centralHost = new URI(centralApiBase).host
 // Orcamentos dentro do app (Fase 3): -PorcWebBase=...
@@ -15,7 +15,7 @@ def appVersionName = (project.findProperty('appVersionName') ?: '3.1.0-rc.20').t
 def appVersionCode = (project.findProperty('appVersionCode') ?: '31020').toString().toInteger()
 // Chamados e O.S. dentro do app: -PchamadosWebBase=...
 def chamadosWebBase = (project.findProperty('chamadosWebBase') ?: 'https://construtec-chamados.construtec-reports.workers.dev').toString().replaceAll('/+$', '')
-def orcWebBase = (project.findProperty('orcWebBase') ?: 'https://construtec-orcamentos-cloud.construtec-reports.workers.dev').toString().replaceAll('/+$', '')
+def orcWebBase = (project.findProperty('orcWebBase') ?: 'https://orcamentos.rcconstrutec.online').toString().replaceAll('/+$', '')
 
 android {
     namespace 'br.com.rcconstrutec.centrocustos'

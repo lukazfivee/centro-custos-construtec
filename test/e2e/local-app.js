@@ -16,7 +16,7 @@ function createLocalUiApp(realApp) {
   const pattern = /(<iframe\b[^>]*\bid="orcamentos-frame"[^>]*\bsrc=")([^"]+)(")/g;
   const matches = [...source.matchAll(pattern)];
   assert.equal(matches.length, 1, 'O harness deve substituir exatamente um iframe externo conhecido.');
-  assert.equal(matches[0][2], 'https://construtec-orcamentos-cloud.construtec-reports.workers.dev/');
+  assert.equal(matches[0][2], 'https://orcamentos.rcconstrutec.online/');
   const shell = source.replace(pattern, '$1' + FIXTURE_PATH + '$3');
   const app = express();
   app.get(['/', '/index.html'], (request, response, next) => {

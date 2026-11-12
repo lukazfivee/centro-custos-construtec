@@ -40,7 +40,7 @@ test('QR Code do desktop abre diretamente a versao mobile HTTPS', () => {
   const { resolveMobileAppUrl } = require('../server');
   const server = read('server.js');
   const app = read('public/app.js');
-  const expected = 'https://centro-custos-api.construtec-reports.workers.dev';
+  const expected = 'https://rcconstrutec.online';
   assert.equal(resolveMobileAppUrl(`${expected}/`), expected);
   assert.equal(resolveMobileAppUrl('http://192.168.0.13:3333'), '');
   assert.match(server, /const url = resolveMobileAppUrl\(\)/);

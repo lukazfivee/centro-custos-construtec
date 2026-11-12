@@ -93,7 +93,7 @@ test('mobile and coarse narrow viewports choose the mobile Centre only after app
 });
 test('Orcamentos keeps its own responsive entry and existing full-version preference', () => {
   const html = fs.readFileSync(path.join(root, 'public/suite/index.html'), 'utf8');
-  assert.match(html, /id="app-orcamentos" href="https:\/\/construtec-orcamentos-cloud\.construtec-reports\.workers\.dev\/"/);
+  assert.match(html, /id="app-orcamentos" href="https:\/\/orcamentos.rcconstrutec.online\/"/);
   assert.match(html, /id="app-chamados" href="https:\/\/construtec-chamados\.construtec-reports\.workers\.dev\/"/);
   assert.doesNotMatch(html, /localhost|lucas-coelho5923|target="_blank"/);
 });

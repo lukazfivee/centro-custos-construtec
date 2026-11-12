@@ -94,19 +94,19 @@ let server,chrome,tab;
    await tab.clicar('#app-centro');assert.equal(await tab.esperar('location.pathname==="/m/"'),true);
    report.clicks.push({app:'centro',device:c.name,path:await tab.avaliar('location.pathname')});
    await tab.ir(origin+'/suite/');await tab.clicar('#app-orcamentos');
-   assert.equal(await tab.esperar('location.hostname==="construtec-orcamentos-cloud.construtec-reports.workers.dev"&&location.pathname==="/m/"',20000),true,'existing Orcamentos mobile selection');
+   assert.equal(await tab.esperar('location.hostname==="orcamentos.rcconstrutec.online"&&location.pathname==="/m/"',20000),true,'existing Orcamentos mobile selection');
    report.clicks.push({app:'orcamentos',device:c.name,path:await tab.avaliar('location.pathname'),origin:await tab.avaliar('location.origin')});
    await tab.avaliar('sessionStorage.setItem("orc_versao","completa")');
    await tab.ir(origin+'/suite/');await tab.clicar('#app-orcamentos');
-   assert.equal(await tab.esperar('location.hostname==="construtec-orcamentos-cloud.construtec-reports.workers.dev"&&location.pathname==="/"',20000),true,'Orcamentos full-version override preserved');
+   assert.equal(await tab.esperar('location.hostname==="orcamentos.rcconstrutec.online"&&location.pathname==="/"',20000),true,'Orcamentos full-version override preserved');
    report.clicks.push({app:'orcamentos',device:c.name,preference:'completa',path:await tab.avaliar('location.pathname')});
    await tab.avaliar('sessionStorage.removeItem("orc_versao")');
   }
  }
  await tab.ir(origin+'/d/');
- await tab.avaliar(`window.CC={session:{user:()=>({role:'admin'})}};document.body.innerHTML='<div class="suite"><div class="pop" role="menu"><a href="https://construtec-orcamentos-cloud.construtec-reports.workers.dev/">Orcamentos</a><a href="https://chamadopro-app.lucas-coelho5923.workers.dev/">ChamadoPro</a><div class="sep"></div></div></div><div id="suite-sheet"><div class="sheet"><a href="https://construtec-orcamentos-cloud.construtec-reports.workers.dev/">Orcamentos</a><a href="https://chamadopro-app.lucas-coelho5923.workers.dev/">ChamadoPro</a></div></div>';const script=document.createElement('script');script.src='/chamados/suite.js';document.body.appendChild(script);`);
+ await tab.avaliar(`window.CC={session:{user:()=>({role:'admin'})}};document.body.innerHTML='<div class="suite"><div class="pop" role="menu"><a href="https://orcamentos.rcconstrutec.online/">Orcamentos</a><a href="https://construtec-chamados.construtec-reports.workers.dev/">ChamadoPro</a><div class="sep"></div></div></div><div id="suite-sheet"><div class="sheet"><a href="https://orcamentos.rcconstrutec.online/">Orcamentos</a><a href="https://construtec-chamados.construtec-reports.workers.dev/">ChamadoPro</a></div></div>';const script=document.createElement('script');script.src='/chamados/suite.js';document.body.appendChild(script);`);
  assert.equal(await tab.esperar('document.querySelectorAll("[data-chamados-launch=app]").length===2'),true);
- const navigation=await tab.avaliar('({legacy:[...document.links].filter(a=>a.hostname==="chamadopro-app.lucas-coelho5923.workers.dev").length,orcamentos:[...document.links].filter(a=>a.hostname==="construtec-orcamentos-cloud.construtec-reports.workers.dev").length,chamados:document.querySelectorAll("[data-chamados-launch=app]").length,admin:document.querySelectorAll("[data-chamados-launch=admin]").length})');
+ const navigation=await tab.avaliar('({legacy:[...document.links].filter(a=>a.hostname==="chamadopro-app.lucas-coelho5923.workers.dev").length,orcamentos:[...document.links].filter(a=>a.hostname==="orcamentos.rcconstrutec.online").length,chamados:document.querySelectorAll("[data-chamados-launch=app]").length,admin:document.querySelectorAll("[data-chamados-launch=admin]").length})');
  assert.deepEqual(navigation,{legacy:0,orcamentos:2,chamados:2,admin:2});report.navigation=navigation;
  assert.deepEqual(report.apiRequests,[],'launcher does not call private APIs');
  assert.deepEqual(report.consoleErrors,[]);

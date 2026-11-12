@@ -82,7 +82,7 @@ test('desktop: destinos de tela são os do desktop e respeitam o papel', async (
   await CC.ia.run({ name: 'abrir_tela', args: { tela: 'proposta', proposta_id: 'p-1' } });
   CC.ia.pendingNav();
   assert.equal(opened.length, 1);
-  assert.match(opened[0][0], /^https:\/\/construtec-orcamentos-cloud\.construtec-reports\.workers\.dev\/#proposta=p-1$/);
+  assert.match(opened[0][0], /^https:\/\/orcamentos.rcconstrutec.online\/#proposta=p-1$/);
 });
 
 test('desktop: no app Windows o Orçamentos é a outra tela da mesma janela', async () => {

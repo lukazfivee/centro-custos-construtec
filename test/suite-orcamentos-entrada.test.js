@@ -6,7 +6,7 @@ const fs = require('fs');
 const path = require('path');
 const vm = require('vm');
 
-const ORCAMENTOS = 'https://construtec-orcamentos-cloud.construtec-reports.workers.dev/';
+const ORCAMENTOS = 'https://orcamentos.rcconstrutec.online/';
 const fonte = fs.readFileSync(path.join(__dirname, '..', 'public', 'entrar-orcamentos.js'), 'utf8');
 const CODIGO = 'a'.repeat(40) + '_-9';
 

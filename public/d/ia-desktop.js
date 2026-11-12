@@ -5,7 +5,7 @@
   const D = CC.d;
   const IA = CC.ia;
   if (!D || !IA || !IA.telas) return;
-  const ORCAMENTOS = 'https://construtec-orcamentos-cloud.construtec-reports.workers.dev/';
+  const ORCAMENTOS = 'https://orcamentos.rcconstrutec.online/';
   const PROPOSTA = /^[A-Za-z0-9-]{1,64}$/;
 
   // Nome da tela (rota) que a IA e o relato de problema contam como "tela aberta".

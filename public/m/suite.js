@@ -5,7 +5,7 @@
 // na mesma tela: suite://app/chamados no app Android; no navegador, codigo de entrada (handoff) na mesma aba.
 (function (CC) {
   const { esc, icon } = CC;
-  const ORC_URL = 'https://construtec-orcamentos-cloud.construtec-reports.workers.dev/';
+  const ORC_URL = 'https://orcamentos.rcconstrutec.online/';
   const inApp = () => /SuiteConstrutec\//.test(navigator.userAgent) || new URLSearchParams(location.search).has('app');
   const orcLink = (proposta) => {
     const id = proposta ? encodeURIComponent(proposta) : '';
@@ -59,7 +59,7 @@
     if (CC.sv && CC.sv.role() === 'tecnico') return;
     close();
     const origem = CC.suite.context && CC.suite.context.proposta;
-    const other = inApp() ? '' : ' target="_blank" rel="noopener"';
+    const other = '';
     const el = document.createElement('div');
     el.id = 'suite-sheet';
     el.className = 'sheet-backdrop';

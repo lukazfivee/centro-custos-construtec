@@ -2,7 +2,7 @@
 // com a conta corporativa logada aqui, volta com um codigo de uso unico (#handoff=, vale 60 s e so para o Orcamentos);
 // sem sessao, conta local, sem rede ou demora, volta com #centro=0 e la vale o login de sempre. O destino e fixo.
 (function () {
-  const ORCAMENTOS = 'https://construtec-orcamentos-cloud.construtec-reports.workers.dev/';
+  const ORCAMENTOS = 'https://orcamentos.rcconstrutec.online/';
   const proposta = new URLSearchParams(location.hash.slice(1)).get('proposta');
   const junto = proposta && /^[A-Za-z0-9-]{1,64}$/.test(proposta) ? `&proposta=${proposta}` : '';
   const voltar = (trecho) => location.replace(`${ORCAMENTOS}#${trecho}${junto}`);

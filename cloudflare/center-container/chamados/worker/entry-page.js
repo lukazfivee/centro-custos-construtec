@@ -26,6 +26,6 @@ export async function handleChamadosEntry(request, env) {
   return new Response(body, { headers: {
     ...headers, 'content-type': 'text/html; charset=utf-8',
     'content-security-policy': "default-src 'none'; script-src 'self'; style-src 'nonce-" + nonce
-      + "'; connect-src 'self'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'",
+      + "'; font-src 'self'; img-src 'self'; connect-src 'self'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'",
   } });
 }

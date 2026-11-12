@@ -103,11 +103,7 @@ export function configuration(env) {
   const serviceKey = env?.CHAMADOS_SERVICE_KEY;
   if (env?.CHAMADOS_ENABLED !== 'true' || !origin || !organizationId
     || typeof serviceKey !== 'string' || !/^[\x21-\x7e]{32,256}$/.test(serviceKey)) return undefined;
-  // Enderecos antigos do mesmo Chamados (apps ja instalados abrem o site por eles); so valem para consumir o
-  // codigo de entrada. A origem oficial continua sendo a unica devolvida e gravada.
-  const legacyOrigins = String(env?.CHAMADOS_LEGACY_ORIGINS || '').split(',').map((item) => item.trim())
-    .filter((item) => item && item !== origin && publicOrigin(item));
-  return { origin, organizationId, serviceKey, legacyOrigins };
+  return { origin, organizationId, serviceKey };
 }
 
 export function validEnvelope(value, config, now = Date.now()) {

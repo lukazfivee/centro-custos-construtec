@@ -97,14 +97,3 @@ test('admin com papel dev administra e recebe acesso ao Chamados como admin',asy
  const access=await f.central.getChamadosAccess(new Request('https://central.test/v1/auth/chamados/access',{headers:{authorization:'Bearer '+f.token}}),f.env);
  assert.equal(access.status,200);
 });
-test('origem antiga do Chamados so consome a entrada quando esta configurada como legada',async t=>{
- const f=await adminFixture(t);await f.request('POST',{body:f.save()});
- const legacy='https://construtec-chamados.construtec-reports.workers.dev';
- const issue=async()=>(await(await f.central.issueChamadosHandoff(new Request('https://central.test/v1/auth/handoff',{headers:{authorization:'Bearer '+f.token}}),f.env,{target:'chamados'})).json()).code;
- const consume=(code,origin)=>f.central.consumeChamadosHandoff(f.env,{application:'chamados',origin,code,serviceKey:f.env.CHAMADOS_SERVICE_KEY});
- assert.equal((await consume(await issue(),legacy)).invalid,true);
- f.env.CHAMADOS_LEGACY_ORIGINS=legacy+', https://outro.example.com';
- const ok=await consume(await issue(),legacy);
- assert.equal(ok.ok,true,JSON.stringify(ok));assert.equal(ok.origin,f.env.CHAMADOS_PUBLIC_ORIGIN);
- assert.equal((await consume(await issue(),'https://invasor.example.com')).invalid,true);
-});

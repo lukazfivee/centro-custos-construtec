@@ -20,9 +20,7 @@ function serviceInput(env, input) {
   const config = configuration(env);
   if (!config || !env.DB?.prepare || typeof env.DB.batch !== 'function') return { error: unavailable() };
   if (!record(input) || !sameKey(input.serviceKey, config.serviceKey)) return { error: invalid('SERVICE_FORBIDDEN') };
-  if (input.application !== APPLICATION || (input.origin !== config.origin && !config.legacyOrigins.includes(input.origin))) {
-    return { error: invalid('TARGET_INVALID') };
-  }
+  if (input.application !== APPLICATION || input.origin !== config.origin) return { error: invalid('TARGET_INVALID') };
   return { config };
 }
 

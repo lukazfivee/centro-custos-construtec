@@ -16,7 +16,6 @@
     "ANDROID_CERT_SHA256": "0D:85:31:22:E7:A6:BC:5A:9E:FF:A7:49:1D:DF:99:8F:BB:3D:F7:0E:0F:DB:B0:D9:28:17:7B:25:C4:8E:E7:84",
     "CHAMADOS_ENABLED": "true",
     "CHAMADOS_PUBLIC_ORIGIN": "https://chamados.rcconstrutec.online",
-    "CHAMADOS_LEGACY_ORIGINS": "https://construtec-chamados.construtec-reports.workers.dev",
     "CHAMADOS_ORGANIZATION_ID": "rcconstrutec.com.br"
   },
   "containers": [{

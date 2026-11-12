@@ -134,7 +134,7 @@ test('Android: o Chamados é um app da Suíte com WebView própria, código de e
   assert.match(views, /\|\| CHAMADOS\.equals\(app\)/, 'suite://app/chamados é um destino conhecido');
   const gradle = read('android/app/build.gradle');
   assert.match(gradle, /chamadosWebBase/);
-  assert.match(gradle, /https:\/\/construtec-chamados\.construtec-reports\.workers\.dev/);
+  assert.match(gradle, /https:\/\/chamados.rcconstrutec.online/);
   assert.match(gradle, /buildConfigField 'String', 'CHAMADOS_WEB_BASE'/);
   const main = read(dir + 'MainActivity.java');
   assert.match(main, /auth\.handoffCode\(app\)/, 'mesmo código de uso único dos outros apps');

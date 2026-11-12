@@ -1,6 +1,6 @@
 // Chamados e O.S. dentro da Suíte do Windows: origem configurada, código de entrada (handoff) e regras de navegação.
 // O Chamados é um site (Cloudflare) mostrado numa WebContentsView da mesma janela; a conta entra uma vez no Centro.
-const DEFAULT_ORIGIN = 'https://construtec-chamados.construtec-reports.workers.dev';
+const DEFAULT_ORIGIN = 'https://chamados.rcconstrutec.online';
 const CODE = /^[A-Za-z0-9_-]{43}$/;
 
 function validOrigin(value) {

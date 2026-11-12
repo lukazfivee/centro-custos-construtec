@@ -1,10 +1,11 @@
 const crypto = require('crypto');
-const { todayIso } = require('../../lib/dates');
+const { httpError } = require('../../lib/http');
+const { atomic, lockExpense, validateMapping, refresh } = require('./allocationLifecycle');
 
 /**
  * Cria ou atualiza alocação de despesa vinculada a um item de controle orçamentário
  */
-async function recordExpenseAllocation(pool, params) {
+async function recordExpenseAllocationInTransaction(pool, params) {
   const {
     transactionId,
     costCenterId,
@@ -21,18 +22,32 @@ async function recordExpenseAllocation(pool, params) {
   if (!transactionId || !costCenterId || amount == null) {
     throw new Error('PARAMETROS_INVALIDOS: transactionId, costCenterId e amount são obrigatórios');
   }
+  if (controlItemId && !contractId) throw httpError(400, 'Informe o contrato do item de controle.');
+  await lockExpense(pool, transactionId, costCenterId, amount);
+  if (contractId && !(await pool.query('SELECT 1 FROM project_contracts WHERE id=$1 AND cost_center_id=$2 AND status=\'active\'', [contractId,costCenterId])).rows.length) {
+    throw httpError(400, 'O contrato não pertence à obra.');
+  }
+  const mapped = await pool.query(`SELECT id,control_item_id,contract_id FROM expense_allocations
+    WHERE transaction_id=$1 AND cost_center_id=$2 AND active AND mapping_status='mapped'`, [transactionId,costCenterId]);
+  if (mapped.rows.length) {
+    const previous = mapped.rows[0];
+    if (mapped.rows.length > 1 || (controlItemId && (previous.control_item_id !== controlItemId || previous.contract_id !== contractId))) {
+      throw httpError(409, 'Use o identificador da apropriação para alterar seu mapeamento.');
+    }
+    return { id:previous.id, mappingStatus:'mapped' };
+  }
 
   // Reuso idempotente: se já existe alocação unmapped da transação (ex.: criada automaticamente),
   // mapeia/reutiliza em vez de duplicar.
   const prev = await pool.query(
     `SELECT id FROM expense_allocations
-     WHERE transaction_id = $1 AND mapping_status = 'unmapped'
+     WHERE transaction_id = $1 AND cost_center_id=$2 AND active AND mapping_status = 'unmapped'
      ORDER BY created_at LIMIT 1`,
-    [transactionId]
+    [transactionId,costCenterId]
   );
   if (prev.rows[0]) {
     if (!controlItemId) return { id: prev.rows[0].id, mappingStatus: 'unmapped' };
-    await mapExistingAllocation(pool, {
+    await mapExistingAllocationInTransaction(pool, {
       allocationId: prev.rows[0].id, contractId, controlItemId,
       materialLineId, laborLineId, quantity, unit, notes,
     });
@@ -44,6 +59,7 @@ async function recordExpenseAllocation(pool, params) {
 
   // Validar se o item de controle pertence ao contrato se informado
   if (controlItemId && contractId) {
+    await validateMapping(pool, params, costCenterId);
     const itemCheck = await pool.query(
       'SELECT id FROM budget_control_items WHERE id = $1 AND contract_id = $2',
       [controlItemId, contractId]
@@ -72,27 +88,9 @@ async function recordExpenseAllocation(pool, params) {
     notes,
   ]);
 
-  // Se for mapeado, criar reconhecimento de custo direto
+  // O mesmo reconciliador usado pelos lançamentos produz o reconhecimento.
   if (mappingStatus === 'mapped') {
-    const tx = await pool.query('SELECT transaction_date, type FROM transactions WHERE id = $1', [transactionId]);
-    const recDate = tx.rows[0]?.transaction_date || todayIso();
-    const sign = tx.rows[0]?.type === 'estorno' ? -1 : 1;
-
-    await pool.query(`
-      INSERT INTO cost_recognitions
-        (id, cost_center_id, contract_id, allocation_id, control_item_id, recognition_date, amount, sign, status, notes)
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, 'approved', $9)
-    `, [
-      crypto.randomUUID(),
-      costCenterId,
-      contractId,
-      id,
-      controlItemId,
-      recDate,
-      amount,
-      sign,
-      notes,
-    ]);
+    await refresh(pool, transactionId);
   }
 
   return { id, mappingStatus };
@@ -101,7 +99,7 @@ async function recordExpenseAllocation(pool, params) {
 /**
  * Mapeia uma alocação preexistente para um item de controle de baseline
  */
-async function mapExistingAllocation(pool, params) {
+async function mapExistingAllocationInTransaction(pool, params) {
   const {
     allocationId,
     contractId,
@@ -122,6 +120,11 @@ async function mapExistingAllocation(pool, params) {
     throw new Error('ALOCACAO_NAO_ENCONTRADA: Alocação não encontrada');
   }
   const alloc = allocRes.rows[0];
+  await lockExpense(pool, alloc.transaction_id, alloc.cost_center_id);
+  if (!(await pool.query('SELECT 1 FROM expense_allocations WHERE id=$1 AND active', [allocationId])).rows.length) {
+    throw httpError(409, 'A apropriação está inativa. Atualize a lista.');
+  }
+  await validateMapping(pool, params, alloc.cost_center_id);
 
   // Verificar item de controle
   const itemCheck = await pool.query(
@@ -145,46 +148,28 @@ async function mapExistingAllocation(pool, params) {
     WHERE id = $8
   `, [contractId, controlItemId, materialLineId, laborLineId, quantity, unit, notes, allocationId]);
 
-  // Atualizar ou criar cost_recognition
-  const tx = await pool.query('SELECT transaction_date, type FROM transactions WHERE id = $1', [alloc.transaction_id]);
-  const recDate = tx.rows[0]?.transaction_date || todayIso();
-  const sign = tx.rows[0]?.type === 'estorno' ? -1 : 1;
-
-  await pool.query('DELETE FROM cost_recognitions WHERE allocation_id = $1', [allocationId]);
-  await pool.query(`
-    INSERT INTO cost_recognitions
-      (id, cost_center_id, contract_id, allocation_id, control_item_id, recognition_date, amount, sign, status, notes)
-    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, 'approved', $9)
-  `, [
-    crypto.randomUUID(),
-    alloc.cost_center_id,
-    contractId,
-    allocationId,
-    controlItemId,
-    recDate,
-    alloc.amount,
-    sign,
-    notes,
-  ]);
-
+  await refresh(pool, alloc.transaction_id);
   return { success: true, allocationId, controlItemId };
 }
 
 /**
  * Desfaz o mapeamento de uma alocação (retorna a unmapped)
  */
-async function unmapAllocation(pool, allocationId) {
+async function unmapAllocationInTransaction(pool, allocationId) {
+  const alloc = (await pool.query('SELECT * FROM expense_allocations WHERE id=$1 AND active', [allocationId])).rows[0];
+  if (!alloc) throw httpError(404, 'Apropriação não encontrada.');
+  await lockExpense(pool, alloc.transaction_id, alloc.cost_center_id);
   await pool.query(`
     UPDATE expense_allocations
-    SET contract_id = NULL,
-        control_item_id = NULL,
+    SET control_item_id = NULL,
         material_line_id = NULL,
         labor_line_id = NULL,
         mapping_status = 'unmapped'
     WHERE id = $1
   `, [allocationId]);
 
-  await pool.query('DELETE FROM cost_recognitions WHERE allocation_id = $1', [allocationId]);
+  await pool.query("UPDATE cost_recognitions SET status='reversed' WHERE allocation_id=$1 AND status='approved'", [allocationId]);
+  await refresh(pool, alloc.transaction_id);
   return { success: true, allocationId };
 }
 
@@ -215,7 +200,8 @@ async function listCostCenterAllocations(pool, costCenterId, filters = {}) {
     FROM expense_allocations ea
     JOIN transactions t ON t.id = ea.transaction_id
     LEFT JOIN budget_control_items bci ON bci.id = ea.control_item_id
-    WHERE ea.cost_center_id = $1
+    WHERE ea.cost_center_id = $1 AND ea.active AND t.deleted_at IS NULL
+      AND t.type='despesa' AND t.financial_status='liquidado' AND t.approval_status='aprovado'
   `;
   const params = [costCenterId];
 
@@ -228,6 +214,10 @@ async function listCostCenterAllocations(pool, costCenterId, filters = {}) {
   const result = await pool.query(sql, params);
   return result.rows;
 }
+
+const recordExpenseAllocation = (pool, params) => atomic(pool, tx => recordExpenseAllocationInTransaction(tx, params));
+const mapExistingAllocation = (pool, params) => atomic(pool, tx => mapExistingAllocationInTransaction(tx, params));
+const unmapAllocation = (pool, id) => atomic(pool, tx => unmapAllocationInTransaction(tx, id));
 
 module.exports = {
   recordExpenseAllocation,

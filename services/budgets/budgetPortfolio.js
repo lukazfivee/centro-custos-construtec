@@ -43,11 +43,12 @@ async function getPortfolioSummary(pool, { kind = null } = {}) {
 
   // 3. Realizado líquido consolidado de todas as despesas da carteira
   const realizedRes = await pool.query(`
-    SELECT COALESCE(SUM(t.amount * t.accounting_sign), 0) AS total_realized
+    SELECT COALESCE(SUM(COALESCE(a.amount,t.amount) * t.accounting_sign), 0) AS total_realized
     FROM transactions t
+    LEFT JOIN transaction_allocations a ON a.transaction_id=t.id
     WHERE t.deleted_at IS NULL
       AND t.type = 'despesa'
-      AND t.financial_status = 'liquidado'${ofKind('t.cost_center_id')}
+      AND t.financial_status = 'liquidado' AND t.approval_status='aprovado'${ofKind('COALESCE(a.cost_center_id,t.cost_center_id)')}
   `, params);
   const totalRealizedCost = Math.max(0, Number(realizedRes.rows[0]?.total_realized || 0));
 
@@ -76,10 +77,15 @@ async function getPortfolioSummary(pool, { kind = null } = {}) {
   // 7. Levantamento de centros individuais com risco orçamentário
   const centersExpensesRes = await pool.query(`
     SELECT cc.id, cc.code, cc.name,
-      COALESCE(SUM(t.amount * t.accounting_sign), 0) AS realized
+      COALESCE(SUM(expense.amount), 0) AS realized
     FROM cost_centers cc
-    LEFT JOIN transactions t ON t.cost_center_id = cc.id
-      AND t.deleted_at IS NULL AND t.type = 'despesa' AND t.financial_status = 'liquidado'
+    LEFT JOIN (
+      SELECT COALESCE(a.cost_center_id,t.cost_center_id) AS cost_center_id,
+        COALESCE(a.amount,t.amount)*t.accounting_sign AS amount
+      FROM transactions t LEFT JOIN transaction_allocations a ON a.transaction_id=t.id
+      WHERE t.deleted_at IS NULL AND t.type='despesa' AND t.financial_status='liquidado'
+        AND t.approval_status='aprovado'
+    ) expense ON expense.cost_center_id=cc.id
     WHERE cc.active = true${k ? ' AND cc.kind = $1' : ''}
     GROUP BY cc.id, cc.code, cc.name
   `, params);

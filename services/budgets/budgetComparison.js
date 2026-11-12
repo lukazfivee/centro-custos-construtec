@@ -1,12 +1,20 @@
-function roundMoney(val) {
-  return Math.round((Number(val || 0) + Number.EPSILON) * 100) / 100;
-}
+const { roundDecimal, sumDecimal, multiplyDecimal } = require('../../lib/decimal');
+const { httpError } = require('../../lib/http');
+const { validDate } = require('../../lib/dates');
+const roundMoney = val => roundDecimal(val || 0);
 
 /**
  * Calcula o comparativo Orçado vs. Realizado consolidado para um centro de custo
  */
 async function getCostCenterBudgetComparison(pool, costCenterId, options = {}) {
   const { contractId = null, baselineId = null, cutOffDate = null } = options;
+  const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+  if ([contractId,baselineId].some(id => id && !uuid.test(String(id)))) throw httpError(400, 'Contrato ou baseline inválidos.');
+  if (cutOffDate && !validDate(cutOffDate)) throw httpError(400, 'Data de corte inválida.');
+  if (baselineId && !(await pool.query(`SELECT 1 FROM budget_baselines b JOIN project_contracts pc ON pc.id=b.contract_id
+    WHERE b.id=$1 AND pc.cost_center_id=$2 AND ($3::uuid IS NULL OR pc.id=$3)`, [baselineId,costCenterId,contractId])).rows.length) {
+    throw httpError(400, 'A baseline não pertence ao contrato e à obra informados.');
+  }
 
   // 1. Obter contrato e baseline vigente (ou especificada)
   let contractQuery = `
@@ -14,7 +22,7 @@ async function getCostCenterBudgetComparison(pool, costCenterId, options = {}) {
            bb.id AS baseline_id, bb.version AS baseline_version,
            bb.materials_cost, bb.labor_cost, bb.base_cost, bb.contract_value, bb.sealed_at
     FROM project_contracts pc
-    LEFT JOIN budget_baselines bb ON bb.id = COALESCE($2, pc.current_baseline_id)
+    LEFT JOIN budget_baselines bb ON bb.id = COALESCE($2, pc.current_baseline_id) AND bb.contract_id=pc.id
     WHERE pc.cost_center_id = $1 AND pc.status = 'active'
   `;
   const contractParams = [costCenterId, baselineId];
@@ -22,10 +30,14 @@ async function getCostCenterBudgetComparison(pool, costCenterId, options = {}) {
     contractQuery += ' AND pc.id = $3';
     contractParams.push(contractId);
   }
-  contractQuery += ' LIMIT 1';
+  if (baselineId) {
+    contractQuery += ' AND bb.id IS NOT NULL';
+  }
+  contractQuery += ' ORDER BY pc.created_at,pc.id LIMIT 2';
 
   const contractRes = await pool.query(contractQuery, contractParams);
   const contract = contractRes.rows[0];
+  if (contractRes.rows.length > 1) throw httpError(400, 'Selecione o contrato para consultar esta obra.');
 
   if (!contract || !contract.baseline_id) {
     return {
@@ -65,17 +77,22 @@ async function getCostCenterBudgetComparison(pool, costCenterId, options = {}) {
 
   // 4. Obter reconhecimentos de custos aprovados por item de controle
   let costRecQuery = `
-    SELECT control_item_id,
-           SUM(amount * sign) AS realized_amount
-    FROM cost_recognitions
-    WHERE cost_center_id = $1 AND status = 'approved'
+    SELECT cr.control_item_id,
+           SUM(cr.amount * CASE WHEN cr.allocation_id IS NULL THEN cr.sign ELSE t.accounting_sign END) AS realized_amount
+    FROM cost_recognitions cr
+    LEFT JOIN expense_allocations ea ON ea.id=cr.allocation_id
+    LEFT JOIN transactions t ON t.id=ea.transaction_id
+    WHERE cr.cost_center_id = $1 AND cr.status = 'approved'
+      AND (cr.contract_id=$2 OR cr.contract_id IS NULL)
+      AND (cr.allocation_id IS NULL OR (ea.active AND t.deleted_at IS NULL AND t.type='despesa'
+        AND t.financial_status='liquidado' AND t.approval_status='aprovado'))
   `;
-  const costRecParams = [costCenterId];
+  const costRecParams = [costCenterId,contract.contract_id];
   if (cutOffDate) {
-    costRecQuery += ' AND recognition_date <= $2';
+    costRecQuery += ' AND COALESCE(t.transaction_date,cr.recognition_date) <= $3';
     costRecParams.push(cutOffDate);
   }
-  costRecQuery += ' GROUP BY control_item_id';
+  costRecQuery += ' GROUP BY cr.control_item_id';
 
   const costRecRes = await pool.query(costRecQuery, costRecParams);
   const realizedMap = new Map();
@@ -85,16 +102,19 @@ async function getCostCenterBudgetComparison(pool, costCenterId, options = {}) {
 
   // 5. Obter apropriações não mapeadas
   const unmappedRes = await pool.query(`
-    SELECT ea.id, ea.amount, ea.notes, t.transaction_date AS date, t.description, t.payment_method
+    SELECT ea.id, ea.amount * t.accounting_sign AS amount, ea.notes, t.transaction_date AS date, t.description, t.payment_method
     FROM expense_allocations ea
     JOIN transactions t ON t.id = ea.transaction_id
-    WHERE ea.cost_center_id = $1 AND ea.mapping_status = 'unmapped'
-  `, [costCenterId]);
+    WHERE ea.cost_center_id = $1 AND ea.mapping_status = 'unmapped' AND ea.active
+      AND t.deleted_at IS NULL AND t.type='despesa' AND t.financial_status='liquidado'
+      AND t.approval_status='aprovado' AND (ea.contract_id=$2 OR ea.contract_id IS NULL)
+      AND ($3::date IS NULL OR t.transaction_date <= $3)
+  `, [costCenterId,contract.contract_id,cutOffDate]);
 
   let unmappedTotal = 0;
   const unmappedList = unmappedRes.rows.map(r => {
     const val = Number(r.amount);
-    unmappedTotal += val;
+    unmappedTotal = sumDecimal([unmappedTotal,val]);
     return {
       id: r.id,
       amount: roundMoney(val),
@@ -108,8 +128,8 @@ async function getCostCenterBudgetComparison(pool, costCenterId, options = {}) {
   const hoursRes = await pool.query(`
     SELECT COALESCE(SUM(team_hours), 0) AS total_hours
     FROM labor_measurements
-    WHERE contract_id = $1 AND status = 'approved'
-  `, [contract.contract_id]);
+    WHERE contract_id = $1 AND status = 'approved' AND ($2::date IS NULL OR period_end <= $2)
+  `, [contract.contract_id,cutOffDate]);
   const consumedHours = Number(hoursRes.rows[0]?.total_hours || 0);
 
   let plannedTotalHours = 0;
@@ -132,12 +152,12 @@ async function getCostCenterBudgetComparison(pool, costCenterId, options = {}) {
       realized = roundMoney(realizedMap.get(line.control_item_id) || 0);
       realizedAssigned.add(line.control_item_id);
     }
-    const variance = roundMoney(realized - budgeted);
-    const variancePercent = budgeted > 0 ? roundMoney(((realized - budgeted) / budgeted) * 100) : null;
-    const balance = roundMoney(budgeted - realized);
+    const variance = sumDecimal([realized,-budgeted]);
+    const variancePercent = budgeted > 0 ? multiplyDecimal([variance,100],budgeted) : null;
+    const balance = sumDecimal([budgeted,-realized]);
 
-    totalBudgeted += budgeted;
-    totalRealized += realized;
+    totalBudgeted = sumDecimal([totalBudgeted,budgeted]);
+    totalRealized = sumDecimal([totalRealized,realized]);
 
     return {
       lineId: line.line_id,
@@ -159,10 +179,31 @@ async function getCostCenterBudgetComparison(pool, costCenterId, options = {}) {
     };
   });
 
-  // 8. Total realizado global inclui despesas não mapeadas
-  const grandRealized = roundMoney(totalRealized + unmappedTotal);
+  // Custos de itens retirados de uma baseline continuam visíveis e no total.
+  const outsideBaseline = [];
+  for (const [controlItemId,realized] of realizedMap) {
+    if (realizedAssigned.has(controlItemId) || !realized) continue;
+    outsideBaseline.push({ controlItemId, realizedCost:roundMoney(realized) });
+    totalRealized = sumDecimal([totalRealized,realized]);
+  }
+  if (outsideBaseline.length) {
+    const metadata = await pool.query('SELECT id,name,kind,unit FROM budget_control_items WHERE id=ANY($1::uuid[])',
+      [outsideBaseline.map(i => i.controlItemId)]);
+    const byId = new Map(metadata.rows.map(i => [i.id,i]));
+    for (const item of outsideBaseline) {
+      const meta = byId.get(item.controlItemId);
+      items.push({ lineId:`outside-${item.controlItemId}`,controlItemId:item.controlItemId,code:null,
+        name:`${meta?.name || 'Custo sem item de controle'} (fora da baseline)`,description:'Fora da baseline vigente',
+        category:'Fora da baseline',kind:meta?.kind || 'material',unit:meta?.unit || '',
+        budgetedQuantity:0,budgetedUnitCost:0,budgetedCost:0,realizedCost:item.realizedCost,
+        variance:item.realizedCost,variancePercent:null,balance:-item.realizedCost,
+        isOverBudget:item.realizedCost>0,isOutsideBaseline:true });
+    }
+  }
+  // 8. Total realizado global inclui despesas não mapeadas e itens fora da baseline.
+  const grandRealized = sumDecimal([totalRealized,unmappedTotal]);
   const grandExposure = grandRealized; // Futuramente soma ordens de compra em aberto
-  const grandBalance = roundMoney(Number(contract.base_cost) - grandExposure);
+  const grandBalance = sumDecimal([contract.base_cost,-grandExposure]);
 
   // 9. Construir Curva ABC dos itens com custo realizado positivo
   const positiveItems = items.filter(i => i.realizedCost > 0).sort((a, b) => b.realizedCost - a.realizedCost);
@@ -207,7 +248,7 @@ async function getCostCenterBudgetComparison(pool, costCenterId, options = {}) {
       exposure: grandExposure,
       balance: grandBalance,
       isOverBudget: grandBalance < 0,
-      burnRatePercent: Number(contract.base_cost) > 0 ? roundMoney((grandExposure / Number(contract.base_cost)) * 100) : 0,
+      burnRatePercent: Number(contract.base_cost) > 0 ? multiplyDecimal([grandExposure,100],contract.base_cost) : 0,
     },
     laborHours: {
       planned: roundMoney(plannedTotalHours),
@@ -215,6 +256,7 @@ async function getCostCenterBudgetComparison(pool, costCenterId, options = {}) {
       balance: roundMoney(plannedTotalHours - consumedHours),
     },
     items,
+    outsideBaseline,
     unmapped: {
       totalCost: roundMoney(unmappedTotal),
       count: unmappedList.length,

@@ -55,11 +55,24 @@ async function getCostCenterCurveS(pool, costCenterId) {
 
   // 2. Consultar despesas realizadas agrupadas por mês
   const expRes = await pool.query(`
-    SELECT TO_CHAR(recognition_date, 'YYYY-MM') AS month_key,
-           SUM(amount * sign) AS monthly_amount
-    FROM cost_recognitions
-    WHERE cost_center_id = $1 AND status = 'approved'
-    GROUP BY TO_CHAR(recognition_date, 'YYYY-MM')
+    SELECT TO_CHAR(cost_date,'YYYY-MM') AS month_key,SUM(signed_amount) AS monthly_amount
+    FROM (
+      SELECT COALESCE(t.transaction_date,cr.recognition_date) AS cost_date,
+        cr.amount * CASE WHEN cr.allocation_id IS NULL THEN cr.sign ELSE t.accounting_sign END AS signed_amount
+      FROM cost_recognitions cr
+      LEFT JOIN expense_allocations ea ON ea.id=cr.allocation_id
+      LEFT JOIN transactions t ON t.id=ea.transaction_id
+      WHERE cr.cost_center_id=$1 AND cr.status='approved'
+        AND (cr.allocation_id IS NULL OR (ea.active AND t.deleted_at IS NULL AND t.type='despesa'
+          AND t.financial_status='liquidado' AND t.approval_status='aprovado'))
+      UNION ALL
+      SELECT t.transaction_date,ea.amount*t.accounting_sign
+      FROM expense_allocations ea JOIN transactions t ON t.id=ea.transaction_id
+      WHERE ea.cost_center_id=$1 AND ea.active AND ea.mapping_status='unmapped'
+        AND t.deleted_at IS NULL AND t.type='despesa' AND t.financial_status='liquidado'
+        AND t.approval_status='aprovado'
+    ) costs
+    GROUP BY TO_CHAR(cost_date,'YYYY-MM')
     ORDER BY month_key ASC
   `, [costCenterId]);
 

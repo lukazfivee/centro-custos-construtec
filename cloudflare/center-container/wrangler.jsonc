@@ -5,6 +5,7 @@
   "compatibility_date": "2026-09-15",
   "compatibility_flags": ["nodejs_compat"],
   "workers_dev": true,
+  "routes": [{ "pattern": "rcconstrutec.online", "custom_domain": true }],
   "observability": { "enabled": true },
   "triggers": { "crons": ["0 11 * * *"] },
   // Impressao digital da chave fixa de assinatura do app (publica): libera os App Links

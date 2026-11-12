@@ -221,7 +221,7 @@ test('M4: lista e painel de fornecedor somam so as obras permitidas ao usuario e
   assert.equal(Number(doFornecedor((await call('GET', '/fornecedores?mes=2026-09&pagina=1&busca=Escopo', { token: admin })).data).gasto_mes), 300);
 
   // Escopado na obra A: so a obra A, inclusive com busca e paginacao.
-  const soA = await conta('forn-a@teste.local', 'tecnico', [a]);
+  const soA = await conta('forn-a@teste.local', 'engenharia', [a]);
   assert.equal(Number((await lista(soA)).gasto_mes), 100);
   assert.equal(Number((await lista(soA)).lancamentos_mes), 1);
   assert.equal(Number(doFornecedor((await call('GET', '/fornecedores?mes=2026-09&pagina=1&busca=Escopo', { token: soA })).data).gasto_mes), 100);
@@ -229,6 +229,9 @@ test('M4: lista e painel de fornecedor somam so as obras permitidas ao usuario e
   assert.equal(rA.gasto_mes, 100);
   assert.equal(rA.lancamentos_mes, 1);
   assert.deepEqual(rA.lancamentos.map((l) => l.obra_codigo), ['FOR-A']);
+  const tecnico = await conta('forn-tecnico@teste.local', 'tecnico', [a]);
+  assert.equal((await call('GET', '/fornecedores', { token: tecnico })).status, 403);
+  assert.equal((await call('GET', `/fornecedores/${fornecedor}/resumo`, { token: tecnico })).status, 403);
 
   // Escopado sem nenhuma obra: zeros e lista vazia (o cadastro em si continua listado).
   const semObra = await conta('forn-zero@teste.local', 'engenharia', []);

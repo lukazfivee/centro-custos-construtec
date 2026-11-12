@@ -8,6 +8,7 @@ const path = require('path');
 const crypto = require('crypto');
 const { Builder, Browser, until, logging } = require('selenium-webdriver');
 const chrome = require('selenium-webdriver/chrome');
+const { createLocalUiApp, loopbackFetchGuard, assertLocalUiTraffic } = require('./local-app');
 
 const ADMIN_EMAIL = 'admin@teste.local';
 const ADMIN_PASSWORD = 'Admin@123456';
@@ -31,10 +32,13 @@ async function startServer() {
   const { createApp } = require('../../server');
   delete process.env.DATABASE_URL;
   await initializeDatabase();
-  const server = createApp().listen(0, '127.0.0.1');
+  const fetchGuard = loopbackFetchGuard();
+  const localUi = createLocalUiApp(createApp());
+  const server = localUi.app.listen(0, '127.0.0.1');
   await new Promise((resolve) => server.once('listening', resolve));
   const port = server.address().port;
-  return { server, closeDatabase, baseUrl: `http://127.0.0.1:${port}` };
+  return { server, closeDatabase, baseUrl: `http://127.0.0.1:${port}`,
+    sourceSha256: localUi.sourceSha256, shellSubstitutions: localUi.shellSubstitutions, fetchGuard };
 }
 
 // server.close() so espera o callback depois que TODAS as conexoes (incluindo
@@ -48,14 +52,18 @@ async function stopServer(ctx) {
   ]);
   ctx.server.closeAllConnections?.();
   await ctx.closeDatabase();
+  ctx.fetchGuard.restore();
   fs.rmSync(process.env.PGLITE_DATA_DIR, { recursive: true, force: true });
 }
 
 async function buildDriver() {
   const options = new chrome.Options();
-  options.addArguments('--headless=new', '--disable-gpu', '--window-size=1440,1000', '--no-sandbox');
+  options.addArguments('--headless=new', '--disable-gpu', '--window-size=1440,1000', '--no-sandbox',
+    '--disable-background-networking', '--host-resolver-rules=MAP * ~NOTFOUND, EXCLUDE 127.0.0.1, EXCLUDE localhost');
+  options.setPerfLoggingPrefs({ enableNetwork: true, enablePage: true });
   const prefs = new logging.Preferences();
   prefs.setLevel(logging.Type.BROWSER, logging.Level.ALL);
+  prefs.setLevel(logging.Type.PERFORMANCE, logging.Level.ALL);
   options.setLoggingPrefs(prefs);
   return new Builder().forBrowser(Browser.CHROME).setChromeOptions(options).build();
 }
@@ -94,7 +102,9 @@ async function collectConsoleErrors(driver) {
       driver.manage().logs().get('browser'),
       new Promise((_, reject) => setTimeout(() => reject(new Error('logs().get timeout')), 5000)),
     ]);
-    return entries.filter((entry) => entry.level.name === 'SEVERE');
+    // O Orçamentos de produção só aceita ser embutido pelo Centro de produção (frame-ancestors); no teste local o
+    // navegador avisa e isso não é erro do Centro.
+    return entries.filter((entry) => entry.level.name === 'SEVERE' && !/violates the following Content Security Policy directive: "frame-ancestors/.test(entry.message));
   } catch {
     return null; // indica que a coleta não é suportada/disponível neste ambiente
   }
@@ -104,5 +114,5 @@ module.exports = {
   ADMIN_EMAIL, ADMIN_PASSWORD,
   startServer, stopServer,
   buildDriver, stopDriver,
-  login, collectConsoleErrors,
+  login, collectConsoleErrors, assertLocalUiTraffic,
 };

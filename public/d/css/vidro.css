@@ -1,0 +1,70 @@
+/* Vidro: o unico lugar do desktop novo com desfoque, cortina e painel translucido.
+   Tudo que cobre ou flutua sobre a tela (dialogos, paineis laterais, menus, busca, toasts, dicas, assistente)
+   le os tokens abaixo; nenhum outro CSS repete essas receitas. Carregado por ultimo no index.html.
+   Desempenho: so a cortina e as superficies pequenas desfocam; listas e areas que rolam nunca desfocam. */
+:root {
+  --vidro-blur: 14px;          /* cortina (tela inteira) */
+  --vidro-blur-painel: 12px;   /* menus, paineis e avisos */
+  --vidro-saturar: 1.2;
+  --vidro-cortina: rgba(206, 224, 232, .58);
+  --vidro-painel: rgba(254, 254, 254, .88);
+  --vidro-painel-forte: rgba(254, 254, 254, .94);
+  --vidro-borda: rgba(10, 120, 150, .32);
+  --vidro-brilho: 0 0 0 1px var(--vidro-borda), 0 18px 44px rgba(3, 31, 41, .2), 0 0 28px rgba(18, 169, 209, .1);
+  --vidro-aviso: rgba(3, 31, 41, .9);
+  --vidro-aviso-borda: rgba(95, 208, 238, .4);
+  --vidro-foco: 0 0 0 3px rgba(18, 169, 209, .22);
+}
+[data-theme="escuro"] {
+  --vidro-cortina: rgba(2, 13, 20, .55);
+  --vidro-painel: rgba(8, 42, 54, .9);
+  --vidro-painel-forte: rgba(8, 42, 54, .95);
+  --vidro-borda: rgba(95, 208, 238, .34);
+  --vidro-brilho: 0 0 0 1px var(--vidro-borda), 0 22px 56px rgba(0, 0, 0, .55), 0 0 32px rgba(18, 169, 209, .16);
+  --vidro-aviso: rgba(4, 30, 40, .9);
+  --vidro-foco: 0 0 0 3px rgba(95, 208, 238, .22);
+}
+/* Sem backdrop-filter: cortina e paineis ficam mais opacos, para o texto nunca brigar com o fundo. */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  :root { --vidro-cortina: rgba(206, 224, 232, .88); --vidro-painel: rgba(254, 254, 254, .98); --vidro-aviso: rgba(3, 31, 41, .97); }
+  [data-theme="escuro"] { --vidro-cortina: rgba(2, 13, 20, .86); --vidro-painel: rgba(8, 42, 54, .98); --vidro-aviso: rgba(4, 30, 40, .98); }
+}
+
+/* Cortina: tudo atras (menu lateral, topo, conteudo) fica escuro e borrado; so formas e cores. */
+.dialogo-camada, .camada .fundo {
+  background: var(--vidro-cortina);
+  -webkit-backdrop-filter: blur(var(--vidro-blur)) saturate(var(--vidro-saturar));
+  backdrop-filter: blur(var(--vidro-blur)) saturate(var(--vidro-saturar));
+}
+
+/* Painel de vidro: dialogos, painel lateral, menus e popovers (busca, Suite), dica do menu e folha do assistente. */
+.dialogo, .drawer, .pop, #ia-sheet .sheet, .menu-dica {
+  background: var(--vidro-painel);
+  -webkit-backdrop-filter: blur(var(--vidro-blur-painel)) saturate(var(--vidro-saturar));
+  backdrop-filter: blur(var(--vidro-blur-painel)) saturate(var(--vidro-saturar));
+  box-shadow: var(--vidro-brilho);
+}
+.dialogo { border-radius: 18px; }
+.pop, #ia-sheet .sheet { background: var(--vidro-painel-forte); }
+.drawer { border-radius: 18px 0 0 18px; box-shadow: -1px 0 0 var(--vidro-borda), -24px 0 60px rgba(2, 13, 20, .3), 0 0 32px rgba(18, 169, 209, .12); }
+/* Cabecalho, abas e rodape do painel deixam o vidro aparecer e se separam por linha fina. */
+.drawer .dcab, .drawer .dabas, .drawer .drod { background: transparent; border-color: var(--vidro-borda); }
+.menu-dica { color: var(--color-text); }
+
+/* Aviso rapido: vidro escuro nos dois temas (texto claro), com contorno ciano fino. */
+.toast {
+  background: var(--vidro-aviso);
+  -webkit-backdrop-filter: blur(var(--vidro-blur-painel)) saturate(var(--vidro-saturar));
+  backdrop-filter: blur(var(--vidro-blur-painel)) saturate(var(--vidro-saturar));
+  box-shadow: 0 0 0 1px var(--vidro-aviso-borda), 0 14px 34px rgba(2, 13, 20, .4);
+}
+
+/* Menu lateral e topo: leve brilho ciano, sem tapar nada (nao ha conteudo rolando por baixo deles). */
+.side { background: linear-gradient(180deg, #05303e 0%, var(--side-bg) 55%); box-shadow: 1px 0 0 rgba(95, 208, 238, .16), 4px 0 24px rgba(3, 31, 41, .18); }
+.nav[aria-current="page"] { box-shadow: inset 0 0 0 1px rgba(95, 208, 238, .22), 0 0 18px rgba(18, 169, 209, .16); }
+.top { background: color-mix(in srgb, var(--color-surface) 90%, transparent); box-shadow: 0 1px 0 var(--vidro-borda); }
+
+/* Foco dos campos com brilho suave e botao primario em degrade ciano (tema escuro). */
+.inp:focus { box-shadow: inset 0 0 0 2px var(--color-focus), var(--vidro-foco); }
+[data-theme="escuro"] .btn-p { background: linear-gradient(180deg, #2bc0e4 0%, #0f93b7 100%); color: #00141b; box-shadow: 0 6px 18px rgba(18, 169, 209, .28); }
+[data-theme="escuro"] .btn-p:hover { background: linear-gradient(180deg, #4fd0ee 0%, #12a3c9 100%); }

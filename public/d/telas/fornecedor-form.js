@@ -12,10 +12,9 @@
       ${U.campo({ rotulo: 'Nome ou razão social', name: 'nome', valor: f.nome, placeholder: 'Ex.: Seg Distribuidora' })}
       <div class="duas">${U.campo({ rotulo: 'CPF ou CNPJ', name: 'documento', valor: f.documento, placeholder: '00.000.000/0000-00' })}
         ${U.campo({ rotulo: 'Categoria mais comum', name: 'categoria_id', tipo: 'select', valor: f.categoria_id || '', opcoes })}</div>
-      <div class="duas">${U.campo({ rotulo: 'Contato', name: 'contato', valor: f.contato })}${U.campo({ rotulo: 'Telefone', name: 'telefone', valor: f.telefone, placeholder: '(11) 90000-0000' })}</div>
+      <div class="duas">${U.campo({ rotulo: 'Contato', name: 'contato', valor: f.contato })}${U.campo({ rotulo: 'Telefone', name: 'telefone', valor: C.fone(f.telefone), placeholder: '(11) 90000-0000' })}</div>
       ${U.campo({ rotulo: 'E-mail', name: 'email', tipo: 'email', valor: f.email })}
-      <div class="dica">${D.ic('magic-wand')}<span>Guardada no cadastro. A sugestão de categoria nos lançamentos entra numa próxima etapa.</span></div>
-      ${f.id ? `<label class="check"><input type="checkbox" name="ativo"${f.ativo !== false ? ' checked' : ''}> Fornecedor ativo</label>` : ''}
+      ${f.id ? C.troca({ titulo: 'Fornecedor ativo', ligado: f.ativo !== false }) : ''}
       ${f.id ? '<div class="mes-lista" data-mes></div>' : ''}
     </form>`;
   }
@@ -57,17 +56,17 @@
     });
     if (!ctl) return;
     if (f) lancamentosDoMes(ctl, f, mes);
+    const ativo = f ? C.ligarTroca(ctl.corpo, ctl) : () => true;
     const salvar = async () => {
       if (enviando) return;
       const v = (n) => (CC.$(`[name="${n}"]`, ctl.corpo) || {}).value || '';
-      const ativo = CC.$('[name="ativo"]', ctl.corpo);
       const d = { nome: v('nome').trim(), documento: v('documento').trim(), contato: v('contato').trim(), telefone: v('telefone').trim(), email: v('email').trim() };
       const erros = validar(d);
       ctl.errosCampos(erros);
       if (Object.keys(erros).length) { ctl.erro(Object.values(erros)[0]); return; }
       ctl.erro('');
       enviando = true;
-      const body = { ...d, categoria_id: v('categoria_id') || null, ativo: ativo ? ativo.checked : true };
+      const body = { ...d, categoria_id: v('categoria_id') || null, ativo: ativo() };
       try {
         if (f) await CC.api(`/fornecedores/${f.id}`, { method: 'PUT', body });
         else await CC.api('/fornecedores', { method: 'POST', body });

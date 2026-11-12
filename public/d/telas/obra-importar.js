@@ -138,7 +138,7 @@
       <select class="inp" aria-label="Insumo para ${esc(g.description || 'a despesa')}">${opcoes.map((o) => `<option value="${esc(o.valor)}">${esc(o.rotulo)}</option>`).join('')}</select>
       <button type="button" class="btn btn-s" data-ligar>Vincular</button></div>`).join('') || U.vazio('check-circle', 'Todos os gastos estão vinculados.');
     const ctl = await D.painel.abrir({
-      icone: 'link', titulo: 'Vincular gastos a insumos', sub: `${pendentes.length} gasto(s) sem vínculo · ${obra.nome}`,
+      icone: 'link', titulo: 'Vincular gastos a insumos', sub: `${D.plural(pendentes.length, 'gasto', 'gastos')} sem vínculo · ${obra.nome}`,
       corpo: `<span class="muted">Ligue cada gasto a um insumo da planilha para o consumo ficar certo.</span><div class="lista-docs" data-lista>${lista()}</div>`,
       rodape: '<button type="button" class="btn btn-s" data-fechar>Fechar</button>',
       aoFechar: aoConcluir,

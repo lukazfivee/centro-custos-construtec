@@ -1,5 +1,9 @@
 import { Container } from '@cloudflare/containers';
-import { env } from 'cloudflare:workers';
+import { env, WorkerEntrypoint } from 'cloudflare:workers';
+import { verifyChamadosSession, consumeChamadosHandoff } from './chamados/worker/chamados-central.js';
+import { handleChamadosIntegration } from './chamados/worker/integration-router.js';
+import { handleSuiteLauncher } from './chamados/worker/suite-launcher.js';
+import { handleChamadosNavigation, injectChamadosNavigation } from './chamados/worker/navigation.js';
 import { handleCentralAuth, cleanSyncKey } from './centralAuth.js';
 import { handleCommercialSync } from './commercialSync.js';
 import { handleNotifications, isNotificationRoute, runDailyNotices } from './notifications.js';
@@ -39,13 +43,26 @@ export class CentroCustosApi extends Container {
     CONSTRUTEC_INTEGRATION_KEY: env.CONSTRUTEC_INTEGRATION_KEY,
     CONSTRUTEC_IDENTITY_KEY: env.CONSTRUTEC_IDENTITY_KEY,
     MOBILE_APP_URL: env.MOBILE_APP_URL,
+    CHAMADOS_ENABLED: env.CHAMADOS_ENABLED,
+    CHAMADOS_PUBLIC_ORIGIN: env.CHAMADOS_PUBLIC_ORIGIN,
     NODE_ENV: env.NODE_ENV,
   });
+}
+
+export class ChamadosSessionVerifier extends WorkerEntrypoint {
+  verifyChamadosSession(input) { return verifyChamadosSession(this.env, input); }
+  consumeChamadosHandoff(input) { return consumeChamadosHandoff(this.env, input); }
 }
 
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
+    const suite = handleSuiteLauncher(request);
+    if (suite !== undefined) return suite;
+    const navigation = handleChamadosNavigation(request, env);
+    if (navigation) return navigation;
+    const chamados = await handleChamadosIntegration(request, env);
+    if (chamados) return chamados;
     if (request.method === 'GET' && url.pathname === '/redefinir-senha') return resetPage();
     if (request.method === 'GET' && url.pathname === '/cadastro') return invitePage();
     if (request.method === 'GET' && url.pathname === '/.well-known/assetlinks.json') return assetLinks(env);
@@ -64,7 +81,7 @@ export default {
     if (!env.DATABASE_URL || !env.JWT_SECRET) {
       return Response.json({ erro: 'Serviço aguardando configuração.' }, { status: 503 });
     }
-    return env.API.getByName('production').fetch(request);
+    return injectChamadosNavigation(request, await env.API.getByName('production').fetch(request), env);
   },
 
   // Avisos diários (contas a vencer e itens acima do orçado), às 08:00 de Brasília.

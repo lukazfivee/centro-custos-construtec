@@ -64,7 +64,7 @@ test('escopo por obra: lista, painel, lancamentos e anexos; 403 por URL fora do 
   }
 
 
-  for (const role of ['tecnico', 'engenharia']) {
+  for (const role of ['engenharia']) {
     const token = await conta(role, `${role}@teste.local`, [a, b]);
 
     // Lista de obras e detalhe
@@ -113,13 +113,13 @@ test('escopo por obra: lista, painel, lancamentos e anexos; 403 por URL fora do 
   // Sem nenhuma obra atribuida: nao ve nada.
   const vazio = await conta('tecnico', 'vazio@teste.local', []);
   assert.deepEqual((await call('GET', '/centros-custo', vazio, undefined, 200)).data, []);
-  assert.equal((await call('GET', '/dashboard/resumo?mes=2026-09', vazio, undefined, 200)).data.despesas, 0);
-  assert.deepEqual((await call('GET', '/lancamentos', vazio, undefined, 200)).data, []);
+  await call('GET', '/dashboard/resumo?mes=2026-09', vazio, undefined, 403);
+  await call('GET', '/lancamentos', vazio, undefined, 403);
 
-  // all_cost_centers TRUE (conta antiga): ve tudo, como antes.
+  // all_cost_centers TRUE não elimina atribuições obrigatórias do técnico.
   const antigo = await conta('tecnico', 'antigo@teste.local', [], true);
-  assert.equal((await call('GET', '/centros-custo', antigo, undefined, 200)).data.length, 3);
-  await call('GET', `/lancamentos/${lc}`, antigo, undefined, 200);
+  assert.equal((await call('GET', '/centros-custo', antigo, undefined, 200)).data.length, 0);
+  await call('GET', `/lancamentos/${lc}`, antigo, undefined, 403);
 
   // Papeis sem escopo (financeiro) continuam vendo tudo.
   const fin = await conta('financeiro', 'fin@teste.local', []);

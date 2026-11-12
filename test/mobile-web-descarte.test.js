@@ -29,6 +29,8 @@ test('celular: Obras descartadas so para admin, com lista, detalhe e recuperar',
   assert.match(desc, /\/restaurar`, \{ method: 'POST'/);
   assert.match(desc, /Nenhuma obra descartada/);
   assert.match(desc, /CC\.cached\('descartadas'/, 'lista abre sem internet com a ultima copia');
+  assert.match(desc, /\/descartadas\/excluir`?'?, \{ method: 'POST'/, 'excluir de vez, uma ou varias');
+  assert.match(desc, /data-selecionar/);
   const sw = read('sw.js');
   assert.match(sw, /'screen-obra-acoes\.js'/);
   assert.match(sw, /'screen-descartadas\.js'/);

@@ -5,7 +5,7 @@ const { getDb } = require('../db');
 const { autenticar, exigirPapel } = require('../middleware/auth');
 const { asyncRoute, httpError, positiveId } = require('../lib/http');
 const { recordAudit } = require('../services/audit');
-const { discardCostCenter, restoreCostCenter, listDiscarded, movementSummary } = require('../services/costCenterArchive');
+const { discardCostCenter, restoreCostCenter, listDiscarded, deleteDiscarded, movementSummary } = require('../services/costCenterArchive');
 const { clearCostCenterEntries } = require('../services/costCenterClear');
 
 const router = express.Router();
@@ -14,6 +14,16 @@ const admin = [autenticar, exigirPapel('admin')];
 
 router.get('/descartadas', admin, asyncRoute(async (req, res) => {
   res.json(await listDiscarded(getDb()));
+}));
+
+// Excluir de vez: corpo { ids: [...] }. A rota fixa vem antes de /descartadas/:id/restaurar.
+router.post('/descartadas/excluir', admin, asyncRoute(async (req, res) => {
+  const removed = await deleteDiscarded(getDb(), req.body?.ids);
+  if (removed.length) {
+    await recordAudit({ entityType: 'obra', entityId: removed[0].id, action: 'descarte_excluido', summary: `Obra(s) descartada(s) excluída(s) para sempre: ${removed.map((r) => r.code).filter(Boolean).join(', ').slice(0, 200)}`,
+      data: { codigos: removed.map((r) => r.code), quantidade: removed.length }, user: req.usuario });
+  }
+  res.json({ ok: true, excluidas: removed.length });
 }));
 
 router.post('/descartadas/:id/restaurar', admin, asyncRoute(async (req, res) => {

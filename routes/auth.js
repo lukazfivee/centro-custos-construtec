@@ -5,7 +5,7 @@ const fs = require('fs');
 const crypto = require('crypto');
 const { getDb, getInstanceIdentity } = require('../db');
 const { autenticar } = require('../middleware/auth');
-const { accessInfo } = require('../services/permissions');
+const { accessInfo, suiteRoleOf } = require('../services/permissions');
 const { asyncRoute, httpError } = require('../lib/http');
 const cloudAuth = require('../services/cloudAuth');
 const { mirrorCloudUser } = require('../services/cloudUserMirror');
@@ -18,6 +18,7 @@ const { appAllowed, APP_DENIED_MESSAGE } = require('../services/appAccess');
 const { isDev } = require('../services/programmer');
 
 const router = express.Router();
+require('../services/chamadosSuite.cjs').registerRoutes(router, { autenticar, asyncRoute, cloudAuth });
 const LOGIN_MAX_FAILURES = 5;
 const LOGIN_EMAIL_MAX_FAILURES = 30;
 const LOGIN_BLOCK_MS = 15 * 60 * 1000;
@@ -47,14 +48,19 @@ setInterval(() => { pairThrottle.sweep(); emailThrottle.sweep(); }, LOGIN_SWEEP_
 
 function assertLoginAllowed(email, ip) {
   const minutes = Math.max(pairThrottle.blockedMinutes(`${loginKey(email)}|${ip}`), emailThrottle.blockedMinutes(loginKey(email)));
-  if (minutes) throw httpError(429, `Muitas tentativas de login para este e-mail. Tente novamente em ${minutes} minuto(s).`);
+  if (!minutes) return;
+  const error = httpError(429, `Muitas tentativas de login para este e-mail. Tente novamente em ${minutes} minuto(s).`);
+  error.extra = { bloqueadoMinutos:minutes };
+  throw error;
 }
 
+// Devolve quantas tentativas restam antes do bloqueio (null sem e-mail).
 function registerLoginFailure(email, ip) {
   const key = loginKey(email);
-  if (!key) return;
-  pairThrottle.fail(`${key}|${ip}`);
-  emailThrottle.fail(key);
+  if (!key) return null;
+  const pair = pairThrottle.fail(`${key}|${ip}`);
+  const global = emailThrottle.fail(key);
+  return Math.max(0, Math.min(LOGIN_MAX_FAILURES - pair, LOGIN_EMAIL_MAX_FAILURES - global));
 }
 
 function clearLoginFailures(email, ip) {
@@ -192,7 +198,13 @@ router.post('/login', asyncRoute(async (req, res) => {
     });
   } catch (error) {
     const status = Number(error.statusCode || error.status || 500);
-    if (status === 401) registerLoginFailure(email, ip);
+    if (status === 401) {
+      const remaining = registerLoginFailure(email, ip);
+      if (remaining !== null) {
+        error.extra = { ...(error.extra || {}), tentativasRestantes:remaining };
+        if (remaining === 0) error.extra.bloqueadoMinutos = LOGIN_BLOCK_MS / 60000;
+      }
+    }
     logger.warn('login_failed', {
       email: email || null,
       requestId:req.requestId,
@@ -209,11 +221,37 @@ router.get('/me', autenticar, asyncRoute(async (req, res) => res.json({
   email: req.usuario.email,
   role: req.usuario.role,
   ...(await accessInfo(req.usuario)),
-  todasObras: req.usuario.all_cost_centers !== false,
+  todasObras: suiteRoleOf(req.usuario) !== 'tecnico' && req.usuario.all_cost_centers !== false,
   programador: isDev(req.usuario),
   verComo: req.verComo || null,
   instancia: getInstanceIdentity(),
 })));
+
+// Código de uso único para abrir o Orçamentos já logado: no navegador (public/entrar-orcamentos.js, que o Orçamentos
+// sem sessão chama) e no app Suíte do Windows (uma janela, duas telas, ver abaixo).
+// Só contas corporativas têm sessão central; as locais entram pela tela de login do Orçamentos.
+router.post('/suite-handoff', autenticar, asyncRoute(async (req, res) => {
+  const target = String(req.body?.target || '');
+  if (target !== 'orcamentos') throw httpError(400,'Destino inválido.');
+  if (!req.usuario.cloud_managed || !req.usuario.cloud_session_token) throw httpError(409,'Só contas corporativas entram direto no Orçamentos.');
+  // O código só é trocado no Centro com a chave de serviço, segredo do servidor que não vai no instalador.
+  // Dentro da Suíte, o processo principal (único que conhece a chave interna desta execução) pede a própria
+  // sessão corporativa, que o Orçamentos valida só com ela.
+  const internalKey = String(process.env.CONSTRUTEC_SUITE_INTERNAL_KEY || '');
+  const suppliedKey = String(req.get('x-suite-internal') || '');
+  if (internalKey.length >= 32 && suppliedKey.length === internalKey.length
+    && crypto.timingSafeEqual(Buffer.from(suppliedKey),Buffer.from(internalKey))) {
+    return res.json({ sessionToken:req.usuario.cloud_session_token });
+  }
+  let remote;
+  try { remote = await cloudAuth.handoff(req.usuario.cloud_session_token,target); }
+  catch (error) {
+    if (error.status === 401) throw httpError(428,'Sua sessão corporativa expirou. Entre novamente.');
+    throw httpError(503,'Não foi possível abrir o Orçamentos com a sua conta agora.');
+  }
+  if (!remote?.code) throw httpError(502,'A autenticação corporativa não retornou o código de acesso.');
+  res.json({ code:remote.code });
+}));
 
 router.get('/foto-perfil', autenticar, asyncRoute(async (req, res) => {
   let synchronized = true;

@@ -93,7 +93,15 @@ async function consumeRate(db, ip) {
   return true;
 }
 
+// Reports do Orcamentos chegam com platform 'orcamentos-...'; o resto e do Centro de Custos.
+function sistemaDoReport(report) {
+  return /^orcamentos/i.test(text(report.platform))
+    ? { nome: 'Construtec Orçamentos', tag: 'orcamentos' }
+    : { nome: 'Centro de Custos', tag: 'centro-custos' };
+}
+
 async function sendEmail(env, report) {
+  const sistema = sistemaDoReport(report);
   if (!env.RESEND_API_KEY || !env.REPORT_FROM) {
     throw new Error('Resend nao configurado no Worker.');
   }
@@ -116,7 +124,7 @@ async function sendEmail(env, report) {
   const html = `<!doctype html><html><body style="font-family:Arial,Helvetica,sans-serif;background:#f4f6f7;color:#102a33;margin:0;padding:24px">
   <table width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td align="center">
   <table width="600" cellpadding="0" cellspacing="0" border="0" style="max-width:600px;background:#ffffff;border-radius:10px;overflow:hidden">
-  <tr><td style="background:#021d26;padding:20px;color:#ffffff"><div style="font-size:20px;font-weight:700">Novo report do Centro de Custos</div><div style="font-size:13px;margin-top:6px;color:#c7d2d7">${esc(report.report_id)}</div></td></tr>
+  <tr><td style="background:#021d26;padding:20px;color:#ffffff"><div style="font-size:20px;font-weight:700">Novo report do ${esc(sistema.nome)}</div><div style="font-size:13px;margin-top:6px;color:#c7d2d7">${esc(report.report_id)}</div></td></tr>
   <tr><td style="padding:20px">
   <table width="100%" cellpadding="0" cellspacing="0" border="0" style="font-size:14px;line-height:1.5">
   <tr><td style="padding:5px 0;color:#657780;width:130px">Titulo</td><td style="padding:5px 0;font-weight:700">${esc(report.title)}</td></tr>
@@ -147,7 +155,7 @@ async function sendEmail(env, report) {
       text: plain,
       html,
       tags: [
-        { name: 'system', value: 'centro-custos' },
+        { name: 'system', value: sistema.tag },
         { name: 'type', value: report.type },
         { name: 'severity', value: report.severity },
       ],

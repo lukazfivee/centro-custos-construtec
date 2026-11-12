@@ -115,10 +115,11 @@
     corpo.innerHTML = `<div class="cfg-grade">
       <section class="card cfg-card" aria-labelledby="cfg-perfil-t"><h2 id="cfg-perfil-t">Meu perfil</h2>
         <div class="cfg-foto"><span class="avatar" data-foto></span>
-          <button type="button" class="btn btn-s" data-enviar>${D.ic('camera')}<span data-enviar-rot></span></button>
-          <button type="button" class="cfg-link" data-tirar>Remover</button>
-          <input type="file" id="cfg-arquivo" accept="image/png,image/jpeg" aria-label="Escolher foto de perfil">
-          <span class="cfg-nota">JPG ou PNG, até 2 MB. Aparece no menu e no app.</span></div>
+          <div class="cfg-foto-dados"><div class="cfg-botoes">
+            <button type="button" class="btn btn-s" data-enviar>${D.ic('camera')}<span data-enviar-rot></span></button>
+            <button type="button" class="cfg-link" data-tirar>Remover</button></div>
+            <span class="cfg-nota">JPG ou PNG, até 2 MB. Aparece no menu e no app.</span></div>
+          <input type="file" id="cfg-arquivo" accept="image/png,image/jpeg" aria-label="Escolher foto de perfil"></div>
         <div class="cfg-duas">${U.campo({ rotulo: 'Nome', name: 'nome', valor: p.nome, obrigatorio: true })}
           ${U.campo({ rotulo: 'Telefone', name: 'celular', tipo: 'tel', valor: mascara(p.celular), placeholder: '(11) 98765-4321' })}</div>
         <label class="fld"><span>E-mail · usado para entrar</span><input class="inp" type="email" value="${esc(p.email)}" readonly aria-readonly="true"></label>

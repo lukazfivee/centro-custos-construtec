@@ -3,6 +3,7 @@ const crypto = require('crypto');
 const router = express.Router();
 const { getDb } = require('../db');
 const { autenticar, exigirPapel } = require('../middleware/auth');
+const { suiteRoleOf } = require('../services/permissions');
 const { asyncRoute, httpError, positiveId } = require('../lib/http');
 const { recordAudit } = require('../services/audit');
 const { deliverReport, flushPendingReports, refreshAcceptedReports, platformLabel } = require('../services/reportDelivery');
@@ -46,7 +47,7 @@ function reportSelect(detalhe) {
 router.get('/', asyncRoute(async (req, res) => {
   const db = getDb();
   const limite = Math.min(Math.max(Number.parseInt(req.query.limite, 10) || 200, 1), 500);
-  const isAdminOrGestor = ['admin', 'gestor'].includes(req.usuario.role);
+  const isAdminOrGestor = ['admin', 'gestor'].includes(suiteRoleOf(req.usuario));
   const result = isAdminOrGestor
     ? await db.query(`${reportSelect()} ORDER BY b.created_at DESC LIMIT $1`, [limite])
     : await db.query(`${reportSelect()} WHERE b.created_by = $1 ORDER BY b.created_at DESC LIMIT $2`, [req.usuario.id, limite]);
@@ -83,7 +84,7 @@ router.get('/:id', asyncRoute(async (req, res) => {
   const result = await db.query(`${reportSelect(true)} WHERE b.id = $1`, [id]);
   if (!result.rows[0]) throw httpError(404, 'Report não encontrado.');
   const report = result.rows[0];
-  const isAdminOrGestor = ['admin', 'gestor'].includes(req.usuario.role);
+  const isAdminOrGestor = ['admin', 'gestor'].includes(suiteRoleOf(req.usuario));
   if (!isAdminOrGestor && report.created_by !== req.usuario.id) throw httpError(403, 'Sem permissão.');
   res.json(report);
 }));
@@ -96,7 +97,7 @@ router.get('/:id/anexo', asyncRoute(async (req, res) => {
     WHERE b.id = $1
   `, [id]);
   if (!rows[0]) throw httpError(404, 'Este report não tem print.');
-  const isAdminOrGestor = ['admin', 'gestor'].includes(req.usuario.role);
+  const isAdminOrGestor = ['admin', 'gestor'].includes(suiteRoleOf(req.usuario));
   if (!isAdminOrGestor && rows[0].created_by !== req.usuario.id) throw httpError(403, 'Sem permissão.');
   res.set({ 'Content-Type': rows[0].tipo, 'X-Content-Type-Options': 'nosniff', 'Cache-Control': 'private, no-store', 'Content-Disposition': `inline; filename="${rows[0].nome}"` });
   res.send(Buffer.from(rows[0].dados));
@@ -176,7 +177,7 @@ router.post('/:id/retry', asyncRoute(async (req, res) => {
   const id = positiveId(req.params.id);
   const existing = await getDb().query('SELECT id, created_by FROM bug_reports WHERE id = $1', [id]);
   if (!existing.rows[0]) throw httpError(404, 'Report não encontrado.');
-  const isAdminOrGestor = ['admin', 'gestor'].includes(req.usuario.role);
+  const isAdminOrGestor = ['admin', 'gestor'].includes(suiteRoleOf(req.usuario));
   if (!isAdminOrGestor && existing.rows[0].created_by !== req.usuario.id) throw httpError(403, 'Sem permissão.');
   const delivery = await deliverReport(id);
   res.json(delivery);

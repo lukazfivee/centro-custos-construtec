@@ -340,12 +340,13 @@ if (!gotLock) {
       createWindow();
       createTray();
       await startServer();
-      if (shouldPersistBootstrap && firstAccessCredentials) {
+      const primeiraVez = shouldPersistBootstrap && !!firstAccessCredentials;
+      if (primeiraVez) {
         persistBootstrapCredentials(firstAccessCredentials);
         shouldPersistBootstrap = false;
       }
       if (mainWindow) mainWindow.loadURL(SERVER_URL);
-      await showFirstAccessInfo();
+      if (primeiraVez) await showFirstAccessInfo();
     } catch (error) {
       dialog.showErrorBox('Erro ao iniciar', `Não foi possível iniciar: ${error.message}`);
       app.quit();

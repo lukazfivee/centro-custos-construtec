@@ -1,20 +1,29 @@
-// Detalhe da obra: Resumo, Lancamentos e Caixa. Prototipo: sObra (otResumo, otLanc, otCaixa).
+// Detalhe da obra: Resumo, Lancamentos, Caixa, Orcado, Notas, Medicoes e Curva S. Prototipo: sObra (otResumo, otLanc, otCaixa).
 (function (CC) {
   const { esc, icon, money, moneyShort } = CC;
-  const TABS = [['resumo', 'Resumo'], ['lanc', 'Lançamentos'], ['caixa', 'Caixa']];
+  const TABS = [['resumo', 'Resumo'], ['lanc', 'Lançamentos'], ['caixa', 'Caixa'], ['orcado', 'Orçado × realizado'], ['nf', 'Notas fiscais'], ['medicoes', 'Medições'], ['curva', 'Curva S']];
+  // Abas desenhadas por outros arquivos (screen-obra-abas.js, screen-obra-tec.js, screen-obra-curva.js).
+  const ABAS = { orcado: 'obraOrcado', nf: 'obraNf', medicoes: 'obraMedicoes', curva: 'obraCurva' };
 
   function amountOf(t) {
     const v = Number(t.valor) * Number(t.sinal_contabil || 1);
     return t.tipo === 'receita' ? v : -v;
   }
 
-  CC.txRow = function (t, extra) {
+  // porDescricao: titulo = descricao (como as Atividades recentes do desktop); sem ele, favorecido primeiro.
+  CC.txRow = function (t, extra, porDescricao) {
     const value = amountOf(t);
-    const state = t.situacao === 'vencido' ? '<span class="state">Vencida</span>'
+    const state = t.situacao === 'vencido' ? '<span class="state err">Vencida</span>'
       : (t.status_financeiro === 'pendente' ? `<small>${t.tipo === 'receita' ? 'A receber' : 'A pagar'}${t.vencimento ? ` · vence ${esc(CC.dateBr(t.vencimento))}` : ''}</small>` : '');
-    return `<div class="tx"><span class="grow"><b>${esc(t.favorecido || t.descricao)}</b><small>${esc(t.favorecido ? t.descricao : (t.categoria || ''))}${extra ? ` · ${esc(extra)}` : ''}</small>${state}</span>
-      <span class="amt${value > 0 ? ' in' : ''}">${esc(CC.signed(value))}</span></div>`;
+    const estorno = t.estorno_de ? '<small class="state">Estorno</small>' : (t.estornado || t.reversed_at ? '<small>Estornado</small>' : '');
+    // Lancamento do servidor (tem id) abre o detalhe; o que ainda esta na fila do celular nao.
+    const [open, close] = t.id ? [`<button class="tx tx-btn" type="button" data-tx="${Number(t.id)}">`, '</button>'] : ['<div class="tx">', '</div>'];
+    const [titulo, apoio] = porDescricao ? [t.descricao || t.favorecido, t.descricao ? t.favorecido : ''] : [t.favorecido || t.descricao, t.favorecido ? t.descricao : (t.categoria || '')];
+    return `${open}<span class="grow"><b>${esc(titulo)}</b><small>${esc([apoio, extra].filter(Boolean).join(' · '))}</small>${state}${estorno}</span>
+      <span class="amt${value > 0 ? ' in' : ''}">${esc(CC.signed(value))}</span>${close}`;
   };
+  // Liga o toque nas linhas de lancamento da tela (scope) ao detalhe; from = para onde o Voltar leva.
+  CC.wireTx = (scope, from) => CC.$$('[data-tx]', scope).forEach((b) => b.addEventListener('click', () => CC.go('lanc', { id: Number(b.dataset.tx), from })));
 
   CC.queuedRows = async function (filterFn) {
     const items = (await CC.queue.mine()).filter(filterFn || (() => true));
@@ -43,12 +52,12 @@
     return `<div class="card"><span class="label">Resultado até agora</span>
         <div class="big">${esc(CC.signed(Number(c.total_receitas) - Number(c.total_despesas)))}</div>
         ${contract ? `<div class="kv"><span>Contrato (receita)</span><b>${esc(money(contract))}</b></div>` : ''}
-        <div class="kv"><span>Custo orçado</span><b>${budget > 0 ? esc(money(budget)) : 'Sem orçamento'}</b></div>
+        <div class="kv"><span>Orçamento da obra</span><b>${budget > 0 ? esc(money(budget)) : 'Sem orçamento'}</b></div>
         <div class="kv"><span>Gasto (comprometido)</span><b${p !== null && p > 100 ? ' style="color:var(--warn)"' : ''}>${esc(money(spent))}</b></div>
         <div class="kv"><span>Pago</span><b>${esc(money(c.total_despesas))}</b></div>
         <div class="kv"><span>Recebido</span><b>${esc(money(c.total_receitas))}</b></div>
         ${p === null ? '' : `<div class="bar${p > 100 ? ' warn' : ''}" style="margin-top:8px"><span style="width:${Math.min(100, p)}%"></span></div>
-        <small class="muted">Gasto em relação ao custo orçado · ${p}%</small>`}</div>
+        <small class="muted">Gasto em relação ao orçamento da obra · ${p}%</small>`}</div>
       <span class="label">Resolver nesta obra</span>
       ${pend.length ? pend.map(([ic, t, v]) => `<div class="card task hot"><span class="ic">${icon(ic, 18)}</span><span class="txt"><b>${esc(t)}</b><small>${esc(v)}</small></span></div>`).join('')
         : `<div class="empty">${icon('check-circle', 24)}Nada pendente nesta obra.</div>`}`;
@@ -66,27 +75,46 @@
     CC.$('#voltar', el).addEventListener('click', () => CC.go('obras'));
     let result;
     try {
-      result = await CC.cached(`obra-${id}`, `/centros-custo/${id}/detalhes?mes=${CC.month()}`);
+      [result] = await Promise.all([CC.cached(`obra-${id}`, `/centros-custo/${id}/detalhes?mes=${CC.month()}`), CC.sv ? CC.sv.loadPerms() : null]);
     } catch (error) {
+      if (params && params.__nav && params.__nav !== CC.nav) return;
       return CC.errorScreen(el, error, () => CC.screens.obra(params));
     }
+    if (!CC.session.token() || (params && params.__nav && params.__nav !== CC.nav)) return;
     const c = result.data.centro, list = result.data.lancamentos || [];
+    if (CC.sv && CC.sv.role() === 'tecnico') {
+      const situacoes = { planejamento: 'Planejamento', execucao: 'Em execução', pausado: 'Pausada', concluido: 'Concluída' };
+      CC.render(`<div class="top obra-top"><button class="back" type="button" id="voltar" aria-label="Voltar">${icon('caret-left', 20)}</button><h1>${esc(c.nome)}</h1></div>${CC.staleNote(result)}
+        <div class="card">${[['Código', c.codigo], ['Cliente', c.cliente], ['Local', c.local], ['Situação', situacoes[c.situacao] || c.situacao]]
+          .map(([k, v]) => `<div class="kv"><span>${k}</span><b>${esc(v || '—')}</b></div>`).join('')}</div>
+        <div class="card"><span class="label">Descrição</span><p class="tc-relato">${esc(c.descricao || 'Sem descrição registrada.')}</p></div>`, true, params);
+      CC.$('#voltar').addEventListener('click', () => CC.go('obras'));
+      return;
+    }
     if (CC.suite) CC.suite.context = { proposta: c.proposta_origem || null };
     const queued = tab === 'lanc' ? await CC.queuedRows((i) => Number(i.payload.cost_center_id) === id) : '';
     const body = tab === 'resumo' ? resumo(c, list)
       : (tab === 'caixa' ? caixa(list)
-        : (list.length || queued ? `${queued}${byDate(list)}` : `<div class="empty">${icon('receipt', 28)}Nenhum lançamento nesta obra ainda.</div>`));
+        : (ABAS[tab] ? '<div id="obra-aba"></div>'
+          : (list.length || queued ? `<div class="rows">${queued}${byDate(list)}</div>` : `<div class="empty">${icon('receipt', 28)}Nenhum lançamento nesta obra ainda.</div>`)));
     CC.render(`<div class="top obra-top"><button class="back" type="button" id="voltar" aria-label="Voltar">${icon('caret-left', 20)}</button>
         <span class="grow"><h1>${esc(c.nome)}</h1><small class="muted">${esc([c.cliente, c.codigo].filter(Boolean).join(' · '))}</small></span>
         ${CC.obraMenu ? `<button class="back" type="button" id="obra-mais" aria-label="Mais ações da obra" aria-haspopup="dialog">${icon('dots-three', 22)}</button>` : ''}${CC.bellBtn ? CC.bellBtn() : ''}${CC.suitePill()}</div>
       ${CC.staleNote(result)}
-      <div class="seg" role="group" aria-label="Seções da obra">${TABS.map(([k, label]) => `<button type="button" data-tab="${k}" aria-pressed="${k === tab}">${label}</button>`).join('')}</div>
+      <div class="chips obra-abas" role="group" aria-label="Seções da obra">${TABS.map(([k, label]) => `<button class="chip-act" type="button" data-tab="${k}" aria-pressed="${k === tab}">${label}</button>`).join('')}</div>
       ${body}
+      ${tab === 'resumo' && CC.sv && CC.sv.can('p5') ? '<div id="obra-tecnicos"></div>' : ''}
       <div class="actions"><button class="btn" type="button" id="lancar">${icon('camera', 18)}Lançar despesa</button></div>`, true, params);
     CC.$('#voltar').addEventListener('click', () => CC.go('obras'));
     CC.$$('[data-tab]').forEach((b) => b.addEventListener('click', () => CC.screens.obra({ id, tab: b.dataset.tab })));
+    CC.wireTx(document, ['obra', { id, tab }]);
+    const aba = CC.$('#obra-aba');
+    if (aba && CC[ABAS[tab]]) CC[ABAS[tab]](aba, c);
+    const sel = CC.$('.obra-abas [aria-pressed="true"]');
+    if (sel && sel.scrollIntoView) sel.scrollIntoView({ block: 'nearest', inline: 'center' });
     const mais = CC.$('#obra-mais');
     if (mais) mais.addEventListener('click', () => CC.obraMenu(c));
     CC.$('#lancar').addEventListener('click', () => CC.go('lancar', { obraId: id, from: ['obra', { id, tab: 'lanc' }] }));
+    if (CC.$('#obra-tecnicos') && CC.tecnicos) CC.tecnicos.panel(CC.$('#obra-tecnicos'), id);
   };
 })(window.CC = window.CC || {});

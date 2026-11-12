@@ -37,11 +37,11 @@ test('medições com data pura e autor; importação só para admin e gestor', a
     return data;
   }
   const admin = (await request('/auth/login', 'POST', { email: 'admin@teste.local', senha: 'senha-teste-123' }, 200)).token;
-  await request('/usuarios', 'POST', { nome: 'Supervisor', email: 'sup@teste.local', senha: 'senha-sup-1234', role: 'supervisor' }, 201, admin);
+  await request('/usuarios', 'POST', { nome: 'Engenharia', email: 'sup@teste.local', senha: 'senha-sup-1234', suiteRole: 'engenharia', obras: 'todas' }, 201, admin);
   const sup = (await request('/auth/login', 'POST', { email: 'sup@teste.local', senha: 'senha-sup-1234' }, 200)).token;
 
   const envelope = JSON.parse(fs.readFileSync(path.join(__dirname, 'fixtures/proposal-approved.v1.example.json'), 'utf8'));
-  // Supervisor nao importa (nem previa, nem direto).
+  // Engenharia não importa (nem prévia, nem direto).
   await request('/integracao/orcamentos/previas', 'POST', envelope, 403, sup);
   await request('/integracao/orcamentos/confirmar-direto', 'POST', envelope, 403, sup);
   // Admin faz a previa e confirma.
@@ -60,7 +60,11 @@ test('medições com data pura e autor; importação só para admin e gestor', a
   assert.equal(med.contracts[0].period_end, '2026-09-15');
   assert.equal(med.labor[0].created_by_name, 'Administrador');
   assert.equal(med.contracts[0].created_by_name, 'Administrador');
-  // O supervisor legado vira tecnico, que registra horas e medicoes (p12). Financeiro nao.
+  // Técnicos não acessam medições financeiras; engenharia registra autoria de horas.
+  await getDb().query("UPDATE users SET suite_role='tecnico' WHERE email=$1", ['sup@teste.local']);
+  await request(`/centros-custo/${obra}/medicoes`, 'GET', undefined, 403, sup);
+  await request(`/centros-custo/${obra}/medicoes`, 'POST', { type: 'labor', periodStart: '2026-09-08', periodEnd: '2026-09-14', teamHours: 5 }, 403, sup);
+  await getDb().query("UPDATE users SET suite_role='engenharia' WHERE email=$1", ['sup@teste.local']);
   await request(`/centros-custo/${obra}/medicoes`, 'POST', { type: 'labor', periodStart: '2026-09-08', periodEnd: '2026-09-14', teamHours: 5 }, 201, sup);
   await getDb().query("UPDATE users SET suite_role='financeiro' WHERE email=$1", ['sup@teste.local']);
   await request(`/centros-custo/${obra}/medicoes`, 'POST', { type: 'labor', periodStart: '2026-09-15', periodEnd: '2026-09-21', teamHours: 5 }, 403, sup);

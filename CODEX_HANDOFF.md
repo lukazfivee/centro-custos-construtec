@@ -1,5 +1,41 @@
 # Handoff — Centro de Custos
 
+## 2026-11-01 BRT — importação WhatsApp aceita linhas idênticas (Claude Code)
+
+- Base: `origin/main` em `9fa047b`, branch `feat/whatsapp-linhas-identicas`, sem push. Duas linhas iguais na mesma mensagem (valor, descrição e centro) viravam pendência; agora cada item fica com uma linha, na ordem, quando a extração traz exatamente a mesma quantidade de linhas iguais que a mensagem. Quantidade diferente continua pendência.
+- Mudou: `lib/whatsappImport/source.js` (`matchSources`), `lib/whatsappImport/check.js` e `test/whatsapp-import-duplicate.test.js` (3 casos). Só `lib/whatsappImport/` e teste; nada de interface.
+- Validação: `node --test test/whatsapp-import-*.test.js` com 26 testes aprovados e `node scripts/check-syntax.js`. Não rodei `npm run verify` nem a integração com banco e Gemini (clone sem `node_modules`).
+- Próximo passo: rodar `npm run verify` e abrir PR quando o Lucas pedir o push.
+
+## 2026-10-30 BRT — correção de centros e pendências da importação publicada
+
+- Cartões de obras mostram o valor comprometido (despesas aprovadas, pagas e a pagar) separadamente do realizado liquidado, sem alterar a situação dos lançamentos.
+- A validação da mensagem aceita continuação do centro em linhas sucessivas; itens rejeitados com origem identificável não geram pendência duplicada. O histórico permite ao próprio usuário sem restrição de obras reutilizar a mensagem original, preservando a chave de deduplicação dos lançamentos.
+- PR #229 mesclado em `13e10c4f978febd91b926edba89bb59c9457aab3`; Worker versão `3e2af520-e2eb-461d-80ce-9a4785652e1e`. `npm run verify`: 785 testes aprovados; CI Node 20, Node 24 e Android verdes. Interface testada com dados fictícios, IA e banco isolado; produção serve os novos arquivos e informa banco conectado. A importação anterior deve ser reprocessada pelo botão de reutilizar a mensagem original no histórico; nenhum dado de produção foi alterado automaticamente.
+
+
+## 2026-10-30 11:54 BRT — correção da resposta de IA do WhatsApp publicada
+
+- A extração agora solicita esquema JSON explícito, aceita também lista de itens e tenta o modelo reserva após falha, sem enviar lançamentos se nenhum modelo retornar resposta válida. O prompt esclarece que o destino anterior ao travessão é o centro no rateio.
+- Testes unitários cobrem formato, reserva e troca de sessão. Em navegador, mensagem fictícia com compras e rateio gerou os cinco lançamentos esperados em banco isolado.
+- PR #227 mesclado em `79fbd1a8897b8b86220b4896b815c07ee266567a`; Worker versão `6f7988e8-ad67-47fa-9165-0611e096d438`. `npm run verify`: 782 testes aprovados; CI Node 20, Node 24 e Android verdes. Em produção, o script com esquema e modelo reserva é servido e o banco responde. Não incluir mensagens reais em fixtures ou logs.
+
+
+## 2026-10-30 11:00 BRT — importação WhatsApp publicada (Codex)
+
+- PR #225 mesclado em `1a947947df8c25423646135f14b55e36f4c1a103`; Worker `centro-custos-api` versão `7fc49c00-44af-451e-86be-9326896b2914`. Após troca de imagem, `/d/` inclui a tela, o script é servido como JavaScript, a API exige autenticação e `/api/health/ready` informa banco conectado à instância `027af419-27bb-4e80-a312-187421bc1ec5`.
+- Importa compras como pendentes, confere valores e centros na origem, totais e permissões, evita duplicações e oferece histórico e desfazer. A exclusão de lançamentos usa lixeira; centro novo sem vínculos ativos é inativado, preservando o histórico, em vez de apagado fisicamente.
+- Validação: `npm run verify` no head do PR, 778 testes aprovados; CI Node 20, Node 24 e Android verdes. Integração em PostgreSQL isolado aprovada usando sessões de teste assinadas localmente; fluxo com Gemini, dois formatos e desfazer testado em navegador com dados fictícios. Backup PostgreSQL do dia concluído antes do deploy.
+- Limite: não foi criado lançamento com conta corporativa no banco de produção. Próximo passo: acompanhar o primeiro uso real e tratar formatos marcados como pendência; não registrar dados reais em fixtures públicas.
+
+## 2026-10-20 BRT - Otimizacao fase 1: logs de invocacao desligados (Claude Code)
+
+- Base: `origin/main` em `8e291f8`, branch `perf/fase1-logs`. Plano geral de reducao de atraso e de custo na Cloudflare (Orcamentos, Centro e Chamados).
+- `cloudflare/center-container/wrangler.jsonc`: `observability.logs.invocation_logs` false (o log de cada invocacao deixa de ser gravado; logs de erro e `console.log` continuam). Efeito so depois do proximo deploy.
+- Conferido sem mudar: o Worker publicado e o `center-container` (e o que `scripts/deploy-cloud.js` usa). O `cloudflare-sync-worker` tem o mesmo nome `centro-custos-api`; conferir antes de qualquer deploy dele (`deploy-iphone-cloud.yml`).
+- Cache estatico ja esta razoavel (`server.js`: fontes e imagens 7 dias; JS/CSS com `no-cache` e ETag forte). Pendente, nao feito: cada revalidacao de JS/CSS passa por Worker, Durable Object e Container (pode acordar o Container). Opcoes: servir `public/` por Static Assets do Worker, ou nome com hash.
+- Proximo passo: medir antes e depois (volume de logs e uso do Container no painel Cloudflare).
+
 ## 2026-09-27 12:40 BRT — Suíte mobile, Fase 4 (notificações) publicada (Claude Code)
 
 - Central de notificações no Worker (D1 `010`), push pelo Firebase (`FCM_SERVICE_ACCOUNT`), avisos de proposta aprovada, item acima do orçado, contas a vencer e novo acesso, sino e central no site do celular, app com Firebase Messaging (PR #45).
@@ -50,10 +86,10 @@
 - Curva S: HALF_UP racional, cronograma estável e indicadores indisponíveis quando não há base suficiente.
 - Recibo idempotente inclui obra e baseline original. Boletim inclui acumulado/saldo e não infere execução física pelo gasto.
 - `lib/localControl.js`: parada local autenticada, reutilizando fechamento HTTP/PGlite do servidor.
-- Homologação com banco isolado: integração real, reinício, backup/restauração, Hub e PDF A4 aprovados.
+- Homologação com banco isolado: integração real, reinício, backup/restauração e PDF A4 aprovados.
 - Instâncias produtivas antigas preservadas; precisam de reinício seguro para carregar o backend corrigido.
 - Relatório: `../INTEGRAÇÃO-ORÇAMENTOS-CENTRO V3/09-HOMOLOGACAO-SUITE.md`.
-- Validação final: `npm test` 107/107; `npm run check` 76 arquivos; Hub e PowerShell sem erros de sintaxe.
+- Validação final: `npm test` 107/107; `npm run check` 76 arquivos; PowerShell sem erros de sintaxe.
 
 ## 2026-09-06 15:56 BRT — projeções financeiras do Centro de Custos
 

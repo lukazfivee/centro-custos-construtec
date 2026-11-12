@@ -138,6 +138,7 @@ test('D3b Obras: medições, Curva S, relatório, importar e vincular', () => {
   assert.match(imp, /hash: previa\.hash/);
   assert.match(imp, /\/centros-custo\/\$\{obraId\}\/proposta/, 'o PDF da proposta vai para a obra depois de importar');
   assert.match(imp, /accept="\.pdf,application\/pdf"/);
+  assert.match(src('telas/obra-orcado.js'), /Baixar a proposta \(PDF\)/, 'PDF guardado aparece mesmo sem orçamento importado');
   assert.match(imp, /allocationId: card\.dataset\.gasto/);
   assert.match(src('css/obras-ferramentas.css'), /@media print/);
 });
@@ -164,7 +165,8 @@ test('desktop novo: tokens de contraste e rodapes opacos (QA visual)', () => {
   }
   assert.match(tokens, /\[data-theme="escuro"\][\s\S]*--color-field:/);
   assert.match(src('css/base.css'), /box-shadow: inset 0 0 0 1px var\(--color-field\)/);
-  assert.match(src('css/robustez.css'), /\.drawer \.drod \{ background: var\(--color-surface\)/);
+  assert.match(src('css/vidro.css'), /--vidro-painel:/);
+  assert.match(src('css/vidro.css'), /\.drawer \.dcab, \.drawer \.dabas, \.drawer \.drod \{ background: transparent/);
   // Texto branco so sobre a cor de marca solida, nunca sobre accent-300 (claro no tema escuro).
   assert.doesNotMatch(src('css/usuarios.css'), /accent-300\); color: #fff/);
 });
@@ -194,4 +196,22 @@ test('desktop novo: barra de rolagem do tema (fina, com cores dos tokens), nao a
   assert.match(css, /scrollbar-width: thin/);
   assert.match(css, /\*::-webkit-scrollbar-thumb \{[^}]*var\(--color-neutral-500\)/);
   assert.match(css, /\*::-webkit-scrollbar-track \{[^}]*var\(--color-bg\)/);
+});
+
+test('desktop novo: transicao entre telas so quando a tela muda e continua com movimento reduzido (so esmaecer)', () => {
+  assert.match(src('index.html'), /css\/transicao\.css/);
+  const router = src('router.js');
+  assert.match(router, /modoDeEntrada/);
+  assert.match(router, /'entra-aba'/);
+  const css = src('css/transicao.css');
+  assert.match(css, /\.conteudo\.entra > \.pagina > \*[^}]*telaEntra/);
+  assert.match(css, /prefers-reduced-motion: reduce\) \{[^}]*telaFade[^}]*!important/);
+  assert.doesNotMatch(src('css/layout.css'), /\.conteudo > \* \{ animation/);
+});
+
+test('desktop novo: com a escala de 75% o app fica preso a janela (sem segunda barra de rolagem do documento)', () => {
+  const css = src('css/escala.css');
+  assert.match(css, /\.app \{ position: fixed; inset: 0; height: auto; \}/);
+  assert.match(css, /\.abertura \{ position: fixed; inset: 0;/);
+  assert.doesNotMatch(css, /height: calc\(100(vh|%) \/ \.75\)/);
 });

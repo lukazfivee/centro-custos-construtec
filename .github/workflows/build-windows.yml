@@ -8,6 +8,7 @@ on:
       - 'package.json'
       - 'package-lock.json'
       - 'desktop/**'
+      - 'scripts/build-suite-modules.js'
       - 'public/**'
       - 'routes/**'
       - 'services/**'
@@ -41,6 +42,15 @@ jobs:
         run: npm audit --omit=dev --audit-level=high
       - name: Testar aplicacao
         run: npm run verify
+      # Depois do verify: o node --test do Centro descobriria e rodaria os testes do Orcamentos aqui dentro.
+      - name: Baixar codigo do Orcamentos (tela da Suite)
+        uses: actions/checkout@v7
+        with:
+          repository: lukazfivee/construtec-orcamentos
+          path: orcamentos-src
+      - name: Instalar dependencias do Orcamentos
+        working-directory: orcamentos-src
+        run: npm ci
       - name: Gerar instalador e versao portatil
         run: npm run build
       - name: Publicar artefatos

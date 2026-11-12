@@ -20,8 +20,8 @@ jobs:
       # Unico lugar que muda a cada pre-lancamento: o numero da RC. O versionCode do
       # Android sai dele (3.1.0-rc.N -> 31000+N; ver versionCodeFor no Worker) e o app
       # instalado so oferece a atualizacao quando o codigo da release for maior.
-      RC_NUMBER: '20'
-      APP_NOTES: 'Atualização do aplicativo direto de dentro do app: Menu > Atualização do aplicativo.'
+      RC_NUMBER: '52'
+      APP_NOTES: 'Tela de Logistica refeita no Centro de Custos: resumo com indicadores que abrem a lista, abas Ferramental, Materiais, Pendencias e Historico, fichas pendentes com revisao da divergencia, historico da ferramenta com impressao e tabelas em cartoes no celular.'
     steps:
       - name: Baixar codigo
         uses: actions/checkout@v7
@@ -40,6 +40,15 @@ jobs:
           npm version $version --no-git-tag-version
       - name: Validar aplicacao
         run: npm run verify
+      # Depois do verify: o node --test do Centro descobriria e rodaria os testes do Orcamentos aqui dentro.
+      - name: Baixar codigo do Orcamentos (tela da Suite)
+        uses: actions/checkout@v7
+        with:
+          repository: lukazfivee/construtec-orcamentos
+          path: orcamentos-src
+      - name: Instalar dependencias do Orcamentos
+        working-directory: orcamentos-src
+        run: npm ci
       - name: Gerar instalador Windows
         run: npm run build
       - name: Configurar Java
@@ -89,6 +98,10 @@ jobs:
           make_latest: false
           body: |
             Pre-lancamento RC${{ env.RC_NUMBER }} da V3.1 para validacao interna.
+
+            Novidades da RC29:
+            - barra de abas no estilo do iPhone (iOS 26): vidro transparente, lente que arrasta de uma aba para outra e icone preenchido na aba ativa;
+            - celular: cadastros, administracao e obra tecnica como no desktop;
 
             Melhorias desta versao:
             - atualizacao do aplicativo por dentro do app (Menu > Atualizacao do aplicativo): o app avisa quando ha versao nova, baixa, confere o hash e abre o instalador do Android. Esta e a ultima vez que o APK precisa ser instalado a mao;

@@ -1,11 +1,13 @@
 /* Barra de abas, bordas seguras e acabamentos (QA visual do celular).
-   Regra: nada aparece atras da barra inferior; html e body ja usam --bg (m.css). */
-:root { --tabs-h: 64px; --tabs-gap: 12px; --side: max(20px, env(safe-area-inset-left, 0px), env(safe-area-inset-right, 0px)); }
+   Regra: o conteudo aparece pelo vidro da barra inferior (Liquid Glass); html e body ja usam --bg (m.css). */
+:root { --tabs-h: 58px; --tabs-base: max(12px, calc(var(--sab) - 19px)); --side: max(20px, env(safe-area-inset-left, 0px), env(safe-area-inset-right, 0px)); }
 
-/* Faixa opaca atras da barra e do home indicator, com esmaecido em cima: o conteudo some antes de chegar nela. */
+/* Esmaecido sob a barra (borda de rolagem do iOS 26): forte so abaixo dela (home indicator) e sumindo nos primeiros
+   24px por dentro; o resto do vidro fica limpo. A mascara controla a opacidade da cor de fundo em cada altura. */
 body::after { content: ''; position: fixed; left: 0; right: 0; bottom: 0; z-index: 19; pointer-events: none;
-  height: calc(var(--tabs-gap) + var(--tabs-h) + var(--sab) + 28px);
-  background: linear-gradient(to top, var(--bg) 0, var(--bg) calc(var(--tabs-gap) + var(--tabs-h) + var(--sab) + 6px), transparent 100%); }
+  height: calc(var(--tabs-base) + 24px); background: var(--bg);
+  -webkit-mask-image: linear-gradient(to top, rgba(0, 0, 0, .9) 0, rgba(0, 0, 0, .3) var(--tabs-base), transparent 100%);
+  mask-image: linear-gradient(to top, rgba(0, 0, 0, .9) 0, rgba(0, 0, 0, .3) var(--tabs-base), transparent 100%); }
 body.no-tabs::after { display: none; }
 .tabs { left: max(14px, env(safe-area-inset-left, 0px)); right: max(14px, env(safe-area-inset-right, 0px)); }
 .tabs-refraction { overflow: hidden; }
@@ -26,6 +28,32 @@ body.no-tabs .toast { bottom: calc(24px + var(--sab)); }
 .ia-note a { position: relative; }
 .ia-note a::after { content: ''; position: absolute; inset: -15px -8px; } /* area de toque de 44 px sem aumentar o texto */
 
+/* Botao flutuante do assistente (ia-chat.js): acima da barra de abas, em todas as telas.
+   --fab-lift sobe o botao quando a tela tem barra de acoes fixa; some enquanto o teclado esta aberto. */
+.ia-fab { position: fixed; right: max(16px, env(safe-area-inset-right, 0px)); bottom: calc(var(--tabs-base) + var(--tabs-h) + 14px + var(--fab-lift, 0px)); z-index: 21; width: 52px; height: 52px; border: 0; border-radius: 26px; background: var(--fill); color: #fff; display: grid; place-items: center; box-shadow: 0 6px 18px rgba(2, 24, 32, .28), inset 0 0 0 1px rgba(255, 255, 255, .18); transition: transform .12s, opacity .15s; }
+.ia-fab[hidden] { display: none; }
+.ia-fab:active { transform: scale(.94); }
+.ia-fab .ico { color: inherit; }
+body.no-tabs .ia-fab { bottom: calc(16px + var(--sab) + var(--fab-lift, 0px)); }
+body:has(input:focus, textarea:focus, select:focus) .ia-fab, .ia-fab.rolando { opacity: 0; pointer-events: none; }
+.ia-fab.rolando { transform: scale(.9); }
+/* D1 (igual no Orcamentos): o fim da rolagem reserva a altura do botao + 16 px, para a ultima linha nunca ficar
+   embaixo dele; em tela com barra de acoes fixa (formularios) o botao some, para nao cobrir o botao principal. */
+body:has(.ia-fab:not([hidden])):not(:has(.actions)) { padding-bottom: calc(var(--barra-topo) + 82px); }
+body.no-tabs:has(.ia-fab:not([hidden])):not(:has(.actions)) { padding-bottom: calc(var(--sab) + 84px); }
+body:has(.actions) .ia-fab { display: none; }
+
+/* Controles nativos no tema (D5, igual ao desktop): select com seta desenhada e reticencias; caixa de ligar
+   (.pref) com o desenho do interruptor; marca na cor da marca. */
+.field select { appearance: none; -webkit-appearance: none; padding-right: 40px; text-overflow: ellipsis; background: var(--surface) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4 6l4 4 4-4' fill='none' stroke='%234e6570' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat right 14px center / 16px; }
+html[data-theme="escuro"] .field select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4 6l4 4 4-4' fill='none' stroke='%23b9d4dd' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); }
+input[type="checkbox"], input[type="radio"] { accent-color: var(--accent-300); }
+.pref input[type="checkbox"] { flex: none; appearance: none; -webkit-appearance: none; position: relative; width: 44px; height: 26px; margin: 0; border-radius: 13px; background: var(--n600); transition: background-color .15s; cursor: pointer; }
+.pref input[type="checkbox"]::after { content: ''; position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; border-radius: 50%; background: #fff; box-shadow: 0 1px 2px rgba(0, 0, 0, .25); transition: transform .15s; }
+.pref input[type="checkbox"]:checked { background: var(--fill); }
+.pref input[type="checkbox"]:checked::after { transform: translateX(18px); }
+.pref input[type="checkbox"]:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
 /* Botoes: texto nunca estoura nem quebra feio */
 .btn, .btn2, .chip-act, .suite-pill, .seg button { text-align: center; line-height: 1.2; }
 .btn, .btn2 { padding: 0 16px; }
@@ -35,7 +63,6 @@ body.no-tabs .toast { bottom: calc(24px + var(--sab)); }
 /* Telas estreitas (360 px): cabecalho cabe inteiro */
 @media (max-width: 380px) {
   .top { gap: 6px; }
-  .top .brand { gap: 6px; letter-spacing: .02em; }
   .suite-pill { padding: 0 12px; }
   .task { gap: 10px; padding: 12px; }
   .summary { padding: 8px 12px; gap: 6px; }

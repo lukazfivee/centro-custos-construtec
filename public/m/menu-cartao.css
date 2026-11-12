@@ -1,0 +1,12 @@
+/* Menu do celular: mesma organizacao do Menu do Orcamentos (cartao do perfil + lista agrupada com seta). */
+.who { width: 100%; border: 0; text-align: left; display: flex; align-items: center; gap: 12px; color: inherit; font: inherit; }
+.who .grow { flex: 1; min-width: 0; display: grid; gap: 2px; }
+.who small { font-size: 12px; color: var(--n300); overflow: hidden; text-overflow: ellipsis; }
+.menu-card { padding: 0 14px; }
+.menu-card .menu-item { padding: 8px 0; color: inherit; text-decoration: none; }
+.menu-card > .menu-item:first-child, .menu-card > #m-fin > .fin-sec:first-child { border-top: 0; }
+.menu-card .menu-item > span { flex: 1; min-width: 0; }
+.menu-card .menu-item::after { content: ''; flex: none; width: 8px; height: 8px; margin-right: 4px; border-right: 2px solid var(--n300); border-top: 2px solid var(--n300); transform: rotate(45deg); }
+.menu-card .adm-sec, .menu-card .fin-sec { margin: 0; padding: 14px 0 4px; border-top: 1px solid var(--divider); }
+.menu-card > :first-child .fin-sec, .menu-card #m-fin:empty + .adm-menu .adm-sec { border-top: 0; }
+.danger-btn { color: var(--danger-ink); }

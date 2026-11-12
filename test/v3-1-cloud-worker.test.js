@@ -19,3 +19,26 @@ test('Worker de reports consulta a entrega real no provedor', () => {
   assert.match(source, /\/v1\\\/reports\\\/\(\[\^\/\]\+\)\\\/status/);
   assert.match(source, /emailConfigured/);
 });
+
+test('e-mail do report diz de qual sistema veio (Centro ou Orcamentos)', async () => {
+  const source = fs.readFileSync(path.join(__dirname, '..', 'cloudflare-report-worker', 'src', 'index.js'), 'utf8');
+  const worker = await import(`data:text/javascript;base64,${Buffer.from(`${source}\nexport { sendEmail };`).toString('base64')}`);
+  const original = global.fetch;
+  const enviar = async (platform) => {
+    let payload;
+    global.fetch = async (_url, options) => { payload = JSON.parse(options.body); return Response.json({ id: 'e1' }); };
+    await worker.sendEmail({ RESEND_API_KEY: 'k', REPORT_FROM: 'Centro <no-reply@reports.rcconstrutec.com.br>' }, {
+      report_id: 'RPT-1', title: 'T', type: 'bug', severity: 'alta', user_name: 'M', user_email: 'm@rcconstrutec.com.br',
+      installation_name: 'I', platform, description: 'Descricao', created_at: '2026-10-13T00:00:00Z',
+    });
+    return payload;
+  };
+  try {
+    const orcamentos = await enviar('orcamentos-celular');
+    assert.match(orcamentos.html, /Novo report do Construtec Orçamentos/);
+    assert.ok(orcamentos.tags.some((t) => t.name === 'system' && t.value === 'orcamentos'));
+    const centro = await enviar('android');
+    assert.match(centro.html, /Novo report do Centro de Custos/);
+    assert.ok(centro.tags.some((t) => t.name === 'system' && t.value === 'centro-custos'));
+  } finally { global.fetch = original; }
+});

@@ -1,0 +1,26 @@
+[
+  {
+    "antipattern": "design-system-radius",
+    "name": "Radius outside DESIGN.md",
+    "description": "A border-radius value is outside the DESIGN.md rounded scale. Use a documented radius token or update the design system if the new shape is intentional.",
+    "severity": "advisory",
+    "category": "quality",
+    "file": "C:\\cc-t-c2\\public\\d\\css\\fechamento.css",
+    "line": 12,
+    "snippet": "border-radius: 12px is outside the DESIGN.md rounded scale",
+    "advisory": true,
+    "ignoreValue": "12px"
+  },
+  {
+    "antipattern": "design-system-radius",
+    "name": "Radius outside DESIGN.md",
+    "description": "A border-radius value is outside the DESIGN.md rounded scale. Use a documented radius token or update the design system if the new shape is intentional.",
+    "severity": "advisory",
+    "category": "quality",
+    "file": "C:\\cc-t-c2\\public\\d\\css\\fechamento.css",
+    "line": 23,
+    "snippet": "border-radius: 9px is outside the DESIGN.md rounded scale",
+    "advisory": true,
+    "ignoreValue": "9px"
+  }
+]

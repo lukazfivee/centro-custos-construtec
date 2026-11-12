@@ -5,21 +5,28 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const { By, until } = require('selenium-webdriver');
-const { startServer, stopServer, buildDriver, stopDriver, login, collectConsoleErrors } = require('./helpers');
+const { startServer, stopServer, buildDriver, stopDriver, login, collectConsoleErrors, assertLocalUiTraffic } = require('./helpers');
 
 const SECTIONS = [
   'dashboard', 'lancamentos', 'centros', 'categorias', 'fornecedores',
   'config', 'recorrentes', 'bugreports', 'usuarios',
 ];
 
-test('E2E painel financeiro: carrega os KPIs sem erro de console', async () => {
+test('E2E painel financeiro: carrega os KPIs sem erro de console', async (t) => {
   const ctx = await startServer();
   const driver = await buildDriver();
   try {
     await login(driver, ctx.baseUrl);
-    await driver.wait(until.elementLocated(By.id('kpi-receitas')), 10000);
-    // loadDashboard() é assíncrono; aguarda o texto do KPI deixar de ser vazio.
-    await driver.wait(async () => (await driver.findElement(By.id('kpi-receitas')).getText()).trim().length > 0, 10000);
+    // A tela inicial já contém R$ estático; abre a view e espera os dados reais.
+    await driver.findElement(By.css('.nav-item[data-view="dashboard"]')).click();
+    await assertLocalUiTraffic(driver, ctx, t);
+    await driver.wait(async () => {
+      try {
+        const receitas = await driver.findElement(By.id('kpi-receitas')).getText();
+        const saldo = await driver.findElement(By.id('kpi-saldo')).getText();
+        return /R\$/.test(receitas) && /R\$/.test(saldo);
+      } catch { return false; } // O carregamento substitui temporariamente o grid.
+    }, 10000, 'KPIs devem renderizar valores monetários após a resposta real.');
 
     const receitas = await driver.findElement(By.id('kpi-receitas')).getText();
     const saldo = await driver.findElement(By.id('kpi-saldo')).getText();
@@ -36,7 +43,7 @@ test('E2E painel financeiro: carrega os KPIs sem erro de console', async () => {
   }
 });
 
-test('E2E navegação: todas as seções principais abrem sem erro de console', async () => {
+test('E2E navegação: todas as seções principais abrem sem erro de console', async (t) => {
   const ctx = await startServer();
   const driver = await buildDriver();
   try {
@@ -51,6 +58,7 @@ test('E2E navegação: todas as seções principais abrem sem erro de console', 
       await driver.sleep(300);
     }
 
+    await assertLocalUiTraffic(driver, ctx, t);
     const errors = await collectConsoleErrors(driver);
     if (errors !== null) {
       assert.deepEqual(

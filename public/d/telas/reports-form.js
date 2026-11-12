@@ -21,7 +21,7 @@
       ${U.campo({ rotulo: 'Onde aconteceu', name: 'tela', tipo: 'select', valor: ondeInicial, opcoes })}
       ${U.campo({ rotulo: 'O que aconteceu', name: 'descricao', tipo: 'textarea', placeholder: 'Conte o que você fez, o que esperava e o que viu.' })}
       ${C.troca({ titulo: 'Incluir diagnóstico', texto: 'Versão, navegador, conexão e as últimas 20 ações. Nada de senhas ou valores.', ligado: true })}
-      <div class="rep-anexar"><button type="button" class="rep-anexo-bt" data-escolher>${D.ic('image')}<span><b>Anexar um print</b><small data-print-txt>Ajuda a equipe a ver o problema</small></span></button>
+      <div class="rep-anexar"><button type="button" class="rep-anexo-bt" data-escolher>${D.ic('image')}<span><b>Anexar uma imagem da tela</b><small data-print-txt>Ajuda a equipe a ver o problema</small></span></button>
         <input type="file" id="rep-arquivo" accept="image/png,image/jpeg,image/webp,image/gif" hidden>
         <button type="button" class="btn btn-s" data-tirar-print hidden>${D.ic('x')}Remover</button></div>
       <div class="rep-previa" data-previa hidden></div>
@@ -54,15 +54,15 @@
       CC.$('[data-tirar-print]', ctl.corpo).hidden = !print;
       const previa = CC.$('[data-previa]', ctl.corpo);
       previa.hidden = !print;
-      previa.innerHTML = print ? `<img src="data:${esc(print.tipo)};base64,${esc(print.dados)}" alt="Prévia do print anexado">` : '';
+      previa.innerHTML = print ? `<img src="data:${esc(print.tipo)};base64,${esc(print.dados)}" alt="Prévia da imagem anexada">` : '';
     };
     CC.$('[data-escolher]', ctl.corpo).addEventListener('click', () => CC.$('#rep-arquivo', ctl.corpo).click());
     CC.$('#rep-arquivo', ctl.corpo).addEventListener('change', async (event) => {
       const arquivo = event.target.files[0];
       event.target.value = '';
       if (!arquivo) return;
-      if (!/^image\/(png|jpeg|webp|gif)$/.test(arquivo.type)) { ctl.erro('O print precisa ser uma imagem PNG, JPG, WEBP ou GIF.'); return; }
-      if (arquivo.size > MAX_PRINT) { ctl.erro('O print passa de 4 MB. Escolha uma imagem menor.'); return; }
+      if (!/^image\/(png|jpeg|webp|gif)$/.test(arquivo.type)) { ctl.erro('A imagem precisa ser uma imagem PNG, JPG, WEBP ou GIF.'); return; }
+      if (arquivo.size > MAX_PRINT) { ctl.erro('A imagem passa de 4 MB. Escolha uma imagem menor.'); return; }
       try { print = { ...(await lerArquivo(arquivo)), tamanho: arquivo.size }; ctl.erro(''); } catch (error) { ctl.erro(error.message); }
       mostrarPrint();
     });

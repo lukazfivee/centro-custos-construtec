@@ -86,7 +86,7 @@ test('cadastros: categorias, fornecedores e recorrentes por mês', async (contex
     return data;
   }
   const admin = (await request('/auth/login', 'POST', { email: 'admin@teste.local', senha: 'senha-teste-123' }, 200)).token;
-  await request('/usuarios', 'POST', { nome: 'Supervisor', email: 'sup@teste.local', senha: 'senha-sup-1234', role: 'supervisor' }, 201, admin);
+  await request('/usuarios', 'POST', { nome: 'Engenharia', email: 'sup@teste.local', senha: 'senha-sup-1234', suiteRole: 'engenharia', obras: 'todas' }, 201, admin);
   const sup = (await request('/auth/login', 'POST', { email: 'sup@teste.local', senha: 'senha-sup-1234' }, 200)).token;
   const mes = currentMonth();
 

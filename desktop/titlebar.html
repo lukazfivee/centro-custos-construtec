@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Suíte Construtec</title>
+<style>
+  /* Barra de título da Suíte (Windows): sem faixa própria, na cor do topo do app e com a fonte do app (IBM Plex Sans).
+     Os botões de minimizar, maximizar e fechar são os do Windows (titleBarOverlay), pintados na mesma cor.
+     Arrastar move a janela; clique duplo maximiza. */
+  @font-face { font-family: 'IBM Plex Sans'; font-weight: 600; src: url(../public/m/fonts/plex-600.woff2) format('woff2'); }
+  :root { --nav: #020d14; --texto: #dcecf1; --apoio: #8fb3c2; --controls: 138px; }
+  * { box-sizing: border-box; margin: 0; }
+  html, body { height: 32px; overflow: hidden; background: var(--nav); }
+  .titlebar { height: 32px; display: flex; align-items: center; gap: 8px; padding: 0 var(--controls) 0 14px; overflow: hidden; background: var(--nav); color: var(--apoio); -webkit-app-region: drag; user-select: none; font-family: 'IBM Plex Sans', 'Segoe UI', system-ui, sans-serif; font-size: 12.5px; font-weight: 600; white-space: nowrap; transition: opacity .25s ease; }
+  .titlebar.inativa { opacity: .6; }
+  .ponto { flex: none; width: 7px; height: 7px; border-radius: 50%; background: #12a9d1; pointer-events: none; }
+  .titulo { color: var(--texto); }
+  .atual:empty { display: none; }
+  .atual::before { content: '·'; margin-right: 8px; }
+  @media (prefers-reduced-motion: reduce) { .titlebar { transition: none; } }
+</style>
+</head>
+<body>
+<div class="titlebar" id="barra" role="presentation">
+  <i class="ponto" aria-hidden="true"></i>
+  <span class="titulo">Suíte Construtec</span>
+  <span class="atual" id="atual">Centro de Custos</span>
+</div>
+<script src="titlebar.js"></script>
+</body>
+</html>

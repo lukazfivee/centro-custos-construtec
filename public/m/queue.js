@@ -37,25 +37,58 @@
   function emit() { listeners.forEach((fn) => { try { fn(state); } catch { /* tela fechada */ } }); }
 
   // So os itens da conta atual (outra conta no mesmo celular nao envia nem ve a fila alheia).
-  CC.queue.mine = async () => (await CC.store.all('fila').catch(() => [])).filter((i) => i.owner && i.owner === CC.owner());
+  const mineAll = async () => {
+    const owner = CC.owner(), token = CC.session.token();
+    const items = await CC.store.all('fila').catch(() => []);
+    return token && token === CC.session.token() && owner === CC.owner() ? items.filter((i) => i.owner && i.owner === owner) : [];
+  };
+  const campoOps = new Set(['checklist-add', 'checklist', 'foto', 'aceite', 'observacoes']);
+  const permitido = (i) => !CC.sv || CC.sv.role() !== 'tecnico' || (i.op === 'programacao' ? !!i.atividadeId && !i.payload
+    : i.op === 'logistica-assinatura' ? Number.isSafeInteger(Number(i.reciboId)) && Number(i.reciboId) > 0 && !!i.body?.assinatura?.conteudoBase64
+      : i.op === 'logistica-solicitacao' ? Number(i.body?.centroId) > 0 && Number(i.body?.materialId) > 0 && Number(i.body?.quantidade) > 0 && !!i.body?.client_id
+      : i.servicoId && campoOps.has(i.op));
+  // Lancamentos e despesas de servico (tem payload) ficam separados das operacoes de campo do servico (op:
+  // checklist, foto e aceite), que as telas de lancamentos nao sabem desenhar.
+  CC.queue.mine = async () => (await mineAll()).filter((i) => !i.op && permitido(i));
+  CC.queue.ops = async () => (await mineAll()).filter((i) => i.op && permitido(i));
 
   CC.queue.refresh = async function () {
-    const items = await CC.queue.mine();
+    const items = (await mineAll()).filter(permitido);
     state.pending = items.filter((i) => i.estado !== 'erro').length;
     state.errors = items.filter((i) => i.estado === 'erro').length;
     emit();
     return items;
   };
 
+  // Hora crescente: dois itens no mesmo milissegundo nao trocam de ordem no envio.
+  let ultimo = 0;
+  const agora = () => { ultimo = Math.max(Date.now(), ultimo + 1); return ultimo; };
+
   // Guarda a despesa no celular. Ela sai da fila so depois de o servidor confirmar.
   CC.queue.add = async function (item) {
+    if (!permitido(item)) throw new CC.ApiError(403, 'Seu acesso é operacional; sem permissão para lançar despesas.');
     // Se nao der para gravar (ex.: sem espaco), o erro sobe e a tela mantem o rascunho.
-    await CC.store.put('fila', { ...item, owner: CC.owner(), estado: 'fila', erro: '', lancamento_id: null, criado_em: Date.now() });
+    await CC.store.put('fila', { ...item, owner: CC.owner(), estado: 'fila', erro: '', lancamento_id: null, criado_em: agora() });
     await CC.queue.refresh();
     try { await CC.queue.run(); } catch { /* segue na fila; tenta de novo depois */ }
   };
 
   async function sendOne(item) {
+    if (item.op === 'programacao') return CC.programacaoFila.sendOp(item);
+    if (item.op === 'logistica-assinatura') return CC.logistica.sendOp(item);
+    if (item.op === 'logistica-solicitacao') {
+      await CC.api('/logistica/materiais/solicitacoes', { method: 'POST', body: item.body });
+      await CC.store.del('fila', item.client_id);
+      return;
+    }
+    // Checklist, foto e aceite do servico: envio em screen-servico-fila.js.
+    if (item.op) return CC.sv.sendOp(item);
+    // Despesa de servico (lancamento rapido): rota propria, recibo no mesmo envio; o client_id evita duplicar.
+    if (item.servicoId) {
+      await CC.api(`/servicos/${item.servicoId}/gastos`, { method: 'POST', body: { ...item.payload, client_id: item.client_id, ...(item.recibo ? { recibo: item.recibo } : {}) } });
+      await CC.store.del('fila', item.client_id);
+      return;
+    }
     if (!item.lancamento_id) {
       const { data } = await CC.api('/lancamentos', { method: 'POST', body: { ...item.payload, client_id: item.client_id } });
       item.lancamento_id = data.id;
@@ -74,22 +107,29 @@
   // Envia a fila em ordem. Para na primeira falha de rede; erros de dados ficam marcados.
   CC.queue.run = async function () {
     if (state.syncing || CC.offline() || !CC.session.token()) return CC.queue.refresh();
-    const items = (await CC.queue.mine()).filter((i) => i.estado !== 'erro').sort((a, b) => a.criado_em - b.criado_em);
-    if (!items.length) return CC.queue.refresh();
+    const owner = CC.owner(), token = CC.session.token();
     state.syncing = true;
     emit();
     let sent = 0;
     try {
+      const mine = (await mineAll()).filter(permitido);
+      const blocked = new Set(mine.filter((i) => i.op === 'programacao' && i.estado === 'erro').map((i) => Number(i.atividadeId)));
+      const items = mine.filter((i) => i.estado !== 'erro').sort((a, b) => a.criado_em - b.criado_em);
       for (const item of items) {
+        if (owner !== CC.owner() || token !== CC.session.token()) break;
+        if (item.op === 'programacao' && blocked.has(Number(item.atividadeId))) continue;
         try {
           await sendOne(item);
           sent += 1;
         } catch (error) {
+          if (owner !== CC.owner() || token !== CC.session.token()) break;
           if (error.status === 0) state.wasOffline = true;
           if (error.status === 0 || error.status === 401 || error.status >= 500) break;
           item.estado = 'erro';
           item.erro = error.message;
+          item.erroStatus = error.status;
           await CC.store.put('fila', item);
+          if (item.op === 'programacao') blocked.add(Number(item.atividadeId));
         }
       }
     } finally {
@@ -98,16 +138,20 @@
     }
     if (sent && state.wasOffline) {
       state.wasOffline = false;
-      CC.toast(sent === 1 ? 'Internet de volta · 1 lançamento enviado' : `Internet de volta · ${sent} lançamentos enviados`, 'cloud-arrow-up');
+      CC.toast(sent === 1 ? 'Internet de volta · 1 item enviado' : `Internet de volta · ${sent} itens enviados`, 'cloud-arrow-up');
     }
     if (sent && CC.onQueueSent) CC.onQueueSent();
     return sent;
   };
 
-  CC.queue.discard = async (clientId) => { await CC.store.del('fila', clientId); return CC.queue.refresh(); };
+  CC.queue.discard = async (clientId) => {
+    const item = await CC.store.get('fila', clientId);
+    if (item && item.owner === CC.owner() && permitido(item)) await CC.store.del('fila', clientId);
+    return CC.queue.refresh();
+  };
   CC.queue.retry = async (clientId) => {
     const item = await CC.store.get('fila', clientId);
-    if (item) { item.estado = 'fila'; item.erro = ''; await CC.store.put('fila', item); }
+    if (item && item.owner === CC.owner() && permitido(item)) { item.estado = 'fila'; item.erro = ''; await CC.store.put('fila', item); }
     return CC.queue.run();
   };
 
@@ -123,11 +167,11 @@
     const n = state.pending;
     if (state.syncing) {
       bar.className = 'netbar sync';
-      bar.innerHTML = `<span class="spin" aria-hidden="true"></span><span class="msg">${n === 1 ? 'Enviando 1 lançamento…' : `Enviando ${n} lançamentos…`}</span>`;
+      bar.innerHTML = `<span class="spin" aria-hidden="true"></span><span class="msg">${n === 1 ? 'Enviando 1 item…' : `Enviando ${n} itens…`}</span>`;
       return;
     }
     bar.className = 'netbar off';
-    const msg = n ? (n === 1 ? 'Sem internet · 1 lançamento na fila' : `Sem internet · ${n} lançamentos na fila`) : 'Sem internet · você pode continuar usando';
+    const msg = n ? (n === 1 ? 'Sem internet · 1 item na fila' : `Sem internet · ${n} itens na fila`) : 'Sem internet · você pode continuar usando';
     bar.innerHTML = `${CC.icon('wifi-slash', 17)}<span class="msg">${msg}</span><button type="button" id="net-retry">Tentar agora</button>`;
     CC.$('#net-retry', bar).addEventListener('click', () => {
       if (CC.offline()) CC.toast('Ainda sem internet · seus dados estão salvos no celular', 'cloud-slash');

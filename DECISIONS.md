@@ -42,3 +42,21 @@
 - Instalação silenciosa (`quitAndInstall(true, true)`): antes de rodar o instalador o app encerra o Express do Centro, o banco (PGlite), o Orçamentos e o ChamadoPro (`encerrarServicos`, também usado no before-quit). Sem isso o instalador encontrava arquivos do banco em uso.
 - O instalador NSIS não é assinado e o app não define `publisherName`, então o electron-updater não exige assinatura. Se um dia houver certificado, defina `build.win.publisherName`. A versão portátil não se atualiza.
 - Verificação em segundo plano no desktop novo: só no Electron, só para quem tem p9, no máximo uma vez a cada 6 horas.
+
+## 2026-10-10 — Suíte: Orçamentos recebe a sessão do Centro, não um código de uso único
+
+- Sintoma: na Suíte instalada, a tela de login do Orçamentos mostrava "Integração de contas com o Centro de Custos não configurada neste servidor". A troca do código de uso único (`/v1/auth/handoff/consume`) exige a chave de serviço `CONSTRUTEC_IDENTITY_KEY`, segredo do servidor que não existe no app instalado. A prova de 09/10 só tinha rodado contra uma central simulada.
+- A chave não pode ir no instalador (repositório e releases públicos). Dentro da Suíte os servidores do Centro e do Orçamentos rodam no mesmo processo: o processo principal gera uma chave interna por execução (`CONSTRUTEC_SUITE_INTERNAL_KEY`, em memória, enviada no cabeçalho `x-suite-internal`) e `POST /api/auth/suite-handoff` devolve a sessão corporativa da própria conta só a quem a apresenta (comparação em tempo constante). Sem o cabeçalho, a rota segue emitindo código como antes.
+- O Orçamentos valida essa sessão no Centro só com o Bearer (`/v1/auth/session`, que não exige a chave) e aplica `apps` e permissões pelo `suiteGuard`. Os dois apps passam a compartilhar a mesma sessão central: sair de um encerra a do outro, como já era a intenção.
+
+## 2026-10-10 — Suíte: recarregar o Orçamentos ao entregar a sessão
+
+- Visto no app RC26 isolado: com a tela do Orçamentos já aberta, entregar uma sessão nova só trocava o `#` do endereço (navegação no mesmo documento), o `AuthGate` não rodava de novo e a conta não entrava. `loadOrcamentos` agora recarrega a tela quando ela já estava carregada; sem tela aberta, a carga normal basta.
+
+## 2026-10-12 — Suíte no navegador: logado no Centro, o Orçamentos entra sozinho
+
+- Pedido: "se eu estou logado no Centro de Custos, não preciso fazer login no Orçamentos". O app Windows (`#sessao=`) e o Android (`#handoff=` pelo app) já entravam sozinhos; no navegador os dois sites ficam em domínios diferentes e o menu Suíte só abria o endereço do Orçamentos, que pedia o login.
+- Regra única: o Orçamentos sem sessão manda a aba, uma vez, para `/entrar-orcamentos.html` daqui. A página lê o `cc_token`, pede `POST /api/auth/suite-handoff` (sem a chave interna, então sai o código de uso único de 60 s, só para o Orçamentos) e volta para o endereço fixo do Orçamentos com `#handoff=`. Sem sessão, conta local (409), sessão vencida, sem rede ou 10 s sem resposta: volta com `#centro=0` e lá vale o login de sempre. Vale para o menu Suíte, links, avisos e favoritos, sem mexer nos menus.
+- O destino é fixo no código (não vem do endereço): um site qualquer que abra a página só consegue mandar a pessoa para o Orçamentos com a própria conta dela. O código vai só no fragmento (`#`), que não chega a servidor nem ao `Referer`.
+- A página fica na raiz de `public/` porque `public/d/` só tem scripts carregados pelo `index.html` do desktop (teste `desktop-web-structure`). Conta que entrou no Centro pela ponte do app Android (`hash:` no lugar da sessão) não gera código e cai no login do Orçamentos, como antes.
+- Lado do Orçamentos: `DECISIONS.md` do Orçamentos, 2026-10-12.

@@ -1,0 +1,4517 @@
+[
+ {
+  "id": "usuarios-lista",
+  "grupo": "D6",
+  "tamanho": "1280x720",
+  "tema": "claro",
+  "app": "D6/1280x720-claro-usuarios-lista.jpg",
+  "ref": "D6/1280x720-claro-usuarios-lista.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "usuarios-lista",
+  "grupo": "D6",
+  "tamanho": "1280x720",
+  "tema": "escuro",
+  "app": "D6/1280x720-escuro-usuarios-lista.jpg",
+  "ref": "D6/1280x720-escuro-usuarios-lista.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "usuarios-lista",
+  "grupo": "D6",
+  "tamanho": "1280x800",
+  "tema": "claro",
+  "app": "D6/1280x800-claro-usuarios-lista.jpg",
+  "ref": "D6/1280x800-claro-usuarios-lista.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "usuarios-lista",
+  "grupo": "D6",
+  "tamanho": "1280x800",
+  "tema": "escuro",
+  "app": "D6/1280x800-escuro-usuarios-lista.jpg",
+  "ref": "D6/1280x800-escuro-usuarios-lista.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "usuarios-lista",
+  "grupo": "D6",
+  "tamanho": "1440x900",
+  "tema": "claro",
+  "app": "D6/1440x900-claro-usuarios-lista.jpg",
+  "ref": "D6/1440x900-claro-usuarios-lista.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "usuarios-lista",
+  "grupo": "D6",
+  "tamanho": "1440x900",
+  "tema": "escuro",
+  "app": "D6/1440x900-escuro-usuarios-lista.jpg",
+  "ref": "D6/1440x900-escuro-usuarios-lista.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "usuario-novo",
+  "grupo": "D6",
+  "tamanho": "1280x720",
+  "tema": "claro",
+  "app": "D6/1280x720-claro-usuario-novo.jpg",
+  "ref": "D6/1280x720-claro-usuario-novo.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "usuario-novo",
+  "grupo": "D6",
+  "tamanho": "1280x720",
+  "tema": "escuro",
+  "app": "D6/1280x720-escuro-usuario-novo.jpg",
+  "ref": "D6/1280x720-escuro-usuario-novo.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "usuario-novo",
+  "grupo": "D6",
+  "tamanho": "1280x800",
+  "tema": "claro",
+  "app": "D6/1280x800-claro-usuario-novo.jpg",
+  "ref": "D6/1280x800-claro-usuario-novo.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "usuario-novo",
+  "grupo": "D6",
+  "tamanho": "1280x800",
+  "tema": "escuro",
+  "app": "D6/1280x800-escuro-usuario-novo.jpg",
+  "ref": "D6/1280x800-escuro-usuario-novo.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "usuario-novo",
+  "grupo": "D6",
+  "tamanho": "1440x900",
+  "tema": "claro",
+  "app": "D6/1440x900-claro-usuario-novo.jpg",
+  "ref": "D6/1440x900-claro-usuario-novo.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "usuario-novo",
+  "grupo": "D6",
+  "tamanho": "1440x900",
+  "tema": "escuro",
+  "app": "D6/1440x900-escuro-usuario-novo.jpg",
+  "ref": "D6/1440x900-escuro-usuario-novo.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "usuario-editar-acesso",
+  "grupo": "D6",
+  "tamanho": "1280x720",
+  "tema": "claro",
+  "app": "D6/1280x720-claro-usuario-editar-acesso.jpg",
+  "ref": "D6/1280x720-claro-usuario-editar-acesso.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "usuario-editar-acesso",
+  "grupo": "D6",
+  "tamanho": "1280x720",
+  "tema": "escuro",
+  "app": "D6/1280x720-escuro-usuario-editar-acesso.jpg",
+  "ref": "D6/1280x720-escuro-usuario-editar-acesso.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "usuario-editar-acesso",
+  "grupo": "D6",
+  "tamanho": "1280x800",
+  "tema": "claro",
+  "app": "D6/1280x800-claro-usuario-editar-acesso.jpg",
+  "ref": "D6/1280x800-claro-usuario-editar-acesso.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "usuario-editar-acesso",
+  "grupo": "D6",
+  "tamanho": "1280x800",
+  "tema": "escuro",
+  "app": "D6/1280x800-escuro-usuario-editar-acesso.jpg",
+  "ref": "D6/1280x800-escuro-usuario-editar-acesso.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "usuario-editar-acesso",
+  "grupo": "D6",
+  "tamanho": "1440x900",
+  "tema": "claro",
+  "app": "D6/1440x900-claro-usuario-editar-acesso.jpg",
+  "ref": "D6/1440x900-claro-usuario-editar-acesso.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "usuario-editar-acesso",
+  "grupo": "D6",
+  "tamanho": "1440x900",
+  "tema": "escuro",
+  "app": "D6/1440x900-escuro-usuario-editar-acesso.jpg",
+  "ref": "D6/1440x900-escuro-usuario-editar-acesso.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "papeis-permissoes",
+  "grupo": "D6",
+  "tamanho": "1280x720",
+  "tema": "claro",
+  "app": "D6/1280x720-claro-papeis-permissoes.jpg",
+  "ref": "D6/1280x720-claro-papeis-permissoes.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "papeis-permissoes",
+  "grupo": "D6",
+  "tamanho": "1280x720",
+  "tema": "escuro",
+  "app": "D6/1280x720-escuro-papeis-permissoes.jpg",
+  "ref": "D6/1280x720-escuro-papeis-permissoes.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "papeis-permissoes",
+  "grupo": "D6",
+  "tamanho": "1280x800",
+  "tema": "claro",
+  "app": "D6/1280x800-claro-papeis-permissoes.jpg",
+  "ref": "D6/1280x800-claro-papeis-permissoes.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "papeis-permissoes",
+  "grupo": "D6",
+  "tamanho": "1280x800",
+  "tema": "escuro",
+  "app": "D6/1280x800-escuro-papeis-permissoes.jpg",
+  "ref": "D6/1280x800-escuro-papeis-permissoes.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "papeis-permissoes",
+  "grupo": "D6",
+  "tamanho": "1440x900",
+  "tema": "claro",
+  "app": "D6/1440x900-claro-papeis-permissoes.jpg",
+  "ref": "D6/1440x900-claro-papeis-permissoes.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "papeis-permissoes",
+  "grupo": "D6",
+  "tamanho": "1440x900",
+  "tema": "escuro",
+  "app": "D6/1440x900-escuro-papeis-permissoes.jpg",
+  "ref": "D6/1440x900-escuro-papeis-permissoes.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "emails-externos",
+  "grupo": "D6",
+  "tamanho": "1280x720",
+  "tema": "claro",
+  "app": "D6/1280x720-claro-emails-externos.jpg",
+  "ref": "D6/1280x720-claro-emails-externos.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "emails-externos",
+  "grupo": "D6",
+  "tamanho": "1280x720",
+  "tema": "escuro",
+  "app": "D6/1280x720-escuro-emails-externos.jpg",
+  "ref": "D6/1280x720-escuro-emails-externos.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "emails-externos",
+  "grupo": "D6",
+  "tamanho": "1280x800",
+  "tema": "claro",
+  "app": "D6/1280x800-claro-emails-externos.jpg",
+  "ref": "D6/1280x800-claro-emails-externos.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "emails-externos",
+  "grupo": "D6",
+  "tamanho": "1280x800",
+  "tema": "escuro",
+  "app": "D6/1280x800-escuro-emails-externos.jpg",
+  "ref": "D6/1280x800-escuro-emails-externos.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "emails-externos",
+  "grupo": "D6",
+  "tamanho": "1440x900",
+  "tema": "claro",
+  "app": "D6/1440x900-claro-emails-externos.jpg",
+  "ref": "D6/1440x900-claro-emails-externos.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "emails-externos",
+  "grupo": "D6",
+  "tamanho": "1440x900",
+  "tema": "escuro",
+  "app": "D6/1440x900-escuro-emails-externos.jpg",
+  "ref": "D6/1440x900-escuro-emails-externos.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "ver-como-tecnico",
+  "grupo": "D6",
+  "tamanho": "1280x720",
+  "tema": "claro",
+  "app": "D6/1280x720-claro-ver-como-tecnico.jpg",
+  "ref": "D6/1280x720-claro-ver-como-tecnico.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "ver-como-tecnico",
+  "grupo": "D6",
+  "tamanho": "1280x720",
+  "tema": "escuro",
+  "app": "D6/1280x720-escuro-ver-como-tecnico.jpg",
+  "ref": "D6/1280x720-escuro-ver-como-tecnico.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "ver-como-tecnico",
+  "grupo": "D6",
+  "tamanho": "1280x800",
+  "tema": "claro",
+  "app": "D6/1280x800-claro-ver-como-tecnico.jpg",
+  "ref": "D6/1280x800-claro-ver-como-tecnico.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "ver-como-tecnico",
+  "grupo": "D6",
+  "tamanho": "1280x800",
+  "tema": "escuro",
+  "app": "D6/1280x800-escuro-ver-como-tecnico.jpg",
+  "ref": "D6/1280x800-escuro-ver-como-tecnico.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "ver-como-tecnico",
+  "grupo": "D6",
+  "tamanho": "1440x900",
+  "tema": "claro",
+  "app": "D6/1440x900-claro-ver-como-tecnico.jpg",
+  "ref": "D6/1440x900-claro-ver-como-tecnico.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "ver-como-tecnico",
+  "grupo": "D6",
+  "tamanho": "1440x900",
+  "tema": "escuro",
+  "app": "D6/1440x900-escuro-ver-como-tecnico.jpg",
+  "ref": "D6/1440x900-escuro-ver-como-tecnico.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "acesso-admin",
+  "grupo": "D6",
+  "tamanho": "1280x720",
+  "tema": "claro",
+  "app": "D6/1280x720-claro-acesso-admin.jpg",
+  "ref": "D6/1280x720-claro-acesso-admin.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "acesso-admin",
+  "grupo": "D6",
+  "tamanho": "1280x720",
+  "tema": "escuro",
+  "app": "D6/1280x720-escuro-acesso-admin.jpg",
+  "ref": "D6/1280x720-escuro-acesso-admin.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "acesso-admin",
+  "grupo": "D6",
+  "tamanho": "1280x800",
+  "tema": "claro",
+  "app": "D6/1280x800-claro-acesso-admin.jpg",
+  "ref": "D6/1280x800-claro-acesso-admin.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "acesso-admin",
+  "grupo": "D6",
+  "tamanho": "1280x800",
+  "tema": "escuro",
+  "app": "D6/1280x800-escuro-acesso-admin.jpg",
+  "ref": "D6/1280x800-escuro-acesso-admin.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "acesso-admin",
+  "grupo": "D6",
+  "tamanho": "1440x900",
+  "tema": "claro",
+  "app": "D6/1440x900-claro-acesso-admin.jpg",
+  "ref": "D6/1440x900-claro-acesso-admin.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "acesso-admin",
+  "grupo": "D6",
+  "tamanho": "1440x900",
+  "tema": "escuro",
+  "app": "D6/1440x900-escuro-acesso-admin.jpg",
+  "ref": "D6/1440x900-escuro-acesso-admin.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "editar-admin",
+  "grupo": "D6",
+  "tamanho": "1280x720",
+  "tema": "claro",
+  "app": "D6/1280x720-claro-editar-admin.jpg",
+  "ref": "D6/1280x720-claro-editar-admin.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "editar-admin",
+  "grupo": "D6",
+  "tamanho": "1280x720",
+  "tema": "escuro",
+  "app": "D6/1280x720-escuro-editar-admin.jpg",
+  "ref": "D6/1280x720-escuro-editar-admin.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "editar-admin",
+  "grupo": "D6",
+  "tamanho": "1280x800",
+  "tema": "claro",
+  "app": "D6/1280x800-claro-editar-admin.jpg",
+  "ref": "D6/1280x800-claro-editar-admin.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "editar-admin",
+  "grupo": "D6",
+  "tamanho": "1280x800",
+  "tema": "escuro",
+  "app": "D6/1280x800-escuro-editar-admin.jpg",
+  "ref": "D6/1280x800-escuro-editar-admin.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "editar-admin",
+  "grupo": "D6",
+  "tamanho": "1440x900",
+  "tema": "claro",
+  "app": "D6/1440x900-claro-editar-admin.jpg",
+  "ref": "D6/1440x900-claro-editar-admin.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "editar-admin",
+  "grupo": "D6",
+  "tamanho": "1440x900",
+  "tema": "escuro",
+  "app": "D6/1440x900-escuro-editar-admin.jpg",
+  "ref": "D6/1440x900-escuro-editar-admin.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "senha-admin",
+  "grupo": "D6",
+  "tamanho": "1280x720",
+  "tema": "claro",
+  "app": "D6/1280x720-claro-senha-admin.jpg",
+  "ref": "D6/1280x720-claro-senha-admin.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "senha-admin",
+  "grupo": "D6",
+  "tamanho": "1280x720",
+  "tema": "escuro",
+  "app": "D6/1280x720-escuro-senha-admin.jpg",
+  "ref": "D6/1280x720-escuro-senha-admin.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "senha-admin",
+  "grupo": "D6",
+  "tamanho": "1280x800",
+  "tema": "claro",
+  "app": "D6/1280x800-claro-senha-admin.jpg",
+  "ref": "D6/1280x800-claro-senha-admin.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "senha-admin",
+  "grupo": "D6",
+  "tamanho": "1280x800",
+  "tema": "escuro",
+  "app": "D6/1280x800-escuro-senha-admin.jpg",
+  "ref": "D6/1280x800-escuro-senha-admin.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "senha-admin",
+  "grupo": "D6",
+  "tamanho": "1440x900",
+  "tema": "claro",
+  "app": "D6/1440x900-claro-senha-admin.jpg",
+  "ref": "D6/1440x900-claro-senha-admin.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "senha-admin",
+  "grupo": "D6",
+  "tamanho": "1440x900",
+  "tema": "escuro",
+  "app": "D6/1440x900-escuro-senha-admin.jpg",
+  "ref": "D6/1440x900-escuro-senha-admin.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "convite-admin",
+  "grupo": "D6",
+  "tamanho": "1280x720",
+  "tema": "claro",
+  "app": "D6/1280x720-claro-convite-admin.jpg",
+  "ref": "D6/1280x720-claro-convite-admin.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "convite-admin",
+  "grupo": "D6",
+  "tamanho": "1280x720",
+  "tema": "escuro",
+  "app": "D6/1280x720-escuro-convite-admin.jpg",
+  "ref": "D6/1280x720-escuro-convite-admin.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "convite-admin",
+  "grupo": "D6",
+  "tamanho": "1280x800",
+  "tema": "claro",
+  "app": "D6/1280x800-claro-convite-admin.jpg",
+  "ref": "D6/1280x800-claro-convite-admin.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "convite-admin",
+  "grupo": "D6",
+  "tamanho": "1280x800",
+  "tema": "escuro",
+  "app": "D6/1280x800-escuro-convite-admin.jpg",
+  "ref": "D6/1280x800-escuro-convite-admin.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "convite-admin",
+  "grupo": "D6",
+  "tamanho": "1440x900",
+  "tema": "claro",
+  "app": "D6/1440x900-claro-convite-admin.jpg",
+  "ref": "D6/1440x900-claro-convite-admin.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "convite-admin",
+  "grupo": "D6",
+  "tamanho": "1440x900",
+  "tema": "escuro",
+  "app": "D6/1440x900-escuro-convite-admin.jpg",
+  "ref": "D6/1440x900-escuro-convite-admin.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "ver-como-admin",
+  "grupo": "D6",
+  "tamanho": "1280x720",
+  "tema": "claro",
+  "app": "D6/1280x720-claro-ver-como-admin.jpg",
+  "ref": "D6/1280x720-claro-ver-como-admin.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "ver-como-admin",
+  "grupo": "D6",
+  "tamanho": "1280x720",
+  "tema": "escuro",
+  "app": "D6/1280x720-escuro-ver-como-admin.jpg",
+  "ref": "D6/1280x720-escuro-ver-como-admin.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "ver-como-admin",
+  "grupo": "D6",
+  "tamanho": "1280x800",
+  "tema": "claro",
+  "app": "D6/1280x800-claro-ver-como-admin.jpg",
+  "ref": "D6/1280x800-claro-ver-como-admin.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "ver-como-admin",
+  "grupo": "D6",
+  "tamanho": "1280x800",
+  "tema": "escuro",
+  "app": "D6/1280x800-escuro-ver-como-admin.jpg",
+  "ref": "D6/1280x800-escuro-ver-como-admin.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "ver-como-admin",
+  "grupo": "D6",
+  "tamanho": "1440x900",
+  "tema": "claro",
+  "app": "D6/1440x900-claro-ver-como-admin.jpg",
+  "ref": "D6/1440x900-claro-ver-como-admin.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "ver-como-admin",
+  "grupo": "D6",
+  "tamanho": "1440x900",
+  "tema": "escuro",
+  "app": "D6/1440x900-escuro-ver-como-admin.jpg",
+  "ref": "D6/1440x900-escuro-ver-como-admin.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "acesso-gestor",
+  "grupo": "D6",
+  "tamanho": "1280x720",
+  "tema": "claro",
+  "app": "D6/1280x720-claro-acesso-gestor.jpg",
+  "ref": null,
+  "avisos": [
+   "Sem Referencia no prototipo para este estado."
+  ],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "acesso-gestor",
+  "grupo": "D6",
+  "tamanho": "1280x720",
+  "tema": "escuro",
+  "app": "D6/1280x720-escuro-acesso-gestor.jpg",
+  "ref": null,
+  "avisos": [
+   "Sem Referencia no prototipo para este estado."
+  ],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "acesso-gestor",
+  "grupo": "D6",
+  "tamanho": "1280x800",
+  "tema": "claro",
+  "app": "D6/1280x800-claro-acesso-gestor.jpg",
+  "ref": null,
+  "avisos": [
+   "Sem Referencia no prototipo para este estado."
+  ],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "acesso-gestor",
+  "grupo": "D6",
+  "tamanho": "1280x800",
+  "tema": "escuro",
+  "app": "D6/1280x800-escuro-acesso-gestor.jpg",
+  "ref": null,
+  "avisos": [
+   "Sem Referencia no prototipo para este estado."
+  ],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "acesso-gestor",
+  "grupo": "D6",
+  "tamanho": "1440x900",
+  "tema": "claro",
+  "app": "D6/1440x900-claro-acesso-gestor.jpg",
+  "ref": null,
+  "avisos": [
+   "Sem Referencia no prototipo para este estado."
+  ],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "acesso-gestor",
+  "grupo": "D6",
+  "tamanho": "1440x900",
+  "tema": "escuro",
+  "app": "D6/1440x900-escuro-acesso-gestor.jpg",
+  "ref": null,
+  "avisos": [
+   "Sem Referencia no prototipo para este estado."
+  ],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "editar-gestor",
+  "grupo": "D6",
+  "tamanho": "1280x720",
+  "tema": "claro",
+  "app": "D6/1280x720-claro-editar-gestor.jpg",
+  "ref": "D6/1280x720-claro-editar-gestor.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "editar-gestor",
+  "grupo": "D6",
+  "tamanho": "1280x720",
+  "tema": "escuro",
+  "app": "D6/1280x720-escuro-editar-gestor.jpg",
+  "ref": "D6/1280x720-escuro-editar-gestor.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "editar-gestor",
+  "grupo": "D6",
+  "tamanho": "1280x800",
+  "tema": "claro",
+  "app": "D6/1280x800-claro-editar-gestor.jpg",
+  "ref": "D6/1280x800-claro-editar-gestor.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "editar-gestor",
+  "grupo": "D6",
+  "tamanho": "1280x800",
+  "tema": "escuro",
+  "app": "D6/1280x800-escuro-editar-gestor.jpg",
+  "ref": "D6/1280x800-escuro-editar-gestor.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "editar-gestor",
+  "grupo": "D6",
+  "tamanho": "1440x900",
+  "tema": "claro",
+  "app": "D6/1440x900-claro-editar-gestor.jpg",
+  "ref": "D6/1440x900-claro-editar-gestor.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "editar-gestor",
+  "grupo": "D6",
+  "tamanho": "1440x900",
+  "tema": "escuro",
+  "app": "D6/1440x900-escuro-editar-gestor.jpg",
+  "ref": "D6/1440x900-escuro-editar-gestor.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "senha-gestor",
+  "grupo": "D6",
+  "tamanho": "1280x720",
+  "tema": "claro",
+  "app": "D6/1280x720-claro-senha-gestor.jpg",
+  "ref": "D6/1280x720-claro-senha-gestor.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "senha-gestor",
+  "grupo": "D6",
+  "tamanho": "1280x720",
+  "tema": "escuro",
+  "app": "D6/1280x720-escuro-senha-gestor.jpg",
+  "ref": "D6/1280x720-escuro-senha-gestor.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "senha-gestor",
+  "grupo": "D6",
+  "tamanho": "1280x800",
+  "tema": "claro",
+  "app": "D6/1280x800-claro-senha-gestor.jpg",
+  "ref": "D6/1280x800-claro-senha-gestor.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "senha-gestor",
+  "grupo": "D6",
+  "tamanho": "1280x800",
+  "tema": "escuro",
+  "app": "D6/1280x800-escuro-senha-gestor.jpg",
+  "ref": "D6/1280x800-escuro-senha-gestor.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "senha-gestor",
+  "grupo": "D6",
+  "tamanho": "1440x900",
+  "tema": "claro",
+  "app": "D6/1440x900-claro-senha-gestor.jpg",
+  "ref": "D6/1440x900-claro-senha-gestor.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "senha-gestor",
+  "grupo": "D6",
+  "tamanho": "1440x900",
+  "tema": "escuro",
+  "app": "D6/1440x900-escuro-senha-gestor.jpg",
+  "ref": "D6/1440x900-escuro-senha-gestor.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "convite-gestor",
+  "grupo": "D6",
+  "tamanho": "1280x720",
+  "tema": "claro",
+  "app": "D6/1280x720-claro-convite-gestor.jpg",
+  "ref": "D6/1280x720-claro-convite-gestor.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "convite-gestor",
+  "grupo": "D6",
+  "tamanho": "1280x720",
+  "tema": "escuro",
+  "app": "D6/1280x720-escuro-convite-gestor.jpg",
+  "ref": "D6/1280x720-escuro-convite-gestor.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "convite-gestor",
+  "grupo": "D6",
+  "tamanho": "1280x800",
+  "tema": "claro",
+  "app": "D6/1280x800-claro-convite-gestor.jpg",
+  "ref": "D6/1280x800-claro-convite-gestor.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "convite-gestor",
+  "grupo": "D6",
+  "tamanho": "1280x800",
+  "tema": "escuro",
+  "app": "D6/1280x800-escuro-convite-gestor.jpg",
+  "ref": "D6/1280x800-escuro-convite-gestor.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "convite-gestor",
+  "grupo": "D6",
+  "tamanho": "1440x900",
+  "tema": "claro",
+  "app": "D6/1440x900-claro-convite-gestor.jpg",
+  "ref": "D6/1440x900-claro-convite-gestor.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "convite-gestor",
+  "grupo": "D6",
+  "tamanho": "1440x900",
+  "tema": "escuro",
+  "app": "D6/1440x900-escuro-convite-gestor.jpg",
+  "ref": "D6/1440x900-escuro-convite-gestor.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "ver-como-gestor",
+  "grupo": "D6",
+  "tamanho": "1280x720",
+  "tema": "claro",
+  "app": "D6/1280x720-claro-ver-como-gestor.jpg",
+  "ref": null,
+  "avisos": [
+   "Sem Referencia no prototipo para este estado."
+  ],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "ver-como-gestor",
+  "grupo": "D6",
+  "tamanho": "1280x720",
+  "tema": "escuro",
+  "app": "D6/1280x720-escuro-ver-como-gestor.jpg",
+  "ref": null,
+  "avisos": [
+   "Sem Referencia no prototipo para este estado."
+  ],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "ver-como-gestor",
+  "grupo": "D6",
+  "tamanho": "1280x800",
+  "tema": "claro",
+  "app": "D6/1280x800-claro-ver-como-gestor.jpg",
+  "ref": null,
+  "avisos": [
+   "Sem Referencia no prototipo para este estado."
+  ],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "ver-como-gestor",
+  "grupo": "D6",
+  "tamanho": "1280x800",
+  "tema": "escuro",
+  "app": "D6/1280x800-escuro-ver-como-gestor.jpg",
+  "ref": null,
+  "avisos": [
+   "Sem Referencia no prototipo para este estado."
+  ],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "ver-como-gestor",
+  "grupo": "D6",
+  "tamanho": "1440x900",
+  "tema": "claro",
+  "app": "D6/1440x900-claro-ver-como-gestor.jpg",
+  "ref": null,
+  "avisos": [
+   "Sem Referencia no prototipo para este estado."
+  ],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "ver-como-gestor",
+  "grupo": "D6",
+  "tamanho": "1440x900",
+  "tema": "escuro",
+  "app": "D6/1440x900-escuro-ver-como-gestor.jpg",
+  "ref": null,
+  "avisos": [
+   "Sem Referencia no prototipo para este estado."
+  ],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "acesso-financeiro",
+  "grupo": "D6",
+  "tamanho": "1280x720",
+  "tema": "claro",
+  "app": "D6/1280x720-claro-acesso-financeiro.jpg",
+  "ref": null,
+  "avisos": [
+   "Sem Referencia no prototipo para este estado."
+  ],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "acesso-financeiro",
+  "grupo": "D6",
+  "tamanho": "1280x720",
+  "tema": "escuro",
+  "app": "D6/1280x720-escuro-acesso-financeiro.jpg",
+  "ref": null,
+  "avisos": [
+   "Sem Referencia no prototipo para este estado."
+  ],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "acesso-financeiro",
+  "grupo": "D6",
+  "tamanho": "1280x800",
+  "tema": "claro",
+  "app": "D6/1280x800-claro-acesso-financeiro.jpg",
+  "ref": null,
+  "avisos": [
+   "Sem Referencia no prototipo para este estado."
+  ],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "acesso-financeiro",
+  "grupo": "D6",
+  "tamanho": "1280x800",
+  "tema": "escuro",
+  "app": "D6/1280x800-escuro-acesso-financeiro.jpg",
+  "ref": null,
+  "avisos": [
+   "Sem Referencia no prototipo para este estado."
+  ],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "acesso-financeiro",
+  "grupo": "D6",
+  "tamanho": "1440x900",
+  "tema": "claro",
+  "app": "D6/1440x900-claro-acesso-financeiro.jpg",
+  "ref": null,
+  "avisos": [
+   "Sem Referencia no prototipo para este estado."
+  ],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "acesso-financeiro",
+  "grupo": "D6",
+  "tamanho": "1440x900",
+  "tema": "escuro",
+  "app": "D6/1440x900-escuro-acesso-financeiro.jpg",
+  "ref": null,
+  "avisos": [
+   "Sem Referencia no prototipo para este estado."
+  ],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "editar-financeiro",
+  "grupo": "D6",
+  "tamanho": "1280x720",
+  "tema": "claro",
+  "app": "D6/1280x720-claro-editar-financeiro.jpg",
+  "ref": "D6/1280x720-claro-editar-financeiro.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "editar-financeiro",
+  "grupo": "D6",
+  "tamanho": "1280x720",
+  "tema": "escuro",
+  "app": "D6/1280x720-escuro-editar-financeiro.jpg",
+  "ref": "D6/1280x720-escuro-editar-financeiro.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "editar-financeiro",
+  "grupo": "D6",
+  "tamanho": "1280x800",
+  "tema": "claro",
+  "app": "D6/1280x800-claro-editar-financeiro.jpg",
+  "ref": "D6/1280x800-claro-editar-financeiro.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "editar-financeiro",
+  "grupo": "D6",
+  "tamanho": "1280x800",
+  "tema": "escuro",
+  "app": "D6/1280x800-escuro-editar-financeiro.jpg",
+  "ref": "D6/1280x800-escuro-editar-financeiro.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "editar-financeiro",
+  "grupo": "D6",
+  "tamanho": "1440x900",
+  "tema": "claro",
+  "app": "D6/1440x900-claro-editar-financeiro.jpg",
+  "ref": "D6/1440x900-claro-editar-financeiro.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "editar-financeiro",
+  "grupo": "D6",
+  "tamanho": "1440x900",
+  "tema": "escuro",
+  "app": "D6/1440x900-escuro-editar-financeiro.jpg",
+  "ref": "D6/1440x900-escuro-editar-financeiro.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "senha-financeiro",
+  "grupo": "D6",
+  "tamanho": "1280x720",
+  "tema": "claro",
+  "app": "D6/1280x720-claro-senha-financeiro.jpg",
+  "ref": "D6/1280x720-claro-senha-financeiro.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "senha-financeiro",
+  "grupo": "D6",
+  "tamanho": "1280x720",
+  "tema": "escuro",
+  "app": "D6/1280x720-escuro-senha-financeiro.jpg",
+  "ref": "D6/1280x720-escuro-senha-financeiro.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "senha-financeiro",
+  "grupo": "D6",
+  "tamanho": "1280x800",
+  "tema": "claro",
+  "app": "D6/1280x800-claro-senha-financeiro.jpg",
+  "ref": "D6/1280x800-claro-senha-financeiro.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "senha-financeiro",
+  "grupo": "D6",
+  "tamanho": "1280x800",
+  "tema": "escuro",
+  "app": "D6/1280x800-escuro-senha-financeiro.jpg",
+  "ref": "D6/1280x800-escuro-senha-financeiro.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "senha-financeiro",
+  "grupo": "D6",
+  "tamanho": "1440x900",
+  "tema": "claro",
+  "app": "D6/1440x900-claro-senha-financeiro.jpg",
+  "ref": "D6/1440x900-claro-senha-financeiro.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "senha-financeiro",
+  "grupo": "D6",
+  "tamanho": "1440x900",
+  "tema": "escuro",
+  "app": "D6/1440x900-escuro-senha-financeiro.jpg",
+  "ref": "D6/1440x900-escuro-senha-financeiro.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "convite-financeiro",
+  "grupo": "D6",
+  "tamanho": "1280x720",
+  "tema": "claro",
+  "app": "D6/1280x720-claro-convite-financeiro.jpg",
+  "ref": "D6/1280x720-claro-convite-financeiro.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "convite-financeiro",
+  "grupo": "D6",
+  "tamanho": "1280x720",
+  "tema": "escuro",
+  "app": "D6/1280x720-escuro-convite-financeiro.jpg",
+  "ref": "D6/1280x720-escuro-convite-financeiro.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "convite-financeiro",
+  "grupo": "D6",
+  "tamanho": "1280x800",
+  "tema": "claro",
+  "app": "D6/1280x800-claro-convite-financeiro.jpg",
+  "ref": "D6/1280x800-claro-convite-financeiro.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "convite-financeiro",
+  "grupo": "D6",
+  "tamanho": "1280x800",
+  "tema": "escuro",
+  "app": "D6/1280x800-escuro-convite-financeiro.jpg",
+  "ref": "D6/1280x800-escuro-convite-financeiro.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "convite-financeiro",
+  "grupo": "D6",
+  "tamanho": "1440x900",
+  "tema": "claro",
+  "app": "D6/1440x900-claro-convite-financeiro.jpg",
+  "ref": "D6/1440x900-claro-convite-financeiro.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "convite-financeiro",
+  "grupo": "D6",
+  "tamanho": "1440x900",
+  "tema": "escuro",
+  "app": "D6/1440x900-escuro-convite-financeiro.jpg",
+  "ref": "D6/1440x900-escuro-convite-financeiro.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "ver-como-financeiro",
+  "grupo": "D6",
+  "tamanho": "1280x720",
+  "tema": "claro",
+  "app": "D6/1280x720-claro-ver-como-financeiro.jpg",
+  "ref": null,
+  "avisos": [
+   "Sem Referencia no prototipo para este estado."
+  ],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "ver-como-financeiro",
+  "grupo": "D6",
+  "tamanho": "1280x720",
+  "tema": "escuro",
+  "app": "D6/1280x720-escuro-ver-como-financeiro.jpg",
+  "ref": null,
+  "avisos": [
+   "Sem Referencia no prototipo para este estado."
+  ],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "ver-como-financeiro",
+  "grupo": "D6",
+  "tamanho": "1280x800",
+  "tema": "claro",
+  "app": "D6/1280x800-claro-ver-como-financeiro.jpg",
+  "ref": null,
+  "avisos": [
+   "Sem Referencia no prototipo para este estado."
+  ],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "ver-como-financeiro",
+  "grupo": "D6",
+  "tamanho": "1280x800",
+  "tema": "escuro",
+  "app": "D6/1280x800-escuro-ver-como-financeiro.jpg",
+  "ref": null,
+  "avisos": [
+   "Sem Referencia no prototipo para este estado."
+  ],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "ver-como-financeiro",
+  "grupo": "D6",
+  "tamanho": "1440x900",
+  "tema": "claro",
+  "app": "D6/1440x900-claro-ver-como-financeiro.jpg",
+  "ref": null,
+  "avisos": [
+   "Sem Referencia no prototipo para este estado."
+  ],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "ver-como-financeiro",
+  "grupo": "D6",
+  "tamanho": "1440x900",
+  "tema": "escuro",
+  "app": "D6/1440x900-escuro-ver-como-financeiro.jpg",
+  "ref": null,
+  "avisos": [
+   "Sem Referencia no prototipo para este estado."
+  ],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "acesso-engenharia",
+  "grupo": "D6",
+  "tamanho": "1280x720",
+  "tema": "claro",
+  "app": "D6/1280x720-claro-acesso-engenharia.jpg",
+  "ref": null,
+  "avisos": [
+   "Sem Referencia no prototipo para este estado."
+  ],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "acesso-engenharia",
+  "grupo": "D6",
+  "tamanho": "1280x720",
+  "tema": "escuro",
+  "app": "D6/1280x720-escuro-acesso-engenharia.jpg",
+  "ref": null,
+  "avisos": [
+   "Sem Referencia no prototipo para este estado."
+  ],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "acesso-engenharia",
+  "grupo": "D6",
+  "tamanho": "1280x800",
+  "tema": "claro",
+  "app": "D6/1280x800-claro-acesso-engenharia.jpg",
+  "ref": null,
+  "avisos": [
+   "Sem Referencia no prototipo para este estado."
+  ],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "acesso-engenharia",
+  "grupo": "D6",
+  "tamanho": "1280x800",
+  "tema": "escuro",
+  "app": "D6/1280x800-escuro-acesso-engenharia.jpg",
+  "ref": null,
+  "avisos": [
+   "Sem Referencia no prototipo para este estado."
+  ],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "acesso-engenharia",
+  "grupo": "D6",
+  "tamanho": "1440x900",
+  "tema": "claro",
+  "app": "D6/1440x900-claro-acesso-engenharia.jpg",
+  "ref": null,
+  "avisos": [
+   "Sem Referencia no prototipo para este estado."
+  ],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "acesso-engenharia",
+  "grupo": "D6",
+  "tamanho": "1440x900",
+  "tema": "escuro",
+  "app": "D6/1440x900-escuro-acesso-engenharia.jpg",
+  "ref": null,
+  "avisos": [
+   "Sem Referencia no prototipo para este estado."
+  ],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "editar-engenharia",
+  "grupo": "D6",
+  "tamanho": "1280x720",
+  "tema": "claro",
+  "app": "D6/1280x720-claro-editar-engenharia.jpg",
+  "ref": "D6/1280x720-claro-editar-engenharia.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "editar-engenharia",
+  "grupo": "D6",
+  "tamanho": "1280x720",
+  "tema": "escuro",
+  "app": "D6/1280x720-escuro-editar-engenharia.jpg",
+  "ref": "D6/1280x720-escuro-editar-engenharia.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "editar-engenharia",
+  "grupo": "D6",
+  "tamanho": "1280x800",
+  "tema": "claro",
+  "app": "D6/1280x800-claro-editar-engenharia.jpg",
+  "ref": "D6/1280x800-claro-editar-engenharia.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "editar-engenharia",
+  "grupo": "D6",
+  "tamanho": "1280x800",
+  "tema": "escuro",
+  "app": "D6/1280x800-escuro-editar-engenharia.jpg",
+  "ref": "D6/1280x800-escuro-editar-engenharia.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "editar-engenharia",
+  "grupo": "D6",
+  "tamanho": "1440x900",
+  "tema": "claro",
+  "app": "D6/1440x900-claro-editar-engenharia.jpg",
+  "ref": "D6/1440x900-claro-editar-engenharia.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "editar-engenharia",
+  "grupo": "D6",
+  "tamanho": "1440x900",
+  "tema": "escuro",
+  "app": "D6/1440x900-escuro-editar-engenharia.jpg",
+  "ref": "D6/1440x900-escuro-editar-engenharia.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "senha-engenharia",
+  "grupo": "D6",
+  "tamanho": "1280x720",
+  "tema": "claro",
+  "app": "D6/1280x720-claro-senha-engenharia.jpg",
+  "ref": "D6/1280x720-claro-senha-engenharia.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "senha-engenharia",
+  "grupo": "D6",
+  "tamanho": "1280x720",
+  "tema": "escuro",
+  "app": "D6/1280x720-escuro-senha-engenharia.jpg",
+  "ref": "D6/1280x720-escuro-senha-engenharia.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "senha-engenharia",
+  "grupo": "D6",
+  "tamanho": "1280x800",
+  "tema": "claro",
+  "app": "D6/1280x800-claro-senha-engenharia.jpg",
+  "ref": "D6/1280x800-claro-senha-engenharia.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "senha-engenharia",
+  "grupo": "D6",
+  "tamanho": "1280x800",
+  "tema": "escuro",
+  "app": "D6/1280x800-escuro-senha-engenharia.jpg",
+  "ref": "D6/1280x800-escuro-senha-engenharia.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "senha-engenharia",
+  "grupo": "D6",
+  "tamanho": "1440x900",
+  "tema": "claro",
+  "app": "D6/1440x900-claro-senha-engenharia.jpg",
+  "ref": "D6/1440x900-claro-senha-engenharia.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "senha-engenharia",
+  "grupo": "D6",
+  "tamanho": "1440x900",
+  "tema": "escuro",
+  "app": "D6/1440x900-escuro-senha-engenharia.jpg",
+  "ref": "D6/1440x900-escuro-senha-engenharia.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "convite-engenharia",
+  "grupo": "D6",
+  "tamanho": "1280x720",
+  "tema": "claro",
+  "app": "D6/1280x720-claro-convite-engenharia.jpg",
+  "ref": "D6/1280x720-claro-convite-engenharia.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "convite-engenharia",
+  "grupo": "D6",
+  "tamanho": "1280x720",
+  "tema": "escuro",
+  "app": "D6/1280x720-escuro-convite-engenharia.jpg",
+  "ref": "D6/1280x720-escuro-convite-engenharia.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "convite-engenharia",
+  "grupo": "D6",
+  "tamanho": "1280x800",
+  "tema": "claro",
+  "app": "D6/1280x800-claro-convite-engenharia.jpg",
+  "ref": "D6/1280x800-claro-convite-engenharia.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "convite-engenharia",
+  "grupo": "D6",
+  "tamanho": "1280x800",
+  "tema": "escuro",
+  "app": "D6/1280x800-escuro-convite-engenharia.jpg",
+  "ref": "D6/1280x800-escuro-convite-engenharia.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "convite-engenharia",
+  "grupo": "D6",
+  "tamanho": "1440x900",
+  "tema": "claro",
+  "app": "D6/1440x900-claro-convite-engenharia.jpg",
+  "ref": "D6/1440x900-claro-convite-engenharia.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "convite-engenharia",
+  "grupo": "D6",
+  "tamanho": "1440x900",
+  "tema": "escuro",
+  "app": "D6/1440x900-escuro-convite-engenharia.jpg",
+  "ref": "D6/1440x900-escuro-convite-engenharia.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "ver-como-engenharia",
+  "grupo": "D6",
+  "tamanho": "1280x720",
+  "tema": "claro",
+  "app": "D6/1280x720-claro-ver-como-engenharia.jpg",
+  "ref": null,
+  "avisos": [
+   "Sem Referencia no prototipo para este estado."
+  ],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "ver-como-engenharia",
+  "grupo": "D6",
+  "tamanho": "1280x720",
+  "tema": "escuro",
+  "app": "D6/1280x720-escuro-ver-como-engenharia.jpg",
+  "ref": null,
+  "avisos": [
+   "Sem Referencia no prototipo para este estado."
+  ],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "ver-como-engenharia",
+  "grupo": "D6",
+  "tamanho": "1280x800",
+  "tema": "claro",
+  "app": "D6/1280x800-claro-ver-como-engenharia.jpg",
+  "ref": null,
+  "avisos": [
+   "Sem Referencia no prototipo para este estado."
+  ],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "ver-como-engenharia",
+  "grupo": "D6",
+  "tamanho": "1280x800",
+  "tema": "escuro",
+  "app": "D6/1280x800-escuro-ver-como-engenharia.jpg",
+  "ref": null,
+  "avisos": [
+   "Sem Referencia no prototipo para este estado."
+  ],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "ver-como-engenharia",
+  "grupo": "D6",
+  "tamanho": "1440x900",
+  "tema": "claro",
+  "app": "D6/1440x900-claro-ver-como-engenharia.jpg",
+  "ref": null,
+  "avisos": [
+   "Sem Referencia no prototipo para este estado."
+  ],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "ver-como-engenharia",
+  "grupo": "D6",
+  "tamanho": "1440x900",
+  "tema": "escuro",
+  "app": "D6/1440x900-escuro-ver-como-engenharia.jpg",
+  "ref": null,
+  "avisos": [
+   "Sem Referencia no prototipo para este estado."
+  ],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "acesso-tecnico",
+  "grupo": "D6",
+  "tamanho": "1280x720",
+  "tema": "claro",
+  "app": "D6/1280x720-claro-acesso-tecnico.jpg",
+  "ref": null,
+  "avisos": [
+   "Sem Referencia no prototipo para este estado."
+  ],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "acesso-tecnico",
+  "grupo": "D6",
+  "tamanho": "1280x720",
+  "tema": "escuro",
+  "app": "D6/1280x720-escuro-acesso-tecnico.jpg",
+  "ref": null,
+  "avisos": [
+   "Sem Referencia no prototipo para este estado."
+  ],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "acesso-tecnico",
+  "grupo": "D6",
+  "tamanho": "1280x800",
+  "tema": "claro",
+  "app": "D6/1280x800-claro-acesso-tecnico.jpg",
+  "ref": null,
+  "avisos": [
+   "Sem Referencia no prototipo para este estado."
+  ],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "acesso-tecnico",
+  "grupo": "D6",
+  "tamanho": "1280x800",
+  "tema": "escuro",
+  "app": "D6/1280x800-escuro-acesso-tecnico.jpg",
+  "ref": null,
+  "avisos": [
+   "Sem Referencia no prototipo para este estado."
+  ],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "acesso-tecnico",
+  "grupo": "D6",
+  "tamanho": "1440x900",
+  "tema": "claro",
+  "app": "D6/1440x900-claro-acesso-tecnico.jpg",
+  "ref": null,
+  "avisos": [
+   "Sem Referencia no prototipo para este estado."
+  ],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "acesso-tecnico",
+  "grupo": "D6",
+  "tamanho": "1440x900",
+  "tema": "escuro",
+  "app": "D6/1440x900-escuro-acesso-tecnico.jpg",
+  "ref": null,
+  "avisos": [
+   "Sem Referencia no prototipo para este estado."
+  ],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "senha-tecnico",
+  "grupo": "D6",
+  "tamanho": "1280x720",
+  "tema": "claro",
+  "app": "D6/1280x720-claro-senha-tecnico.jpg",
+  "ref": "D6/1280x720-claro-senha-tecnico.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "senha-tecnico",
+  "grupo": "D6",
+  "tamanho": "1280x720",
+  "tema": "escuro",
+  "app": "D6/1280x720-escuro-senha-tecnico.jpg",
+  "ref": "D6/1280x720-escuro-senha-tecnico.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "senha-tecnico",
+  "grupo": "D6",
+  "tamanho": "1280x800",
+  "tema": "claro",
+  "app": "D6/1280x800-claro-senha-tecnico.jpg",
+  "ref": "D6/1280x800-claro-senha-tecnico.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "senha-tecnico",
+  "grupo": "D6",
+  "tamanho": "1280x800",
+  "tema": "escuro",
+  "app": "D6/1280x800-escuro-senha-tecnico.jpg",
+  "ref": "D6/1280x800-escuro-senha-tecnico.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "senha-tecnico",
+  "grupo": "D6",
+  "tamanho": "1440x900",
+  "tema": "claro",
+  "app": "D6/1440x900-claro-senha-tecnico.jpg",
+  "ref": "D6/1440x900-claro-senha-tecnico.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "senha-tecnico",
+  "grupo": "D6",
+  "tamanho": "1440x900",
+  "tema": "escuro",
+  "app": "D6/1440x900-escuro-senha-tecnico.jpg",
+  "ref": "D6/1440x900-escuro-senha-tecnico.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "convite-tecnico",
+  "grupo": "D6",
+  "tamanho": "1280x720",
+  "tema": "claro",
+  "app": "D6/1280x720-claro-convite-tecnico.jpg",
+  "ref": "D6/1280x720-claro-convite-tecnico.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "convite-tecnico",
+  "grupo": "D6",
+  "tamanho": "1280x720",
+  "tema": "escuro",
+  "app": "D6/1280x720-escuro-convite-tecnico.jpg",
+  "ref": "D6/1280x720-escuro-convite-tecnico.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "convite-tecnico",
+  "grupo": "D6",
+  "tamanho": "1280x800",
+  "tema": "claro",
+  "app": "D6/1280x800-claro-convite-tecnico.jpg",
+  "ref": "D6/1280x800-claro-convite-tecnico.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "convite-tecnico",
+  "grupo": "D6",
+  "tamanho": "1280x800",
+  "tema": "escuro",
+  "app": "D6/1280x800-escuro-convite-tecnico.jpg",
+  "ref": "D6/1280x800-escuro-convite-tecnico.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "convite-tecnico",
+  "grupo": "D6",
+  "tamanho": "1440x900",
+  "tema": "claro",
+  "app": "D6/1440x900-claro-convite-tecnico.jpg",
+  "ref": "D6/1440x900-claro-convite-tecnico.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "convite-tecnico",
+  "grupo": "D6",
+  "tamanho": "1440x900",
+  "tema": "escuro",
+  "app": "D6/1440x900-escuro-convite-tecnico.jpg",
+  "ref": "D6/1440x900-escuro-convite-tecnico.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "acesso-comercial",
+  "grupo": "D6",
+  "tamanho": "1280x720",
+  "tema": "claro",
+  "app": "D6/1280x720-claro-acesso-comercial.jpg",
+  "ref": null,
+  "avisos": [
+   "Sem Referencia no prototipo para este estado."
+  ],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "acesso-comercial",
+  "grupo": "D6",
+  "tamanho": "1280x720",
+  "tema": "escuro",
+  "app": "D6/1280x720-escuro-acesso-comercial.jpg",
+  "ref": null,
+  "avisos": [
+   "Sem Referencia no prototipo para este estado."
+  ],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "acesso-comercial",
+  "grupo": "D6",
+  "tamanho": "1280x800",
+  "tema": "claro",
+  "app": "D6/1280x800-claro-acesso-comercial.jpg",
+  "ref": null,
+  "avisos": [
+   "Sem Referencia no prototipo para este estado."
+  ],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "acesso-comercial",
+  "grupo": "D6",
+  "tamanho": "1280x800",
+  "tema": "escuro",
+  "app": "D6/1280x800-escuro-acesso-comercial.jpg",
+  "ref": null,
+  "avisos": [
+   "Sem Referencia no prototipo para este estado."
+  ],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "acesso-comercial",
+  "grupo": "D6",
+  "tamanho": "1440x900",
+  "tema": "claro",
+  "app": "D6/1440x900-claro-acesso-comercial.jpg",
+  "ref": null,
+  "avisos": [
+   "Sem Referencia no prototipo para este estado."
+  ],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "acesso-comercial",
+  "grupo": "D6",
+  "tamanho": "1440x900",
+  "tema": "escuro",
+  "app": "D6/1440x900-escuro-acesso-comercial.jpg",
+  "ref": null,
+  "avisos": [
+   "Sem Referencia no prototipo para este estado."
+  ],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "editar-comercial",
+  "grupo": "D6",
+  "tamanho": "1280x720",
+  "tema": "claro",
+  "app": "D6/1280x720-claro-editar-comercial.jpg",
+  "ref": "D6/1280x720-claro-editar-comercial.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "editar-comercial",
+  "grupo": "D6",
+  "tamanho": "1280x720",
+  "tema": "escuro",
+  "app": "D6/1280x720-escuro-editar-comercial.jpg",
+  "ref": "D6/1280x720-escuro-editar-comercial.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "editar-comercial",
+  "grupo": "D6",
+  "tamanho": "1280x800",
+  "tema": "claro",
+  "app": "D6/1280x800-claro-editar-comercial.jpg",
+  "ref": "D6/1280x800-claro-editar-comercial.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "editar-comercial",
+  "grupo": "D6",
+  "tamanho": "1280x800",
+  "tema": "escuro",
+  "app": "D6/1280x800-escuro-editar-comercial.jpg",
+  "ref": "D6/1280x800-escuro-editar-comercial.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "editar-comercial",
+  "grupo": "D6",
+  "tamanho": "1440x900",
+  "tema": "claro",
+  "app": "D6/1440x900-claro-editar-comercial.jpg",
+  "ref": "D6/1440x900-claro-editar-comercial.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "editar-comercial",
+  "grupo": "D6",
+  "tamanho": "1440x900",
+  "tema": "escuro",
+  "app": "D6/1440x900-escuro-editar-comercial.jpg",
+  "ref": "D6/1440x900-escuro-editar-comercial.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "senha-comercial",
+  "grupo": "D6",
+  "tamanho": "1280x720",
+  "tema": "claro",
+  "app": "D6/1280x720-claro-senha-comercial.jpg",
+  "ref": "D6/1280x720-claro-senha-comercial.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "senha-comercial",
+  "grupo": "D6",
+  "tamanho": "1280x720",
+  "tema": "escuro",
+  "app": "D6/1280x720-escuro-senha-comercial.jpg",
+  "ref": "D6/1280x720-escuro-senha-comercial.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "senha-comercial",
+  "grupo": "D6",
+  "tamanho": "1280x800",
+  "tema": "claro",
+  "app": "D6/1280x800-claro-senha-comercial.jpg",
+  "ref": "D6/1280x800-claro-senha-comercial.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "senha-comercial",
+  "grupo": "D6",
+  "tamanho": "1280x800",
+  "tema": "escuro",
+  "app": "D6/1280x800-escuro-senha-comercial.jpg",
+  "ref": "D6/1280x800-escuro-senha-comercial.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "senha-comercial",
+  "grupo": "D6",
+  "tamanho": "1440x900",
+  "tema": "claro",
+  "app": "D6/1440x900-claro-senha-comercial.jpg",
+  "ref": "D6/1440x900-claro-senha-comercial.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "senha-comercial",
+  "grupo": "D6",
+  "tamanho": "1440x900",
+  "tema": "escuro",
+  "app": "D6/1440x900-escuro-senha-comercial.jpg",
+  "ref": "D6/1440x900-escuro-senha-comercial.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "convite-comercial",
+  "grupo": "D6",
+  "tamanho": "1280x720",
+  "tema": "claro",
+  "app": "D6/1280x720-claro-convite-comercial.jpg",
+  "ref": "D6/1280x720-claro-convite-comercial.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "convite-comercial",
+  "grupo": "D6",
+  "tamanho": "1280x720",
+  "tema": "escuro",
+  "app": "D6/1280x720-escuro-convite-comercial.jpg",
+  "ref": "D6/1280x720-escuro-convite-comercial.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "convite-comercial",
+  "grupo": "D6",
+  "tamanho": "1280x800",
+  "tema": "claro",
+  "app": "D6/1280x800-claro-convite-comercial.jpg",
+  "ref": "D6/1280x800-claro-convite-comercial.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "convite-comercial",
+  "grupo": "D6",
+  "tamanho": "1280x800",
+  "tema": "escuro",
+  "app": "D6/1280x800-escuro-convite-comercial.jpg",
+  "ref": "D6/1280x800-escuro-convite-comercial.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "convite-comercial",
+  "grupo": "D6",
+  "tamanho": "1440x900",
+  "tema": "claro",
+  "app": "D6/1440x900-claro-convite-comercial.jpg",
+  "ref": "D6/1440x900-claro-convite-comercial.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "convite-comercial",
+  "grupo": "D6",
+  "tamanho": "1440x900",
+  "tema": "escuro",
+  "app": "D6/1440x900-escuro-convite-comercial.jpg",
+  "ref": "D6/1440x900-escuro-convite-comercial.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "ver-como-comercial",
+  "grupo": "D6",
+  "tamanho": "1280x720",
+  "tema": "claro",
+  "app": "D6/1280x720-claro-ver-como-comercial.jpg",
+  "ref": null,
+  "avisos": [
+   "Sem Referencia no prototipo para este estado."
+  ],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "ver-como-comercial",
+  "grupo": "D6",
+  "tamanho": "1280x720",
+  "tema": "escuro",
+  "app": "D6/1280x720-escuro-ver-como-comercial.jpg",
+  "ref": null,
+  "avisos": [
+   "Sem Referencia no prototipo para este estado."
+  ],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "ver-como-comercial",
+  "grupo": "D6",
+  "tamanho": "1280x800",
+  "tema": "claro",
+  "app": "D6/1280x800-claro-ver-como-comercial.jpg",
+  "ref": null,
+  "avisos": [
+   "Sem Referencia no prototipo para este estado."
+  ],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "ver-como-comercial",
+  "grupo": "D6",
+  "tamanho": "1280x800",
+  "tema": "escuro",
+  "app": "D6/1280x800-escuro-ver-como-comercial.jpg",
+  "ref": null,
+  "avisos": [
+   "Sem Referencia no prototipo para este estado."
+  ],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "ver-como-comercial",
+  "grupo": "D6",
+  "tamanho": "1440x900",
+  "tema": "claro",
+  "app": "D6/1440x900-claro-ver-como-comercial.jpg",
+  "ref": null,
+  "avisos": [
+   "Sem Referencia no prototipo para este estado."
+  ],
+  "erros": [
+   "Falha ao preparar a tela: Simulacao nao mudou o papel e a rota"
+  ]
+ },
+ {
+  "id": "ver-como-comercial",
+  "grupo": "D6",
+  "tamanho": "1440x900",
+  "tema": "escuro",
+  "app": "D6/1440x900-escuro-ver-como-comercial.jpg",
+  "ref": null,
+  "avisos": [
+   "Sem Referencia no prototipo para este estado."
+  ],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "ver-como-retorno",
+  "grupo": "D6",
+  "tamanho": "1280x720",
+  "tema": "claro",
+  "app": "D6/1280x720-claro-ver-como-retorno.jpg",
+  "ref": "D6/1280x720-claro-ver-como-retorno.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "ver-como-retorno",
+  "grupo": "D6",
+  "tamanho": "1280x720",
+  "tema": "escuro",
+  "app": "D6/1280x720-escuro-ver-como-retorno.jpg",
+  "ref": "D6/1280x720-escuro-ver-como-retorno.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "ver-como-retorno",
+  "grupo": "D6",
+  "tamanho": "1280x800",
+  "tema": "claro",
+  "app": "D6/1280x800-claro-ver-como-retorno.jpg",
+  "ref": "D6/1280x800-claro-ver-como-retorno.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "ver-como-retorno",
+  "grupo": "D6",
+  "tamanho": "1280x800",
+  "tema": "escuro",
+  "app": "D6/1280x800-escuro-ver-como-retorno.jpg",
+  "ref": "D6/1280x800-escuro-ver-como-retorno.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "ver-como-retorno",
+  "grupo": "D6",
+  "tamanho": "1440x900",
+  "tema": "claro",
+  "app": "D6/1440x900-claro-ver-como-retorno.jpg",
+  "ref": "D6/1440x900-claro-ver-como-retorno.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "ver-como-retorno",
+  "grupo": "D6",
+  "tamanho": "1440x900",
+  "tema": "escuro",
+  "app": "D6/1440x900-escuro-ver-como-retorno.jpg",
+  "ref": "D6/1440x900-escuro-ver-como-retorno.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "papeis-final",
+  "grupo": "D6",
+  "tamanho": "1280x720",
+  "tema": "claro",
+  "app": "D6/1280x720-claro-papeis-final.jpg",
+  "ref": "D6/1280x720-claro-papeis-final.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "papeis-final",
+  "grupo": "D6",
+  "tamanho": "1280x720",
+  "tema": "escuro",
+  "app": "D6/1280x720-escuro-papeis-final.jpg",
+  "ref": "D6/1280x720-escuro-papeis-final.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "papeis-final",
+  "grupo": "D6",
+  "tamanho": "1280x800",
+  "tema": "claro",
+  "app": "D6/1280x800-claro-papeis-final.jpg",
+  "ref": "D6/1280x800-claro-papeis-final.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "papeis-final",
+  "grupo": "D6",
+  "tamanho": "1280x800",
+  "tema": "escuro",
+  "app": "D6/1280x800-escuro-papeis-final.jpg",
+  "ref": "D6/1280x800-escuro-papeis-final.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "papeis-final",
+  "grupo": "D6",
+  "tamanho": "1440x900",
+  "tema": "claro",
+  "app": "D6/1440x900-claro-papeis-final.jpg",
+  "ref": "D6/1440x900-claro-papeis-final.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "papeis-final",
+  "grupo": "D6",
+  "tamanho": "1440x900",
+  "tema": "escuro",
+  "app": "D6/1440x900-escuro-papeis-final.jpg",
+  "ref": "D6/1440x900-escuro-papeis-final.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "papeis-editavel-simulado",
+  "grupo": "D6",
+  "tamanho": "1280x720",
+  "tema": "claro",
+  "app": "D6/1280x720-claro-papeis-editavel-simulado.jpg",
+  "ref": "D6/1280x720-claro-papeis-editavel-simulado.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "papeis-editavel-simulado",
+  "grupo": "D6",
+  "tamanho": "1280x720",
+  "tema": "escuro",
+  "app": "D6/1280x720-escuro-papeis-editavel-simulado.jpg",
+  "ref": "D6/1280x720-escuro-papeis-editavel-simulado.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "papeis-editavel-simulado",
+  "grupo": "D6",
+  "tamanho": "1280x800",
+  "tema": "claro",
+  "app": "D6/1280x800-claro-papeis-editavel-simulado.jpg",
+  "ref": "D6/1280x800-claro-papeis-editavel-simulado.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "papeis-editavel-simulado",
+  "grupo": "D6",
+  "tamanho": "1280x800",
+  "tema": "escuro",
+  "app": "D6/1280x800-escuro-papeis-editavel-simulado.jpg",
+  "ref": "D6/1280x800-escuro-papeis-editavel-simulado.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "papeis-editavel-simulado",
+  "grupo": "D6",
+  "tamanho": "1440x900",
+  "tema": "claro",
+  "app": "D6/1440x900-claro-papeis-editavel-simulado.jpg",
+  "ref": "D6/1440x900-claro-papeis-editavel-simulado.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "papeis-editavel-simulado",
+  "grupo": "D6",
+  "tamanho": "1440x900",
+  "tema": "escuro",
+  "app": "D6/1440x900-escuro-papeis-editavel-simulado.jpg",
+  "ref": "D6/1440x900-escuro-papeis-editavel-simulado.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "papeis-restaurar",
+  "grupo": "D6",
+  "tamanho": "1280x720",
+  "tema": "claro",
+  "app": "D6/1280x720-claro-papeis-restaurar.jpg",
+  "ref": "D6/1280x720-claro-papeis-restaurar.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "papeis-restaurar",
+  "grupo": "D6",
+  "tamanho": "1280x720",
+  "tema": "escuro",
+  "app": "D6/1280x720-escuro-papeis-restaurar.jpg",
+  "ref": "D6/1280x720-escuro-papeis-restaurar.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "papeis-restaurar",
+  "grupo": "D6",
+  "tamanho": "1280x800",
+  "tema": "claro",
+  "app": "D6/1280x800-claro-papeis-restaurar.jpg",
+  "ref": "D6/1280x800-claro-papeis-restaurar.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "papeis-restaurar",
+  "grupo": "D6",
+  "tamanho": "1280x800",
+  "tema": "escuro",
+  "app": "D6/1280x800-escuro-papeis-restaurar.jpg",
+  "ref": "D6/1280x800-escuro-papeis-restaurar.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "papeis-restaurar",
+  "grupo": "D6",
+  "tamanho": "1440x900",
+  "tema": "claro",
+  "app": "D6/1440x900-claro-papeis-restaurar.jpg",
+  "ref": "D6/1440x900-claro-papeis-restaurar.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "papeis-restaurar",
+  "grupo": "D6",
+  "tamanho": "1440x900",
+  "tema": "escuro",
+  "app": "D6/1440x900-escuro-papeis-restaurar.jpg",
+  "ref": "D6/1440x900-escuro-papeis-restaurar.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "lista-todos-simulada",
+  "grupo": "D6",
+  "tamanho": "1280x720",
+  "tema": "claro",
+  "app": "D6/1280x720-claro-lista-todos-simulada.jpg",
+  "ref": "D6/1280x720-claro-lista-todos-simulada.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "lista-todos-simulada",
+  "grupo": "D6",
+  "tamanho": "1280x720",
+  "tema": "escuro",
+  "app": "D6/1280x720-escuro-lista-todos-simulada.jpg",
+  "ref": "D6/1280x720-escuro-lista-todos-simulada.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "lista-todos-simulada",
+  "grupo": "D6",
+  "tamanho": "1280x800",
+  "tema": "claro",
+  "app": "D6/1280x800-claro-lista-todos-simulada.jpg",
+  "ref": "D6/1280x800-claro-lista-todos-simulada.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "lista-todos-simulada",
+  "grupo": "D6",
+  "tamanho": "1280x800",
+  "tema": "escuro",
+  "app": "D6/1280x800-escuro-lista-todos-simulada.jpg",
+  "ref": "D6/1280x800-escuro-lista-todos-simulada.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "lista-todos-simulada",
+  "grupo": "D6",
+  "tamanho": "1440x900",
+  "tema": "claro",
+  "app": "D6/1440x900-claro-lista-todos-simulada.jpg",
+  "ref": "D6/1440x900-claro-lista-todos-simulada.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "lista-todos-simulada",
+  "grupo": "D6",
+  "tamanho": "1440x900",
+  "tema": "escuro",
+  "app": "D6/1440x900-escuro-lista-todos-simulada.jpg",
+  "ref": "D6/1440x900-escuro-lista-todos-simulada.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "lista-ativos-simulada",
+  "grupo": "D6",
+  "tamanho": "1280x720",
+  "tema": "claro",
+  "app": "D6/1280x720-claro-lista-ativos-simulada.jpg",
+  "ref": "D6/1280x720-claro-lista-ativos-simulada.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "lista-ativos-simulada",
+  "grupo": "D6",
+  "tamanho": "1280x720",
+  "tema": "escuro",
+  "app": "D6/1280x720-escuro-lista-ativos-simulada.jpg",
+  "ref": "D6/1280x720-escuro-lista-ativos-simulada.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "lista-ativos-simulada",
+  "grupo": "D6",
+  "tamanho": "1280x800",
+  "tema": "claro",
+  "app": "D6/1280x800-claro-lista-ativos-simulada.jpg",
+  "ref": "D6/1280x800-claro-lista-ativos-simulada.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "lista-ativos-simulada",
+  "grupo": "D6",
+  "tamanho": "1280x800",
+  "tema": "escuro",
+  "app": "D6/1280x800-escuro-lista-ativos-simulada.jpg",
+  "ref": "D6/1280x800-escuro-lista-ativos-simulada.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "lista-ativos-simulada",
+  "grupo": "D6",
+  "tamanho": "1440x900",
+  "tema": "claro",
+  "app": "D6/1440x900-claro-lista-ativos-simulada.jpg",
+  "ref": "D6/1440x900-claro-lista-ativos-simulada.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "lista-ativos-simulada",
+  "grupo": "D6",
+  "tamanho": "1440x900",
+  "tema": "escuro",
+  "app": "D6/1440x900-escuro-lista-ativos-simulada.jpg",
+  "ref": "D6/1440x900-escuro-lista-ativos-simulada.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "lista-convites-simulada",
+  "grupo": "D6",
+  "tamanho": "1280x720",
+  "tema": "claro",
+  "app": "D6/1280x720-claro-lista-convites-simulada.jpg",
+  "ref": "D6/1280x720-claro-lista-convites-simulada.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "lista-convites-simulada",
+  "grupo": "D6",
+  "tamanho": "1280x720",
+  "tema": "escuro",
+  "app": "D6/1280x720-escuro-lista-convites-simulada.jpg",
+  "ref": "D6/1280x720-escuro-lista-convites-simulada.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "lista-convites-simulada",
+  "grupo": "D6",
+  "tamanho": "1280x800",
+  "tema": "claro",
+  "app": "D6/1280x800-claro-lista-convites-simulada.jpg",
+  "ref": "D6/1280x800-claro-lista-convites-simulada.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "lista-convites-simulada",
+  "grupo": "D6",
+  "tamanho": "1280x800",
+  "tema": "escuro",
+  "app": "D6/1280x800-escuro-lista-convites-simulada.jpg",
+  "ref": "D6/1280x800-escuro-lista-convites-simulada.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "lista-convites-simulada",
+  "grupo": "D6",
+  "tamanho": "1440x900",
+  "tema": "claro",
+  "app": "D6/1440x900-claro-lista-convites-simulada.jpg",
+  "ref": "D6/1440x900-claro-lista-convites-simulada.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "lista-convites-simulada",
+  "grupo": "D6",
+  "tamanho": "1440x900",
+  "tema": "escuro",
+  "app": "D6/1440x900-escuro-lista-convites-simulada.jpg",
+  "ref": "D6/1440x900-escuro-lista-convites-simulada.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "lista-desativados-simulada",
+  "grupo": "D6",
+  "tamanho": "1280x720",
+  "tema": "claro",
+  "app": "D6/1280x720-claro-lista-desativados-simulada.jpg",
+  "ref": "D6/1280x720-claro-lista-desativados-simulada.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "lista-desativados-simulada",
+  "grupo": "D6",
+  "tamanho": "1280x720",
+  "tema": "escuro",
+  "app": "D6/1280x720-escuro-lista-desativados-simulada.jpg",
+  "ref": "D6/1280x720-escuro-lista-desativados-simulada.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "lista-desativados-simulada",
+  "grupo": "D6",
+  "tamanho": "1280x800",
+  "tema": "claro",
+  "app": "D6/1280x800-claro-lista-desativados-simulada.jpg",
+  "ref": "D6/1280x800-claro-lista-desativados-simulada.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "lista-desativados-simulada",
+  "grupo": "D6",
+  "tamanho": "1280x800",
+  "tema": "escuro",
+  "app": "D6/1280x800-escuro-lista-desativados-simulada.jpg",
+  "ref": "D6/1280x800-escuro-lista-desativados-simulada.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "lista-desativados-simulada",
+  "grupo": "D6",
+  "tamanho": "1440x900",
+  "tema": "claro",
+  "app": "D6/1440x900-claro-lista-desativados-simulada.jpg",
+  "ref": "D6/1440x900-claro-lista-desativados-simulada.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "lista-desativados-simulada",
+  "grupo": "D6",
+  "tamanho": "1440x900",
+  "tema": "escuro",
+  "app": "D6/1440x900-escuro-lista-desativados-simulada.jpg",
+  "ref": "D6/1440x900-escuro-lista-desativados-simulada.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "lista-vazia",
+  "grupo": "D6",
+  "tamanho": "1280x720",
+  "tema": "claro",
+  "app": "D6/1280x720-claro-lista-vazia.jpg",
+  "ref": "D6/1280x720-claro-lista-vazia.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "lista-vazia",
+  "grupo": "D6",
+  "tamanho": "1280x720",
+  "tema": "escuro",
+  "app": "D6/1280x720-escuro-lista-vazia.jpg",
+  "ref": "D6/1280x720-escuro-lista-vazia.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "lista-vazia",
+  "grupo": "D6",
+  "tamanho": "1280x800",
+  "tema": "claro",
+  "app": "D6/1280x800-claro-lista-vazia.jpg",
+  "ref": "D6/1280x800-claro-lista-vazia.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "lista-vazia",
+  "grupo": "D6",
+  "tamanho": "1280x800",
+  "tema": "escuro",
+  "app": "D6/1280x800-escuro-lista-vazia.jpg",
+  "ref": "D6/1280x800-escuro-lista-vazia.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "lista-vazia",
+  "grupo": "D6",
+  "tamanho": "1440x900",
+  "tema": "claro",
+  "app": "D6/1440x900-claro-lista-vazia.jpg",
+  "ref": "D6/1440x900-claro-lista-vazia.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "lista-vazia",
+  "grupo": "D6",
+  "tamanho": "1440x900",
+  "tema": "escuro",
+  "app": "D6/1440x900-escuro-lista-vazia.jpg",
+  "ref": "D6/1440x900-escuro-lista-vazia.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "convite-enviado-simulado",
+  "grupo": "D6",
+  "tamanho": "1280x720",
+  "tema": "claro",
+  "app": "D6/1280x720-claro-convite-enviado-simulado.jpg",
+  "ref": "D6/1280x720-claro-convite-enviado-simulado.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "convite-enviado-simulado",
+  "grupo": "D6",
+  "tamanho": "1280x720",
+  "tema": "escuro",
+  "app": "D6/1280x720-escuro-convite-enviado-simulado.jpg",
+  "ref": "D6/1280x720-escuro-convite-enviado-simulado.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "convite-enviado-simulado",
+  "grupo": "D6",
+  "tamanho": "1280x800",
+  "tema": "claro",
+  "app": "D6/1280x800-claro-convite-enviado-simulado.jpg",
+  "ref": "D6/1280x800-claro-convite-enviado-simulado.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "convite-enviado-simulado",
+  "grupo": "D6",
+  "tamanho": "1280x800",
+  "tema": "escuro",
+  "app": "D6/1280x800-escuro-convite-enviado-simulado.jpg",
+  "ref": "D6/1280x800-escuro-convite-enviado-simulado.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "convite-enviado-simulado",
+  "grupo": "D6",
+  "tamanho": "1440x900",
+  "tema": "claro",
+  "app": "D6/1440x900-claro-convite-enviado-simulado.jpg",
+  "ref": "D6/1440x900-claro-convite-enviado-simulado.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "convite-enviado-simulado",
+  "grupo": "D6",
+  "tamanho": "1440x900",
+  "tema": "escuro",
+  "app": "D6/1440x900-escuro-convite-enviado-simulado.jpg",
+  "ref": "D6/1440x900-escuro-convite-enviado-simulado.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "convite-reenviado-simulado",
+  "grupo": "D6",
+  "tamanho": "1280x720",
+  "tema": "claro",
+  "app": "D6/1280x720-claro-convite-reenviado-simulado.jpg",
+  "ref": "D6/1280x720-claro-convite-reenviado-simulado.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "convite-reenviado-simulado",
+  "grupo": "D6",
+  "tamanho": "1280x720",
+  "tema": "escuro",
+  "app": "D6/1280x720-escuro-convite-reenviado-simulado.jpg",
+  "ref": "D6/1280x720-escuro-convite-reenviado-simulado.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "convite-reenviado-simulado",
+  "grupo": "D6",
+  "tamanho": "1280x800",
+  "tema": "claro",
+  "app": "D6/1280x800-claro-convite-reenviado-simulado.jpg",
+  "ref": "D6/1280x800-claro-convite-reenviado-simulado.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "convite-reenviado-simulado",
+  "grupo": "D6",
+  "tamanho": "1280x800",
+  "tema": "escuro",
+  "app": "D6/1280x800-escuro-convite-reenviado-simulado.jpg",
+  "ref": "D6/1280x800-escuro-convite-reenviado-simulado.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "convite-reenviado-simulado",
+  "grupo": "D6",
+  "tamanho": "1440x900",
+  "tema": "claro",
+  "app": "D6/1440x900-claro-convite-reenviado-simulado.jpg",
+  "ref": "D6/1440x900-claro-convite-reenviado-simulado.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "convite-reenviado-simulado",
+  "grupo": "D6",
+  "tamanho": "1440x900",
+  "tema": "escuro",
+  "app": "D6/1440x900-escuro-convite-reenviado-simulado.jpg",
+  "ref": "D6/1440x900-escuro-convite-reenviado-simulado.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "usuario-erros",
+  "grupo": "D6",
+  "tamanho": "1280x720",
+  "tema": "claro",
+  "app": "D6/1280x720-claro-usuario-erros.jpg",
+  "ref": "D6/1280x720-claro-usuario-erros.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "usuario-erros",
+  "grupo": "D6",
+  "tamanho": "1280x720",
+  "tema": "escuro",
+  "app": "D6/1280x720-escuro-usuario-erros.jpg",
+  "ref": "D6/1280x720-escuro-usuario-erros.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "usuario-erros",
+  "grupo": "D6",
+  "tamanho": "1280x800",
+  "tema": "claro",
+  "app": "D6/1280x800-claro-usuario-erros.jpg",
+  "ref": "D6/1280x800-claro-usuario-erros.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "usuario-erros",
+  "grupo": "D6",
+  "tamanho": "1280x800",
+  "tema": "escuro",
+  "app": "D6/1280x800-escuro-usuario-erros.jpg",
+  "ref": "D6/1280x800-escuro-usuario-erros.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "usuario-erros",
+  "grupo": "D6",
+  "tamanho": "1440x900",
+  "tema": "claro",
+  "app": "D6/1440x900-claro-usuario-erros.jpg",
+  "ref": "D6/1440x900-claro-usuario-erros.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "usuario-erros",
+  "grupo": "D6",
+  "tamanho": "1440x900",
+  "tema": "escuro",
+  "app": "D6/1440x900-escuro-usuario-erros.jpg",
+  "ref": "D6/1440x900-escuro-usuario-erros.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "editar-obras-todas",
+  "grupo": "D6",
+  "tamanho": "1280x720",
+  "tema": "claro",
+  "app": "D6/1280x720-claro-editar-obras-todas.jpg",
+  "ref": "D6/1280x720-claro-editar-obras-todas.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "editar-obras-todas",
+  "grupo": "D6",
+  "tamanho": "1280x720",
+  "tema": "escuro",
+  "app": "D6/1280x720-escuro-editar-obras-todas.jpg",
+  "ref": "D6/1280x720-escuro-editar-obras-todas.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "editar-obras-todas",
+  "grupo": "D6",
+  "tamanho": "1280x800",
+  "tema": "claro",
+  "app": "D6/1280x800-claro-editar-obras-todas.jpg",
+  "ref": "D6/1280x800-claro-editar-obras-todas.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "editar-obras-todas",
+  "grupo": "D6",
+  "tamanho": "1280x800",
+  "tema": "escuro",
+  "app": "D6/1280x800-escuro-editar-obras-todas.jpg",
+  "ref": "D6/1280x800-escuro-editar-obras-todas.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "editar-obras-todas",
+  "grupo": "D6",
+  "tamanho": "1440x900",
+  "tema": "claro",
+  "app": "D6/1440x900-claro-editar-obras-todas.jpg",
+  "ref": "D6/1440x900-claro-editar-obras-todas.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "editar-obras-todas",
+  "grupo": "D6",
+  "tamanho": "1440x900",
+  "tema": "escuro",
+  "app": "D6/1440x900-escuro-editar-obras-todas.jpg",
+  "ref": "D6/1440x900-escuro-editar-obras-todas.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "editar-final",
+  "grupo": "D6",
+  "tamanho": "1280x720",
+  "tema": "claro",
+  "app": "D6/1280x720-claro-editar-final.jpg",
+  "ref": "D6/1280x720-claro-editar-final.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "editar-final",
+  "grupo": "D6",
+  "tamanho": "1280x720",
+  "tema": "escuro",
+  "app": "D6/1280x720-escuro-editar-final.jpg",
+  "ref": "D6/1280x720-escuro-editar-final.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "editar-final",
+  "grupo": "D6",
+  "tamanho": "1280x800",
+  "tema": "claro",
+  "app": "D6/1280x800-claro-editar-final.jpg",
+  "ref": "D6/1280x800-claro-editar-final.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "editar-final",
+  "grupo": "D6",
+  "tamanho": "1280x800",
+  "tema": "escuro",
+  "app": "D6/1280x800-escuro-editar-final.jpg",
+  "ref": "D6/1280x800-escuro-editar-final.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "editar-final",
+  "grupo": "D6",
+  "tamanho": "1440x900",
+  "tema": "claro",
+  "app": "D6/1440x900-claro-editar-final.jpg",
+  "ref": "D6/1440x900-claro-editar-final.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "editar-final",
+  "grupo": "D6",
+  "tamanho": "1440x900",
+  "tema": "escuro",
+  "app": "D6/1440x900-escuro-editar-final.jpg",
+  "ref": "D6/1440x900-escuro-editar-final.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "usuario-criado",
+  "grupo": "D6",
+  "tamanho": "1280x720",
+  "tema": "claro",
+  "app": "D6/1280x720-claro-usuario-criado.jpg",
+  "ref": "D6/1280x720-claro-usuario-criado.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "usuario-criado",
+  "grupo": "D6",
+  "tamanho": "1280x720",
+  "tema": "escuro",
+  "app": "D6/1280x720-escuro-usuario-criado.jpg",
+  "ref": "D6/1280x720-escuro-usuario-criado.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "usuario-criado",
+  "grupo": "D6",
+  "tamanho": "1280x800",
+  "tema": "claro",
+  "app": "D6/1280x800-claro-usuario-criado.jpg",
+  "ref": "D6/1280x800-claro-usuario-criado.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "usuario-criado",
+  "grupo": "D6",
+  "tamanho": "1280x800",
+  "tema": "escuro",
+  "app": "D6/1280x800-escuro-usuario-criado.jpg",
+  "ref": "D6/1280x800-escuro-usuario-criado.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "usuario-criado",
+  "grupo": "D6",
+  "tamanho": "1440x900",
+  "tema": "claro",
+  "app": "D6/1440x900-claro-usuario-criado.jpg",
+  "ref": "D6/1440x900-claro-usuario-criado.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ },
+ {
+  "id": "usuario-criado",
+  "grupo": "D6",
+  "tamanho": "1440x900",
+  "tema": "escuro",
+  "app": "D6/1440x900-escuro-usuario-criado.jpg",
+  "ref": "D6/1440x900-escuro-usuario-criado.jpg",
+  "avisos": [],
+  "erros": [],
+  "sonda": {
+   "rolagemHorizontal": false,
+   "rolagemAninhada": [],
+   "foraDaJanela": []
+  }
+ }
+]

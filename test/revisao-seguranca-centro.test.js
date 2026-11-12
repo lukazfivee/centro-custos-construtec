@@ -160,13 +160,15 @@ test('anexos: envio exige p2 ou p3, excluido some e remocao respeita competencia
     conteudoBase64: Buffer.from(`%PDF-1.4\n${texto}\n%%EOF\n`).toString('base64'),
   } });
 
-  // Sem p2 nem p3 (comercial): 403. Com p2 (tecnico): passa.
+  // Comercial e técnico não enviam anexos financeiros; engenharia mantém p2.
   const comercial = await userWithRole(admin, 'comercial');
   assert.equal((await upload(comercial.token, keep.id, 'a')).status, 403);
   const tecnico = await userWithRole(admin, 'tecnico');
   await getDb().query('INSERT INTO user_cost_centers (user_id,cost_center_id) VALUES ($1,$2)', [tecnico.id, center.data.id]);
   await getDb().query('UPDATE users SET all_cost_centers=FALSE WHERE id=$1', [tecnico.id]);
-  assert.equal((await upload(tecnico.token, keep.id, 'b')).status, 201);
+  assert.equal((await upload(tecnico.token, keep.id, 'b')).status, 403);
+  const engenharia = await userWithRole(admin, 'engenharia');
+  assert.equal((await upload(engenharia.token, keep.id, 'b')).status, 201);
   const kept = await upload(admin, keep.id, 'c');
   assert.equal(kept.status, 201);
   const dropped = await upload(admin, drop.id, 'd');

@@ -1,205 +1,221 @@
 ---
-name: "Centro de Custos CONSTRUTEC"
-description: "Painel operacional de obras, orçamentos e lançamentos financeiros da Construtec."
+name: Suíte Construtec
+description: Sistema visual comum do Centro de Custos e do Orçamentos: petróleo escuro, ciano que age, IBM Plex, contornos de 1 px.
 colors:
-  navy: "#122036"
-  navy-2: "#1b2c45"
-  ink: "#172033"
-  muted: "#596579"
-  line: "#e4e6ea"
-  control-border: "#8b96a7"
-  canvas: "#f7f8fa"
-  white: "#fefefe"
-  surface-muted: "#f7f8fa"
-  accent: "#085ce5"
-  accent-dark: "#064bbd"
-  green: "#14783c"
-  red: "#b62e38"
-  focus-ring: "#085ce5"
-  budget-ink: "#0f172a"
-  budget-slate: "#64748b"
-  budget-slate-light: "#cbd5e1"
-  budget-danger: "#dc2626"
-  budget-success: "#059669"
-  budget-info: "#0284c7"
-  budget-warning: "#d97706"
+  petroleo: "#031f29"
+  petroleo-fundo-escuro: "#021820"
+  superficie-escura: "#0b2f3b"
+  linha-escura: "#164656"
+  tinta: "#0b2530"
+  papel-frio: "#f2f8fa"
+  superficie: "#fefefe"
+  linha: "#d6e4e9"
+  neutro-texto: "#5d7480"
+  neutro-apoio: "#8fa6b0"
+  ciano: "#12a9d1"
+  ciano-marca: "#0a7896"
+  ciano-medio: "#0d7f9f"
+  ciano-profundo: "#0b4a5c"
+  ciano-suave: "#e8f8fc"
+  ciano-claro-escuro: "#5fd0ee"
+  ok: "#1d7a4f"
+  ok-suave: "#e3f6ec"
+  alerta: "#8a5200"
+  alerta-barra: "#e0a33a"
+  alerta-suave: "#fff5d9"
+  erro: "#b8452c"
+  erro-suave: "#fdecea"
+  saida: "#a24a12"
+  saida-suave: "#fdf0e6"
 typography:
   headline:
     fontFamily: '"IBM Plex Sans", "Segoe UI", system-ui, sans-serif'
-    fontSize: "28px"
+    fontSize: "calc(25px * var(--fs, 1))"
     fontWeight: 700
-    lineHeight: 1.15
-    letterSpacing: "normal"
+    lineHeight: 1.1
   title:
     fontFamily: '"IBM Plex Sans", "Segoe UI", system-ui, sans-serif'
-    fontSize: "14px"
-    fontWeight: 700
-    lineHeight: 1.3
-    letterSpacing: "normal"
+    fontSize: "calc(21px * var(--fs, 1))"
+    fontWeight: 600
+    lineHeight: 1.2
   body:
     fontFamily: '"IBM Plex Sans", "Segoe UI", system-ui, sans-serif'
-    fontSize: "12px"
+    fontSize: "calc(14px * var(--fs, 1))"
     fontWeight: 400
     lineHeight: 1.5
-    letterSpacing: "normal"
   label:
     fontFamily: '"IBM Plex Sans", "Segoe UI", system-ui, sans-serif'
-    fontSize: "11px"
-    fontWeight: 700
+    fontSize: "calc(13.5px * var(--fs, 1))"
+    fontWeight: 600
+    lineHeight: 1.2
+  caption:
+    fontFamily: '"IBM Plex Sans", "Segoe UI", system-ui, sans-serif'
+    fontSize: "calc(12px * var(--fs, 1))"
+    fontWeight: 400
     lineHeight: 1.4
-    letterSpacing: "normal"
 rounded:
-  sm: "6px"
-  md: "8px"
-  lg: "10px"
-  full: "50%"
+  sm: "5px"
+  md: "10px"
+  lg: "14px"
+  pill: "12px"
 spacing:
-  xs: "5px"
-  sm: "10px"
-  md: "14px"
-  lg: "16px"
-  xl: "24px"
+  xs: "8px"
+  sm: "12px"
+  md: "16px"
+  lg: "24px"
 components:
   button-primary:
-    backgroundColor: "{colors.accent}"
-    textColor: "#fff"
-    typography: "{typography.body}"
-    rounded: "{rounded.sm}"
-    padding: "7px 12px"
-    height: "34px"
-  button-secondary:
-    backgroundColor: "{colors.white}"
-    textColor: "{colors.ink}"
-    typography: "{typography.body}"
-    rounded: "{rounded.sm}"
-    padding: "7px 12px"
-    height: "34px"
-  kpi-card:
-    backgroundColor: "{colors.white}"
-    textColor: "{colors.ink}"
+    backgroundColor: "{colors.ciano-marca}"
+    textColor: "{colors.superficie}"
+    typography: "{typography.label}"
     rounded: "{rounded.md}"
-    padding: "15px 16px"
-  table-card:
-    backgroundColor: "{colors.white}"
+    height: "40px"
+    padding: "0 16px"
+  card:
+    backgroundColor: "{colors.superficie}"
+    textColor: "{colors.tinta}"
+    rounded: "{rounded.lg}"
+    padding: "16px"
+  input:
+    backgroundColor: "{colors.superficie}"
+    textColor: "{colors.tinta}"
+    typography: "{typography.body}"
     rounded: "{rounded.md}"
+    height: "40px"
+    padding: "0 12px"
+  chip:
+    backgroundColor: "{colors.ciano-suave}"
+    textColor: "{colors.ciano-marca}"
+    typography: "{typography.caption}"
+    rounded: "{rounded.pill}"
+    height: "24px"
+    padding: "0 9px"
 ---
 
-# Design System: Centro de Custos CONSTRUTEC
+# Design System: Suíte Construtec
+
+> O visual antigo do Centro (Clássico, `/classico/`) está em `docs/DESIGN-CLASSICO.md` até ele sair, cerca de 26/11/2026.
+
+Extraído do Desktop novo do Centro (`public/d/css/tokens.css`, `base.css`, `layout.css`, `escala.css`) na main de 21/10/2026. O Orçamentos tem o próprio DESIGN.md, com os mesmos tokens de marca; a regra do produto é que os dois sejam iguais, medidos lado a lado.
 
 ## Overview
 
-**Creative North Star: "Painel Operacional Construtec"** (mundo compartilhado com o Construtec Orçamentos)
+**Creative North Star: "A Mesa de Obra"**
 
-A interface é um painel de gestão denso, orientado a tabelas e KPIs: navegação petróleo (`#122036`) fixa, área de trabalho quase branca e um único azul de ação (`#085ce5`) reservado para botões primários, seleção e foco. Este sistema foi alinhado intencionalmente ao Construtec Orçamentos numa auditoria anterior (`docs/IMPECCABLE-AUDIT-DESIGN-20260914.md`): mesma família tipográfica (IBM Plex Sans), mesma superfície plana sem sombra, mesmos raios discretos. Este DESIGN.md documenta esse mundo já existente no código (extensão, não redesign) e acrescenta o padrão mobile introduzido nesta sessão.
+Uma bancada de trabalho firme: o petróleo escuro segura a navegação e o tema escuro, o papel frio e a superfície branca recebem os números, e o ciano aparece só onde algo age ou está ativo. A interface é densa de propósito, porque a equipe lança gastos, confere propostas e fecha o mês, não navega. Nada decora; cada bloco informa ou age.
+
+O sistema nasce do celular (os tokens do desktop são os mesmos do `/m/`) e vive em dois temas completos, claro e escuro, ambos obrigatórios. Cantos de 10 a 14 px e contornos de 1 px dão a firmeza sem peso; profundidade é tonal, não sombreada.
 
 **Key Characteristics:**
-
-- Operar > expressar: tabelas, KPIs e formulários densos são o produto; nada compete com a tarefa.
-- Navegação petróleo escura persistente (topbar + sidebar), área de trabalho em papel quase branco.
-- Azul Construtec (`#085ce5`) é a única cor de ação; verde e vermelho são estritamente semânticos (receita/despesa, ativo/inativo).
-- Plano por padrão: sem sombra em superfícies permanentes; profundidade vem de linha e contraste tonal.
-- Em telas até 800px, listas que eram tabelas largas virem cartões tocáveis (ver Layout e Components) — nunca alteram a versão desktop.
+- Petróleo + ciano sobre papel frio; semânticas (ok, alerta, erro, saída) sempre em par texto + fundo suave.
+- IBM Plex Sans em tudo, números tabulares nos valores.
+- Plano: anel de 1 px no lugar de sombra; sombra só no que flutua.
+- Escala natural a 75% em janelas de 1200 px ou mais, com letras devolvidas por `--fs: 1.3`.
+- Sem emojis; ícones Phosphor.
 
 ## Colors
 
-### Primary
-- **Azul Construtec** (`#085ce5`, hover `#064bbd`): ações primárias, item de navegação ativo, foco de teclado, links.
+Paleta de duas famílias frias (petróleo e ciano) com neutros azulados e quatro semânticas quentes e verdes usadas com parcimônia.
 
-### Secondary
-- **Verde de Integridade** (`#14783c`): receita, ativo, status positivo.
-- **Vermelho de Alerta** (`#b62e38`): despesa, inativo, ação destrutiva.
+### Primary
+- **Ciano de Ação** (#12a9d1): marca, gráficos de receita, indicador ativo; no tema claro vira **Ciano de Marca** (#0a7896) para botões e foco, onde precisa de contraste com texto branco.
+- **Ciano Médio** (#0d7f9f) e **Ciano Profundo** (#0b4a5c): estados de pressão e apoio; **Ciano Suave** (#e8f8fc) é o fundo de seleção e dos ícones de KPI no claro; **Ciano Claro** (#5fd0ee) faz o papel de acento no escuro.
 
 ### Neutral
-- **Petróleo** (`#122036` / `#1b2c45`): topbar e sidebar.
-- **Tinta** (`#172033`): texto de alta prioridade.
-- **Cinza de Apoio** (`#596579`): rótulos, texto secundário.
-- **Linha** (`#e4e6ea`) / **Borda de controle** (`#8b96a7`): divisores e bordas de input.
-- **Papel** (`#f7f8fa`) / **Branco** (`#fefefe`): fundo de app e superfícies elevadas (cards, tabelas, painéis).
+- **Petróleo** (#031f29): barra lateral e fundo do tema escuro; **Petróleo Profundo** (#021820) para a barra de abas do celular.
+- **Superfície Escura** (#0b2f3b) e **Linha Escura** (#164656): cartões e divisões no tema escuro.
+- **Papel Frio** (#f2f8fa): fundo do tema claro; **Superfície** (#fefefe): cartões e campos; **Tinta** (#0b2530): texto; **Linha** (#d6e4e9): divisões e anéis.
+- **Neutro de Texto** (#5d7480) e **Neutro de Apoio** (#8fa6b0): texto secundário e placeholders.
 
-### Extensão: Módulo de Orçamento (paleta própria, documentada em 2026-09-20)
-As telas do módulo de Orçamento (`budget-curves.css`, `budget-measurements.css`, `budget-portfolio.css`, `budget-reports.css`, `budget-view.css` — Curva S, Medições, Portfólio, Boletim/Relatório e Análise de Orçamento) usam uma paleta Tailwind própria, consistente entre si mas independente do sistema petróleo/azul acima. Auditoria de 2026-09-20 confirmou: não é bagunça de valores soltos, é um segundo sistema coerente, só que nunca documentado até agora.
-- **Ardósia** (`#0f172a` escuro / `#64748b` médio / `#cbd5e1` claro): texto, ícones e bordas neutras dessas telas — equivalente funcional ao Tinta/Cinza de Apoio/Linha do sistema principal, mas em outra escala de cor.
-- **Vermelho de Orçamento** (`#dc2626`): estouro de orçamento, variação negativa, exclusão.
-- **Verde de Orçamento** (`#059669`): dentro do orçamento, variação positiva, curva ABC "C".
-- **Azul de Orçamento** (`#0284c7`): informação neutra, curva ABC "A", medições em andamento.
-- **Âmbar de Orçamento** (`#d97706`): atenção, curva ABC "B", pendências.
+### Semantic
+- **Ok** (#1d7a4f / suave #e3f6ec), **Alerta** (#8a5200 / barra #e0a33a / suave #fff5d9), **Erro** (#b8452c / suave #fdecea), **Saída** (#a24a12 / suave #fdf0e6, despesas).
+- No tema escuro cada uma clareia (ok #3ccf8e, alerta #f2b544, erro #ff9d8a, saída #f2a26a) e o fundo vira a própria cor a 14 a 16% de opacidade.
 
 ### Named Rules
-**The One Action Rule.** O azul de ação aparece só em botão primário, seleção, foco e item de navegação ativo — nunca como preenchimento decorativo.
-**The Budget Module Exception Rule.** A paleta "de Orçamento" acima só vale dentro dos arquivos `budget-*`. Nunca usar essas cores em telas do app principal, e nunca "corrigir" os arquivos `budget-*` para a paleta petróleo/azul sem uma decisão de design explícita — são dois sistemas cônscios coexistindo, não um erro a unificar por padrão.
+**A Regra do Ciano que Age.** O ciano marca o que o usuário pode clicar ou o que está ativo agora. Quem usa ciano para enfeitar tira o sentido do botão.
+
+**A Regra do Par Semântico.** Cor de situação nunca vai sozinha: texto na cor forte sobre o fundo suave da mesma família, e sempre com texto ou ícone dizendo o estado.
 
 ## Typography
 
-**Body Font:** IBM Plex Sans (com Segoe UI e system-ui como fallback), com numerais tabulares para valores monetários.
+**Display, Body e Label:** IBM Plex Sans (400, 500, 600, 700), com Segoe UI e system-ui de reserva, servida localmente (`public/m/fonts/`).
+
+**Character:** uma família só, trabalhando em pesos. Hierarquia por peso e tamanho, não por troca de fonte; técnica e legível em tela pequena.
 
 ### Hierarchy
-- **Headline** (700, 28px): título de página (`.page-head h1`).
-- **Title** (700, 14px): títulos de painel e cartão.
-- **Body** (400, 12px): tabelas, formulários, navegação.
-- **Label** (700, 11px, uppercase): cabeçalho de tabela, rótulos de cartão mobile.
+- **Headline** (700, 25 px × `--fs`, 1,1): título de tela.
+- **Title** (600, 21 px × `--fs`, 1,2): valores de KPI e títulos de cartão, com `font-variant-numeric: tabular-nums`.
+- **Body** (400, 14 px × `--fs`, 1,5): campos e texto corrido.
+- **Label** (600, 13,5 px × `--fs`): botões, itens de menu.
+- **Caption** (400 a 600, 11,5 a 12 px × `--fs`): chips, apoio de KPI, atalhos.
 
-**Fontes fora do IBM Plex Sans (auditoria 2026-09-20):**
-- `budget-reports.css` (Relatório Executivo/Boletim, documento de impressão — já fora de escopo operacional, ver Layout): usa pilha de fonte de sistema (`-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif`) e monoespaçada (`ui-monospace, SFMono-Regular, ...`) para colunas numéricas/código — **intencional**, no espírito de um PDF exportado.
-- `budget-measurements.css:28` (modal "Medições", tela operacional ao vivo, **não** é impressão): usa a mesma pilha de fonte de sistema em vez de IBM Plex Sans — **isso é deriva real, não uma exceção documentada**. Foi encontrado na auditoria de 2026-09-20 e ainda não corrigido; ver `docs/notas-desenvolvimento` para tratar como item de `/impeccable harden` ou `/impeccable typeset` numa próxima passada.
+### Named Rules
+**A Regra do `--fs`.** Todo `font-size` novo no desktop é `calc(Npx * var(--fs, 1))`. Tamanho fixo em px quebra a escala de 75% e deixa o texto com 9 px na tela.
 
 ## Layout
 
-Casca fixa de desktop (≥801px): topbar de 43px, sidebar de 118px (94px/80px em telas menores), área principal com scroll próprio. Em ≤800px, a casca vira coluna única: topbar de 60px, sidebar torna-se drawer (`position:fixed`, oculta por padrão), navegação inferior fixa.
+Casca fixa: barra lateral de 236 px (264 px a partir de 1200 px) recolhível a 72 px, topbar de 64 px, conteúdo que rola sozinho. Em janela de 1200 px ou mais a página inteira roda a `zoom: .75` e o app é preso à janela (`position: fixed; inset: 0`), para só o conteúdo rolar. Painéis laterais (drawer) de 500 px.
 
-**Listas e tabelas mobile (extensão, 2 rodadas nesta sessão):** qualquer tabela larga recebe a classe `cc-mobile-table` no `<table>`; dentro de `@media (max-width: 800px)`, cada `<tr>` vira um cartão (`border-radius: 10px`, borda `var(--line)`, fundo `var(--white)`) e cada `<td>` com `data-label` mostra um rótulo maiúsculo em cima e o valor embaixo (bloco simples, não lado-a-lado — respeita `<br>` e conteúdo de largura variável sem vazar) — o mesmo princípio de "tabela → cartão" usado no Construtec Orçamentos para a tela de itens da proposta. Aplicado em: `fornecedores`, `categorias`, `histórico`, `usuários`, `lançamentos` (list-panel), a "Planilha Analítica" do modal Orçado vs. Realizado, as duas tabelas do modal de Medições e a tabela de evolução mensal da Curva S. `centros-custo`, `recorrentes` e o dashboard de portfólio já usavam cartão nativo (`.center-card`) e não precisaram de conversão; o grid que os organiza (`.centers-grid`) só tinha `grid-template-columns` dentro de media queries e ficava em coluna única acima de 1000px até a correção CC-P0-07, que adicionou a regra base (`display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));`) em `public/style.css`.
-**Armadilha de flexbox a evitar:** um contêiner com `overflow: hidden` dentro de uma coluna flex com altura máxima definida (ex.: `.budget-curves-modal`) perde a proteção `min-height: auto` do flexbox e pode encolher para ~0px quando o conteúdo do cartão fica mais alto que a tabela original — a correção é `flex-shrink: 0` no contêiner afetado, dentro do media query mobile.
-Fora de escopo (documento de impressão/exportação, não tela operacional): Relatório Executivo e Boletim de Medição (`budget-reports`) mantêm suas tabelas largas com scroll horizontal próprio, no mesmo espírito do PDF exportado do Orçamentos.
+Espaçamento compacto em múltiplos de 4 (8, 12, 16, 24); KPIs em grade `auto-fit` de no mínimo 170 px, quatro colunas quando cabe. O celular troca a barra lateral por uma cápsula de abas inferior (Liquid Glass) e segue a mesma ordem de informação.
 
-**Recursos ativados em 2026-09-18 (P2, P3, P4, Cobranças, Report V2, cloud-sync):** vários módulos tinham backend real, montado e testado, mas nenhum `<script src>` em `index.html` — por isso nunca apareciam na interface. Ativados nesta sessão: estorno de lançamento (P2, `chatgpt-p2.js`), painel de sincronização em pacote único (P3, `chatgpt-p3.js`), documentos/anexos por lançamento (P4, `chatgpt-p4.js`), tela "Cobranças" (`v3-1-enhancements.js`, exige conta `@rcconstrutec.com.br` — degrada com mensagem clara para outras contas), confirmação de entrega de bug reports (`report-v2.js`, substitui o `loadBugReports` original) e sincronização em segundo plano (`cloud-sync.js`). Todas as tabelas novas seguem o mesmo padrão `cc-mobile-table`/`data-label`. **Bug real corrigido na ativação:** essas telas chamavam sua API imediatamente ao carregar o script (antes do login), gerando erro 401 no console em qualquer página — corrigido com uma guarda `localStorage.getItem('cc_token')` antes de cada chamada eager.
-**Não ativado, por instrução explícita do usuário:** o "Cockpit inteligente" (P5-P8, `chatgpt-final.js/css`) — backend real e testado, mas o botão flutuante foi removido de `index.html` a pedido do usuário; o arquivo continua no repositório, só não carregado.
-**Não ativado, decisão de design pendente:** `v3-1-refinements.js/css` (tela "Clientes" + refinamentos de configurações) depende parcialmente de `v3-1-figma.css`, que é um re-skin visual completo do app (cantos arredondados 12px em cards/tabelas, navegação em pílula, sombra no hover) — conflita com a regra "Structure Before Softness" acima. Usuário viu um preview ao vivo (CSS injetado numa instância descartável) e decidiu manter o visual atual.
-
-**The No-Scroll List Rule.** Nenhuma lista mobile força scroll horizontal; o conteúdo empilha verticalmente dentro do cartão.
+Regras de layout do produto: sem rolagem aninhada, nada cortado em 1280x720, 1280x800, 1440x900 e 1920x1080 (desktop) e 375 px (celular).
 
 ## Elevation & Depth
 
-Plano por padrão, igual ao Orçamentos: sem `box-shadow` em painéis, tabelas ou cartões permanentes. Os únicos elementos com sombra real são popover de perfil e menus flutuantes.
+Plano por padrão. Profundidade vem da troca de superfície (papel frio atrás, superfície branca na frente; no escuro, petróleo atrás, superfície escura na frente) e de um anel de 1 px. Sombra só em quem flutua.
 
-**Exceção do Módulo de Orçamento (2026-09-20):** os modais `budget-*` (Curva S, Medições, Portfólio, Relatório, Análise de Orçamento) usam sombras reais e pronunciadas nos seus cartões flutuantes (ex.: `0 25px 50px -12px rgba(0,0,0,.25)` em `budget-measurements.css`/`budget-reports.css`, `0 16px 40px rgba(0,0,0,.25)` em `budget-curves.css`) — consistente com a paleta e tipografia próprias desse módulo, tratado como overlay/modal (não superfície permanente), então não viola a regra acima, mas está fora da lista "popover/menu" já documentada; adicionado aqui para não ser confundido com deriva.
+### Shadow Vocabulary
+- **Anel** (`box-shadow: 0 0 0 1px var(--color-divider)`): todo cartão e contorno de campo.
+- **Cartão** (anel + `0 1px 2px rgba(3, 31, 41, .04)`): sensação mínima de assentamento.
+- **Flutuante** (`0 0 0 1px #d6e4e9, 0 18px 40px rgba(3, 31, 41, .16)`; no escuro `... rgba(0,0,0,.4)`): menus, janelas, a barra lateral que abre ao passar o mouse.
+
+### Named Rules
+**A Regra do Plano em Repouso.** Superfície em repouso não tem sombra além do anel (o botão primário é a exceção, com sombra tingida de ciano); sombra grande é sinal de que o elemento está por cima da página.
 
 ## Shapes
 
-Raios discretos: `6px` em botões, inputs e cabeçalho de tabela; `8–10px` em painéis, KPIs, cartões de centro de custo e nos novos cartões de lista mobile; `50%` em avatares.
-
-**Exceção do Módulo de Orçamento (2026-09-20):** os modais `budget-*` usam raios maiores e mais variados — `12px`/`14px` no contêiner do modal e cartões internos, até `9999px` (pill) em badges e chips de status (`budget-view.css`, `budget-portfolio.css`). Escopo isolado aos próprios arquivos `budget-*`, mesma regra do Módulo de Orçamento em Colors.
+Cantos arredondados médios, consistentes: 5 px (atalhos de teclado), 8 a 10 px (botões, campos, itens de menu, ícones), 12 px (chips, faixas, avisos), 14 px (cartões), 50% (avatar, spinner). Contorno por anel de 1 px (`box-shadow`), não por `border`. Barras de progresso de 8 px com ponta redonda.
 
 ## Components
 
 ### Buttons
-- **Shape:** raio de 6px, altura de 34px (desktop) / mínimo 44px de toque em ≤800px.
-- **Primary:** fundo azul Construtec, texto branco; hover escurece para `#064bbd`.
-- **Secondary:** fundo branco, borda `--control-border`.
+- **Shape:** 40 px de altura, cantos 10 px, rótulo 600 de 13,5 px.
+- **Primary:** fundo Ciano de Marca (#0a7896), texto branco; sombra de cor própria (`0 6px 16px rgba(10, 120, 150, .22)`, a única de repouso); ao passar o mouse escurece para Ciano Profundo (#0b4a5c); transição de 150 ms.
+- **Secondary / Ghost:** `.ibtn` de 36 px sem fundo, ícone em Neutro de Texto, fundo aparece ao passar o mouse.
 
-### Pills / Status
-- `.pill.success` (verde), `.pill.warning` (âmbar), `.pill.danger` (vermelho): status de lançamento, fornecedor e usuário.
+### Chips
+- **Style:** 24 px de altura, cantos 12 px, 11,5 px em 600; par semântico (ok, alerta, erro, ciano).
+- **State:** o chip "Atual" no menu Suíte usa a variante ok.
 
-### Table (desktop)
-- Cabeçalho fixo em `--surface-muted`, linhas com hover leve, números com `font-variant-numeric: tabular-nums`.
+### Cards / Containers
+- **Corner Style:** 14 px. **Background:** Superfície (claro) ou Superfície Escura. **Border:** anel de 1 px. **Padding:** 16 px; KPI com ícone de 30 px em cantos 9 px e valor em 21 px.
 
-### List Card (mobile, novo)
-- Cartão por registro: borda 1px `--line`, raio 10px, fundo `--white`, padding 12–14px.
-- Primeira coluna (nome/título do registro) sem rótulo, tamanho 14px — funciona como cabeçalho do cartão.
-- Demais colunas: rótulo maiúsculo (11px, `--muted`) à esquerda, valor à direita.
-- Ações: botões com altura mínima de 40px, alinhados à direita do cartão.
+### Inputs / Fields
+- **Style:** 40 px, cantos 10 px, anel interno de 1 px em #6f8f9b (claro) ou #5a8493 (escuro), fundo da superfície.
+- **Focus:** o anel passa a Ciano de Marca (claro) ou Ciano Claro (escuro).
+- **Error / Disabled:** mensagem em Erro sobre fundo suave, com ícone e texto.
 
-### KPI Cards
-- Fundo branco, raio 8px, padding 15–16px; valor positivo em verde, negativo em vermelho.
+### Navigation
+- **Barra lateral:** petróleo, itens de 40 px com cantos 10 px, texto #b9d4dd, item ativo com fundo ciano a 16% (rgba(18, 169, 209, .16)), texto branco e ícone em Ciano Claro (#5fd0ee); selo de contagem em #b8452c. Recolhida abre por cima ao passar o mouse (pausa de 140 ms), com itens em cascata. Ctrl B fixa aberta ou recolhida.
+- **Menu Suíte** na topbar: lista de apps com ícone, título, apoio e seta; o app atual leva o chip "Atual" e é um link para o início dele.
+- **Celular:** cápsula inferior de vidro com pílula que vira lente ao arrastar.
+
+### Abertura animada (assinatura)
+Tela de abertura com símbolo que respira, brilho radial em ciano, barra fina de progresso e pontinhos; mantida mesmo com "reduzir movimento", por decisão do Lucas.
 
 ## Do's and Don'ts
 
 ### Do:
-- **Do** reservar o azul `#085ce5` só para ação primária, foco e navegação ativa.
-- **Do** manter tabelas planas (sem sombra) no desktop.
-- **Do** converter listas largas em cartões apenas dentro de `@media (max-width: 800px)`, nunca alterando o HTML/CSS lido pelo desktop.
-- **Do** usar `data-label` nos `<td>` para dar rótulo acessível ao cartão mobile.
+- **Do** usar `calc(Npx * var(--fs, 1))` em todo `font-size` novo do desktop.
+- **Do** entregar os dois temas juntos e conferir contra a Referência nos dois.
+- **Do** acompanhar cor de situação com texto ou ícone, no par forte sobre suave.
+- **Do** manter Centro e Orçamentos idênticos: mesmos tokens, mesmo espaçamento, comparados lado a lado.
+- **Do** reservar sombra para menus, janelas e painéis que flutuam.
 
 ### Don't:
-- **Don't** introduzir sombra em superfícies permanentes.
-- **Don't** usar verde/vermelho fora do contexto semântico (receita/despesa, ativo/inativo).
-- **Don't** aplicar a classe `cc-mobile-table` a tabelas ainda não revisadas linha a linha (módulo de orçamento/medições/contratos) sem antes conferir a estrutura de cada `<td>`.
-- **Don't** misturar a paleta/tipografia/raios do Módulo de Orçamento (`budget-*`) com o resto do app, nem o contrário — são dois sistemas documentados, não uma inconsistência a resolver.
+- **Don't** criar rolagem aninhada nem deixar conteúdo cortado nas resoluções-alvo.
+- **Don't** usar emojis na interface.
+- **Don't** introduzir função nova de negócio em tela de acabamento.
+- **Don't** usar ciano como enfeite em área sem ação.
+- **Don't** usar `border` para contorno de cartão ou campo; o padrão é o anel de 1 px por `box-shadow`.
+- **Don't** colocar X-Frame-Options global no Centro: ele embute outros apps.

@@ -8,6 +8,7 @@
 
   CC.notif = { unread: 0 };
   CC.bellBtn = () => {
+    if (CC.sv && CC.sv.role() === 'tecnico') return '';
     const n = CC.notif.unread;
     return `<button class="bell-btn" type="button" data-avisos aria-label="Notificações${n ? `, ${n} ${n === 1 ? 'nova' : 'novas'}` : ''}">${icon('bell', 22)}<span class="bell-count"${n ? '' : ' hidden'}>${n > 99 ? '99+' : n}</span></button>`;
   };
@@ -17,6 +18,7 @@
     CC.$$('.bell-btn').forEach((el) => el.setAttribute('aria-label', `Notificações${n ? `, ${n} ${n === 1 ? 'nova' : 'novas'}` : ''}`));
   }
   CC.notif.refresh = async function () {
+    if (CC.sv && CC.sv.role() === 'tecnico') { CC.notif.unread = 0; return; }
     try { CC.notif.unread = Number((await CC.api('/notificacoes?limite=1')).data.unread) || 0; } catch { /* sem central: o sino fica sem número */ }
     paintBell();
   };
@@ -68,7 +70,7 @@
       <div class="chips" role="group" aria-label="Filtrar por app">${APPS.map(([k, label]) => `<button type="button" class="chip-act" data-app="${k}" aria-pressed="${k === filter}">${label}</button>`).join('')}</div>
       ${CC.notif.unread ? `<button class="btn2 lidas" type="button" id="lidas">${icon('check', 18)}Marcar todas como lidas</button>` : ''}
       ${groups.length ? groups.map(([g, l]) => `<p class="sheet-sec">${g}</p><div class="avisos">${l.map(row).join('')}</div>`).join('')
-        : `<p class="sub">Nenhuma notificação${filter ? ' neste filtro' : ''} por enquanto.</p>`}
+        : `<div class="empty">${icon('bell', 28)}<b style="color:var(--text)">Nenhuma notificação${filter ? ' neste filtro' : ''}</b>Quando houver um aviso para você, ele aparece aqui.</div>`}
       <p class="sheet-sec">Receber no celular</p>
       <div class="rows">${PREFS.map(([k, label]) => `<label class="menu-item pref"><span>${label}</span><input type="checkbox" data-pref="${k}"${prefs.data.prefs && prefs.data.prefs[k] === false ? '' : ' checked'}></label>`).join('')}</div>
       <button class="btn2" type="button" id="teste">${icon('bell', 18)}Enviar notificação de teste</button>`, true, params);

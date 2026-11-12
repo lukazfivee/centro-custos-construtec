@@ -1,12 +1,12 @@
 // Visibilidade por obra (D6). Engenharia e tecnico so veem as obras atribuidas em
-// user_cost_centers, a menos que users.all_cost_centers seja TRUE (o padrao das
-// contas antigas). Os demais papeis veem todas. Sem obra atribuida, nao veem nada.
+// user_cost_centers. Técnico sempre exige atribuição, inclusive contas antigas.
+// Engenharia preserva all_cost_centers. Sem obra atribuida, nao veem nada.
 const { getDb } = require('../db');
 const { httpError } = require('../lib/http');
 const { suiteRoleOf, SCOPED_ROLES } = require('./permissions');
 
 function escopado(user) {
-  return Boolean(user) && SCOPED_ROLES.includes(suiteRoleOf(user)) && user.all_cost_centers === false;
+  return Boolean(user) && (suiteRoleOf(user) === 'tecnico' || (SCOPED_ROLES.includes(suiteRoleOf(user)) && user.all_cost_centers === false));
 }
 
 // null = todas as obras; lista = so estas (pode ser vazia).

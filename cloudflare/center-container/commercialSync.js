@@ -10,6 +10,7 @@ import {
   json, text, validCorporateEmail, bytesToBase64, base64ToBytes,
   sha256Text, consumeRate, sessionUser, requireSession,
 } from './centralAuth.js';
+import { effectiveSuiteRole } from './suiteRoles.js';
 
 const ORG_ID = 'rcconstrutec.com.br';
 const MAX_NF_BYTES = 5 * 1024 * 1024;
@@ -173,6 +174,8 @@ async function buildSnapshot(env, orgId) {
     else if (row.entity_type === 'lancamento') payload.transactions.push(item);
     cursor = Math.max(cursor, Number(row.event_id || 0));
   }
+  const deleted = (await env.DB.prepare('SELECT public_id FROM sync_deleted_obras WHERE org_id=? ORDER BY public_id').bind(orgId).all()).results || [];
+  payload.deletedCostCenters = deleted.map((row) => row.public_id);
   return { formatVersion: 3, packageId: crypto.randomUUID(), generatedAt: new Date().toISOString(), source: { id: '00000000-0000-4000-8000-000000000001', name: 'Construtec Cloud' }, payload, payloadHash: await sha256(payload), cursor };
 }
 
@@ -494,14 +497,26 @@ function validatePdfAttachments(value) {
   return { attachments: [{ filename, contentBase64, contentType: 'application/pdf' }] };
 }
 
-async function sendClientEmail(env, draft, attachments, idempotencyKey) {
-  if (!env.RESEND_API_KEY || !env.CLIENT_EMAIL_FROM) throw new Error('Envio de cobrancas ainda nao configurado no Worker.');
+// O Resend so envia de dominio verificado (hoje, reports.rcconstrutec.com.br): o nome mostrado e o de quem envia
+// e as respostas do cliente vao para o e-mail corporativo dele (Reply-To). CLIENT_EMAIL_ADDRESS troca o endereco.
+const ENDERECO_COBRANCA = 'cobranca@reports.rcconstrutec.com.br';
+// Logo do cabecalho do e-mail: servida pelo proprio Worker (public/assets), fundo escuro do cabecalho.
+const LOGO_EMAIL = 'https://centro-custos-api.construtec-reports.workers.dev/assets/construtec-logo.png';
+function remetente(env, user) {
+  const nome = text(user?.name).replace(/[<>",;\r\n]/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 80) || 'Construtec';
+  const email = text(user?.email).toLowerCase();
+  return { from: `${nome} <${text(env.CLIENT_EMAIL_ADDRESS) || ENDERECO_COBRANCA}>`, replyTo: validCorporateEmail(email) ? email : '' };
+}
+
+async function sendClientEmail(env, draft, attachments, idempotencyKey, { from, replyTo }) {
+  if (!env.RESEND_API_KEY) throw new Error('Envio de cobrancas ainda nao configurado no Worker.');
   const to = parseJson(draft.to_json, []);
   const cc = parseJson(draft.cc_json, []);
   if (!to.length) throw new Error('Destinatario ausente.');
-  const html = `<!doctype html><html><body style="font-family:Arial,Helvetica,sans-serif;background:#f5f7f8;color:#18323d;padding:24px"><div style="max-width:680px;margin:auto;background:#fff;border-radius:12px;overflow:hidden"><div style="background:#021d26;color:#fff;padding:20px;font-size:20px;font-weight:700">Construtec Engenharia</div><div style="padding:24px;white-space:pre-wrap;line-height:1.6">${esc(draft.body_text)}</div></div></body></html>`;
-  const payload = { from: env.CLIENT_EMAIL_FROM, to, subject: draft.subject, text: draft.body_text, html };
+  const html = `<!doctype html><html><body style="font-family:Arial,Helvetica,sans-serif;background:#f5f7f8;color:#18323d;padding:24px"><div style="max-width:680px;margin:auto;background:#fff;border-radius:12px;overflow:hidden"><div style="background:#021d26;padding:20px 24px;text-align:center"><img src="${LOGO_EMAIL}" alt="Construtec Engenharia" width="200" style="display:inline-block;width:200px;max-width:100%;height:auto;border:0"></div><div style="padding:24px;white-space:pre-wrap;line-height:1.6">${esc(draft.body_text)}</div></div></body></html>`;
+  const payload = { from, to, subject: draft.subject, text: draft.body_text, html };
   if (cc.length) payload.cc = cc;
+  if (replyTo) payload.reply_to = replyTo;
   if (attachments.length) payload.attachments = attachments.map((a) => ({ filename: a.filename, content: a.contentBase64 }));
   const response = await fetch('https://api.resend.com/emails', { method: 'POST', headers: { authorization: `Bearer ${env.RESEND_API_KEY}`, 'content-type': 'application/json', 'Idempotency-Key': idempotencyKey }, body: JSON.stringify(payload) });
   const data = await response.json().catch(() => ({}));
@@ -522,7 +537,8 @@ async function handleSendDraft(request, env) {
     return json({ ok: false, error: 'O envio ficou sem confirmacao por mais de 23 horas. Confira com o suporte antes de tentar novamente.' }, 409);
   if (draft.status === 'sending' && Date.now() - Date.parse(draft.updated_at) < 60 * 1000)
     return json({ ok: false, error: 'Este envio ja esta em andamento. Aguarde um minuto antes de tentar novamente.' }, 409);
-  if (!env.RESEND_API_KEY || !env.CLIENT_EMAIL_FROM) return json({ ok: false, error: 'Envio de cobrancas ainda nao configurado no Worker.' }, 503);
+  const sender = remetente(env, auth.user);
+  if (!env.RESEND_API_KEY) return json({ ok: false, error: 'Envio de cobrancas ainda nao configurado no Worker.' }, 503);
   if (!parseJson(draft.to_json, []).length) return json({ ok: false, error: 'Destinatario ausente.' }, 400);
   const checked = validatePdfAttachments(body.attachments);
   if (checked.error) return json({ ok: false, error: checked.error }, checked.status);
@@ -536,11 +552,11 @@ async function handleSendDraft(request, env) {
   const idempotencyKey = `billing/${auth.user.org_id}/${publicId}/${draft.authorized_at || draft.updated_at}`;
   let emailId;
   try {
-    emailId = await sendClientEmail(env, draft, attachments, idempotencyKey);
+    emailId = await sendClientEmail(env, draft, attachments, idempotencyKey, sender);
   } catch (error) {
     if (error.resendRejected) await env.DB.prepare("UPDATE client_email_drafts SET status='failed',last_error=?,updated_at=? WHERE org_id=? AND cost_center_public_id=? AND status='sending'")
       .bind(String(error.message || error).slice(0, 1000), now, auth.user.org_id, publicId).run();
-    return json({ ok: false, error: error.resendRejected ? String(error.message || error).slice(0, 500) : 'Nao foi possivel confirmar o envio. Confira o historico antes de tentar novamente.' }, 502);
+    return json({ ok: false, error: error.resendRejected ? String(error.message || error).slice(0, 500) : 'Nao foi possivel confirmar o envio. Confira o historico antes de tentar novamente.' }, error.resendRejected ? 422 : 502);
   }
   const meta = attachments.map((a) => ({ filename: a.filename, contentType: a.contentType }));
   try {
@@ -565,6 +581,8 @@ async function handleSendDraft(request, env) {
 // Cobrancas parecer "sem dados" em vez de mostrar um erro real).
 export async function handleCommercialSync(request, env) {
   const url = new URL(request.url);
+  const user = await sessionUser(request, env);
+  if (user && effectiveSuiteRole(user) === 'tecnico') return json({ ok: false, error: 'Sem permissão para esta ação.' }, 403);
   const ip = request.headers.get('cf-connecting-ip') || 'unknown';
   const allowed = await consumeRate(env.DB, ip, 'api', 5000);
   if (!allowed) return json({ ok: false, error: 'Limite temporario de requisicoes atingido.' }, 429);
@@ -596,7 +614,27 @@ export async function handleCommercialSync(request, env) {
       let entities;
       try { entities = packageEntities(body); } catch (error) { return json({ ok: false, error: error.message }, 400); }
       const results = [];
-      for (const entity of entities) results.push(await upsertEntity(env, meta, entity.type, entity.item));
+      const deletedIds = [...new Set((Array.isArray(body.payload.deletedCostCenters) ? body.payload.deletedCostCenters : []).map(String))].filter(validUuid).slice(0, 5000);
+      for (const entity of entities) {
+        if (entity.type === 'obra') {
+          const gone = await env.DB.prepare('SELECT deleted_at FROM sync_deleted_obras WHERE org_id=? AND public_id=?').bind(meta.orgId, entity.item.publicId).first();
+          if (gone) {
+            // So uma alteracao posterior a exclusao (obra restaurada) reabre o centro; pacote antigo nao ressuscita.
+            if (deletedIds.includes(entity.item.publicId) || dateValue(entity.item.updatedAt) <= dateValue(gone.deleted_at)) {
+              results.push({ action: 'deleted', publicId: entity.item.publicId });
+              continue;
+            }
+            await env.DB.prepare('DELETE FROM sync_deleted_obras WHERE org_id=? AND public_id=?').bind(meta.orgId, entity.item.publicId).run();
+          }
+        }
+        results.push(await upsertEntity(env, meta, entity.type, entity.item));
+      }
+      for (const publicId of deletedIds) {
+        await env.DB.prepare('INSERT OR IGNORE INTO sync_deleted_obras(org_id,public_id,deleted_at,source_instance_id,source_user_email) VALUES(?,?,?,?,?)')
+          .bind(meta.orgId, publicId, new Date().toISOString(), meta.instanceId, meta.userEmail).run();
+        await env.DB.prepare("DELETE FROM sync_entities WHERE org_id=? AND entity_type='obra' AND public_id=?").bind(meta.orgId, publicId).run();
+        results.push({ action: 'deleted', publicId });
+      }
       return json({ ok: true, results, snapshot: await buildSnapshot(env, meta.orgId) });
     }
   }

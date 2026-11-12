@@ -4,9 +4,12 @@ const { httpError } = require('../lib/http');
 const { recordAudit } = require('./audit');
 const { readTransactions, normalizeTransaction, sameBusiness, mutationError, writeTransaction } = require('./syncTransactions');
 const jobs = require('../lib/jobs');
+const { LINKED_TABLES } = require('./costCenterLinks');
 
 const FORMAT_VERSION = 3;
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+// Obras que o proprio pacote declara excluidas: o item da obra no mesmo pacote e ignorado sem abrir conflito.
+const deletedByPackage = new WeakMap();
 const FINANCIAL_STATUSES = new Set(['pendente','liquidado']);
 
 function stableHash(value) {
@@ -35,13 +38,14 @@ function financialStatusError(item, label) {
 async function buildPackage() {
   const db = getDb();
   const instance = getInstanceIdentity();
-  const [categories, centers, suppliers, transactions] = await Promise.all([
+  const [categories, centers, suppliers, transactions, tombstones] = await Promise.all([
     db.query(`SELECT public_id,name,type,active,revision,created_at,updated_at FROM categories ORDER BY public_id`),
     db.query(`SELECT public_id,code,name,responsible,monthly_budget,active,client,contract_number,start_date,end_date,
-      contract_amount,project_status,description,revision,created_at,updated_at FROM cost_centers ORDER BY public_id`),
+      contract_amount,project_status,description,kind,revision,created_at,updated_at FROM cost_centers ORDER BY public_id`),
     db.query(`SELECT public_id,name,document,contact_name,email,phone,notes,active,revision,created_at,updated_at
       FROM suppliers ORDER BY public_id`),
     readTransactions(db),
+    db.query('SELECT public_id FROM cost_center_tombstones ORDER BY public_id'),
   ]);
 
   const payload = {
@@ -52,9 +56,11 @@ async function buildPackage() {
     costCenters: centers.rows.map((r) => ({
       publicId:r.public_id,code:r.code,name:r.name,responsible:r.responsible,monthlyBudget:Number(r.monthly_budget || 0),
       active:r.active,client:r.client,contractNumber:r.contract_number,startDate:dateOnly(r.start_date),endDate:dateOnly(r.end_date),
-      contractAmount:Number(r.contract_amount || 0),projectStatus:r.project_status,description:r.description,
+      contractAmount:Number(r.contract_amount || 0),projectStatus:r.project_status,description:r.description,kind:r.kind || 'obra',
       revision:Number(r.revision || 1),createdAt:iso(r.created_at),updatedAt:iso(r.updated_at),
     })),
+    // Centros excluidos: a nuvem e as outras instalacoes precisam saber, senao recriam o centro no proximo pacote.
+    deletedCostCenters: tombstones.rows.map((r) => r.public_id),
     suppliers: suppliers.rows.map((r) => ({
       publicId:r.public_id,name:r.name,document:r.document,contactName:r.contact_name,email:r.email,phone:r.phone,
       notes:r.notes,active:r.active,revision:Number(r.revision || 1),createdAt:iso(r.created_at),updatedAt:iso(r.updated_at),
@@ -115,6 +121,11 @@ async function addConflict(tx, packageImportId, type, publicId, reason, localDat
   result.porTipo[type].conflitos += 1;
 }
 
+// Obra ou servico. Pacotes antigos nao trazem o tipo: valem como obra.
+function kindOf(item) {
+  return item?.kind === 'servico' ? 'servico' : 'obra';
+}
+
 function validRevision(item) {
   const rev = Number(item.revision);
   return Number.isInteger(rev) && rev >= 1 ? rev : 1;
@@ -125,6 +136,9 @@ async function importSimpleEntity(tx, options) {
   if (!UUID.test(String(item.publicId || ''))) throw httpError(400, `${type}: publicId inválido.`);
   if (type === 'obra') {
     const deleted = await tx.query('SELECT 1 FROM cost_center_tombstones WHERE public_id=$1', [item.publicId]);
+    if (deleted.rows.length && deletedByPackage.get(result)?.has(item.publicId)) {
+      result.ignorados += 1; result.porTipo[type].ignorados += 1; return;
+    }
     if (deleted.rows.length) {
       await addConflict(tx, packageImportId, type, item.publicId,
         'Esta obra foi excluída nesta instalação. Mantenha a versão local; o pacote não pode recriá-la.', null, item, result);
@@ -165,6 +179,34 @@ function packageItemCount(pack) {
   return (p.categories?.length || 0) + (p.costCenters?.length || 0) + (p.suppliers?.length || 0) + (p.transactions?.length || 0);
 }
 
+// Aplica as exclusoes de centro de custo feitas em outra instalacao: grava a lapide local (para o centro nao ser
+// recriado) e remove o centro se ele estiver sem movimento. Com movimento, mantem o centro e abre um conflito.
+async function applyDeletedCostCenters(tx, ids, packageImportId, result) {
+  if (!Array.isArray(ids)) return;
+  result.excluidos = 0;
+  const declared = new Set();
+  deletedByPackage.set(result, declared);
+  for (const publicId of [...new Set(ids.map(String))].filter((id) => UUID.test(id)).slice(0, 5000)) {
+    const center = (await tx.query('SELECT id,code,name FROM cost_centers WHERE public_id=$1 FOR UPDATE', [publicId])).rows[0];
+    if (center) {
+      let blocker = null;
+      for (const [table, label] of LINKED_TABLES) {
+        if ((await tx.query(`SELECT 1 FROM ${table} WHERE cost_center_id=$1 LIMIT 1`, [center.id])).rows.length) { blocker = label; break; }
+      }
+      if (blocker) {
+        await addConflict(tx, packageImportId, 'obra', publicId,
+          `Esta obra foi excluída em outra instalação, mas aqui tem ${blocker} vinculados. Ela foi mantida; inative-a se não for mais usada.`,
+          { code:center.code,name:center.name }, { publicId }, result);
+        continue;
+      }
+      await tx.query('DELETE FROM cost_centers WHERE id=$1', [center.id]);
+      result.excluidos += 1;
+    }
+    await tx.query('INSERT INTO cost_center_tombstones (public_id) VALUES ($1) ON CONFLICT (public_id) DO NOTHING', [publicId]);
+    declared.add(publicId);
+  }
+}
+
 const noopJobContext = { updateProgress: async () => {}, checkDeadline: () => {} };
 
 async function runImport(pack, filename, user, ctx = noopJobContext) {
@@ -185,6 +227,8 @@ async function runImport(pack, filename, user, ctx = noopJobContext) {
         String(pack.source.name || 'Instalação desconhecida').slice(0,120),pack.payloadHash,user.id]);
     const packageImportId = inserted.rows[0].id;
 
+    await applyDeletedCostCenters(tx, pack.payload.deletedCostCenters, packageImportId, result);
+
     for (const item of pack.payload.categories) {
       const clean = {...item,revision:validRevision(item),active:item.active !== false};
       await importSimpleEntity(tx, {
@@ -201,16 +245,16 @@ async function runImport(pack, filename, user, ctx = noopJobContext) {
     ctx.checkDeadline();
 
     for (const item of pack.payload.costCenters) {
-      const clean = {...item,revision:validRevision(item),active:item.active !== false};
+      const clean = {...item,revision:validRevision(item),active:item.active !== false,kind:kindOf(item)};
       await importSimpleEntity(tx, {
         type:'obra',table:'cost_centers',item:clean,packageImportId,result,
-        selectFields:'public_id,code,name,responsible,monthly_budget,active,client,contract_number,start_date,end_date,contract_amount,project_status,description,revision,created_at,updated_at',
-        businessFields:['code','name','responsible','monthlyBudget','active','client','contractNumber','startDate','endDate','contractAmount','projectStatus','description'],
-        normalizeExisting:r=>({publicId:r.public_id,code:r.code,name:r.name,responsible:r.responsible,monthlyBudget:Number(r.monthly_budget||0),active:r.active,client:r.client,contractNumber:r.contract_number,startDate:dateOnly(r.start_date),endDate:dateOnly(r.end_date),contractAmount:Number(r.contract_amount||0),projectStatus:r.project_status,description:r.description,revision:Number(r.revision||1),createdAt:iso(r.created_at),updatedAt:iso(r.updated_at)}),
-        insertSql:`INSERT INTO cost_centers (public_id,code,name,responsible,monthly_budget,active,client,contract_number,start_date,end_date,contract_amount,project_status,description,revision,created_at,updated_at) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16)`,
-        insertValues:i=>[i.publicId,String(i.code||'').slice(0,40),String(i.name||'').slice(0,140),i.responsible||null,Number(i.monthlyBudget||0),i.active,i.client||null,i.contractNumber||null,i.startDate||null,i.endDate||null,Number(i.contractAmount||0),['planejamento','execucao','pausado','concluido'].includes(i.projectStatus)?i.projectStatus:'planejamento',i.description||null,i.revision,i.createdAt||new Date(),i.updatedAt||new Date()],
-        updateSql:`UPDATE cost_centers SET code=$2,name=$3,responsible=$4,monthly_budget=$5,active=$6,client=$7,contract_number=$8,start_date=$9,end_date=$10,contract_amount=$11,project_status=$12,description=$13,revision=$14,updated_at=$15 WHERE public_id=$1`,
-        updateValues:i=>[i.publicId,String(i.code||'').slice(0,40),String(i.name||'').slice(0,140),i.responsible||null,Number(i.monthlyBudget||0),i.active,i.client||null,i.contractNumber||null,i.startDate||null,i.endDate||null,Number(i.contractAmount||0),['planejamento','execucao','pausado','concluido'].includes(i.projectStatus)?i.projectStatus:'planejamento',i.description||null,i.revision,i.updatedAt||new Date()],
+        selectFields:'public_id,code,name,responsible,monthly_budget,active,client,contract_number,start_date,end_date,contract_amount,project_status,description,kind,revision,created_at,updated_at',
+        businessFields:['code','name','responsible','monthlyBudget','active','client','contractNumber','startDate','endDate','contractAmount','projectStatus','description','kind'],
+        normalizeExisting:r=>({publicId:r.public_id,code:r.code,name:r.name,responsible:r.responsible,monthlyBudget:Number(r.monthly_budget||0),active:r.active,client:r.client,contractNumber:r.contract_number,startDate:dateOnly(r.start_date),endDate:dateOnly(r.end_date),contractAmount:Number(r.contract_amount||0),projectStatus:r.project_status,description:r.description,kind:r.kind||'obra',revision:Number(r.revision||1),createdAt:iso(r.created_at),updatedAt:iso(r.updated_at)}),
+        insertSql:`INSERT INTO cost_centers (public_id,code,name,responsible,monthly_budget,active,client,contract_number,start_date,end_date,contract_amount,project_status,description,revision,created_at,updated_at,kind) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17)`,
+        insertValues:i=>[i.publicId,String(i.code||'').slice(0,40),String(i.name||'').slice(0,140),i.responsible||null,Number(i.monthlyBudget||0),i.active,i.client||null,i.contractNumber||null,i.startDate||null,i.endDate||null,Number(i.contractAmount||0),['planejamento','execucao','pausado','concluido'].includes(i.projectStatus)?i.projectStatus:'planejamento',i.description||null,i.revision,i.createdAt||new Date(),i.updatedAt||new Date(),kindOf(i)],
+        updateSql:`UPDATE cost_centers SET code=$2,name=$3,responsible=$4,monthly_budget=$5,active=$6,client=$7,contract_number=$8,start_date=$9,end_date=$10,contract_amount=$11,project_status=$12,description=$13,revision=$14,updated_at=$15,kind=$16 WHERE public_id=$1`,
+        updateValues:i=>[i.publicId,String(i.code||'').slice(0,40),String(i.name||'').slice(0,140),i.responsible||null,Number(i.monthlyBudget||0),i.active,i.client||null,i.contractNumber||null,i.startDate||null,i.endDate||null,Number(i.contractAmount||0),['planejamento','execucao','pausado','concluido'].includes(i.projectStatus)?i.projectStatus:'planejamento',i.description||null,i.revision,i.updatedAt||new Date(),kindOf(i)],
       });
     }
     ctx.checkDeadline();
@@ -361,12 +405,12 @@ async function applyIncomingConflict(tx, conflict, user) {
   if (conflict.entity_type === 'obra') {
     const deleted = await tx.query('SELECT 1 FROM cost_center_tombstones WHERE public_id=$1', [publicId]);
     if (deleted.rows.length) throw httpError(409, 'Esta obra foi excluída nesta instalação e não pode ser recriada. Mantenha a versão local.');
-    const values = [publicId,String(item.code||'').slice(0,40),String(item.name||'').slice(0,140),item.responsible||null,Number(item.monthlyBudget||0),item.active !== false,item.client||null,item.contractNumber||null,item.startDate||null,item.endDate||null,Number(item.contractAmount||0),['planejamento','execucao','pausado','concluido'].includes(item.projectStatus)?item.projectStatus:'planejamento',item.description||null,validRevision(item),item.createdAt||new Date(),item.updatedAt||new Date()];
+    const values = [publicId,String(item.code||'').slice(0,40),String(item.name||'').slice(0,140),item.responsible||null,Number(item.monthlyBudget||0),item.active !== false,item.client||null,item.contractNumber||null,item.startDate||null,item.endDate||null,Number(item.contractAmount||0),['planejamento','execucao','pausado','concluido'].includes(item.projectStatus)?item.projectStatus:'planejamento',item.description||null,validRevision(item),item.createdAt||new Date(),item.updatedAt||new Date(),kindOf(item)];
     const existing = (await tx.query('SELECT id FROM cost_centers WHERE public_id=$1',[publicId])).rows[0];
     if (existing) {
-      await tx.query(`UPDATE cost_centers SET code=$2,name=$3,responsible=$4,monthly_budget=$5,active=$6,client=$7,contract_number=$8,start_date=$9,end_date=$10,contract_amount=$11,project_status=$12,description=$13,revision=$14,updated_at=$16 WHERE public_id=$1`,values);
+      await tx.query(`UPDATE cost_centers SET code=$2,name=$3,responsible=$4,monthly_budget=$5,active=$6,client=$7,contract_number=$8,start_date=$9,end_date=$10,contract_amount=$11,project_status=$12,description=$13,revision=$14,updated_at=$16,kind=$17 WHERE public_id=$1`,values);
     } else {
-      await tx.query(`INSERT INTO cost_centers (public_id,code,name,responsible,monthly_budget,active,client,contract_number,start_date,end_date,contract_amount,project_status,description,revision,created_at,updated_at) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16)`,values);
+      await tx.query(`INSERT INTO cost_centers (public_id,code,name,responsible,monthly_budget,active,client,contract_number,start_date,end_date,contract_amount,project_status,description,revision,created_at,updated_at,kind) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17)`,values);
     }
     return;
   }

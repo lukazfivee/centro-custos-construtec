@@ -1,8 +1,8 @@
 // Compatibility markers retained for interface checks: URLSearchParams(location.hash.slice(1)).get('obra'); markStatusMessages($('#modal-corpo')); classList.add('theme-changing'); showView('centros');await openCenterDetail(centerId); matchMedia('(hover:hover) and (pointer:fine)');
 const API = '/api';
 let token = localStorage.getItem('cc_token');
-// Desktop novo e o padrao: depois de entrar aqui vai para /d/. ?antiga=1 mantem o sistema antigo.
-const abrirAntiga = new URLSearchParams(location.search).has('antiga');
+// Desktop novo e o padrao: depois de entrar aqui vai para /d/. ?antiga=1 e /classico/ mantem o sistema antigo.
+const abrirAntiga = new URLSearchParams(location.search).has('antiga') || /^\/classico(?:\/|$)/.test(location.pathname);
 const irParaDesktopNovo = () => { location.replace('/d/'); };
 let usuario = JSON.parse(localStorage.getItem('cc_usuario') || 'null');
 let instancia = JSON.parse(localStorage.getItem('cc_instancia') || 'null');

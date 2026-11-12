@@ -1,0 +1,28 @@
+/* Area operacional do tecnico, seguindo os tokens dos dois temas do celular. */
+.tc-totais { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.tc-totais span { min-width: 0; }
+.tc-totais small { white-space: normal; }
+.tc-totais b { font-size: 22px; }
+.tc-lista { display: grid; gap: 14px; }
+.tc-filtros { display: flex; flex-wrap: wrap; gap: 8px; }
+.tc-filtros .chip-act { min-height: 44px; padding: 0 12px; }
+.tc-filtros [aria-pressed="true"] { background: var(--accent-900); color: var(--accent-300); box-shadow: inset 0 0 0 1px var(--accent); }
+.tc-servico { display: grid; gap: 10px; }
+.tc-servico .line { justify-content: space-between; flex-wrap: wrap; }
+.tc-servico h2 { margin: 0; font-size: 18px; line-height: 1.35; overflow-wrap: anywhere; }
+.tc-meta, .tc-pend, .tc-data { margin: 0; font-size: 13px; overflow-wrap: anywhere; }
+.tc-meta, .tc-pend { color: var(--n300); }
+.tc-data { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.tc-acoes { display: flex; flex-wrap: wrap; gap: 8px; }
+.tc-acoes > button { flex: 1; padding: 0 12px; white-space: nowrap; }
+.tc-fila { width: 100%; padding: 10px; height: auto; min-height: 44px; }
+.tc-relato { white-space: pre-wrap; }
+.tc-relato-editar { margin-top: 12px; }
+.field .tc-obs { min-height: 180px; resize: vertical; }
+.tc-preview { width: 100%; max-height: 260px; object-fit: contain; border-radius: 12px; background: var(--bg); }
+.tc-legenda { margin: 8px 0; white-space: pre-wrap; overflow-wrap: anywhere; }
+.tc-pend.wn, .tc-data.wn { color: var(--warn); }
+.tc-exec-progresso .bar { margin: 10px 0; }
+.tc-exec-progresso .sub { margin: 0; }
+.tc-foto-acoes { display: flex; gap: 8px; margin: 8px 0; }
+.tc-foto-acoes label { flex: 1; padding: 0 10px; cursor: pointer; }

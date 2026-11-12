@@ -59,7 +59,16 @@ final class AuthController {
         if (forget) vault.forgetAll();
     }
 
-    /** A sessao foi recusada pelo servidor (401): apaga o blob, como pede o contrato. */
+    /**
+     * A sessao venceu ou foi recusada (401), mas o PIN do aparelho continua valendo: so tira a sessao da memoria.
+     * O blob velho fica inutil (o servidor ja o recusa) e o PIN o abre na tela "rewrap" para guardar a sessao nova.
+     */
+    synchronized void sessionEnded() {
+        active = null; pending = null;
+        wipeKey();
+    }
+
+    /** Apaga tambem o PIN e o blob (troca de senha: o servidor encerrou todas as sessoes). */
     synchronized void sessionRevoked() {
         active = null; pending = null;
         wipeKey();
@@ -138,7 +147,7 @@ final class AuthController {
         activeKey = key;
         long expiresAt = active.optLong("expiresAt", 0);
         if (expiresAt > 0 && expiresAt * 1000L <= System.currentTimeMillis()) {
-            sessionRevoked();
+            sessionEnded();
             return fail("SESSION_EXPIRED");
         }
         return ok().put("user", publicUser());

@@ -87,7 +87,7 @@
 
     function pintar(todos, aviso) {
       corpo.innerHTML = `${aviso ? U.faixa('warn', 'wifi-slash', aviso) : ''}${kpis(todos)}
-        <div class="card usu-barra"><label class="campo-busca">${D.ic('magnifying-glass')}<input class="inp" type="search" data-busca value="${esc(busca)}" placeholder="Título ou descrição" aria-label="Buscar report"></label>
+        <div class="card usu-barra rep-barra"><label class="campo-busca">${D.ic('magnifying-glass')}<input class="inp" type="search" data-busca value="${esc(busca)}" placeholder="Título ou descrição" aria-label="Buscar report"></label>
           ${U.seg('filtro', FILTROS, filtro, 'Situação da entrega')}</div>
         <div class="card cad-tabela"><div data-tabela></div><div class="rep-rodape" data-rodape></div></div>`;
       const lista = () => {

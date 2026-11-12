@@ -10,6 +10,8 @@ const QRCode = require('qrcode');
 const { initializeDatabase, closeDatabase, getDb, getInstanceIdentity } = require('./db');
 const { observability } = require('./middleware/observability');
 const logger = require('./lib/logger');
+const { centerProxyAccess } = require('./middleware/centerProxyAccess');
+const { allowedLocalOrigin } = require('./lib/localCors');
 
 function rawBody(req) {
   return new Promise((resolve, reject) => {
@@ -25,14 +27,16 @@ function createApp({ orcamentosApp } = {}) {
   app.disable('x-powered-by');
   app.set('etag', 'strong');
   app.use((req, res, next) => {
-    const origin = req.get('origin');
-    if (origin && /^http:\/\/(localhost|127\.0\.0\.1):\d+$/.test(origin)) {
+    // Origens locais: so localhost|127\.0\.0\.1 nas portas da Suite (lib/localCors.js), nao qualquer porta.
+    const origin = allowedLocalOrigin(req.get('origin'));
+    if (origin) {
       res.setHeader('Access-Control-Allow-Origin', origin);
       res.setHeader('Vary', 'Origin');
     }
     next();
   });
   app.use(observability);
+  app.use('/api', require('./middleware/apiRateLimit').createApiRateLimit());
   app.use(require('./lib/auditContext').auditContext);
   app.use(express.json({
     limit:process.env.JSON_BODY_LIMIT || '110mb',
@@ -82,19 +86,27 @@ function createApp({ orcamentosApp } = {}) {
   });
 
   app.use('/api/auth', require('./routes/auth'));
+  app.use('/v1/auth/password-reset', require('./routes/passwordResetLocal')); // so local; na nuvem o Worker atende /v1
   app.use('/api/usuarios', require('./routes/usersAccess'));
   app.use('/api/dev', require('./routes/dev'));
   app.use('/api/usuarios', require('./routes/users'));
+  app.use('/api/centros-custo', require('./routes/costCenterTechnicians'));
   app.use('/api/centros-custo', require('./routes/costCenterDiscard'));
   app.use('/api/centros-custo', require('./routes/costCenters'));
   app.use('/api/centros-custo', require('./routes/costCenterBudget'));
   app.use('/api/notas-fiscais-centro', require('./routes/costCenterInvoices'));
   app.use('/api/centros-custo', require('./routes/costCenterProposals'));
   app.use('/api/centros-custo', require('./routes/costCenterInvoicesLedger'));
+  app.use('/api/servicos', require('./routes/servicos'));
+  app.use('/api/servicos', require('./routes/servicosCampo'));
+  app.use('/api/logistica', require('./routes/logistica'));
+  app.use('/api/logistica', require('./routes/logisticaMateriais'));
+  app.use('/api/programacao', require('./routes/programacao'));
   app.use('/api/categorias', require('./routes/categories'));
   app.use('/api/fornecedores', require('./routes/suppliers'));
   app.use('/api/historico', require('./routes/history'));
   app.use('/api/lancamentos', require('./routes/transactions'));
+  app.use('/api/importacoes/whatsapp', require('./routes/whatsappImport'));
   app.use('/api/anexos', require('./routes/attachments'));
   app.use('/api/produtividade', require('./routes/productivity'));
   app.use('/api/bancos', require('./routes/banking'));
@@ -156,6 +168,7 @@ function createApp({ orcamentosApp } = {}) {
   }
 
   app.use('/chamados-proxy', (req, res) => proxyPass(req, res, CHAMADOPRO_URL, true));
+  app.use('/orcamentos-api', centerProxyAccess);
   if (orcamentosApp) app.use('/orcamentos-api', orcamentosApp);
   else app.use('/orcamentos-api', (req, res) => proxyPass(req, res, ORCAMENTOS_API_URL, false));
   app.use('/orcamentos', express.static(ORCAMENTOS_RENDERER_DIR, { index:'index.html', etag:true }));
@@ -163,6 +176,10 @@ function createApp({ orcamentosApp } = {}) {
 
   const publicDir = path.join(__dirname, 'public');
   const indexPath = path.join(publicDir, 'index.html');
+  const setStaticHeaders = (res, filePath) => {
+    if (/\.(?:woff2?|png|jpe?g|gif|svg|ico)$/i.test(filePath)) res.setHeader('Cache-Control', 'public, max-age=604800');
+    else if (/\.(?:js|css|html)$/i.test(filePath)) res.setHeader('Cache-Control', 'no-cache');
+  };
   const sendIndex = (req, res) => {
     res.setHeader('Cache-Control', 'no-cache');
     res.sendFile(indexPath);
@@ -176,6 +193,11 @@ function createApp({ orcamentosApp } = {}) {
     if (/Android|iPhone|iPad|iPod|Mobile/i.test(req.get('user-agent') || '')) return res.redirect(302, '/m/');
     return res.redirect(302, '/d/');
   });
+  // Versao classica: a interface antiga em /classico/ durante o periodo de transicao (ate cerca de 26/11/2026,
+  // quando vira redirecionamento para /). Os arquivos relativos da pagina (style-base.css, app.js, assets/...)
+  // resolvem sob /classico/, entao a mesma pasta public/ e servida ali. /?antiga=1 e /?entrar=1 seguem funcionando.
+  app.get(['/classico', '/classico/'], (req, res) => (req.path === '/classico' ? res.redirect(301, '/classico/') : sendIndex(req, res)));
+  app.use('/classico', (req, res, next) => (/^\/(?:m|d)(?:\/|$)/i.test(req.path) ? res.status(404).end() : next()), express.static(publicDir, { etag:true, index:false, setHeaders:setStaticHeaders }), (req, res) => res.status(404).end());
   // Centro de Custos no celular (Fase 2 mobile): public/m/.
   app.get(['/m', '/m/'], (req, res) => {
     if (req.path === '/m') return res.redirect(301, '/m/');
@@ -188,19 +210,15 @@ function createApp({ orcamentosApp } = {}) {
     res.setHeader('Cache-Control', 'no-cache');
     return res.sendFile(path.join(publicDir, 'd', 'index.html'));
   });
-  app.use(express.static(publicDir, {
-    etag:true,index:false,
-    setHeaders(res, filePath) {
-      if (/\.(?:woff2?|png|jpe?g|gif|svg|ico)$/i.test(filePath)) res.setHeader('Cache-Control', 'public, max-age=604800');
-      else if (/\.(?:js|css|html)$/i.test(filePath)) res.setHeader('Cache-Control', 'no-cache');
-    },
-  }));
+  app.use(express.static(publicDir, { etag:true, index:false, setHeaders:setStaticHeaders }));
 
   // Embedded Orçamentos uses relative /api URLs; proxy only requests coming from that renderer.
   app.use('/api', (req, res) => {
     if (req.get('referer')?.includes('/orcamentos/')) {
-      req.url = `/api${req.url}`;
-      return proxyPass(req, res, ORCAMENTOS_API_URL, false);
+      return centerProxyAccess(req, res, () => {
+        req.url = `/api${req.url}`;
+        return proxyPass(req, res, ORCAMENTOS_API_URL, false);
+      });
     }
     return res.status(404).json({ erro:'Rota da API não encontrada.', requestId:req.requestId });
   });
@@ -213,7 +231,7 @@ function createApp({ orcamentosApp } = {}) {
     if (error instanceof SyntaxError && error.status === 400 && 'body' in error) return res.status(400).json({ ...payload, erro:'O conteúdo JSON enviado é inválido.' });
     if (error.statusCode) {
       if (error.statusCode >= 500) logger.error('request_failed', { requestId:req.requestId, method:req.method, path:req.originalUrl?.split('?')[0], error });
-      return res.status(error.statusCode).json({ ...payload, erro:error.publicMessage || error.message });
+      return res.status(error.statusCode).json({ ...payload, ...(error.extra || {}), erro:error.publicMessage || error.message });
     }
     if (error.code === '23505') return res.status(409).json({ ...payload, erro:'Já existe um cadastro com estes dados.' });
     if (error.code === '23503') return res.status(409).json({ ...payload, erro:'O registro está sendo usado e não pode ser removido.' });

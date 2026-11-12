@@ -26,7 +26,7 @@
 
   CC.screens.pedidos = async function (params) {
     const top = `<div class="top"><button class="back" type="button" id="voltar" aria-label="Voltar">${icon('caret-left', 20)}</button><h1>Pedidos de acesso</h1></div>`;
-    const back = (el) => CC.$('#voltar', el).addEventListener('click', () => CC.go('menu'));
+    const back = (el) => CC.$('#voltar', el).addEventListener('click', () => CC.go(params.from || 'menu'));
     back(CC.render(`${top}<div class="skeleton"></div><div class="skeleton"></div>`, true, params));
     let data;
     try { data = (params.data) || (await CC.api('/cadastros')).data; } catch (error) {
@@ -40,7 +40,7 @@
           <button class="btn2" type="button" id="trocar" style="padding:0 14px">${icon('key', 18)}Trocar</button></div>
         <p class="muted" style="font-size:12px;margin:6px 0 0">Quem se cadastra pelo app informa este código. O pedido chega aqui para você aprovar.</p></div>
       <p class="sheet-sec">Aguardando aprovação${reqs.length ? ` · ${reqs.length}` : ''}</p>
-      ${reqs.length ? reqs.map(pedido).join('') : `<p class="sub">Nenhum pedido pendente.</p>`}
+      ${reqs.length ? reqs.map(pedido).join('') : `<div class="empty">${icon('user-plus', 28)}<b style="color:var(--text)">Nenhum pedido pendente</b>Quem pedir acesso com o código da empresa aparece aqui para você aprovar.</div>`}
       <p class="sheet-sec">Convidar por e-mail</p>
       <div class="card"><label class="field"><span>E-mail</span><input id="c-email" type="email" inputmode="email" autocomplete="off" maxlength="200" placeholder="nome@empresa.com.br"></label>
         <span class="label">Perfil</span>${perfis('convite', 'supervisor')}

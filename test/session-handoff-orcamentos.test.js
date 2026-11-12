@@ -45,8 +45,10 @@ maybe('código só vale no destino para o qual foi emitido', async () => {
   // As tentativas erradas não gastam o código.
   assert.equal((await call('POST', '/v1/auth/handoff/consume', { headers, body: { code: paraOrc.data.code, target: 'orcamentos' } })).status, 200);
 
-  assert.equal((await call('POST', '/v1/auth/handoff', { token, body: { target: 'chamados' } })).data.code, 'TARGET_INVALID');
-  assert.equal((await call('POST', '/v1/auth/handoff/consume', { body: { code: paraOrc.data.code, target: 'chamados' } })).data.code, 'TARGET_INVALID');
+  assert.equal((await call('POST', '/v1/auth/handoff', { token, body: { target: 'inexistente' } })).data.code, 'TARGET_INVALID');
+  assert.equal((await call('POST', '/v1/auth/handoff/consume', { body: { code: paraOrc.data.code, target: 'inexistente' } })).data.code, 'TARGET_INVALID');
+  assert.equal((await call('POST', '/v1/auth/handoff', { token, body: { target: 'chamados' } })).data.code, 'CENTRAL_UNAVAILABLE');
+  assert.equal((await call('POST', '/v1/auth/handoff/consume', { body: { code: paraOrc.data.code, target: 'chamados' } })).data.code, 'CENTRAL_UNAVAILABLE');
 });
 
 maybe('chave de serviço gravada com BOM ou espaços ainda confere', async () => {

@@ -34,19 +34,14 @@
       catch { CC.toast('Não foi possível abrir o Chamados.', 'warning-circle'); }
       return;
     }
-    // Open synchronously with the click; no identity or secret is placed in this window.
-    const popup = window.open('about:blank', '_blank');
-    if (popup) popup.opener = null;
+    // Entre os sistemas da Suite a troca acontece sempre na mesma aba.
     try {
       const { data } = await CC.api('/auth/suite-handoff', { method: 'POST', body: { target: 'chamados' } });
       if (data?.target !== 'chamados' || data.origin !== origin
         || !/^[A-Za-z0-9_-]{43}$/.test(data.code) || !Number.isSafeInteger(data.expiresAt)
         || data.expiresAt <= Math.floor(Date.now() / 1000)) throw new Error('A entrada no Chamados expirou. Tente novamente.');
-      const destination = origin + '/#handoff=' + data.code;
-      if (popup && !popup.closed) popup.location.replace(destination);
-      else location.assign(destination);
+      location.assign(origin + '/#handoff=' + data.code);
     } catch (error) {
-      popup?.close();
       CC.toast(error.message || 'Não foi possível abrir o Chamados.', 'warning-circle');
     }
   }

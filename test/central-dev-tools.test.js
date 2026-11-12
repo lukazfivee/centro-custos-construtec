@@ -116,3 +116,19 @@ maybe('a via de servico do Orcamentos nao alcanca as rotas de dev', async () => 
   assert.equal((await call('GET', '/v1/dev/audit', { token: devToken, service: key })).status, 404);
   assert.equal((await call('POST', '/v1/dev/impersonate', { token: devToken, service: key, body: { email: people.fulano.email } })).status, 404);
 });
+
+maybe('auditoria: acoes no mesmo instante saem na ordem em que aconteceram', async (t) => {
+  const { call, devToken } = await world();
+  // Congela o relogio: todas as linhas recebem o mesmo created_at, como duas acoes no mesmo milissegundo.
+  t.mock.timers.enable({ apis: ['Date'], now: Date.now() });
+  await call('POST', '/v1/users/status', { token: devToken, body: { email: people.fulano.email, active: false } });
+  await call('POST', '/v1/users/status', { token: devToken, body: { email: people.fulano.email, active: true } });
+  await call('POST', '/v1/users/access', { token: devToken, body: { email: people.fulano.email, suiteRole: 'financeiro' } });
+  await call('POST', '/v1/permissions', { token: devToken, body: { role: 'tecnico', permission: 'p3', allowed: true } });
+  await call('POST', '/v1/permissions/reset', { token: devToken });
+  const { status, data } = await call('GET', '/v1/dev/audit', { token: devToken });
+  assert.equal(status, 200);
+  assert.equal(new Set(data.entries.map((e) => e.createdAt)).size, 1, 'o teste precisa de datas iguais');
+  assert.deepEqual(data.entries.map((e) => e.action).reverse(),
+    ['conta_desativada', 'conta_ativada', 'papel_alterado', 'permissao_alterada', 'permissoes_restauradas']);
+});

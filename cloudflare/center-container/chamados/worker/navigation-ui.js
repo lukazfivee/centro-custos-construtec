@@ -5,7 +5,7 @@
  const arrow='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M8 5h11v11M19 5 5 19"/></svg>';
  function item(mobile,admin=false) {
   const a=document.createElement('a');a.href=admin?'/chamados/acessos':'/chamados/entrar';
-  a.target='_blank';a.rel='noopener';a.dataset.chamadosLaunch=admin?'admin':'app';
+  a.dataset.chamadosLaunch=admin?'admin':'app';
   a.className=mobile?'suite-item':'res';if(!mobile)a.setAttribute('role','menuitem');
   const title=admin?'Acessos ao Chamados':'Chamados e O.S.',sub=admin?'Administração da Suíte':'Atendimento e manutenção';
   a.innerHTML=mobile?icon+'<span><b>'+title+'</b><small>'+sub+'</small></span>'+arrow

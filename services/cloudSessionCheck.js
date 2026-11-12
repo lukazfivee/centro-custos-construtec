@@ -58,4 +58,10 @@ async function cloudSessionAlive(sessionToken, options = {}) {
 
 function resetCloudSessionCache() { cache.clear(); }
 
-module.exports = { cloudSessionAlive, resetCloudSessionCache };
+// Sessao encerrada de proposito (ex.: fim do "ver como"): vale como morta de imediato, sem esperar o cache.
+function markCloudSessionDead(sessionToken, options = {}) {
+  if (!sessionToken) return;
+  remember(options.hashed ? `h:${options.userId}:${sessionToken}` : sessionToken, false);
+}
+
+module.exports = { cloudSessionAlive, resetCloudSessionCache, markCloudSessionDead };

@@ -15,6 +15,7 @@ const { recordAudit } = require('../services/audit');
 const { createLoginThrottle } = require('../lib/loginThrottle');
 const { clientIp } = require('../lib/clientIp');
 const { appAllowed, APP_DENIED_MESSAGE } = require('../services/appAccess');
+const { isDev } = require('../services/programmer');
 
 const router = express.Router();
 const LOGIN_MAX_FAILURES = 5;
@@ -209,6 +210,8 @@ router.get('/me', autenticar, asyncRoute(async (req, res) => res.json({
   role: req.usuario.role,
   ...(await accessInfo(req.usuario)),
   todasObras: req.usuario.all_cost_centers !== false,
+  programador: isDev(req.usuario),
+  verComo: req.verComo || null,
   instancia: getInstanceIdentity(),
 })));
 

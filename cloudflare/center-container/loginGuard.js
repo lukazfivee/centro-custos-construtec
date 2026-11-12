@@ -54,6 +54,11 @@ export async function noteLoginFailure(db, email) {
     ON CONFLICT(bucket) DO UPDATE SET count=count+1`).bind(bucket, expires).run();
 }
 
+// Dev: libera o e-mail bloqueado por falhas de login na hora corrente.
+export async function clearLoginFailures(db, email) {
+  await db.prepare('DELETE FROM sync_rate_limits WHERE bucket=?').bind(emailBucket(email).bucket).run();
+}
+
 // App que esta pedindo o login: o Centro (app e Container) ou o Orcamentos. O Orcamentos chega com a chave
 // de servico e sem cabecalho de app; o Container do Centro usa a chave so para repassar o IP e se identifica.
 export function loginApp(request, service) {

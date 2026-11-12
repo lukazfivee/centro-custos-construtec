@@ -83,6 +83,7 @@ function createApp({ orcamentosApp } = {}) {
 
   app.use('/api/auth', require('./routes/auth'));
   app.use('/api/usuarios', require('./routes/usersAccess'));
+  app.use('/api/dev', require('./routes/dev'));
   app.use('/api/usuarios', require('./routes/users'));
   app.use('/api/centros-custo', require('./routes/costCenterDiscard'));
   app.use('/api/centros-custo', require('./routes/costCenters'));

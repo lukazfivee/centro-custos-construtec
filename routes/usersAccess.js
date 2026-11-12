@@ -2,11 +2,14 @@
 const express = require('express');
 const { getDb } = require('../db');
 const { autenticar } = require('../middleware/auth');
-const { exigirPermissao, defaultMatrix, SUITE_ROLES, PERMISSIONS, resetPermissionsCache } = require('../services/permissions');
+const { exigirPermissao, suiteRoleOf, defaultMatrix, SUITE_ROLES, PERMISSIONS, resetPermissionsCache } = require('../services/permissions');
 const { asyncRoute, httpError, positiveId } = require('../lib/http');
 const { recordAudit } = require('../services/audit');
 const cloudAuth = require('../services/cloudAuth');
 const { mirrorCloudUser } = require('../services/cloudUserMirror');
+const bcrypt = require('bcryptjs');
+const crypto = require('crypto');
+const { isDev, assertDevGrant } = require('../services/programmer');
 const { readAccess, setObras, legacyRoleFor, decorate } = require('../services/userAccess');
 
 const router = express.Router();
@@ -67,6 +70,7 @@ router.put('/:id/acesso', asyncRoute(async (req, res) => {
   const target = (await db.query('SELECT id,name,email,role,suite_role,active,cloud_managed,cloud_user_id FROM users WHERE id=$1 AND deleted_at IS NULL', [id])).rows[0];
   if (!target) throw httpError(404, 'Usuário não encontrado.');
   if (id === req.usuario.id) throw httpError(400, 'Você não pode alterar o próprio papel.');
+  assertDevGrant(req.usuario, { toRole: access.suiteRole, target });
 
   if (target.cloud_managed) {
     let remote;
@@ -81,6 +85,26 @@ router.put('/:id/acesso', asyncRoute(async (req, res) => {
   const [user] = await decorate(db, [{ id: target.id, nome: target.name, email: target.email, role: legacyRoleFor(access.suiteRole), ativo: target.active, cloud_managed: target.cloud_managed === true }]);
   await recordAudit({ entityType: 'usuario', entityId: id, action: 'acesso_alterado', summary: `Acesso de ${target.name}: papel ${access.suiteRole}.`, data: { papel: access.suiteRole, apps: access.apps, obras: access.obras }, user: req.usuario });
   res.json(user);
+}));
+
+// Troca de senha de qualquer usuario, somente pelo programador.
+router.put('/:id/senha', asyncRoute(async (req, res) => {
+  if (!isDev(req.usuario)) throw httpError(403, 'Somente o dev pode trocar a senha de outro usuário.');
+  const id = positiveId(req.params.id, 'Usuário');
+  const senha = String((req.body || {}).senha || '');
+  if (senha.length < 10) throw httpError(400, 'A nova senha precisa ter pelo menos 10 caracteres.');
+  if (id === req.usuario.id) throw httpError(400, 'Para a sua própria senha use a troca de senha do perfil.');
+  const db = getDb();
+  const target = (await db.query('SELECT id,name,email,role,suite_role,cloud_managed,cloud_user_id FROM users WHERE id=$1 AND deleted_at IS NULL', [id])).rows[0];
+  if (!target) throw httpError(404, 'Usuário não encontrado.');
+  if (suiteRoleOf(target) === 'dev') throw httpError(403, 'A senha de outro dev não pode ser trocada por aqui.');
+  if (target.cloud_managed) {
+    try { await cloudAuth.setUserPassword(cloudToken(req), { email: target.email, id: target.cloud_user_id || undefined, password: senha }); }
+    catch (error) { throw error.statusCode ? error : cloudFailure(error, 'Não foi possível trocar a senha corporativa agora.'); }
+  }
+  await db.query('UPDATE users SET password_hash=$1, sessions_valid_from=NOW(), updated_at=NOW() WHERE id=$2', [await bcrypt.hash(target.cloud_managed ? crypto.randomBytes(48).toString('hex') : senha, 12), id]);
+  await recordAudit({ entityType: 'usuario', entityId: id, action: 'senha_trocada', summary: `Senha de ${target.name} trocada pelo programador.`, data: {}, user: req.usuario });
+  res.json({ ok: true });
 }));
 
 module.exports = router;

@@ -5,21 +5,23 @@
 const cloudAuth = require('./cloudAuth');
 const logger = require('../lib/logger');
 
-const SUITE_ROLES = ['admin', 'gestor', 'financeiro', 'engenharia', 'tecnico', 'comercial'];
+const SUITE_ROLES = ['admin', 'dev', 'gestor', 'financeiro', 'engenharia', 'tecnico', 'comercial'];
 const MATRIX = {
-  p1: ['admin', 'gestor', 'financeiro', 'engenharia'],
-  p2: ['admin', 'gestor', 'financeiro', 'engenharia', 'tecnico'],
-  p3: ['admin', 'gestor', 'financeiro'],
-  p4: ['admin', 'gestor', 'financeiro'],
-  p5: ['admin', 'gestor'],
-  p6: ['admin', 'gestor', 'financeiro'],
-  p7: ['admin', 'gestor'],
-  p8: ['admin'],
-  p9: ['admin'],
-  p10: ['admin', 'gestor', 'engenharia', 'comercial'],
-  p11: ['admin', 'gestor', 'comercial'],
-  p12: ['admin', 'gestor', 'engenharia', 'tecnico'],
+  p1: ['admin', 'dev', 'gestor', 'financeiro', 'engenharia'],
+  p2: ['admin', 'dev', 'gestor', 'financeiro', 'engenharia', 'tecnico'],
+  p3: ['admin', 'dev', 'gestor', 'financeiro'],
+  p4: ['admin', 'dev', 'gestor', 'financeiro'],
+  p5: ['admin', 'dev', 'gestor'],
+  p6: ['admin', 'dev', 'gestor', 'financeiro'],
+  p7: ['admin', 'dev', 'gestor'],
+  p8: ['admin', 'dev'],
+  p9: ['admin', 'dev'],
+  p10: ['admin', 'dev', 'gestor', 'engenharia', 'comercial'],
+  p11: ['admin', 'dev', 'gestor', 'comercial'],
+  p12: ['admin', 'dev', 'gestor', 'engenharia', 'tecnico'],
 };
+// Admin e dev tem sempre todas as permissoes.
+const TUDO = ['admin', 'dev'];
 const PERMISSIONS = Object.keys(MATRIX);
 // Papeis que so veem as obras atribuidas (a menos que all_cost_centers seja TRUE).
 const SCOPED_ROLES = ['engenharia', 'tecnico'];
@@ -67,13 +69,13 @@ async function matrixFor(user) {
 // O que a pessoa pode (lista de p1 a p12) e o papel, para o desktop montar menu e botoes.
 async function accessInfo(user) {
   const role = suiteRoleOf(user);
-  const matrix = role === 'admin' ? null : await matrixFor(user);
-  return { suiteRole: role, permissoes: PERMISSIONS.filter((p) => role === 'admin' || matrix[role]?.[p]) };
+  const matrix = TUDO.includes(role) ? null : await matrixFor(user);
+  return { suiteRole: role, permissoes: PERMISSIONS.filter((p) => TUDO.includes(role) || matrix[role]?.[p]) };
 }
 
 async function can(user, permission) {
   const role = suiteRoleOf(user);
-  if (role === 'admin') return true;
+  if (TUDO.includes(role)) return true;
   const matrix = await matrixFor(user);
   return Boolean(matrix[role]?.[permission]);
 }

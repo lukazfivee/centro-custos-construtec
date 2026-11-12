@@ -9,6 +9,7 @@ const { parsePagination, wantsPagination, paginationMeta } = require('../lib/pag
 const { recordAudit } = require('../services/audit');
 const cloudAuth = require('../services/cloudAuth');
 const { mirrorCloudUser, retire } = require('../services/cloudUserMirror');
+const { assertDevGrant } = require('../services/programmer');
 const { readAccess, applySuite, setObras, decorate, legacyRoleFor } = require('../services/userAccess');
 
 const router = express.Router();
@@ -143,6 +144,7 @@ router.post('/', asyncRoute(async (req, res) => {
   const email = String(req.body.email || '').trim().toLowerCase();
   const password = String(req.body.senha || '');
   const access = readAccess(req.body);
+  assertDevGrant(req.usuario, { toRole: access.suiteRole });
   const role = access.suiteRole ? legacyRoleFor(access.suiteRole) : String(req.body.role || '');
   if (!name || !email || !password) throw httpError(400, 'Preencha nome, e-mail e senha.');
   if (password.length < 10) throw httpError(400, 'A senha provisória precisa ter pelo menos 10 caracteres.');

@@ -60,6 +60,7 @@
           <button type="button" class="ibtn" data-sair aria-label="Sair" title="Sair">${D.ic('sign-out', 18)}</button></div>
       </aside>
       <div class="area">
+        ${D.verComo.faixa()}
         ${D.simulando() ? `<div class="como-faixa" role="status">${D.ic('eye')}<span>Você está vendo o sistema como <b>${esc(D.papelNome())}</b>. Menus e botões sem permissão somem. O servidor continua usando o seu papel real.</span><button type="button" class="btn btn-s" data-sair-como>Voltar para ${esc(D.papelNome(D.usuario().suiteRole || 'admin'))}</button></div>` : ''}
         <header class="top">
           <div class="busca" role="search"></div>
@@ -74,6 +75,8 @@
     pintarTema();
     CC.$('[data-tema]').addEventListener('click', () => D.tema.alternar());
     CC.$('[data-sair]').addEventListener('click', sair);
+    const voltarDev = CC.$('[data-voltar-dev]');
+    if (voltarDev) voltarDev.addEventListener('click', () => D.verComo.voltar());
     const voltar = CC.$('[data-sair-como]');
     if (voltar) voltar.addEventListener('click', () => { D.simular(''); location.hash = '#/usuarios'; location.reload(); });
     document.addEventListener('d:tema', pintarTema);
@@ -168,6 +171,7 @@
     const sim = await D.confirmar({ titulo: 'Sair do Centro de Custos?', texto: 'Você vai precisar entrar de novo neste computador.', ok: 'Sair', icone: 'sign-out' });
     if (!sim) return;
     if (D.painel.aberto()) D.painel.fecharJa();
+    D.verComo.descartar();
     CC.session.clear();
     location.href = '/?entrar=1';
   }

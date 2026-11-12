@@ -28,6 +28,8 @@ async function autenticar(req, res, next) {
       if (handoffHash) rows[0].cloud_session_token = `hash:${handoffHash}`;
     }
     req.usuario = rows[0];
+    // Sessao de "ver como": quem esta por tras (dev) vem no JWT emitido por /api/dev/ver-como.
+    req.verComo = typeof payload.verComo === 'string' ? payload.verComo : null;
     return next();
   } catch (error) {
     if (error.name === 'JsonWebTokenError' || error.name === 'TokenExpiredError') {

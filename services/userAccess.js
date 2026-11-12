@@ -5,7 +5,7 @@ const { httpError } = require('../lib/http');
 const APPS = ['centro', 'orcamentos'];
 
 function legacyRoleFor(suiteRole) {
-  if (suiteRole === 'admin') return 'admin';
+  if (suiteRole === 'admin' || suiteRole === 'dev') return 'admin';
   if (suiteRole === 'gestor') return 'gestor';
   return 'supervisor';
 }

@@ -3,23 +3,23 @@
 // Orçamentos e para clientes antigos; `suite_role` é o papel novo. Sempre que o
 // papel novo é gravado, o legado é derivado dele.
 
-export const SUITE_ROLES = ['admin', 'gestor', 'financeiro', 'engenharia', 'tecnico', 'comercial'];
+export const SUITE_ROLES = ['admin', 'dev', 'gestor', 'financeiro', 'engenharia', 'tecnico', 'comercial'];
 export const SUITE_APPS = ['centro', 'orcamentos'];
 
 // Ordem e valores de docs/suite-desktop/01-ESPEC-TELAS.md, seção 6.
 const MATRIX = {
-  p1: ['admin', 'gestor', 'financeiro', 'engenharia'],
-  p2: ['admin', 'gestor', 'financeiro', 'engenharia', 'tecnico'],
-  p3: ['admin', 'gestor', 'financeiro'],
-  p4: ['admin', 'gestor', 'financeiro'],
-  p5: ['admin', 'gestor'],
-  p6: ['admin', 'gestor', 'financeiro'],
-  p7: ['admin', 'gestor'],
-  p8: ['admin'],
-  p9: ['admin'],
-  p10: ['admin', 'gestor', 'engenharia', 'comercial'],
-  p11: ['admin', 'gestor', 'comercial'],
-  p12: ['admin', 'gestor', 'engenharia', 'tecnico'],
+  p1: ['admin', 'dev', 'gestor', 'financeiro', 'engenharia'],
+  p2: ['admin', 'dev', 'gestor', 'financeiro', 'engenharia', 'tecnico'],
+  p3: ['admin', 'dev', 'gestor', 'financeiro'],
+  p4: ['admin', 'dev', 'gestor', 'financeiro'],
+  p5: ['admin', 'dev', 'gestor'],
+  p6: ['admin', 'dev', 'gestor', 'financeiro'],
+  p7: ['admin', 'dev', 'gestor'],
+  p8: ['admin', 'dev'],
+  p9: ['admin', 'dev'],
+  p10: ['admin', 'dev', 'gestor', 'engenharia', 'comercial'],
+  p11: ['admin', 'dev', 'gestor', 'comercial'],
+  p12: ['admin', 'dev', 'gestor', 'engenharia', 'tecnico'],
 };
 export const PERMISSIONS = Object.keys(MATRIX);
 
@@ -28,7 +28,7 @@ export function validSuiteRole(value) {
 }
 
 export function legacyRoleFor(suiteRole) {
-  if (suiteRole === 'admin') return 'admin';
+  if (suiteRole === 'admin' || suiteRole === 'dev') return 'admin';
   if (suiteRole === 'gestor') return 'gestor';
   return 'supervisor';
 }
@@ -66,14 +66,14 @@ export function defaultMatrix() {
   return out;
 }
 
-// Padrão + diferenças gravadas. O admin fica sempre com tudo.
+// Padrão + diferenças gravadas. Admin e dev ficam sempre com tudo.
 export function applyOverrides(rows) {
   const matrix = defaultMatrix();
   for (const row of rows || []) {
-    if (row.role === 'admin' || !matrix[row.role] || !(row.permission in matrix[row.role])) continue;
+    if (row.role === 'admin' || row.role === 'dev' || !matrix[row.role] || !(row.permission in matrix[row.role])) continue;
     matrix[row.role][row.permission] = Boolean(row.allowed);
   }
-  for (const p of PERMISSIONS) matrix.admin[p] = true;
+  for (const p of PERMISSIONS) { matrix.admin[p] = true; matrix.dev[p] = true; }
   return matrix;
 }
 

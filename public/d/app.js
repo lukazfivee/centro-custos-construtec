@@ -4,7 +4,12 @@
   const D = CC.d;
 
   // Sem sessao, limpa o que sobrou e vai para a tela de entrada (pagina de login em /?entrar=1).
-  const paraLogin = () => { try { CC.session.clear(); } catch { /* sem armazenamento */ } location.replace('/?entrar=1'); };
+  // Se a sessao do "ver como" acabou, devolve o dev a conta dele em vez de pedir login.
+  const paraLogin = () => {
+    if (D.verComo && D.verComo.ativo() && D.verComo.restaurar()) { location.hash = '#/config/dev'; location.reload(); return; }
+    try { CC.session.clear(); } catch { /* sem armazenamento */ }
+    location.replace('/?entrar=1');
+  };
   CC.onUnauthorized = paraLogin;
 
   async function consumirHandoff(code) {
@@ -20,7 +25,7 @@
     try {
       const { data } = await CC.api('/auth/me');
       const atual = CC.session.user() || {};
-      localStorage.setItem('cc_usuario', JSON.stringify({ ...atual, id: data.id, nome: data.nome, email: data.email, role: data.role, suiteRole: data.suiteRole, permissoes: data.permissoes, todasObras: data.todasObras }));
+      localStorage.setItem('cc_usuario', JSON.stringify({ ...atual, id: data.id, nome: data.nome, email: data.email, role: data.role, suiteRole: data.suiteRole, permissoes: data.permissoes, todasObras: data.todasObras, programador: data.programador === true, verComo: data.verComo || null }));
       return true;
     } catch (error) {
       if (error.status === 401) return false;

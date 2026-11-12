@@ -63,7 +63,11 @@ function onlyKeys(value, keys) {
   return record(value) && Object.keys(value).every((key) => keys.includes(key));
 }
 
-export function validateIdentity(value, organizationId) {
+// `dev` e administrador na Suite; o Chamados so conhece `admin`.
+const chamadosRole = (role) => (role === 'dev' ? 'admin' : role);
+
+export function validateIdentity(raw, organizationId) {
+  const value = record(raw) && raw.suiteRole === 'dev' ? { ...raw, suiteRole: chamadosRole(raw.suiteRole) } : raw;
   if (!onlyKeys(value, ['userId', 'name', 'organizationId', 'type', 'suiteRole',
     'capabilities', 'scope', 'active', 'application'])) return undefined;
   if (!cleanText(value.userId, 160) || !cleanText(value.name, 200)

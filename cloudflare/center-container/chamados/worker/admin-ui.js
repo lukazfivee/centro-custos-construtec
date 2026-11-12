@@ -130,7 +130,7 @@
    const data=await api('/v1/auth/login',{method:'POST',token:null,body:{email:form.elements.email.value.trim(),password:form.elements.password.value}});
    form.elements.password.value='';
    if(data.challenge || data.mfaRequired || data.requiresMfa || data.nextStep || !data.sessionToken) throw new Error('Conclua a autenticação exigida pela Suíte antes de continuar.');
-   if(data.user?.role!=='admin' || (data.user.suiteRole && data.user.suiteRole!=='admin')) {
+   if(data.user?.role!=='admin' || (data.user.suiteRole && !['admin','dev'].includes(data.user.suiteRole))) {
     await api('/v1/auth/logout',{method:'POST',body:{},token:data.sessionToken}).catch(()=>{});
     throw new Error('Esta área exige uma conta administradora da Suíte.');
    }

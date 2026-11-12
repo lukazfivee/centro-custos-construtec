@@ -11,7 +11,7 @@ WITH RECURSIVE lineage AS (
  SELECT u.id,u.org_id,u.name,u.email,u.role,u.suite_role,u.apps
  FROM cloud_sessions s JOIN cloud_users u ON u.id=s.user_id AND u.org_id=s.org_id
  WHERE s.token_hash=? AND u.org_id=? AND u.active=1 AND u.deleted_at IS NULL
- AND u.role='admin' AND (u.suite_role='admin' OR u.suite_role IS NULL)
+ AND u.role='admin' AND (u.suite_role IN ('admin','dev') OR u.suite_role IS NULL)
  AND NOT EXISTS (SELECT 1 FROM lineage l WHERE l.expires_at<=? OR l.user_id<>u.id OR l.org_id<>u.org_id
   OR l.depth>=16 OR (l.parent_session_hash IS NOT NULL AND NOT EXISTS (
    SELECT 1 FROM cloud_sessions p WHERE p.token_hash=l.parent_session_hash)))

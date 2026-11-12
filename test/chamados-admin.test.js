@@ -89,3 +89,11 @@ test('cadeia administrativa com pai expirado ou ausente é recusada',async t=>{
  raw.prepare('DELETE FROM cloud_sessions WHERE token_hash=?').run(parent);
  assert.equal((await f.request('GET',{token:child})).status,403);
 });
+test('admin com papel dev administra e recebe acesso ao Chamados como admin',async t=>{
+ const f=await adminFixture(t),body=f.save(),key=crypto.randomUUID();
+ f.env.DB.raw.exec("UPDATE cloud_users SET suite_role='dev'");
+ assert.equal((await f.request('GET')).status,200);
+ const r=await f.request('POST',{body,key});assert.equal(r.status,200,JSON.stringify(r.data));
+ const access=await f.central.getChamadosAccess(new Request('https://central.test/v1/auth/chamados/access',{headers:{authorization:'Bearer '+f.token}}),f.env);
+ assert.equal(access.status,200);
+});

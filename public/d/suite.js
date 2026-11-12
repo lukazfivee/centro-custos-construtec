@@ -3,7 +3,7 @@
   const D = CC.d;
   const { esc } = CC;
   const ITENS = [
-    ['file-text', 'Orçamentos', 'Etapa 01 · propostas e BDI', 'https://construtec-orcamentos-cloud.construtec-reports.workers.dev/'],
+    ['file-text', 'Orçamentos', 'Etapa 01 · propostas e BDI', 'https://orcamentos.rcconstrutec.online/'],
     ['chart-bar', 'Centro de Custos', 'Etapa 02 · gestão das obras', null],
   ];
   const WEBMAIL = 'https://webmailpro.uol.com.br/';
@@ -14,7 +14,7 @@
   const item = ([icon, title, subtitle, url]) => {
     const inner = content(icon, title, subtitle);
     return url ? '<a class="res" role="menuitem" href="' + esc(url)
-      + '" target="_blank" rel="noopener">' + inner + D.ic('arrow-square-out', 15) + '</a>'
+      + '"' + (url === WEBMAIL ? ' target="_blank" rel="noopener"' : '') + '>' + inner + D.ic('arrow-square-out', 15) + '</a>'
       : '<a class="res atual" role="menuitem" href="#/inicio" aria-current="page">' + inner + D.ui.chip('Atual', 'ok') + '</a>';
   };
   function validOrigin(value) {

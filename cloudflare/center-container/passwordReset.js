@@ -31,7 +31,7 @@ async function sendResetEmail(env, email, token) {
     console.info('password_reset_email_unconfigured');
     return;
   }
-  const base = 'https://centro-custos-api.construtec-reports.workers.dev';
+  const base = 'https://rcconstrutec.online';
   const link = `${base}/redefinir-senha#t=${token}`;
   try {
     const response = await fetch('https://api.resend.com/emails', {

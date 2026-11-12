@@ -362,7 +362,7 @@
   }
 
   const ORCAMENTOS_TRUSTED_ORIGINS = [
-    'https://construtec-orcamentos-cloud.construtec-reports.workers.dev',
+    'https://construtec-orcamentos-cloud.construtec-reports.workers.dev', 'https://orcamentos.rcconstrutec.online',
     'https://construtec-orcamentos.pages.dev',
     'http://localhost:5173',
     'http://localhost:4173',

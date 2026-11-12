@@ -501,7 +501,7 @@ function validatePdfAttachments(value) {
 // e as respostas do cliente vao para o e-mail corporativo dele (Reply-To). CLIENT_EMAIL_ADDRESS troca o endereco.
 const ENDERECO_COBRANCA = 'cobranca@reports.rcconstrutec.com.br';
 // Logo do cabecalho do e-mail: servida pelo proprio Worker (public/assets), fundo escuro do cabecalho.
-const LOGO_EMAIL = 'https://centro-custos-api.construtec-reports.workers.dev/assets/construtec-logo.png';
+const LOGO_EMAIL = 'https://rcconstrutec.online/assets/construtec-logo.png';
 function remetente(env, user) {
   const nome = text(user?.name).replace(/[<>",;\r\n]/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 80) || 'Construtec';
   const email = text(user?.email).toLowerCase();

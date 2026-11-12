@@ -5,7 +5,7 @@
 const cloudAuth = require('./cloudAuth');
 const { httpError } = require('../lib/http');
 
-const DEFAULT_URL = 'https://construtec-orcamentos-cloud.construtec-reports.workers.dev';
+const DEFAULT_URL = 'https://orcamentos.rcconstrutec.online';
 const TTL_MS = 20 * 60 * 1000;
 const sessions = new Map();
 

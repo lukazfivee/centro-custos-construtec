@@ -9,8 +9,8 @@ function normalizeRequestId(value) {
 
 // Quem pode embutir o Centro em iframe. Na nuvem, so o Orcamentos publicado;
 // origens localhost valem apenas no desktop.
-const CLOUD_FRAME_ANCESTORS = "frame-ancestors 'self' https://construtec-orcamentos-cloud.construtec-reports.workers.dev";
-const LOCAL_FRAME_ANCESTORS = "frame-ancestors 'self' http://localhost:5173 http://127.0.0.1:5173 http://localhost:* http://127.0.0.1:* https://construtec-orcamentos-cloud.construtec-reports.workers.dev";
+const CLOUD_FRAME_ANCESTORS = "frame-ancestors 'self' https://construtec-orcamentos-cloud.construtec-reports.workers.dev https://orcamentos.rcconstrutec.online";
+const LOCAL_FRAME_ANCESTORS = "frame-ancestors 'self' http://localhost:5173 http://127.0.0.1:5173 http://localhost:* http://127.0.0.1:* https://construtec-orcamentos-cloud.construtec-reports.workers.dev https://orcamentos.rcconstrutec.online";
 function frameAncestors() {
   return process.env.DATABASE_URL ? CLOUD_FRAME_ANCESTORS : LOCAL_FRAME_ANCESTORS;
 }

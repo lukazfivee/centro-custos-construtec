@@ -1,7 +1,7 @@
 require('dotenv').config();
 if (process.env.REPORT_API_URL === undefined) process.env.REPORT_API_URL = 'https://centro-custos-reports.construtec-reports.workers.dev';
-if (!process.env.SYNC_API_URL) process.env.SYNC_API_URL = 'https://centro-custos-api.construtec-reports.workers.dev';
-if (process.env.MOBILE_APP_URL === undefined) process.env.MOBILE_APP_URL = 'https://centro-custos-api.construtec-reports.workers.dev';
+if (!process.env.SYNC_API_URL) process.env.SYNC_API_URL = 'https://rcconstrutec.online';
+if (process.env.MOBILE_APP_URL === undefined) process.env.MOBILE_APP_URL = 'https://rcconstrutec.online';
 const express = require('express');
 const os = require('os');
 const path = require('path');

@@ -5,7 +5,7 @@ import { validSuiteRole, legacyRoleFor, suiteFromLegacy, normalizeApps } from '.
 
 // Fase 5 da Suíte mobile: cadastro pelo app com o código da empresa e aprovação
 // do admin, convite por e-mail (a conta sai aprovada) e o código da empresa.
-const BASE = 'https://centro-custos-api.construtec-reports.workers.dev';
+const BASE = 'https://rcconstrutec.online';
 const INVITE_DAYS = 7;
 const CODE_ALPHABET = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
 

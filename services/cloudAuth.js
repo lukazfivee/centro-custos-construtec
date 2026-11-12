@@ -1,6 +1,6 @@
 const { getInstanceIdentity } = require('../db');
 
-const DEFAULT_API_URL = 'https://centro-custos-api.construtec-reports.workers.dev';
+const DEFAULT_API_URL = 'https://rcconstrutec.online';
 
 function apiUrl() {
   return String(process.env.SYNC_API_URL || DEFAULT_API_URL).replace(/\/+$/, '');

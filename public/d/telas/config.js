@@ -9,6 +9,7 @@
     ['perfil', 'Meu perfil', () => true],
     ['backup', 'Backup e restauração', () => D.tem('p9')],
     ['sistema', 'Sistema', () => D.tem('p9')],
+    ['dev', 'Dev', () => D.usuario().programador === true],
   ];
 
   async function render(el, rota, vivo) {

@@ -22,7 +22,9 @@
     ['Financeiro e cadastros', [['p5', 'Cadastros', 'Categorias, fornecedores e recorrentes'], ['p6', 'Cobranças', 'Acompanhar e preparar e-mails ao cliente'], ['p7', 'Autorizar envio de cobrança', 'Libera o e-mail para o cliente'], ['p8', 'Fechamento mensal', 'Fechar e reabrir competências']]],
     ['Orçamentos e administração', [['p10', 'Ver custo, BDI e margem', 'No detalhe das propostas'], ['p11', 'Enviar e aprovar propostas', 'Gerar PDF e registrar aprovação'], ['p9', 'Usuários, permissões e configurações', 'Esta tela, backup e dados da empresa']]],
   ];
-  U.nomePapel = (valor) => U.PAPEIS.find((p) => p.valor === valor)?.rotulo || 'Usuário';
+  // Papel dev: fora da matriz (tem tudo sempre); so um dev pode conceder.
+  U.PAPEL_DEV = { valor: 'dev', rotulo: 'Dev', nota: 'tudo + trocar senhas' };
+  U.nomePapel = (valor) => [...U.PAPEIS, U.PAPEL_DEV].find((p) => p.valor === valor)?.rotulo || 'Usuário';
   U.nomePermissao = (id) => { for (const [, itens] of U.GRUPOS) { const i = itens.find((x) => x[0] === id); if (i) return i[1]; } return id; };
 
   // Matriz atual do servidor (papeis x permissoes), guardada ate a proxima leitura.

@@ -6,7 +6,7 @@ const LEGACY_APPS = ['centro', 'orcamentos'];
 const APPS = [...LEGACY_APPS, 'chamados'];
 
 function legacyRoleFor(suiteRole) {
-  if (suiteRole === 'admin') return 'admin';
+  if (suiteRole === 'admin' || suiteRole === 'dev') return 'admin';
   if (suiteRole === 'gestor') return 'gestor';
   return 'supervisor';
 }

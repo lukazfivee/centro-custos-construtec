@@ -153,19 +153,19 @@ export function publicUser(row) {
   };
 }
 
-async function createSession(env, user, request) {
+export async function createSession(env, user, request, { ttl = SESSION_SECONDS } = {}) {
   const token = bytesToBase64(crypto.getRandomValues(new Uint8Array(32))).replace(/=+$/, '');
   const tokenHash = await sha256Text(token);
   const nowIso = new Date().toISOString();
   const now = Math.floor(Date.now() / 1000);
-  const expiresAt = now + SESSION_SECONDS;
+  const expiresAt = now + ttl;
   const instanceId = text(request.headers.get('x-instance-id')) || null;
   const instanceName = text(request.headers.get('x-instance-name')) || null;
   await env.DB.prepare(`
     INSERT INTO cloud_sessions(token_hash,user_id,org_id,instance_id,instance_name,created_at,expires_at,last_seen_at)
     VALUES(?,?,?,?,?,?,?,?)
   `).bind(tokenHash, user.id, user.org_id, instanceId, instanceName, nowIso, expiresAt, nowIso).run();
-  return { token, expiresAt };
+  return { token, tokenHash, expiresAt };
 }
 
 export async function sessionUser(request, env) {

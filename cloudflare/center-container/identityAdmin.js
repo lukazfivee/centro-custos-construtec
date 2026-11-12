@@ -17,12 +17,15 @@ import {
   makePasswordRecord, publicUser, timingSafeEqual, sessionTokenHash,
 } from './centralAuth.js';
 import { forgetSessionDevice } from './notifications.js';
+import { handleUserPassword } from './passwordAdmin.js';
+import { DEV_ROUTES, handleDevRoute, devAudit, impersonatorOf } from './devTools.js';
 import {
-  PERMISSIONS, SUITE_ROLES, validSuiteRole, legacyRoleFor, suiteFromLegacy, normalizeApps, defaultMatrix, loadMatrix,
+  PERMISSIONS, SUITE_ROLES, effectiveSuiteRole, validSuiteRole, legacyRoleFor, suiteFromLegacy, normalizeApps, defaultMatrix, loadMatrix,
 } from './suiteRoles.js';
 
 const MIN_SERVICE_KEY_LENGTH = 32;
 const SERVICE_CREATED_ROLE = 'supervisor';
+const DEV_ONLY = 'Somente um dev pode conceder ou alterar o papel dev.';
 
 const ROUTES = new Set([
   '/v1/auth/session',
@@ -31,10 +34,12 @@ const ROUTES = new Set([
   '/v1/users/status',
   '/v1/users/delete',
   '/v1/users/access',
+  '/v1/users/password',
   '/v1/permissions',
   '/v1/permissions/reset',
   '/v1/authorized-emails',
   '/v1/authorized-emails/revoke',
+  ...DEV_ROUTES,
 ]);
 
 export function isIdentityRoute(pathname) {
@@ -60,7 +65,7 @@ async function requireAccountAdmin(request, env, service) {
   if (auth.error) return auth;
   // Pela via de servico o poder e sempre o do Orcamentos, mesmo que o Bearer
   // seja de um admin do Centro: nada de criar ou alterar admins por ela.
-  return { user: auth.user, centroAdmin: !service && auth.user.role === 'admin' };
+  return { user: auth.user, centroAdmin: !service && auth.user.role === 'admin', dev: !service && effectiveSuiteRole(auth.user) === 'dev' };
 }
 
 // A tabela de producao nao tem org_id (organizacao unica, ORG_ID).
@@ -78,7 +83,8 @@ async function liveUserByEmail(env, orgId, email) {
 async function handleSession(request, env) {
   const user = await sessionUser(request, env);
   if (!user) return json({ ok: false, code: 'SESSION_INVALID', error: 'Sessao invalida ou expirada.' }, 401);
-  return json({ ok: true, user: publicUser(user), expiresAt: Number(user.expires_at) });
+  const impersonatedBy = await impersonatorOf(env, user.token_hash);
+  return json({ ok: true, user: publicUser(user), expiresAt: Number(user.expires_at), ...(impersonatedBy ? { impersonatedBy } : {}) });
 }
 
 // Encerra a sessão atual, as sessões web criadas por handoff a partir dela e os códigos pendentes.
@@ -111,6 +117,7 @@ async function handleCreateUser(request, env, auth) {
   const password = String(body.password || '');
   const wantedSuite = auth.centroAdmin && body.suiteRole !== undefined ? text(body.suiteRole) : null;
   if (wantedSuite !== null && !validSuiteRole(wantedSuite)) return json({ ok: false, error: 'Papel invalido.' }, 400);
+  if (wantedSuite === 'dev' && !auth.dev) return json({ ok: false, error: DEV_ONLY }, 403);
   const role = wantedSuite ? legacyRoleFor(wantedSuite) : auth.centroAdmin ? text(body.role) : SERVICE_CREATED_ROLE;
   // Conta nova sempre nasce com papel novo explicito (sem ele, o tecnico entraria vendo todas as obras).
   const suiteRole = wantedSuite || suiteFromLegacy(role);
@@ -148,6 +155,7 @@ async function targetFor(request, env, auth, verb) {
   if (target.role === 'admin' && !auth.centroAdmin) {
     return { response: json({ ok: false, error: 'Somente um admin do Centro de Custos pode alterar outro admin.' }, 403) };
   }
+  if (!auth.dev && effectiveSuiteRole(target) === 'dev') return { response: json({ ok: false, error: DEV_ONLY }, 403) };
   return { body, target };
 }
 
@@ -157,6 +165,7 @@ async function handleUserStatus(request, env, auth) {
   const active = body.active === true ? 1 : 0;
   await env.DB.prepare('UPDATE cloud_users SET active=?,updated_at=? WHERE id=?').bind(active, new Date().toISOString(), target.id).run();
   if (!active) await env.DB.prepare('DELETE FROM cloud_sessions WHERE user_id=?').bind(target.id).run();
+  if (auth.dev) await devAudit(env, auth.user, active ? 'conta_ativada' : 'conta_desativada', target);
   return json({ ok: true });
 }
 
@@ -168,6 +177,7 @@ async function handleDeleteUser(request, env, auth) {
     env.DB.prepare('UPDATE cloud_users SET deleted_at=?,active=0,updated_at=? WHERE id=? AND deleted_at IS NULL').bind(now, now, target.id),
     env.DB.prepare('DELETE FROM cloud_sessions WHERE user_id=?').bind(target.id),
   ]);
+  if (auth.dev) await devAudit(env, auth.user, 'conta_excluida', target);
   return json({ ok: true, deletedId: target.id, deletedAt: now });
 }
 
@@ -179,12 +189,14 @@ async function handleUserAccess(request, env, auth) {
   if (response) return response;
   const suiteRole = text(body.suiteRole);
   if (!validSuiteRole(suiteRole)) return json({ ok: false, error: 'Papel invalido.' }, 400);
+  if (suiteRole === 'dev' && !auth.dev) return json({ ok: false, error: DEV_ONLY }, 403);
   const apps = body.apps === undefined ? undefined : normalizeApps(body.apps);
   if (apps === null) return json({ ok: false, error: 'Escolha ao menos um app.' }, 400);
   const now = new Date().toISOString();
   await env.DB.prepare('UPDATE cloud_users SET suite_role=?,role=?,apps=COALESCE(?,apps),updated_at=? WHERE id=?')
     .bind(suiteRole, legacyRoleFor(suiteRole), apps ? JSON.stringify(apps) : null, now, target.id).run();
   const updated = await env.DB.prepare('SELECT * FROM cloud_users WHERE id=?').bind(target.id).first();
+  if (auth.dev) await devAudit(env, auth.user, 'papel_alterado', target, { de: effectiveSuiteRole(target), para: suiteRole, apps: apps || undefined });
   return json({ ok: true, user: publicUser(updated) });
 }
 
@@ -216,6 +228,7 @@ async function handlePermissions(request, env) {
       ON CONFLICT(role,permission) DO UPDATE SET allowed=excluded.allowed,updated_by=excluded.updated_by,updated_at=excluded.updated_at
     `).bind(role, permission, body.allowed ? 1 : 0, auth.user.id, new Date().toISOString()).run();
   }
+  if (effectiveSuiteRole(auth.user) === 'dev') await devAudit(env, auth.user, 'permissao_alterada', null, { role, permission, allowed: body.allowed });
   return json(await permissionsPayload(env));
 }
 
@@ -223,6 +236,7 @@ async function handlePermissionsReset(request, env) {
   const auth = await requireSession(request, env, ['admin']);
   if (auth.error) return json({ ok: false, error: auth.error }, auth.status);
   await env.DB.prepare('DELETE FROM role_permission_overrides').run();
+  if (effectiveSuiteRole(auth.user) === 'dev') await devAudit(env, auth.user, 'permissoes_restauradas');
   return json(await permissionsPayload(env));
 }
 
@@ -261,6 +275,9 @@ export async function handleIdentityAdmin(request, env, url, service) {
 
   if (path === '/v1/permissions' && (method === 'GET' || method === 'POST')) return handlePermissions(request, env);
   if (path === '/v1/permissions/reset' && method === 'POST') return handlePermissionsReset(request, env);
+
+  if (path === '/v1/users/password' && method === 'POST' && !service) return handleUserPassword(request, env);
+  if (path.startsWith('/v1/dev/')) return service ? json({ ok: false, error: 'Rota nao encontrada.' }, 404) : handleDevRoute(request, env, path);
 
   const auth = await requireAccountAdmin(request, env, service);
   if (auth.error) return json({ ok: false, error: auth.error }, auth.status);

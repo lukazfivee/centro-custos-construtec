@@ -44,12 +44,13 @@
     };
     const corpo = `<form class="form-lanc usu-form" novalidate>
       <div class="usu-identidade">${U.campo({ rotulo: 'Nome', name: 'nome', valor: usuario?.nome })}
-      ${U.campo({ rotulo: 'Papel', name: 'suiteRole', tipo: 'select', valor: papelInicial, opcoes: X.PAPEIS })}</div>
+      ${U.campo({ rotulo: 'Papel', name: 'suiteRole', tipo: 'select', valor: papelInicial, opcoes: D.usuario().suiteRole === 'dev' ? [...X.PAPEIS, X.PAPEL_DEV] : X.PAPEIS })}</div>
       ${U.campo({ rotulo: 'E-mail', name: 'email', tipo: 'email', valor: usuario?.email })}
       ${blocoApps(estado.apps)}
       <div data-obras-wrap></div>
       ${editando ? '' : `<div class="fld"><span>Como a pessoa entra</span>${X.convitesOk ? U.seg('metodo', [{ valor: 'convite', rotulo: 'Convite por e-mail' }, { valor: 'senha', rotulo: 'Senha provisória' }], 'convite', 'Método') : '<small class="muted">Sem conta corporativa, o acesso é por senha provisória.</small>'}</div>
         <div data-senha-wrap${X.convitesOk ? ' hidden' : ''}>${U.campo({ rotulo: 'Senha provisória', name: 'senha', tipo: 'password', ajuda: 'Pelo menos 10 caracteres. Informe a senha à pessoa por um canal seguro.' })}</div>`}
+      ${editando && D.usuario().programador && usuario.suiteRole !== 'dev' ? U.campo({ rotulo: 'Nova senha (opcional)', name: 'novaSenha', tipo: 'password', ajuda: 'Só o dev vê este campo. Troca a senha da pessoa e encerra as sessões dela.' }) : ''}
       <div data-pode></div>
       ${usuario?.cloud_managed ? U.faixa('info', 'info', 'Nome e e-mail vêm do diretório central; aqui mudam papel, apps e obras.') : ''}
     </form>`;
@@ -121,6 +122,8 @@
       const email = String(form.elements.email.value || '').trim().toLowerCase();
       const senha = form.elements.senha ? String(form.elements.senha.value || '') : '';
       const erros = {};
+      const novaSenha = form.elements.novaSenha ? String(form.elements.novaSenha.value || '') : '';
+      if (novaSenha && novaSenha.length < 10) erros.novaSenha = 'Use pelo menos 10 caracteres.';
       if (!editando && !nome && estado.metodo === 'senha') erros.nome = 'Informe o nome.';
       if (!editando && !EMAIL.test(email)) erros.email = 'Informe um e-mail válido.';
       if (!editando && estado.metodo === 'senha' && senha.length < 10) erros.senha = 'Use pelo menos 10 caracteres.';
@@ -133,7 +136,8 @@
       try {
         if (editando) {
           await CC.api(`/usuarios/${usuario.id}/acesso`, { method: 'PUT', body: { suiteRole: papel(), apps: estado.apps, obras: obrasCorpo } });
-          ctl.marcarSalvo(); ctl.fechar(true); CC.toast('Acesso atualizado'); await atualizar();
+          if (novaSenha) await CC.api(`/usuarios/${usuario.id}/senha`, { method: 'PUT', body: { senha: novaSenha } });
+          ctl.marcarSalvo(); ctl.fechar(true); CC.toast(novaSenha ? 'Acesso e senha atualizados' : 'Acesso atualizado'); await atualizar();
         } else if (estado.metodo === 'senha') {
           await CC.api('/usuarios', { method: 'POST', body: { nome, email, senha, suiteRole: papel(), apps: estado.apps, obras: obrasCorpo } });
           ctl.marcarSalvo();

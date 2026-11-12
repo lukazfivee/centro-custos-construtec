@@ -62,6 +62,7 @@
           <button type="button" class="ibtn" data-sair aria-label="Sair" title="Sair">${D.ic('sign-out', 18)}</button></div>
       </aside>
       <div class="area">
+        ${D.verComo.faixa()}
         <header class="top">
           <div class="busca" role="search"></div>
           <span class="espaco"></span>
@@ -78,6 +79,8 @@
     pintarTema();
     CC.$('[data-tema]').addEventListener('click', () => D.tema.alternar());
     CC.$('[data-sair]').addEventListener('click', sair);
+    const voltarDev = CC.$('[data-voltar-dev]');
+    if (voltarDev) voltarDev.addEventListener('click', () => D.verComo.voltar());
     const voltar = CC.$('[data-sair-como]');
     if (voltar) voltar.addEventListener('click', () => { D.simular(''); location.hash = '#/usuarios'; location.reload(); });
     document.addEventListener('d:tema', pintarTema);
@@ -202,6 +205,7 @@
     const sim = await D.confirmar({ titulo: 'Sair do Centro de Custos?', texto: 'Você vai precisar entrar de novo neste computador.', ok: 'Sair', icone: 'sign-out' });
     if (!sim) return;
     if (D.painel.aberto()) D.painel.fecharJa();
+    D.verComo.descartar();
     CC.session.clear();
     D.sessao.avisar('sair');
     location.replace('/d/');

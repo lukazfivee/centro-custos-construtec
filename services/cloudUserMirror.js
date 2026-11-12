@@ -10,7 +10,7 @@ const RETURNING = 'id,name,email,role,suite_role,apps,all_cost_centers,active,cl
 
 // Papel novo e apps vindos do diretorio; Worker antigo nao os envia (fica NULL).
 function suiteFields(remote) {
-  const roles = ['admin', 'gestor', 'financeiro', 'engenharia', 'tecnico', 'comercial'];
+  const roles = ['admin', 'dev', 'gestor', 'financeiro', 'engenharia', 'tecnico', 'comercial'];
   const suiteRole = roles.includes(remote.suiteRole) ? remote.suiteRole : null;
   const apps = Array.isArray(remote.apps) ? JSON.stringify(remote.apps) : null;
   return { suiteRole, apps };

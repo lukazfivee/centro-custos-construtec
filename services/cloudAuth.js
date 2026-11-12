@@ -127,6 +127,23 @@ async function setUserAccess(sessionToken, payload) {
   });
 }
 
+async function setUserPassword(sessionToken, payload) {
+  return request('/v1/users/password', {
+    method:'POST',
+    headers:{ Authorization:`Bearer ${sessionToken}` },
+    body:JSON.stringify(payload),
+  });
+}
+
+// Ferramentas de dev no diretorio central (/v1/dev/*): so o dev, com a sessao propria.
+async function devCall(sessionToken, path, payload) {
+  return request(`/v1/dev/${path}`, {
+    method: payload === undefined ? 'GET' : 'POST',
+    headers:{ Authorization:`Bearer ${sessionToken}` },
+    ...(payload === undefined ? {} : { body:JSON.stringify(payload) }),
+  });
+}
+
 async function setPermission(sessionToken, payload) {
   return request('/v1/permissions', {
     method:'POST',
@@ -234,6 +251,8 @@ async function removeProfilePhoto(sessionToken) {
 module.exports = {
   session,
   setUserAccess,
+  setUserPassword,
+  devCall,
   setPermission,
   resetPermissions,
   permissions,

@@ -27,7 +27,7 @@ CREATE TABLE cloud_sessions (
 function fakeD1() {
   const db = new sqlite.DatabaseSync(':memory:');
   db.exec(LEGACY_SCHEMA);
-  for (const name of ['006-identidade-compartilhada.sql', '007-mobile-auth.sql', '008-sessao-web-vinculada.sql', '009-handoff-alvo.sql', '010-notificacoes.sql', '011-cadastro.sql', '012-papeis-suite.sql']) {
+  for (const name of ['006-identidade-compartilhada.sql', '007-mobile-auth.sql', '008-sessao-web-vinculada.sql', '009-handoff-alvo.sql', '010-notificacoes.sql', '011-cadastro.sql', '012-papeis-suite.sql', '014-dev-ferramentas.sql']) {
     db.exec(fs.readFileSync(path.join(root, 'cloudflare', 'center-container', 'd1-migrations', name), 'utf8'));
   }
   const statement = (sql) => ({
@@ -217,4 +217,37 @@ maybe('matriz de permissoes: padrao, ajuste, admin travado e restaurar', async (
   const reset = await call('POST', '/v1/permissions/reset', { token: adminToken });
   assert.equal(reset.data.matrix.gestor.p8, false);
   assert.equal((await call('POST', '/v1/permissions/reset', { token: gestorToken })).status, 403);
+});
+
+maybe('dev troca a senha de quem esta abaixo; admin e outro dev ficam de fora', async () => {
+  const { env, call, adminToken } = await setup();
+  const dev = { name: 'PCM', email: 'pcm@rcconstrutec.com.br', password: 'senha-pcm-1234567', role: 'admin' };
+  const dev2 = { name: 'Dev2', email: 'dev2@rcconstrutec.com.br', password: 'senha-dev2-123456', role: 'admin' };
+  const fulano = { name: 'Fulano', email: 'fulano@rcconstrutec.com.br', password: 'senha-fulano-12', role: 'gestor' };
+  for (const user of [dev, dev2, fulano]) await call('POST', '/v1/users', { token: adminToken, body: user });
+  // Admin nao concede o papel dev; so o banco (ou outro dev) promove.
+  assert.equal((await call('POST', '/v1/users/access', { token: adminToken, body: { email: dev.email, suiteRole: 'dev' } })).status, 403);
+  env.DB.raw.prepare("UPDATE cloud_users SET suite_role='dev' WHERE email IN (?,?)").run(dev.email, dev2.email);
+  const devToken = (await call('POST', '/v1/auth/login', { body: dev })).data.sessionToken;
+  const fulanoToken = (await call('POST', '/v1/auth/login', { body: fulano })).data.sessionToken;
+  assert.equal((await call('GET', '/v1/auth/session', { token: devToken })).data.user.suiteRole, 'dev');
+
+  const body = { email: fulano.email, password: 'senha-nova-123456' };
+  assert.equal((await call('POST', '/v1/users/password', { body })).status, 401);
+  assert.equal((await call('POST', '/v1/users/password', { token: adminToken, body })).status, 403);
+  assert.equal((await call('POST', '/v1/users/password', { token: fulanoToken, body })).status, 403);
+  assert.equal((await call('POST', '/v1/users/password', { token: devToken, body: { ...body, password: 'curta' } })).status, 400);
+  assert.equal((await call('POST', '/v1/users/password', { token: devToken, body: { ...body, email: dev.email } })).status, 400);
+  assert.equal((await call('POST', '/v1/users/password', { token: devToken, body: { ...body, email: dev2.email } })).status, 403);
+  assert.equal((await call('POST', '/v1/users/password', { token: devToken, body: { ...body, email: 'nao@rcconstrutec.com.br' } })).status, 404);
+
+  assert.equal((await call('POST', '/v1/users/password', { token: devToken, body })).status, 200);
+  assert.equal((await call('GET', '/v1/auth/session', { token: fulanoToken })).status, 401);
+  assert.equal((await call('POST', '/v1/auth/login', { body: fulano })).status, 401);
+  assert.equal((await call('POST', '/v1/auth/login', { body: { email: fulano.email, password: body.password } })).status, 200);
+  // Admin do Centro (abaixo do dev) tem a senha trocada; admin nao mexe em dev.
+  assert.equal((await call('POST', '/v1/users/password', { token: devToken, body: { email: 'admin@rcconstrutec.com.br', password: 'senha-admin-nova-1' } })).status, 200);
+  const adminAgain = (await call('POST', '/v1/auth/login', { body: { email: 'admin@rcconstrutec.com.br', password: 'senha-admin-nova-1' } })).data.sessionToken;
+  assert.equal((await call('POST', '/v1/users/status', { token: adminAgain, body: { email: dev.email, active: false } })).status, 403);
+  assert.equal((await call('POST', '/v1/users/access', { token: devToken, body: { email: fulano.email, suiteRole: 'dev' } })).status, 200);
 });

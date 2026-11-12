@@ -10,6 +10,7 @@ COPY lib ./lib
 COPY middleware ./middleware
 COPY migrations ./migrations
 COPY public ./public
+LABEL construtec.origem-chamados="chamados.rcconstrutec.online"
 USER node
 EXPOSE 8080
 CMD ["node", "server.js"]

@@ -12,34 +12,75 @@
 </head>
 <body>
   <a class="skip" href="#aplicativos">Ir para os aplicativos</a>
-  <header class="topbar">
-    <div class="brand">
-      <span class="brand-symbol" aria-hidden="true"><img src="/d/simbolo.png" width="40" height="40" alt=""></span>
-      <span><strong>CONSTRUTEC</strong><small>Suíte de aplicativos</small></span>
-    </div>
-    <span class="topbar-note">Engenharia conectada</span>
-  </header>
-  <main>
+  <div class="hero">
+    <svg class="hero-mark" viewBox="0 0 240 150" aria-hidden="true">
+      <path d="M26 112 120 30l94 82"/>
+      <path d="M72 140l48-42 48 42"/>
+    </svg>
+    <header class="topbar">
+      <div class="brand">
+        <svg class="brand-symbol" viewBox="0 0 240 150" aria-hidden="true"><path d="M26 112 120 30l94 82"/><path d="M72 140l48-42 48 42"/></svg>
+        <span><strong>CONSTRUTEC</strong><small>Suíte de aplicativos</small></span>
+      </div>
+      <span class="topbar-note">Engenharia conectada</span>
+    </header>
     <section class="intro" aria-labelledby="title">
-      <p class="eyebrow">Suíte Construtec</p>
       <h1 id="title">Qual aplicativo você quer abrir?</h1>
       <p class="lead">Escolha um sistema para continuar seu trabalho.</p>
     </section>
+  </div>
+  <main>
     <nav id="aplicativos" class="apps" aria-label="Aplicativos da Suíte">
       <a class="app" id="app-orcamentos" href="https://construtec-orcamentos-cloud.construtec-reports.workers.dev/">
-        <span class="app-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9l-6-6Zm0 0v6h6M8 13h8M8 17h5"/></svg></span>
-        <div class="app-copy"><span class="app-type">Propostas e vendas</span><h2>Orçamentos</h2><span class="description">Prepare propostas, consulte o catálogo e acompanhe seus orçamentos.</span></div>
-        <span class="app-action">Abrir Orçamentos <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></span>
+        <span class="app-panel" aria-hidden="true">
+          <svg class="art" viewBox="0 0 240 140" preserveAspectRatio="xMidYMid meet">
+            <rect class="soft" x="62" y="26" width="86" height="104" rx="7" transform="rotate(-7 105 78)"/>
+            <path class="fill" d="M88 14h58l22 22v90a6 6 0 0 1-6 6H88a6 6 0 0 1-6-6V20a6 6 0 0 1 6-6Z"/>
+            <path d="M146 14v22h22M96 54h44M96 68h62M96 82h62"/>
+            <rect class="tint" x="96" y="98" width="62" height="18" rx="3"/>
+            <circle class="fill" cx="178" cy="104" r="21"/>
+            <path d="m168 104 7 7 13-14"/>
+          </svg>
+        </span>
+        <span class="app-body">
+          <span class="app-copy"><span class="app-type">Propostas e vendas</span><h2>Orçamentos</h2><span class="description">Prepare propostas, consulte o catálogo e acompanhe seus orçamentos.</span></span>
+          <span class="app-action"><span>Abrir Orçamentos</span><span class="go"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></span></span>
+        </span>
       </a>
       <a class="app" id="app-centro" href="__CENTRO_ENTRY__">
-        <span class="app-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 21h18M5 21V7l7-4v18M12 9h7v12M8 9v1m0 3v1m0 3v1m7-5h1m-1 4h1"/></svg></span>
-        <div class="app-copy"><span class="app-type">Obras e finanças</span><h2>Centro de Custos</h2><span class="description">Acompanhe suas obras, lançamentos, medições e resultados financeiros.</span></div>
-        <span class="app-action">Abrir Centro de Custos <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></span>
+        <span class="app-panel" aria-hidden="true">
+          <svg class="art" viewBox="0 0 240 140" preserveAspectRatio="xMidYMid meet">
+            <path d="M20 126h200"/>
+            <path class="fill" d="M56 126V42l32-14v98"/>
+            <path d="M88 126V58h28v68M66 52h12M66 68h12M66 84h12M66 100h12M98 74h8M98 90h8M98 106h8"/>
+            <rect class="tint" x="148" y="88" width="14" height="38" rx="2"/>
+            <rect class="tint" x="170" y="68" width="14" height="58" rx="2"/>
+            <rect class="tint" x="192" y="46" width="14" height="80" rx="2"/>
+            <path d="M144 78l24-18 20-6 24-20m0 0h-14m14 0v14"/>
+          </svg>
+        </span>
+        <span class="app-body">
+          <span class="app-copy"><span class="app-type">Obras e finanças</span><h2>Centro de Custos</h2><span class="description">Acompanhe suas obras, lançamentos, medições e resultados financeiros.</span></span>
+          <span class="app-action"><span>Abrir Centro de Custos</span><span class="go"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></span></span>
+        </span>
       </a>
       <a class="app" id="app-chamados" href="https://construtec-chamados.construtec-reports.workers.dev/">
-        <span class="app-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m14 6 4 4 3-3a6 6 0 0 1-8 7l-7 7-3-3 7-7a6 6 0 0 1 7-8l-3 3Z"/></svg></span>
-        <div class="app-copy"><span class="app-type">Atendimento e manutenção</span><h2>Chamados e O.S.</h2><span class="description">Gerencie atendimentos, ordens de serviço, checklists e preventivas.</span></div>
-        <span class="app-action">Abrir Chamados <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></span>
+        <span class="app-panel" aria-hidden="true">
+          <svg class="art" viewBox="0 0 240 140" preserveAspectRatio="xMidYMid meet">
+            <rect class="fill" x="64" y="24" width="88" height="106" rx="9"/>
+            <rect class="tint" x="92" y="14" width="32" height="18" rx="5"/>
+            <path d="m80 58 5 5 10-11M106 57h34m-60 24 5 5 10-11M106 80h34"/>
+            <rect x="80" y="100" width="14" height="14" rx="3"/>
+            <path d="M106 107h24"/>
+            <g class="wrench" transform="translate(150 28) scale(3.7)">
+              <path class="fill" d="m14 6 4 4 3-3a6 6 0 0 1-8 7l-7 7-3-3 7-7a6 6 0 0 1 7-8l-3 3Z"/>
+            </g>
+          </svg>
+        </span>
+        <span class="app-body">
+          <span class="app-copy"><span class="app-type">Atendimento e manutenção</span><h2>Chamados e O.S.</h2><span class="description">Gerencie atendimentos, ordens de serviço, checklists e preventivas.</span></span>
+          <span class="app-action"><span>Abrir Chamados</span><span class="go"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></span></span>
+        </span>
       </a>
     </nav>
     <footer>

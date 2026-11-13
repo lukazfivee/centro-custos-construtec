@@ -109,7 +109,7 @@
     const rotEnviar = pendente ? 'Confirmar envio pendente' : (d.status === 'sent' ? 'Reenviar e-mail' : 'Enviar e-mail');
     const page = CC.render(`${F.top('E-mail ao cliente', `${item.code} · ${item.name}`)}${faixa(d)}
       <label class="field"><span>Para</span><input id="ce-to" type="email" multiple autocapitalize="off" spellcheck="false" value="${esc((d.to || []).join(', '))}" placeholder="cliente@empresa.com.br"></label>
-      <label class="field"><span>Cópia (opcional)</span><input id="ce-cc" autocapitalize="off" spellcheck="false" value="${esc(extras.join(', '))}"></label>
+      <label class="field"><span>Cópia (opcional)</span><input id="ce-cc" inputmode="email" autocapitalize="off" spellcheck="false" value="${esc(extras.join(', '))}"></label>
       ${fixos.length ? `<p class="sub fin-nota">Sempre em cópia: ${esc(fixos.join(', '))}</p>` : ''}
       ${F.campo('Assunto', 'ce-assunto', d.subject, ' maxlength="300"')}
       <label class="field"><span>Mensagem</span><textarea id="ce-msg" rows="9">${esc(d.bodyText || '')}</textarea></label>

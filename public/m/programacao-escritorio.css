@@ -80,5 +80,6 @@
   .pe-office .pe-fields { grid-template-columns: 1fr; }
   .pe-office .pe-actions > button { flex: 1 1 160px; }
   .pe-office .pe-toolbar > label { flex-basis: 100%; }
-  .pe-office input:not([type="checkbox"]), .pe-office select { min-height: 44px; }
+  .pe-office input:not([type="checkbox"]), .pe-office select, .pe-office textarea { min-height: 44px; font-size: 16px; }
+  .pe-office button:not(.back) { min-height: 44px; }
 }

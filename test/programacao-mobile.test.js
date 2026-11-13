@@ -26,7 +26,7 @@ function mobile({ offline = false, role = 'tecnico' } = {}) {
     document: { getElementById: (id) => id === 'netbar' ? null : node(id), addEventListener() {},
       body: { classList: { add() {}, remove() {}, toggle() {} } } },
     addEventListener() {}, matchMedia: () => ({ matches: false }), requestAnimationFrame: (fn) => fn(),
-    location: { hash: '', pathname: '/m/', search: '' }, history: { replaceState() {} } };
+    location: { hash: '', pathname: '/m/', search: '' }, history: { replaceState() {}, pushState() {} } };
   context.window = context; vm.createContext(context);
   const load = (...names) => names.forEach((name) => { if (fs.existsSync(path.join(dir, name))) vm.runInContext(fs.readFileSync(path.join(dir, name), 'utf8'), context, { filename: name }); });
   load('core.js', 'queue.js');

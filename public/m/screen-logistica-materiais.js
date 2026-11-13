@@ -12,10 +12,10 @@
       const materials = options.materiais.map((m) => `<option value="${m.id}">${esc(m.nome)} (${esc(m.unidade)})</option>`).join('');
       const list = requests.map((r) => `<article class="card lgm-item"><b>${esc(r.material)} · ${esc(r.status)}</b><span>${esc(r.entregue)} de ${esc(r.solicitada)} ${esc(r.unidade)} · ${esc(r.centro)}</span>${['solicitada','parcial'].includes(r.status) ? `<button class="btn2" type="button" data-cancelar="${r.id}">Cancelar pedido</button>` : ''}</article>`).join('');
       el.innerHTML = `${CC.header('')}<h1 class="title">Materiais para serviço</h1><p class="sub">Peça materiais para uma obra ou serviço atribuído a você.</p>
-        <form class="card lgm-form" id="lm-form"><label>Obra ou serviço<select class="inp" name="centroId" required>${centers}</select></label>
-        <label>Material<select class="inp" name="materialId" required>${materials}</select></label>
-        <label>Quantidade<input class="inp" name="quantidade" type="number" min="0.001" step="0.001" required></label>
-        <label>Observação (opcional)<input class="inp" name="observacao" maxlength="500"></label>
+        <form class="card form" id="lm-form" style="padding:15px"><label class="field"><span>Obra ou serviço</span><select name="centroId" required>${centers}</select></label>
+        <label class="field"><span>Material</span><select name="materialId" required>${materials}</select></label>
+        <label class="field"><span>Quantidade</span><input name="quantidade" type="number" inputmode="decimal" min="0.001" step="0.001" required></label>
+        <label class="field"><span>Observação (opcional)</span><input name="observacao" maxlength="500" enterkeyhint="done"></label>
         <button class="btn lgm-full" type="submit">${icon('package', 18)}Solicitar material</button></form>
         <h2 class="label">Minhas solicitações</h2><div class="lgm-list">${list || '<p class="sub">Nenhum pedido de material.</p>'}</div>`;
       CC.$('#lm-form', el).addEventListener('submit', async (event) => {

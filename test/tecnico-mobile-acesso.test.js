@@ -16,7 +16,7 @@ function mobile(user = { id: 1, role: 'supervisor', suiteRole: 'tecnico', nome: 
   };
   const context = { console, Intl, URLSearchParams, setTimeout, clearTimeout, setInterval: () => 0,
     requestAnimationFrame: (fn) => fn(), navigator: { userAgent: 'test', onLine: true },
-    location: { hash: '', search: '', pathname: '/m/' }, history: { replaceState() {} },
+    location: { hash: '', search: '', pathname: '/m/' }, history: { replaceState() {}, pushState() {} },
     localStorage: { getItem: (k) => storage.get(k), setItem: (k, v) => storage.set(k, v), removeItem: (k) => storage.delete(k) },
     document: { addEventListener() {}, getElementById: element, body: { contains: () => true, classList: { add() {}, remove() {}, toggle() {} } } },
     addEventListener() {}, scrollTo() {}, matchMedia: () => ({ matches: false }) };

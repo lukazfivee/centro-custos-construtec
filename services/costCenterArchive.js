@@ -14,10 +14,10 @@ const MOVEMENT = [
   ['transactions', 'lançamentos', 'deleted_at IS NULL'],
   ['transaction_allocations', 'rateios de lançamentos', LIVE_TX],
   ['recurring_templates', 'recorrências'],
-  ['expense_allocations', 'apropriações de despesas', LIVE_TX],
+  ['expense_allocations', 'apropriações de despesas', `active AND ${LIVE_TX}`],
   // Medicoes e reconhecimentos de custo vao guardados com a obra (decisao do Lucas, 03/10/2026). So impedem
   // quando presos a dinheiro ativo: reconhecimento de uma apropriacao de lancamento ativo, medicao faturada em lancamento ativo.
-  ['cost_recognitions', 'reconhecimentos de custos de lançamentos ativos', `allocation_id IN (SELECT id FROM expense_allocations WHERE ${LIVE_TX})`],
+  ['cost_recognitions', 'reconhecimentos de custos de lançamentos ativos', `status='approved' AND allocation_id IN (SELECT id FROM expense_allocations WHERE active AND ${LIVE_TX})`],
   ['contract_measurements', 'medições contratuais já faturadas', 'billed_transaction_id IN (SELECT id FROM transactions WHERE deleted_at IS NULL)'],
   ['cost_center_invoices', 'notas fiscais vinculadas'],
   ['cost_center_invoices_ledger', 'notas fiscais'],
@@ -69,6 +69,9 @@ const GUARDED = [
   ['transactions', 'financial_consistency'],
   ['transaction_allocations', 'financial_allocation_guard'],
   ['transaction_allocations', 'allocation_consistency'],
+  ['transactions', 'expense_transaction_lifecycle'],
+  ['transaction_allocations', 'expense_split_lifecycle'],
+  ['project_contracts', 'expense_contract_lifecycle'],
 ];
 
 async function movements(db, id) {
@@ -177,6 +180,8 @@ async function restoreCostCenter(db, discardId, user) {
       if (!rows.length) continue;
       // Descartes anteriores ao tipo (obra ou servico) nao trazem kind: voltam como obra.
       if (table === 'cost_centers') rows = rows.map((r) => ({ ...r, kind: r.kind === 'servico' ? 'servico' : 'obra' }));
+      // Arquivos anteriores à migração 121 não tinham o indicador de atividade.
+      if (table === 'expense_allocations') rows = rows.map((r) => ({ ...r, active:r.active !== false }));
       await tx.query(`INSERT INTO ${table} SELECT * FROM jsonb_populate_recordset(NULL::${table}, $1::jsonb) ON CONFLICT DO NOTHING`, [JSON.stringify(rows)]);
     }
     await toggleGuards(tx, true);

@@ -235,6 +235,7 @@ function createApp({ orcamentosApp } = {}) {
     }
     if (error.code === '23505') return res.status(409).json({ ...payload, erro:'Já existe um cadastro com estes dados.' });
     if (error.code === '23503') return res.status(409).json({ ...payload, erro:'O registro está sendo usado e não pode ser removido.' });
+    if (error.code === 'P4005') return res.status(409).json({ ...payload, erro:'O lançamento tem várias apropriações. Revise o mapeamento das parcelas antes de alterar o valor ou rateio.' });
     logger.error('unhandled_request_error', { requestId:req.requestId, method:req.method, path:req.originalUrl?.split('?')[0], error });
     return res.status(500).json({ ...payload, erro:'Não foi possível concluir a operação.' });
   });

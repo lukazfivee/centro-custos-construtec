@@ -12,7 +12,6 @@ const { validDate, todaySql, todayIso } = require('../lib/dates');
 const { csvLine, decimalBr } = require('../lib/csv');
 const { recordAudit } = require('../services/audit');
 const { marcarOrigem } = require('../lib/auditContext');
-const { recordExpenseAllocation } = require('../services/budgets/budgetAllocations');
 const { readClientId, findReplay, ensureCreatedAudit } = require('../lib/transactionIdempotency');
 const { insertTransaction } = require('../lib/transactionInsert');
 const { transactionOrder, validatePayload, validateRelations } = require('../lib/transactionPayload');
@@ -101,7 +100,7 @@ router.post('/', exigirPermissao('p2'), asyncRoute(async (req, res) => {
   const clientId = readClientId(req.body);
   if (clientId) marcarOrigem('fila'); // o celular manda o client_id da fila offline
   const replay = await findReplay(getDb(), req.usuario.id, clientId, data);
-  if (replay && !replay.excluido) { await ensureCreatedAudit(replay.public_id, data, req.usuario); await maybeAutoAllocateExpense(data, replay.id); }
+  if (replay && !replay.excluido) await ensureCreatedAudit(replay.public_id, data, req.usuario);
   if (replay) return res.status(200).json(replay);
   if (await isMonthClosed(data.date)) {
     throw httpError(403, 'Esta competência está fechada. Não é possível criar lançamentos nela.');
@@ -110,7 +109,6 @@ router.post('/', exigirPermissao('p2'), asyncRoute(async (req, res) => {
   const inserted = await insertTransaction(data, req.usuario, clientId);
   if (inserted.replayed) return res.status(200).json(inserted);
   await ensureCreatedAudit(inserted.public_id, data, req.usuario);
-  await maybeAutoAllocateExpense(data, inserted.id);
   res.status(201).json(inserted);
 }));
 
@@ -249,7 +247,6 @@ router.put('/:id', exigirPermissao('p3'), asyncRoute(async (req, res) => {
     entityType:'lancamento',entityId:existing.public_id,action:'atualizado',
     summary:`Lançamento atualizado: ${data.description}`,data,before:payloadAnterior(existing),user:req.usuario,
   });
-  await maybeAutoAllocateExpense(data, id);
   res.json({ ok:true, revisao:result.rows[0].revision });
 }));
 
@@ -283,23 +280,5 @@ router.delete('/:id', exigirPermissao('p3'), asyncRoute(async (req, res) => {
   });
   res.json({ ok:true });
 }));
-
-// Cria allocation 'unmapped' automática p/ despesa liquidada em centro com contrato ativo e baseline vigente.
-// Idempotente: não cria se já existir allocation para a transação.
-async function maybeAutoAllocateExpense(data, transactionId) {
-  if (data.type !== 'despesa' || data.financialStatus !== 'liquidado') return;
-  const db = getDb();
-  const contract = await db.query(
-    `SELECT id FROM project_contracts
-     WHERE cost_center_id=$1 AND status='active' AND current_baseline_id IS NOT NULL LIMIT 1`,
-    [data.costCenterId]
-  );
-  if (!contract.rows[0]) return;
-  const existing = await db.query('SELECT 1 FROM expense_allocations WHERE transaction_id=$1 LIMIT 1', [transactionId]);
-  if (existing.rows.length) return; // rowCount de SELECT vem 0 no PGlite
-  await recordExpenseAllocation(db, {
-    transactionId, costCenterId:data.costCenterId, amount:data.amount, contractId:contract.rows[0].id,
-  });
-}
 
 module.exports = router;

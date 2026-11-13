@@ -12,7 +12,7 @@
 
   CC.sv.gasto = function abrir(s, prev, error) {
     if (!CC.sv.can('p2')) return CC.toast('Seu perfil não tem permissão para lançar despesas.', 'shield-check');
-    const g = prev || { tipo: 'deslocamento', valor: '', desc: '', recibo: null };
+    const g = { data: CC.today(), ...(prev || { tipo: 'deslocamento', valor: '', desc: '', recibo: null }) };
     const T = CC.sv.TIPOS;
     const val = CC.parseMoney(g.valor);
     const ok = val > 0;
@@ -25,13 +25,14 @@
       <div class="sv-menores">${MENORES.map((k) => `<button type="button" class="sv-chip-b" data-tipo="${k}" aria-pressed="${g.tipo === k}">${esc(T[k][0])}</button>`).join('')}</div>
       <label class="field money sv-gap"><span>Valor (R$)</span><input id="g-valor" inputmode="decimal" autocomplete="off" placeholder="0,00" value="${esc(g.valor)}"></label>
       <label class="field sv-gap"><span>Descrição · opcional</span><input id="g-desc" maxlength="240" autocomplete="off" placeholder="${esc(DICA[g.tipo])}" value="${esc(g.desc)}"></label>
+      <label class="field sv-gap"><span>Data do gasto</span><input id="g-data" type="date" max="${esc(CC.today())}" value="${esc(g.data)}"></label>
       <p class="sheet-sec">Foto do recibo</p>
       ${g.recibo ? `<div class="sv-recibo">${g.recibo.tipo === 'application/pdf' ? `<span class="th">${icon('file-pdf', 20)}</span>` : `<span class="th" style="background-image:url('${g.recibo.conteudoBase64}')"></span>`}
           <span class="grow"><b>${esc(g.recibo.nome)}</b><small>Foto do recibo · fica no anexo</small></span><button type="button" class="sv-link" id="g-trocar">Trocar</button></div>`
         : `<div class="grid2"><label class="btn2">${icon('camera', 18)}Câmera<input class="sr" type="file" id="g-cam" accept="image/*" capture="environment"></label>
           <label class="btn2">${icon('paperclip', 18)}Arquivo<input class="sr" type="file" id="g-arq" accept="image/jpeg,image/png,image/webp,application/pdf"></label></div>`}
       <button class="btn sv-full" type="button" id="g-ok"${ok ? '' : ' disabled'}>${icon('plus', 18)}${ok ? `Lançar ${esc(money(val))}` : 'Digite o valor'}</button>`);
-    const ler = () => ({ ...g, valor: CC.$('#g-valor', sh.el).value, desc: CC.$('#g-desc', sh.el).value });
+    const ler = () => ({ ...g, valor: CC.$('#g-valor', sh.el).value, desc: CC.$('#g-desc', sh.el).value, data: CC.$('#g-data', sh.el).value || CC.today() });
     const btn = CC.$('#g-ok', sh.el);
     CC.$$('[data-tipo]', sh.el).forEach((b) => b.addEventListener('click', () => abrir(s, { ...ler(), tipo: b.dataset.tipo })));
     CC.$('#g-valor', sh.el).addEventListener('input', (e) => {
@@ -62,7 +63,7 @@
       const valor = CC.parseMoney(d.valor);
       if (!(valor > 0)) return;
       const clientId = CC.uuid();
-      const payload = { tipo: d.tipo, valor, data: CC.today(), descricao: d.desc.trim() || CC.sv.TIPOS[d.tipo][0] };
+      const payload = { tipo: d.tipo, valor, data: d.data, descricao: d.desc.trim() || CC.sv.TIPOS[d.tipo][0] };
       CC.busy(btn, 'Lançando…');
       CC.$$('button, input', sh.el).forEach((x) => { if (x !== btn) x.disabled = true; });
       if (CC.offline()) return naFila(s, sh, { client_id: clientId, servicoId: s.id, obra_nome: s.nome, payload, recibo: d.recibo }, d);

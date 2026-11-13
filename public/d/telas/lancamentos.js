@@ -127,6 +127,8 @@
 
   async function render(el, rota, vivo) {
     const f = L.lerFiltros();
+    // Vindo do Inicio (#/lancamentos?sit=vencidos&obra=...): a lista abre nos vencidos de todos os meses, como o total do painel.
+    if (rota.query.sit === 'vencidos') Object.assign(f, L.padrao(), { sit: 'vencidos', mes: '', obra: /^\d+$/.test(rota.query.obra || '') ? rota.query.obra : '' });
     L.esquecerApoio(); // ao abrir a tela, le de novo obras, categorias e meses fechados
     el.innerHTML = `<div class="pagina lancamentos">
       ${U.cabecalho({ grupo: 'Operação', titulo: 'Lançamentos', sub: ' ', acoes: `${D.tem('p2') ? `<button type="button" class="btn btn-s" data-whatsapp>${D.ic('clipboard-text')}Importar do WhatsApp</button>` : ''}<button type="button" class="btn btn-s" data-csv>${D.ic('download-simple')}Exportar CSV</button><button type="button" class="btn btn-p" data-novo>${D.ic('plus')}Novo lançamento</button>` })}

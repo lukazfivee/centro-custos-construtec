@@ -154,4 +154,8 @@
     return `<span class="success" role="img" aria-label="${CC.esc(label)}" style="--s:${size || 72}px"><span class="ring"></span>${parts.join('')}`
       + `<span class="check">${CC.icon('check-circle-fill', Math.round(44 * k))}</span><img class="logo" src="simbolo.png" alt=""></span>`;
   };
+  if (typeof document !== 'undefined' && document.addEventListener) document.addEventListener('focusin', (event) => {
+    const campo = event.target;
+    if (campo.matches && campo.matches('input, textarea, select') && campo.closest('.sheet-backdrop')) setTimeout(() => { if (document.activeElement === campo) campo.scrollIntoView({ block: 'center', behavior: 'smooth' }); }, 300);
+  });
 })(window.CC = window.CC || {});

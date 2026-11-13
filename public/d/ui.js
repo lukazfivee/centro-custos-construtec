@@ -11,9 +11,10 @@
 
   // tom: cor do icone (ok, saida, info, warn, err). tomValor: cor do valor (ok, err).
   // dica: texto do title do rotulo (ex.: a sigla tecnica); sem ela, o proprio rotulo.
-  U.kpi = ({ rotulo, valor, det, icone, tom, tomValor, dica }) => `<div class="card kpi">
+  // href: o cartao vira link (ex.: A pagar abre a lista ja filtrada).
+  U.kpi = ({ rotulo, valor, det, icone, tom, tomValor, dica, href }) => `<${href ? `a href="${esc(href)}"` : 'div'} class="card kpi">
     <div class="topo"><span class="lbl" title="${esc(dica || rotulo)}">${esc(rotulo)}</span><span class="ic ${esc(tom || 'info')}">${D.ic(icone || 'chart-bar')}</span></div>
-    <span class="val ${esc(tomValor || '')}">${esc(valor)}</span>${det ? `<span class="det">${esc(det)}</span>` : ''}</div>`;
+    <span class="val ${esc(tomValor || '')}">${esc(valor)}</span>${det ? `<span class="det">${esc(det)}</span>` : ''}</${href ? 'a' : 'div'}>`;
 
   // tom: ok, warn, err, info, neutro.
   U.chip = (texto, tom, icone) => `<span class="chip ${esc(tom || 'neutro')}">${icone ? D.ic(icone) : ''}${esc(texto)}</span>`;

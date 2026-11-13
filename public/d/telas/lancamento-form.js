@@ -89,7 +89,7 @@
   // obraInicial: o novo ja vem com a obra (Lancar despesa no detalhe da obra).
   L.formulario = async function (l, aba, obraInicial) {
     const a = await L.apoio();
-    if (!l && !a.obras.some((o) => o.ativo !== false)) { await D.avisar('Cadastre uma obra primeiro', 'O lançamento precisa de uma obra ou centro de custo ativo.'); return; }
+    if (!l && !a.obras.some((o) => o.ativo !== false)) { if (await D.confirmar({ titulo: 'Cadastre uma obra primeiro', texto: 'O lançamento precisa de uma obra ou centro de custo ativo.', ok: 'Ir para Obras', cancelar: 'Agora não', tom: 'aviso' })) D.ir('obras'); return; }
     const e = estadoDe(l, a, obraInicial);
     const clientId = CC.uuid();
     let enviando = false;

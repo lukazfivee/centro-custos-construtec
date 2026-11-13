@@ -12,8 +12,8 @@
   // Ajustes do vidro, em px CSS. Refracao: bisel, espessura, indice; forca multiplica o desvio. Brilho: luz em graus
   // (90 = de cima, 180 = da esquerda), fracao no lado oposto, largura e base do aro, faixa e forca da luz no bisel,
   // franja colorida (dispersao pintada; so onde nao ha refracao de verdade).
-  const BARRA = { bisel: 16, espessura: 16, ior: 1.5, forca: 0.8, luz: 120, oposto: 0.45, aro: 1, base: 0.3, faixa: 10, bisLuz: 0.1, franja: 0 };
-  const LENTE = { bisel: 14, espessura: 10, ior: 1.5, forca: 1, luz: 120, oposto: 0.5, aro: 1.25, base: 0.35, faixa: 10, bisLuz: 0.16, franja: REFRATA ? 0 : 0.16 };
+  const BARRA = { bisel: 16, espessura: 16, ior: 1.5, forca: 0.8, luz: 120, oposto: 0.5, aro: 1.25, base: 0.42, faixa: 12, bisLuz: 0.18, franja: 0 };
+  const LENTE = { bisel: 14, espessura: 10, ior: 1.5, forca: 1, luz: 120, oposto: 0.55, aro: 1.8, base: 0.5, faixa: 13, bisLuz: 0.28, franja: REFRATA ? 0.2 : 0.55 };
 
   // Desvio lateral (px) do raio que desce pelo vidro em cada profundidade x = i/N do bisel (0 = borda, 1 = miolo plano).
   // Superficie squircle convexa y = (1 - (1 - x)^4)^(1/4) e refracao de Snell (mesma conta do refract do GLSL).
@@ -116,7 +116,7 @@
     const canal = (de, k, out) => `<feColorMatrix in="${de}" type="matrix" values="${[0, 1, 2, 3].map((r) => [0, 1, 2, 3, 4].map((c) => (r === c && (r === k || r === 3) ? 1 : 0)).join(' ')).join(' ')}" result="${out}"/>`;
     svg.innerHTML = `<filter id="vidro-barra" ${area(b)} color-interpolation-filters="sRGB">${mapa(b)}${desvio(b.scale, 'v')}</filter>`
       + `<filter id="abas-lente" ${area(l)} color-interpolation-filters="sRGB">${mapa(l)}`
-      + `${desvio(l.scale * 0.9, 'dr')}${desvio(l.scale, 'dg')}${desvio(l.scale * 1.1, 'db')}`
+      + `${desvio(l.scale * 0.8, 'dr')}${desvio(l.scale, 'dg')}${desvio(l.scale * 1.2, 'db')}`
       + `${canal('dr', 0, 'r')}${canal('dg', 1, 'g')}${canal('db', 2, 'b')}`
       + '<feBlend in="r" in2="g" mode="screen" result="rg"/><feBlend in="rg" in2="b" mode="screen"/></filter>';
   }
@@ -128,7 +128,7 @@
     // Cada URL antiga so e revogada depois que a nova ja foi aplicada.
     const urls = {}, trocar = (k, u) => { if (urls[k]) URL.revokeObjectURL(urls[k]); urls[k] = u; return u; };
     const medida = () => {
-      const r = nav.getBoundingClientRect(), n = nav.querySelectorAll('.tab').length || 1;
+      const r = nav.getBoundingClientRect(), n = nav.querySelectorAll(':scope > .tab').length || 1;
       return { r, n, W: Math.round(r.width * 100) / 100, H: Math.round(r.height * 100) / 100 };
     };
     const gerar = () => {
@@ -209,13 +209,34 @@
 
   window.arrastarAbas = function (nav, onPick) {
     let drag = null;
-    let settleTimer;
+    let settleTimer, holdTimer; // holdTimer: toque rapido fica leve; segurando (ou arrastando) entra o zoom, que fica
     let swallowUntil = 0;
-    // Mola da deformacao: s e o quanto a lente estica (negativo = achata), sv a velocidade da mola.
-    let s = 0, sv = 0, vel = 0, lastX = 0, lastT = 0, raf = 0;
+    // Gota: px e onde a lente esta, tx onde o dedo esta; a mola (pv) faz a lente seguir com um pouco de atraso e passar
+    // do ponto ao parar. s e o quanto ela estica com a velocidade (negativo = achata), sv a velocidade dessa mola.
+    let s = 0, sv = 0, px = 0, pv = 0, tx = 0, raf = 0;
     montarVidro(nav);
     tintaAdaptativa(nav);
-    const tabs = () => Array.from(nav.querySelectorAll('.tab'));
+    const tabs = () => Array.from(nav.querySelectorAll(':scope > .tab'));
+    // Lupa: copia do icone e do rotulo de cada aba dentro da gota. O CSS da a ela o mesmo transform da gota, entao o que
+    // esta embaixo aparece ampliado e deformado junto (vale no iPhone, onde nao ha refracao); --i diz a cada aba onde
+    // ela esta, para sumir sob a gota. Refeita a cada toque: paintTabs troca os botoes.
+    const lupa = () => {
+      const el = document.createElement('span'), row = document.createElement('span'), cs = getComputedStyle(tabs()[0] || nav);
+      el.className = 'tabs-lupa';
+      el.setAttribute('aria-hidden', 'true');
+      el.inert = true;
+      row.style.cssText = `font-size:${cs.fontSize};font-weight:${cs.fontWeight};line-height:${cs.lineHeight};letter-spacing:${cs.letterSpacing}`;
+      tabs().forEach((b, i) => {
+        b.style.setProperty('--i', i);
+        const c = document.createElement('span');
+        c.style.gap = cs.gap;
+        c.innerHTML = b.innerHTML;
+        row.appendChild(c);
+      });
+      el.appendChild(row);
+      nav.querySelectorAll('.tabs-lupa').forEach((x) => x.remove());
+      nav.appendChild(el);
+    };
     const geometry = () => {
       const r = nav.getBoundingClientRect();
       const pad = parseFloat(getComputedStyle(nav).paddingLeft) || 0;
@@ -223,26 +244,22 @@
       return { left: r.left + pad, cell: (r.width - pad * 2) / n, n };
     };
     const spring = () => {
-      if (performance.now() - lastT > 40) vel *= 0.5; // dedo parado: a velocidade some e a lente volta balancando
-      const target = Math.min(Math.abs(vel) * 0.18, 0.24);
-      sv = (sv + (target - s) * 0.3) * 0.8;
+      pv = (pv + (tx - px) * 0.28) * 0.55;
+      px += pv;
+      sv = (sv + (Math.min(Math.abs(pv) * 0.009, 0.16) - s) * 0.3) * 0.8;
       s += sv;
+      nav.style.setProperty('--drag-x', `${px.toFixed(2)}px`);
       nav.style.setProperty('--stretch', s.toFixed(4));
-      if (drag && (Math.abs(s) > 0.002 || Math.abs(sv) > 0.002 || Math.abs(vel) > 0.01)) raf = requestAnimationFrame(spring);
-      else { raf = 0; s = sv = vel = 0; nav.style.setProperty('--stretch', '0'); }
+      if (drag && (Math.abs(tx - px) > 0.05 || Math.abs(pv) > 0.05 || Math.abs(s) > 0.002 || Math.abs(sv) > 0.002)) raf = requestAnimationFrame(spring);
+      else { raf = 0; s = sv = pv = 0; nav.style.setProperty('--stretch', '0'); }
     };
-    const stopSpring = () => { cancelAnimationFrame(raf); raf = 0; s = sv = vel = 0; nav.style.setProperty('--stretch', '0'); };
+    const stopSpring = () => { cancelAnimationFrame(raf); raf = 0; s = sv = pv = 0; nav.style.setProperty('--stretch', '0'); };
     const place = (clientX) => {
       const { left, cell, n } = drag.g;
       const x = Math.min(Math.max(clientX - left - cell / 2, 0), cell * (n - 1));
-      nav.style.setProperty('--drag-x', `${x}px`);
-      if (drag.moved && !CALMO) {
-        const now = performance.now();
-        vel = vel * 0.5 + ((clientX - lastX) / Math.max(1, now - lastT)) * 0.5;
-        lastX = clientX;
-        lastT = now;
-        if (!raf) raf = requestAnimationFrame(spring);
-      }
+      tx = x;
+      if (drag.moved && !CALMO) { if (!raf) raf = requestAnimationFrame(spring); }
+      else { px = x; nav.style.setProperty('--drag-x', `${x}px`); } // toque parado: o CSS leva a gota ate o dedo
       const idx = Math.round(x / cell);
       if (idx === drag.idx) return;
       drag.idx = idx;
@@ -256,17 +273,17 @@
       swallowUntil = 0; // um toque novo nao e o clique fantasma do arrasto anterior
       nav.classList.remove('is-settling');
       drag = { id: e.pointerId, x0: e.clientX, moved: false, idx: -1, g: geometry() };
-      lastX = e.clientX;
-      lastT = performance.now();
       place(e.clientX);
+      lupa();
       nav.classList.add('is-pressed');
+      holdTimer = setTimeout(() => nav.classList.add('is-held'), 170);
     });
     nav.addEventListener('pointermove', (e) => {
       if (!drag || e.pointerId !== drag.id) return;
       if (!drag.moved) {
         if (Math.abs(e.clientX - drag.x0) < 8) return;
         drag.moved = true;
-        nav.classList.add('is-dragging');
+        nav.classList.add('is-dragging', 'is-held');
         try { nav.setPointerCapture(e.pointerId); } catch { /* segue sem captura */ }
       }
       place(e.clientX);
@@ -276,7 +293,8 @@
       const { moved, idx } = drag;
       drag = null;
       stopSpring();
-      nav.classList.remove('is-pressed', 'is-dragging');
+      clearTimeout(holdTimer);
+      nav.classList.remove('is-pressed', 'is-dragging', 'is-held');
       nav.classList.add('is-settling');
       settleTimer = setTimeout(() => nav.classList.remove('is-settling'), 420);
       tabs().forEach((b) => b.classList.remove('is-lens'));

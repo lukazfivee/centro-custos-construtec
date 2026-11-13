@@ -21,7 +21,7 @@ test('celular: logística do escritório carregada, no cache e dona da aba Menu'
     assert.ok(sw.includes(`'${f}'`), `${f} fora do sw.js`);
     assert.ok(read(f).split('\n').length <= 350, `${f} passou de 350 linhas`);
   }
-  assert.match(sw, /const CACHE = 'cc-celular-v42'/);
+  assert.match(sw, /const CACHE = 'cc-celular-v43'/);
   // A ordem importa: pecas comuns antes das abas, e tudo depois de fin-base.js, screen-adm.js e das folhas (screen-obra-acoes.js).
   const pos = (f) => html.indexOf(`"${f}"`);
   for (const f of ARQUIVOS.slice(1)) assert.ok(pos(f) > pos(ARQUIVOS[0]), `${f} antes das peças comuns`);

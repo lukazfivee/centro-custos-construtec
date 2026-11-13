@@ -21,7 +21,7 @@
     const acoes = [
       `<button type="button" class="ibtn" data-acao="docs" aria-label="Documentos${qtd ? ` (${qtd})` : ''}" title="Documentos">${D.ic('paperclip', 18)}${qtd ? `<span class="cont">${qtd}</span>` : ''}</button>`,
       L.podeEstornar(l) ? `<button type="button" class="ibtn" data-acao="estornar" aria-label="Estornar" title="Estornar">${D.ic('arrow-u-up-left', 18)}</button>`
-        : (l.status_financeiro === 'pendente' && !L.soLeitura(l) ? `<button type="button" class="ibtn" data-acao="pagar" aria-label="${l.tipo === 'receita' ? 'Marcar como recebido' : 'Marcar como pago'}" title="${l.tipo === 'receita' ? 'Marcar como recebido' : 'Marcar como pago'}">${D.ic('check', 18)}</button>` : '<span class="ibtn vago" aria-hidden="true"></span>'),
+        : (l.status_financeiro === 'pendente' && !L.soLeitura(l) && D.tem('p3') ? `<button type="button" class="ibtn" data-acao="pagar" aria-label="${l.tipo === 'receita' ? 'Marcar como recebido' : 'Marcar como pago'}" title="${l.tipo === 'receita' ? 'Marcar como recebido' : 'Marcar como pago'}">${D.ic('check', 18)}</button>` : '<span class="ibtn vago" aria-hidden="true"></span>'),
       L.podeExcluir(l) ? `<button type="button" class="ibtn" data-acao="excluir" aria-label="Excluir" title="Excluir">${D.ic('trash', 18)}</button>` : '',
     ].join('');
     const sub = [l.categoria, l.favorecido].filter(Boolean).join(' · ');

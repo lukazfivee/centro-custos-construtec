@@ -61,7 +61,7 @@
     if (params && params.editar) draft = fromTx(params.editar);
     else if (!draft || (params && params.novo)) {
       const k = (params && params.manter) || {};
-      draft = { tipo: (params && params.tipo) || 'despesa', obraId: (params && params.obraId) || ultimaObra(), categoriaId: 0, foto: null, pagamento: k.pagamento || 'apagar', data: k.data || CC.today(), vencimento: CC.today(),
+      draft = { tipo: (params && params.tipo) || 'despesa', obraId: (params && params.obraId) || ultimaObra(), obraLembrada: !(params && params.obraId), categoriaId: 0, foto: null, pagamento: k.pagamento || 'apagar', data: k.data || CC.today(), vencimento: CC.today(),
         liquidacao: k.liquidacao || CC.today(), forma: k.forma || '', valor: NaN, descricao: '', favorecido: '', documento: '', observacao: '' };
     }
     const editing = !!draft.id;
@@ -73,6 +73,8 @@
     } catch (error) {
       return CC.errorScreen(el, error, () => CC.screens.lancar(params));
     }
+    // Obra lembrada so vale se continua ativa: senao o lancamento seria recusado (ou ficaria com erro na fila).
+    if (draft.obraLembrada && !(obras.data || []).some((c) => c.id === Number(draft.obraId) && c.ativo !== false && c.situacao !== 'concluido')) draft.obraId = undefined;
     const rec = draft.tipo === 'receita';
     const obraList = (obras.data || []).filter((c) => (c.ativo !== false && c.situacao !== 'concluido') || c.id === Number(draft.obraId));
     const catList = (cats.data || []).filter((c) => (c.ativo !== false || c.id === Number(draft.categoriaId)) && (c.tipo === draft.tipo || c.tipo === 'ambos'));

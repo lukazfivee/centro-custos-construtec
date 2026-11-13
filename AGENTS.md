@@ -14,3 +14,7 @@ Aplicação web e local-first de Gestão Financeira de Obras da Construtec Engen
 - **Clean Code & Quality Gates**:
   - Respeitar rigorosamente o limite de linhas por arquivo (`MAX_LINES <= 350`).
   - Validar todos os 89 testes com `npm test` antes de considerar qualquer alteração concluída.
+
+## Agentes, ferramentas e continuidade
+- Em tarefa tecnica, consulte [protocolo de contexto sob demanda](docs/ai/START-HERE.md) e apenas a documentacao do escopo.
+- Codex e qualquer conta do Claude registram o estado da tarefa em Issue/PR, usando [handoff compacto](docs/ai/HANDOFF-TEMPLATE.md); nao publicam sem autorizacao.

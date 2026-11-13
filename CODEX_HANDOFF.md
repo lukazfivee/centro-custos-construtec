@@ -3,7 +3,7 @@
 ## 2026-11-13 BRT — pendências do fluxo de uso (Claude Code)
 
 - Base: `origin/main` em `bf7ee58`, branch `fix/fluxo-pendencias`, worktree `C:\cc-mobile`.
-- Computador: A pagar, A receber e Vencidos do Início abrem Lançamentos já filtrado (`?sit=&mes=&obra=`, `U.kpi` aceita `href`); filtro de mês guardado no mês passado volta ao mês atual (`salvoEm`); Lançamento rápido ganhou "Completar e anexar" no sucesso; "Cadastre uma obra primeiro" leva a Obras; totais do topo da obra se atualizam depois de lançar.
+- Computador: Vencidos do Início abre Lançamentos nos vencidos de todos os meses (`?sit=vencidos&obra=`, `U.kpi` aceita `href`); A pagar e A receber não viraram link porque o painel conta por vencimento e a lista filtra por competência; filtro de mês guardado no mês passado volta ao mês atual (`salvoEm`); Lançamento rápido ganhou "Completar e anexar" no sucesso; "Cadastre uma obra primeiro" leva a Obras; totais do topo da obra se atualizam depois de lançar.
 - Celular: gasto de serviço aceita data anterior; pagar conta vinda do Caixa da obra volta para a lista; "Lançar NF" virou "Registrar NF"; campo focado em folha rola para o meio (teclado do iOS). Cache `cc-celular-v41`.
 - Validação: `npm run verify` com 826 de 827; a falha foi `ac08-sync.integration` com "bad port" (porta sorteada bloqueada), que passa 5/5 rodando sozinho. Nada exercitado no navegador nem em aparelho.
 - Próximo passo: publicar quando o Lucas autorizar. Bloqueios: nenhum.

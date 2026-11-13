@@ -1,5 +1,14 @@
 # Handoff — Centro de Custos
 
+## 2026-11-13 BRT — gota da barra de abas do celular, publicada (Claude Code)
+
+- Base: `origin/main em 5cc303e`, branch `feat/vidro-barra-afinado` (PR 252, mesclado), worktree `C:cc-vidro`.
+- Barra de abas do celular (Liquid Glass): toque rápido dá gota leve; segurar ou arrastar (`.is-held`, após 170 ms) dá zoom com lupa (ícone e rótulo ampliados dentro da gota), a barra cresce 3,5% e distorce a partir da gota; mola ao seguir o dedo e balanço ao soltar. Sem zoom da barra com "Reduzir movimento". Desfoque do vidro 2 para 6 px, aro de luz e saturação mais fortes. Script do gesto: `public/m/abas-arrastar.js`, CSS em `public/m/m.css` e `public/m/barra.css`.
+- Publicado: Worker `208594ee`, cache `cc-celular-v43`, banco conectado. O Centro em produção é `https://rcconstrutec.online/m/` (`custos.rcconstrutec.com.br` não existe).. Backup do PostgreSQL disparado antes do deploy quando o repositório tem o workflow.
+- Validação: `npm test` 835 de 835 e `npm run check` ok. Visto só no navegador em 375 px (página de teste, já removida); nada em aparelho real nem com login. A refração na borda só existe no Chromium/Android; no iPhone valem desfoque, aro e lupa.
+- Deploy: o wrangler está logado em duas contas da Cloudflare e precisa de `CLOUDFLARE_ACCOUNT_ID=36153bf46ff4ca3b52f6a009397ca6ff` (conta de produção). O Orçamentos precisa de `node_modules` também em `cloudflare/api-container`.
+- Próximo passo: olhar a barra num iPhone e num Android reais. Bloqueios: nenhum.
+
 ## 2026-11-13 BRT — pendências do fluxo de uso (Claude Code)
 
 - Base: `origin/main` em `bf7ee58`, branch `fix/fluxo-pendencias`, worktree `C:\cc-mobile`.

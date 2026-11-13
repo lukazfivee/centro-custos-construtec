@@ -1,16 +1,16 @@
 // Guarda o site do celular para abrir sem internet. A API nunca e guardada aqui:
 // os dados offline ficam no IndexedDB (queue.js), com a fila de lancamentos.
-const CACHE = 'cc-celular-v41';
+const CACHE = 'cc-celular-v42';
 const SHELL = ['./', 'manifest.webmanifest', 'simbolo.png', 'icon-180.png', 'm.css', 'anim.css', 'barra.css', 'tema.js', 'servico.css', 'fin.css', 'adm.css',
   'obra-tec.css', 'tecnico.css', 'tecnicos.css', 'tecnicos.js', 'menu-cartao.css', 'ajuda.css', 'screen-home-tecnico.js', 'screen-logistica-materiais.js', 'screen-meu-kit.js', 'logistica-mobile.css', 'screen-servico-registros.js', 'icons.js', 'core.js', 'queue.js', 'abas-arrastar.js', 'app.js', 'screen-entrar.js', 'screen-home.js', 'screen-obra.js', 'screen-lancar.js',
   'screen-misc.js', 'screen-lancamentos.js', 'screen-lanc.js', 'screen-lanc-docs.js', 'screen-obra-acoes.js', 'screen-obra-abas.js',
   'screen-obra-form.js', 'screen-servico.js', 'screen-servico-fila.js', 'screen-servico-exec.js', 'screen-servico-gasto.js', 'screen-servico-fim.js',
-  'screen-servico-form.js', 'screen-descartadas.js', 'screen-logistica-fila.js', 'suite.js', 'screen-avisos.js', 'screen-pedidos.js', 'screen-adm.js', 'screen-fechamento.js',
+  'screen-servico-form.js', 'screen-descartadas.js', 'screen-logistica-fila.js', 'screen-logistica-base.js', 'screen-logistica.js', 'screen-logistica-ferramental.js', 'screen-logistica-ferramental-acoes.js', 'screen-logistica-estoque.js', 'screen-logistica-pendencias.js', 'suite.js', 'screen-avisos.js', 'screen-pedidos.js', 'screen-adm.js', 'screen-fechamento.js',
   'screen-historico.js', 'screen-reports.js', 'screen-report-novo.js', 'screen-usuarios.js', 'screen-usuario-form.js', 'screen-papeis.js',
   'screen-sistema.js', 'screen-perfil.js', 'screen-atualizacao.js', 'screen-ajuda.js', 'fin-base.js', 'cobr-regras.js', 'screen-cobrancas.js', 'screen-cobranca.js',
   'screen-cobranca-dados.js', 'screen-cobranca-email.js', 'screen-recorrentes.js', 'screen-recorrente-form.js', 'screen-fornecedores.js',
   'screen-fornecedor-form.js', 'screen-categorias.js', 'screen-obra-tec.js', 'screen-obra-curva.js', 'screen-obra-folha.js',
-  'screen-obra-importar.js', 'screen-home-mais.js', 'screen-busca.js', 'ia-config.js', 'ia-tools.js', 'ditado-captura.js', 'ditado-motores.js', 'ditado-ao-vivo.js', 'ia-voz.js', 'ia-chat.js', 'index.html', 'icon-192.png',
+  'screen-obra-importar.js', 'screen-home-mais.js', 'screen-busca.js', 'ia-config.js', 'ia-tools.js', 'ditado-captura.js', 'ditado-motores.js', 'ditado-ao-vivo.js', 'ia-voz.js', 'ia-chat.js', 'ia-whatsapp.js', 'screen-importar-whatsapp.js', 'index.html', 'icon-192.png',
   'programacao.css', 'programacao-escritorio.css', 'programacao-nuvem.js', 'programacao-fila.js', 'screen-meu-dia.js', 'screen-programacao-atividade.js',
   'programacao-escritorio-form.js', 'programacao-escritorio.js', 'screen-programacao.js',
   'icon-512.png', 'fonts/plex-400.woff2', 'fonts/plex-500.woff2', 'fonts/plex-600.woff2', 'fonts/plex-700.woff2'];

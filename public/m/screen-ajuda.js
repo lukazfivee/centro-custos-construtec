@@ -29,7 +29,7 @@
       par('Fechamento mensal', 'Fechar o mês trava os lançamentos daquele período. Para corrigir um mês fechado, primeiro é preciso reabrir o fechamento; no mês aberto, edite ou estorne. Tudo fica no Histórico.'),
     ].join('');
     const perfis = `${PAPEIS.map(([nome, texto]) => `<p><b>${esc(nome)}.</b> ${esc(texto)}</p>`).join('')}
-      <p class="muted">É o padrão de cada perfil; em contas corporativas o administrador ajusta as permissões em Usuários, no computador. O que você não pode usar não aparece.</p>`;
+      <p class="muted">É o padrão de cada perfil; em contas corporativas o administrador ajusta as permissões em Usuários, Papéis e permissões. O que você não pode usar não aparece.</p>`;
     const sobre = `<p><b>Aplicativo.</b> Centro de Custos Construtec</p>
       <p><b>Onde roda.</b> ${/SuiteConstrutec/.test(navigator.userAgent) ? 'Aplicativo da Suíte' : 'Site da Suíte no navegador'}</p>
       <p><b>Empresa.</b> LAC Construtec Construtora Eireli</p>`;

@@ -16,3 +16,31 @@
 .lgm-pad button { position: absolute; top: 8px; right: 8px; min-height: 44px; border: 0; border-radius: 8px; padding: 0 12px; background: #eef4f6; color: #203941; }
 .lgm-full { width: 100%; }
 .tc-kit-link:focus-visible, .lgm-item button:focus-visible, .lgm-recibo button:focus-visible, .lgm-pad button:focus-visible, .lgm-full:focus-visible { outline: 3px solid var(--accent-300); outline-offset: 2px; }
+/* Logistica do escritorio (screen-logistica*.js): abas, indicadores, listas e folhas. */
+.lgo-corpo, .lgo-lista, .lgo-form, .lgo-kit-lista, .lgo-checks { display: grid; gap: 10px; }
+.lgo-form { margin-top: 12px; gap: 12px; }
+.lgo-acoes { display: grid; gap: 8px; } .lgo-acoes[hidden] { display: none; }
+.lgo-acoes .btn, .lgo-acoes .btn2 { width: 100%; padding: 0 14px; }
+.lgo-nota, .lgo-ctx, .lgo-form .sub { margin: 0; font-size: 13px; }
+.lgo-sec { margin: 10px 0 0; }
+.lgo-kpis { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.lgo-kpi { display: grid; gap: 2px; min-height: 88px; border: 0; color: var(--text); font: inherit; text-align: left; }
+.lgo-kpi small, .lgo-kpi span { font-size: 12px; color: var(--n300); } .lgo-kpi b { font-size: 24px; font-weight: 600; line-height: 1.1; }
+.lgo-kpi.warn { box-shadow: inset 0 0 0 1px var(--warn-bar); } .lgo-kpi.warn b { color: var(--warn); }
+.lgo-kpi.err { box-shadow: inset 0 0 0 1px var(--danger); } .lgo-kpi.err b { color: var(--danger-ink); }
+.lgo-item { display: grid; gap: 6px; }
+.lgo-item > b { font-size: 14px; overflow-wrap: anywhere; }
+.lgo-item > small { font-size: 13px; color: var(--n300); overflow-wrap: anywhere; } .lgo-item > small.lgo-forte { color: var(--text); font-size: 14px; }
+.lgo-tags, .lgo-bts { display: flex; flex-wrap: wrap; gap: 6px; } .lgo-bts { gap: 8px; margin-top: 4px; }
+.lgo-bts .btn2, .lgo-solto, .lgo-denovo { padding: 0 16px; } .lgo-solto { justify-self: start; }
+.lgo-form .field.bad select, .lgo-form .field.bad textarea, .lgo-kit-item .field.bad input { box-shadow: inset 0 0 0 2px var(--danger); }
+.lgo-grupo { margin: 0; padding: 0; border: 0; min-width: 0; display: grid; gap: 10px; }
+.lgo-grupo legend { padding: 0; margin-bottom: 6px; font-size: 11.5px; font-weight: 600; color: var(--n300); }
+.lgo-checks { gap: 0; max-height: 44dvh; overflow-y: auto; border-radius: 10px; background: var(--surface); box-shadow: inset 0 0 0 1px var(--divider); }
+.lgo-check { display: flex; align-items: center; gap: 12px; min-height: 48px; padding: 6px 14px; font-size: 16px; } .lgo-check[hidden] { display: none; }
+.lgo-checks .lgo-check + .lgo-check { border-top: 1px solid var(--divider); }
+.lgo-check input { flex: none; width: 22px; height: 22px; accent-color: var(--accent-300); }
+.lgo-check span { display: grid; gap: 2px; overflow-wrap: anywhere; } .lgo-check small { font-size: 12.5px; color: var(--n300); }
+.lgo-kit-item { display: grid; grid-template-columns: minmax(0, 1fr) 84px 44px; gap: 8px; align-items: end; }
+.lgo-kit-item .back { margin: 0 0 2px; color: var(--danger-ink); }
+.lgo-kpi:focus-visible, .lgo-item button:focus-visible, .lgo-acoes button:focus-visible, .lgo-check input:focus-visible, .lgo-solto:focus-visible { outline: 3px solid var(--accent-300); outline-offset: 2px; }

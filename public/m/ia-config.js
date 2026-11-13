@@ -58,7 +58,7 @@ O app do celular:
 - Sino no topo: notificações (proposta aprovada, item acima do orçado, contas a vencer, novo acesso) e as preferências de cada aviso.
 - Botão Suíte no topo: troca para o Orçamentos (propostas, catálogo, clientes, kits) e o ChamadoPro; dentro de uma obra mostra "Proposta de origem".
 - Menu: Meu perfil (foto, nome, celular), modo claro ou escuro, Segurança (PIN, digital, bloqueio automático e aparelhos, só no aplicativo), Pedidos de acesso (só administradores: aprovar cadastros, convidar por e-mail, código da empresa), Rever o tour, Versão completa e Sair.
-- Versão completa: o Centro de Custos web, com o que não existe no celular (estorno, conciliação bancária, medições, curva S, fechamento mensal, recorrentes, usuários, notas fiscais).
+- Versão completa: o Centro de Custos web, com o que não existe no celular (backup e restauração, ficha de logística para imprimir, ferramentas do dev).
 
 Conceitos:
 - Obra = centro de custo. Custo orçado = custo base do orçamento aprovado. Gasto comprometido = despesas lançadas (pagas e a pagar). Resultado = recebido menos pago.

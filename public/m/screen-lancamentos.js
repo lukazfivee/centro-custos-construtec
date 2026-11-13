@@ -101,8 +101,20 @@
     const page = CC.render(`${CC.header('Lançamentos')}${filtros}${CC.staleNote(result)}${local}
       ${memo.total ? `<div class="kv lanc-total"><span>${memo.total === 1 ? '1 lançamento' : `${memo.total} lançamentos`} · total líquido</span><b class="${memo.liquido >= 0 ? 'in' : ''}">${esc(CC.signed(memo.liquido))}</b></div>` : ''}
       ${list ? `<div class="rows">${list}</div>` : (local ? '' : `<div class="empty">${icon('list-bullets', 28)}${vazio}</div>`)}
-      ${resto > 0 ? `<button class="btn2" type="button" id="l-mais">Carregar mais ${Math.min(resto, POR_PAGINA)} de ${resto}</button>` : ''}`, false, params);
+      ${resto > 0 ? `<button class="btn2" type="button" id="l-mais">Carregar mais ${Math.min(resto, POR_PAGINA)} de ${resto}</button>` : ''}
+      ${memo.total ? `<button class="btn2" type="button" id="l-csv">${icon('download-simple', 18)}Baixar CSV destes lançamentos</button>` : ''}`, false, params);
     wire();
+    // CSV com os mesmos filtros da lista (mesma rota do desktop; o servidor limita a 10 mil linhas).
+    const csv = CC.$('#l-csv', page);
+    if (csv) csv.addEventListener('click', async () => {
+      const q = new URLSearchParams();
+      [['mes', f.mes], ['situacao', f.situacao], ['tipo', f.tipo], ['busca', f.busca]].forEach(([k, v]) => { if (v) q.set(k, v); });
+      const rotulo = csv.innerHTML;
+      CC.busy(csv, 'Gerando o CSV…');
+      try { await CC.fin.csvDaApi(`/lancamentos/exportar.csv?${q}`, `lancamentos${f.mes ? `-${f.mes}` : ''}.csv`); }
+      catch (error) { CC.toast(error.status === 0 ? 'Sem internet para gerar o CSV.' : error.message, 'warning-circle'); }
+      csv.disabled = false; csv.innerHTML = rotulo;
+    });
     CC.wireTx(page, ['lancamentos', { mes: f.mes, situacao: f.situacao, tipo: f.tipo, busca: f.busca }]);
     CC.$$('[data-retry]').forEach((b) => b.addEventListener('click', async () => { await CC.queue.retry(b.dataset.retry); CC.screens.lancamentos(params); }));
     CC.$$('[data-discard]').forEach((b) => b.addEventListener('click', async () => {

@@ -169,6 +169,7 @@
 
   // ---- Secao "Administracao" do Menu: cada item so para quem tem a permissao (igual ao desktop).
   const ITENS = [
+    ['logistica', 'p5', 'wrench', 'Logística', 'Ferramentas, materiais e fichas dos técnicos'],
     ['fechamento', 'p8', 'lock-simple', 'Fechamento mensal', 'Checklist do mês, fechar e reabrir competências'],
     ['usuarios', 'p9', 'user-plus', 'Usuários', 'Acessos, papéis, convites e pedidos de acesso'],
     ['historico', 'p9', 'list-checks', 'Histórico', 'Quem mudou o quê, quando e de onde'],

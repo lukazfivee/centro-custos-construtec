@@ -3,7 +3,7 @@ const assert = require('node:assert/strict');
 const vm = require('node:vm');
 const fs = require('node:fs');
 const window = { CC:{} };
-vm.runInNewContext(fs.readFileSync(require.resolve('../public/d/ia-whatsapp.js'),'utf8'),{window,JSON,Error,String});
+vm.runInNewContext(fs.readFileSync(require.resolve('../public/m/ia-whatsapp.js'),'utf8'),{window,JSON,Error,String});
 const W = window.CC.whatsappIA;
 test('prompt inclui dados e regras de extração sem cálculo', () => {
   const prompt = W.prompt('R$ 10,00 - CABO',[{id:3,nome:'Material'}]);

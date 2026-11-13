@@ -15,7 +15,7 @@
     ['obras', 'Obras', 'buildings', ['obras', 'obra', 'obra-editar', 'obra-folha', 'servico', 'servico-rel']],
     ['lancar', 'Lançar', 'plus-circle', ['lancar', 'ok']],
     ['lancamentos', 'Lançamentos', 'list-bullets', ['lancamentos', 'lanc']],
-    ['menu', 'Menu', 'list', ['menu', 'programacao', 'cobrancas', 'cobranca', 'cobranca-dados', 'cobranca-email', 'recorrentes', 'recorrente', 'fornecedores', 'fornecedor', 'categorias', 'categoria', 'pedidos', 'perfil', 'ajuda', 'fechamento', 'historico', 'reports', 'report', 'report-novo', 'usuarios', 'usuario-form', 'papeis', 'emails-ext', 'sistema', 'descartadas', 'descartada', 'atualizacao']],
+    ['menu', 'Menu', 'list', ['menu', 'programacao', 'logistica', 'importar-whatsapp', 'cobrancas', 'cobranca', 'cobranca-dados', 'cobranca-email', 'recorrentes', 'recorrente', 'fornecedores', 'fornecedor', 'categorias', 'categoria', 'pedidos', 'perfil', 'ajuda', 'fechamento', 'historico', 'reports', 'report', 'report-novo', 'usuarios', 'usuario-form', 'papeis', 'emails-ext', 'sistema', 'descartadas', 'descartada', 'atualizacao']],
   ];
   let current = 'home', currentParams = {};
   let lensTimer;

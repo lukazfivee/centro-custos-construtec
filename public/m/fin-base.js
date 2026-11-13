@@ -79,6 +79,7 @@
       F.podeCadastrar() ? item('recorrentes', 'arrow-clockwise', 'Recorrentes', 'Modelos que viram lançamentos todo mês') : '',
       item('fornecedores', 'hard-hat', 'Fornecedores', 'Cadastro e gasto do mês'),
       item('categorias', 'funnel', 'Categorias', 'Tipos de receita e despesa'),
+      F.can('p2') ? item('importar-whatsapp', 'download-simple', 'Importar do WhatsApp', 'Cole a mensagem e lance os itens como pendentes') : '',
     ].join('');
     slot.innerHTML = `<span class="label fin-sec">Cadastros e financeiro</span>${itens}`;
     CC.$$('[data-fin]', slot).forEach((b) => b.addEventListener('click', () => CC.go(b.dataset.fin)));

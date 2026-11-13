@@ -1,5 +1,13 @@
 # Handoff — Centro de Custos
 
+## 2026-11-13 BRT — fluxo de lançar mais direto, celular e computador (Claude Code)
+
+- Base: `origin/main` em `934af36`, branch `feat/fluxo-mais-simples`, worktree `C:\cc-mobile`.
+- Computador (`public/d/`): Categoria começa em "Escolha a categoria" (antes a primeira da lista era gravada sem aviso); Enter salva no painel e o foco começa na Descrição; sucesso do lançamento tem "Anexar documento" e "Lançar outro" mantém a obra; fornecedor conhecido traz a categoria dele; última obra lembrada; conta em aberto ganha "Marcar como pago" na linha (`L.pagar`); anexar não pede mais "Descartar as alterações?"; Novo lançamento usa a obra do filtro.
+- Celular (`public/m/`): aba Lançar volta para a tela de origem e já traz a obra; última obra lembrada; descrição opcional (usa categoria e fornecedor); erro leva o foco ao campo; "Lançar outra" mantém situação, forma e data; pendências do Resumo da obra abrem a aba que resolve; Voltar da obra respeita a origem; fila do técnico não abre serviço sem id. Cache `cc-celular-v40`.
+- Validação: `npm run verify` 831/831. Tela de lançar do celular exercitada no navegador em 375 px com dados de teste; computador não aberto no navegador; sem login real.
+- Próximo passo: publicar (`npm run deploy:cloud`) quando o Lucas autorizar. Bloqueios: nenhum.
+
 ## 2026-11-01 BRT — importação WhatsApp aceita linhas idênticas (Claude Code)
 
 - Base: `origin/main` em `9fa047b`, branch `feat/whatsapp-linhas-identicas`, sem push. Duas linhas iguais na mesma mensagem (valor, descrição e centro) viravam pendência; agora cada item fica com uma linha, na ordem, quando a extração traz exatamente a mesma quantidade de linhas iguais que a mensagem. Quantidade diferente continua pendência.

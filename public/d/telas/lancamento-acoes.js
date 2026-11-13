@@ -46,6 +46,37 @@
     });
   };
 
+  // Marcar como pago (ou recebido) direto da lista: data e forma, sem abrir o lancamento inteiro.
+  L.pagar = async function (l) {
+    const rec = l.tipo === 'receita';
+    let enviando = false;
+    const ctl = await D.painel.abrir({
+      icone: 'check', titulo: rec ? 'Marcar como recebido' : 'Marcar como pago', sub: [l.centro_codigo, l.descricao].filter(Boolean).join(' · '),
+      corpo: `<div class="card resumo-lanc"><b>${esc(l.descricao)}</b><span class="muted">${esc(D.valorSinal(l).texto)}</span></div>
+        ${U.campo({ rotulo: rec ? 'Data do recebimento' : 'Data do pagamento', name: 'data_liquidacao', tipo: 'date', valor: CC.today() })}
+        ${U.campo({ rotulo: 'Forma de pagamento', name: 'forma_pagamento', tipo: 'select', valor: l.forma_pagamento || '', opcoes: ['', 'Pix', 'Boleto', 'Transferência', 'Cartão', 'Dinheiro', 'Outro'].map((x) => ({ valor: x, rotulo: x || 'Escolha' })) })}`,
+      rodape: `<button type="button" class="btn btn-s" data-fechar>Cancelar</button><button type="button" class="btn btn-p" data-salvar>${D.ic('check')}Confirmar</button>`,
+    });
+    if (!ctl) return;
+    CC.$('[data-salvar]', ctl.rodape).addEventListener('click', async () => {
+      const data = CC.$('[name="data_liquidacao"]', ctl.corpo).value;
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(data)) { ctl.erro('Informe a data.'); return; }
+      if (enviando) return;
+      enviando = true;
+      try {
+        await CC.api(`/lancamentos/${l.id}`, { method: 'PUT', body: { ...L.corpoDe(l), status_financeiro: 'liquidado', data_liquidacao: data, forma_pagamento: CC.$('[name="forma_pagamento"]', ctl.corpo).value, revisao: Number(l.revision) } });
+        ctl.marcarSalvo();
+        ctl.fechar(true);
+        CC.toast(rec ? 'Marcado como recebido' : 'Marcado como pago');
+        if (L.recarregar) L.recarregar();
+      } catch (error) {
+        ctl.erro(error.status === 0 ? 'Sem internet. Marcar como pago precisa da conexão.' : error.message);
+      } finally {
+        enviando = false;
+      }
+    });
+  };
+
   L.excluir = async function (l) {
     const sim = await D.confirmar({
       titulo: 'Excluir este lançamento?',

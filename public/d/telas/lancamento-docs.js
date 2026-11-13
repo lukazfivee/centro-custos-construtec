@@ -95,7 +95,7 @@
       }
     }
 
-    input.addEventListener('change', () => enviar(input.files[0]));
+    input.addEventListener('change', (e) => { e.stopPropagation(); enviar(input.files[0]); });
     zona.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); input.click(); } });
     zona.addEventListener('dragover', (e) => { e.preventDefault(); zona.classList.add('sobre'); });
     zona.addEventListener('dragleave', () => zona.classList.remove('sobre'));

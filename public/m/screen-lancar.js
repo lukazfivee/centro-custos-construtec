@@ -24,17 +24,18 @@
 
   function validate(d) {
     const rec = d.tipo === 'receita';
-    if (!d.obraId) return 'Escolha a obra.';
-    if (!d.categoriaId) return 'Escolha a categoria.';
-    if (!d.descricao.trim()) return rec ? 'Descreva a receita.' : 'Descreva a despesa.';
-    if (!(d.valor > 0)) return rec ? 'Informe o valor da receita.' : 'Informe o valor da despesa.';
-    if (!d.data) return 'Informe a data.';
-    if (d.pagamento === 'apagar' && !d.vencimento) return 'Informe o vencimento.';
-    if (d.pagamento === 'pago' && !d.liquidacao) return rec ? 'Informe a data do recebimento.' : 'Informe a data do pagamento.';
+    if (!d.obraId) return ['Escolha a obra.', 'f-obra'];
+    if (!(d.valor > 0)) return [rec ? 'Informe o valor da receita.' : 'Informe o valor da despesa.', 'f-valor'];
+    if (!d.categoriaId) return ['Escolha a categoria.', 'f-cat'];
+    if (!d.data) return ['Informe a data.', 'f-data'];
+    if (d.pagamento === 'apagar' && !d.vencimento) return ['Informe o vencimento.', 'f-venc'];
+    if (d.pagamento === 'pago' && !d.liquidacao) return [rec ? 'Informe a data do recebimento.' : 'Informe a data do pagamento.', 'f-liq'];
     const fe = CC.lanc && CC.lanc.fechado(d.data);
-    if (fe) return `A competência de ${CC.lanc.mesAno(d.data)} está fechada. Use outra data ou peça ao administrador para reabrir.`;
-    return '';
+    if (fe) return [`A competência de ${CC.lanc.mesAno(d.data)} está fechada. Use outra data ou peça ao administrador para reabrir.`, 'f-data'];
+    return null;
   }
+
+  const ultimaObra = () => { try { return Number(localStorage.getItem('cc_ultima_obra')) || undefined; } catch { return undefined; } };
 
   function read(el) {
     const v = (id) => { const x = CC.$(`#${id}`, el); return x ? x.value : ''; };
@@ -59,8 +60,9 @@
     const from = (params && params.from) || ['home'];
     if (params && params.editar) draft = fromTx(params.editar);
     else if (!draft || (params && params.novo)) {
-      draft = { tipo: (params && params.tipo) || 'despesa', obraId: params && params.obraId, categoriaId: 0, foto: null, pagamento: 'apagar', data: CC.today(), vencimento: CC.today(),
-        liquidacao: CC.today(), forma: '', valor: NaN, descricao: '', favorecido: '', documento: '', observacao: '' };
+      const k = (params && params.manter) || {};
+      draft = { tipo: (params && params.tipo) || 'despesa', obraId: (params && params.obraId) || ultimaObra(), categoriaId: 0, foto: null, pagamento: k.pagamento || 'apagar', data: k.data || CC.today(), vencimento: CC.today(),
+        liquidacao: k.liquidacao || CC.today(), forma: k.forma || '', valor: NaN, descricao: '', favorecido: '', documento: '', observacao: '' };
     }
     const editing = !!draft.id;
     const el = CC.render('<div class="skeleton"></div>', true);
@@ -89,9 +91,9 @@
       <label class="field"><span>Obra</span><select id="f-obra">${opt(obraList, draft.obraId, 'Escolha a obra')}</select></label>
       <label class="field"><span>${rec ? 'Cliente / pagador' : 'Fornecedor'}</span><input id="f-forn" maxlength="160" autocomplete="off" list="f-forn-lista" value="${esc(draft.favorecido)}" placeholder="${rec ? 'Nome ou razão social' : 'Ex.: Seg Distribuidora'}"></label>
       <datalist id="f-forn-lista">${fornList.map((x) => `<option value="${esc(x.nome)}"></option>`).join('')}</datalist>
-      <label class="field"><span>Descrição</span><input id="f-desc" maxlength="240" autocomplete="off" value="${esc(draft.descricao)}" placeholder="${rec ? 'Ex.: Medição 3' : 'Ex.: Cabos e conectores'}"></label>
+      <label class="field"><span>Descrição · opcional</span><input id="f-desc" maxlength="240" autocomplete="off" value="${esc(draft.descricao)}" placeholder="Em branco, usa a categoria"></label>
       <label class="field money"><span>Valor</span><input id="f-valor" inputmode="decimal" autocomplete="off" value="${esc(value)}" placeholder="0,00"></label>
-      <div class="grid2"><label class="field"><span>Data (competência)</span><input id="f-data" type="date" value="${esc(draft.data)}"></label>
+      <div class="grid2"><label class="field"><span>Data</span><input id="f-data" type="date" value="${esc(draft.data)}"></label>
         <label class="field"><span>Nota fiscal</span><input id="f-nf" maxlength="80" value="${esc(draft.documento)}" placeholder="Opcional"></label></div>
       <label class="field"><span>Categoria</span><select id="f-cat">${opt(catList, draft.categoriaId, 'Escolha a categoria')}</select></label>
       <div class="field"><span>Situação</span><div class="seg" role="group" aria-label="Situação">
@@ -106,6 +108,10 @@
     document.body.classList.add('no-tabs');
     CC.$('#voltar', page).addEventListener('click', () => { draft = null; CC.go(from[0], from[1]); });
     const redraw = () => CC.screens.lancar({ from });
+    CC.$('#f-forn', page).addEventListener('change', (event) => {
+      const forn = fornList.find((x) => x.nome === event.target.value.trim()), cat = CC.$('#f-cat', page);
+      if (forn && forn.categoria_id && !cat.value && catList.some((c) => c.id === Number(forn.categoria_id))) cat.value = String(forn.categoria_id);
+    });
     for (const id of ['f-cam', 'f-gal']) {
       const input = CC.$(`#${id}`, page);
       if (input) input.addEventListener('change', async (event) => {
@@ -122,7 +128,10 @@
       const d = read(page);
       const problem = validate(d);
       const showErr = (msg) => { CC.$('#err', page).innerHTML = `${icon('warning-circle', 16)}<span>${esc(msg)}</span>`; };
-      if (problem) return showErr(problem);
+      if (problem) { const campo = CC.$(`#${problem[1]}`, page); if (campo) { campo.scrollIntoView({ block: 'center' }); campo.focus(); } return showErr(problem[0]); }
+      // Sem descricao, vale a categoria (e o fornecedor), como no gasto de servico.
+      if (!d.descricao.trim()) d.descricao = [(catList.find((c) => c.id === d.categoriaId) || {}).nome, d.favorecido].filter(Boolean).join(' · ');
+      try { localStorage.setItem('cc_ultima_obra', String(d.obraId)); } catch { /* so nao lembra */ }
       const button = CC.$('#salvar', page);
       button.disabled = true;
       const obra = obraList.find((o) => o.id === d.obraId);
@@ -175,7 +184,8 @@
       <div class="actions"><button class="btn2" type="button" id="outra">${icon('camera', 18)}Lançar outra</button>
         <button class="btn" type="button" id="ver">Ver lançamentos</button></div>`, true);
     document.body.classList.add('no-tabs');
-    CC.$('#outra', el).addEventListener('click', () => CC.go('lancar', { obraId: p.cost_center_id, tipo: p.tipo, novo: true, from }));
+    CC.$('#outra', el).addEventListener('click', () => CC.go('lancar', { obraId: p.cost_center_id, tipo: p.tipo, novo: true, from,
+      manter: { pagamento: p.status_financeiro === 'liquidado' ? 'pago' : 'apagar', forma: p.forma_pagamento || '', data: p.data, liquidacao: p.data_liquidacao || undefined } }));
     CC.$('#ver', el).addEventListener('click', () => CC.go('obra', { id: p.cost_center_id, tab: 'lanc' }));
   };
 })(window.CC = window.CC || {});

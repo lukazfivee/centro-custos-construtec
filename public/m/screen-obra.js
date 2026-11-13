@@ -46,9 +46,9 @@
     const overdue = list.filter((t) => t.situacao === 'vencido');
     const toPay = list.filter((t) => t.status_financeiro === 'pendente' && t.tipo === 'despesa' && t.situacao !== 'vencido');
     const pend = [];
-    if (overdue.length) pend.push(['warning-circle', overdue.length === 1 ? '1 conta vencida' : `${overdue.length} contas vencidas`, money(overdue.reduce((s, t) => s + Number(t.valor), 0))]);
-    if (p !== null && p > 100) pend.push(['trend-up', 'Custo acima do orçado', `${p}% do orçado`]);
-    if (toPay.length) pend.push(['calendar-blank', toPay.length === 1 ? '1 conta a pagar' : `${toPay.length} contas a pagar`, money(toPay.reduce((s, t) => s + Number(t.valor), 0))]);
+    if (overdue.length) pend.push(['caixa', 'warning-circle', overdue.length === 1 ? '1 conta vencida' : `${overdue.length} contas vencidas`, money(overdue.reduce((s, t) => s + Number(t.valor), 0))]);
+    if (p !== null && p > 100) pend.push(['orcado', 'trend-up', 'Custo acima do orçado', `${p}% do orçado`]);
+    if (toPay.length) pend.push(['caixa', 'calendar-blank', toPay.length === 1 ? '1 conta a pagar' : `${toPay.length} contas a pagar`, money(toPay.reduce((s, t) => s + Number(t.valor), 0))]);
     return `<div class="card"><span class="label">Resultado até agora</span>
         <div class="big">${esc(CC.signed(Number(c.total_receitas) - Number(c.total_despesas)))}</div>
         ${contract ? `<div class="kv"><span>Contrato (receita)</span><b>${esc(money(contract))}</b></div>` : ''}
@@ -59,7 +59,7 @@
         ${p === null ? '' : `<div class="bar${p > 100 ? ' warn' : ''}" style="margin-top:8px"><span style="width:${Math.min(100, p)}%"></span></div>
         <small class="muted">Gasto em relação ao orçamento da obra · ${p}%</small>`}</div>
       <span class="label">Resolver nesta obra</span>
-      ${pend.length ? pend.map(([ic, t, v]) => `<div class="card task hot"><span class="ic">${icon(ic, 18)}</span><span class="txt"><b>${esc(t)}</b><small>${esc(v)}</small></span></div>`).join('')
+      ${pend.length ? pend.map(([aba, ic, t, v]) => `<button class="card task hot" type="button" data-tab="${aba}"><span class="ic">${icon(ic, 18)}</span><span class="txt"><b>${esc(t)}</b><small>${esc(v)}</small></span>${icon('caret-right', 18)}</button>`).join('')
         : `<div class="empty">${icon('check-circle', 24)}Nada pendente nesta obra.</div>`}`;
   }
 
@@ -71,8 +71,9 @@
   CC.screens.obra = async function (params) {
     const id = Number(params && params.id);
     const tab = (params && params.tab) || 'resumo';
+    const from = (params && params.from) || ['obras'];
     const el = CC.render(`<div class="top obra-top"><button class="back" type="button" id="voltar" aria-label="Voltar">${icon('caret-left', 20)}</button><h1>Obra</h1></div><div class="skeleton"></div>`, true);
-    CC.$('#voltar', el).addEventListener('click', () => CC.go('obras'));
+    CC.$('#voltar', el).addEventListener('click', () => CC.go(from[0], from[1]));
     let result;
     try {
       [result] = await Promise.all([CC.cached(`obra-${id}`, `/centros-custo/${id}/detalhes?mes=${CC.month()}`), CC.sv ? CC.sv.loadPerms() : null]);
@@ -88,7 +89,7 @@
         <div class="card">${[['Código', c.codigo], ['Cliente', c.cliente], ['Local', c.local], ['Situação', situacoes[c.situacao] || c.situacao]]
           .map(([k, v]) => `<div class="kv"><span>${k}</span><b>${esc(v || '—')}</b></div>`).join('')}</div>
         <div class="card"><span class="label">Descrição</span><p class="tc-relato">${esc(c.descricao || 'Sem descrição registrada.')}</p></div>`, true, params);
-      CC.$('#voltar').addEventListener('click', () => CC.go('obras'));
+      CC.$('#voltar').addEventListener('click', () => CC.go(from[0], from[1]));
       return;
     }
     if (CC.suite) CC.suite.context = { proposta: c.proposta_origem || null };
@@ -105,9 +106,9 @@
       ${body}
       ${tab === 'resumo' && CC.sv && CC.sv.can('p5') ? '<div id="obra-tecnicos"></div>' : ''}
       <div class="actions"><button class="btn" type="button" id="lancar">${icon('camera', 18)}Lançar despesa</button></div>`, true, params);
-    CC.$('#voltar').addEventListener('click', () => CC.go('obras'));
-    CC.$$('[data-tab]').forEach((b) => b.addEventListener('click', () => CC.screens.obra({ id, tab: b.dataset.tab })));
-    CC.wireTx(document, ['obra', { id, tab }]);
+    CC.$('#voltar').addEventListener('click', () => CC.go(from[0], from[1]));
+    CC.$$('[data-tab]').forEach((b) => b.addEventListener('click', () => CC.go('obra', { id, tab: b.dataset.tab, from })));
+    CC.wireTx(document, ['obra', { id, tab, from }]);
     const aba = CC.$('#obra-aba');
     if (aba && CC[ABAS[tab]]) CC[ABAS[tab]](aba, c);
     const sel = CC.$('.obra-abas [aria-pressed="true"]');

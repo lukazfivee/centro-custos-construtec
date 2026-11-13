@@ -14,7 +14,7 @@
 
   function estadoDe(l, a, obraInicial) {
     const hoje = CC.today();
-    const ativa = a.obras.find((o) => o.ativo !== false);
+    const ativa = a.obras.find((o) => o.ativo !== false && String(o.id) === L.ultimaObra()) || a.obras.find((o) => o.ativo !== false);
     if (!l) return { tipo: 'despesa', obra: String(obraInicial || (ativa ? ativa.id : '')), descricao: '', categoria: '', valor: '', favorecido: '', data: hoje, vencimento: hoje, status: 'pendente', liquidacao: hoje, forma: '', documento: '', observacao: '' };
     return {
       tipo: l.tipo, obra: String(l.cost_center_id), descricao: l.descricao || '', categoria: String(l.category_id), valor: valorBr(l.valor),
@@ -22,6 +22,9 @@
       liquidacao: l.data_liquidacao || l.data || hoje, forma: l.forma_pagamento || '', documento: l.documento || '', observacao: l.observacao || '',
     };
   }
+
+  L.ultimaObra = () => { try { return localStorage.getItem('cc_ultima_obra') || ''; } catch { return ''; } };
+  L.corpoDe = (l) => corpoPost(estadoDe(l, { obras: [] })); // corpo do PUT a partir da linha (marcar como pago)
 
   function camposHtml(e, a) {
     const obras = a.obras.filter((o) => o.ativo !== false || String(o.id) === e.obra);
@@ -31,7 +34,7 @@
       ${U.seg('tipo', [{ valor: 'despesa', rotulo: 'Despesa' }, { valor: 'receita', rotulo: 'Receita' }], e.tipo, 'Tipo do lançamento')}
       ${U.campo({ rotulo: 'Obra / centro de custo', name: 'cost_center_id', tipo: 'select', valor: e.obra, opcoes: obras.map((o) => ({ valor: o.id, rotulo: [o.codigo, o.nome].filter(Boolean).join(' · ') })) })}
       ${U.campo({ rotulo: 'Descrição', name: 'descricao', valor: e.descricao, placeholder: 'Ex.: NF 18.442 · Câmeras IP dome' })}
-      <div class="duas">${U.campo({ rotulo: 'Categoria', name: 'category_id', tipo: 'select', valor: e.categoria, opcoes: cats.map((c) => ({ valor: c.id, rotulo: c.nome })) })}
+      <div class="duas">${U.campo({ rotulo: 'Categoria', name: 'category_id', tipo: 'select', valor: e.categoria, opcoes: [{ valor: '', rotulo: 'Escolha a categoria' }, ...cats.map((c) => ({ valor: c.id, rotulo: c.nome }))] })}
         ${U.campo({ rotulo: 'Valor (R$)', name: 'valor', valor: e.valor, placeholder: '0,00' })}</div>
       ${U.campo({ rotulo: e.tipo === 'receita' ? 'Cliente / pagador' : 'Fornecedor / favorecido', name: 'favorecido', valor: e.favorecido, placeholder: 'Nome ou razão social' }).replace('<input ', '<input list="lista-fornecedores" autocomplete="off" ')}
       <datalist id="lista-fornecedores">${a.fornecedores.filter((x) => x.ativo !== false).map((x) => `<option value="${esc(x.nome)}"></option>`).join('')}</datalist>
@@ -76,8 +79,10 @@
     const linhas = [['Obra', D.obraTexto(vis)], ['Valor', D.valorSinal(vis).texto], ['Situação', naFila ? 'Guardado na fila · sai quando a internet voltar' : D.situacaoTexto(vis)]];
     ctl.desenhar(`${D.sucesso(naFila ? 'Guardado neste computador' : 'Lançamento registrado', l.descricao)}
       <div class="card resumo-ok">${linhas.map(([k, x]) => `<span><span class="muted">${esc(k)}</span><b>${esc(x)}</b></span>`).join('')}</div>`);
-    ctl.botoes(`<button type="button" class="btn btn-s" data-fechar>Fechar</button><button type="button" class="btn btn-p" data-outro>${D.ic('plus')}Lançar outro</button>`);
-    CC.$('[data-outro]', ctl.rodape).addEventListener('click', () => { ctl.fechar(true); L.formulario(null); });
+    ctl.botoes(`<button type="button" class="btn btn-s" data-fechar>Fechar</button>${l.id ? `<button type="button" class="btn btn-s" data-anexar>${D.ic('paperclip')}Anexar documento</button>` : ''}<button type="button" class="btn btn-p" data-outro>${D.ic('plus')}Lançar outro</button>`);
+    CC.$('[data-outro]', ctl.rodape).addEventListener('click', () => { ctl.fechar(true); L.formulario(null, null, l.cost_center_id); });
+    const anexar = CC.$('[data-anexar]', ctl.rodape);
+    if (anexar) anexar.addEventListener('click', () => { ctl.fechar(true); L.abrirPorId(l.id, 'docs'); });
     ctl.marcarSalvo();
   }
 
@@ -96,6 +101,10 @@
         if (b.dataset.seg === 'tipo') { if (e.tipo !== b.dataset.valor) e.categoria = ''; e.tipo = b.dataset.valor; } else e.status = b.dataset.valor;
         if (antes !== `${e.tipo}|${e.status}`) { desenharDados(ctl); ctl.sujo = true; }
       }));
+      CC.$('[name="favorecido"]', ctl.corpo).addEventListener('change', (ev) => {
+        const forn = a.fornecedores.find((x) => x.nome === ev.target.value.trim()), cat = CC.$('[name="category_id"]', ctl.corpo);
+        if (forn && forn.categoria_id && !cat.value && CC.$(`option[value="${Number(forn.categoria_id)}"]`, cat)) cat.value = String(Number(forn.categoria_id));
+      });
       CC.$('form', ctl.corpo).addEventListener('submit', (ev) => { ev.preventDefault(); salvar(ctl); });
     };
     const botoes = `<button type="button" class="btn btn-s" data-fechar>Cancelar</button><button type="button" class="btn btn-p" data-salvar>${D.ic('check')}${l ? 'Salvar alterações' : 'Registrar lançamento'}</button>`;
@@ -119,6 +128,7 @@
       const bt = CC.$('[data-salvar]', ctl.rodape);
       bt.disabled = true;
       const body = corpoPost(e);
+      try { localStorage.setItem('cc_ultima_obra', e.obra); } catch { /* so nao lembra */ }
       try {
         if (l) {
           await CC.api(`/lancamentos/${l.id}`, { method: 'PUT', body: { ...body, revisao: Number(l.revision) } });
@@ -181,11 +191,11 @@
     return L.soLeitura(l) ? L.leitura(l, aba) : L.formulario(l, aba);
   };
   // Abre pelo id, com os dados completos do servidor (atividades recentes, busca).
-  L.abrirPorId = async (id) => {
+  L.abrirPorId = async (id, aba) => {
     try {
       const { data } = await CC.api(`/lancamentos/${encodeURIComponent(id)}`);
       D.lancCache.set(String(data.id), data);
-      return L.abrir(data);
+      return L.abrir(data, aba);
     } catch (error) {
       CC.toast(error.status === 404 ? 'Este lançamento não existe mais.' : error.message, 'warning');
       return null;

@@ -60,6 +60,7 @@ button { cursor: pointer; }
 .summary b.warn { color: var(--warn); }
 
 .task { display: flex; align-items: center; gap: 12px; padding: 12px 14px; }
+button.task { width: 100%; border: 0; color: inherit; font: inherit; text-align: left; }
 .task .ic { width: 32px; height: 32px; flex: none; border-radius: 8px; display: grid; place-items: center; background: var(--accent-900); color: var(--accent-300); }
 .task.hot .ic { background: var(--warn-soft); color: var(--warn); }
 .task .txt { flex: 1; min-width: 0; }

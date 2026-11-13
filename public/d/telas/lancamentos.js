@@ -20,7 +20,8 @@
     const qtd = Number(l.qtd_anexos) || 0;
     const acoes = [
       `<button type="button" class="ibtn" data-acao="docs" aria-label="Documentos${qtd ? ` (${qtd})` : ''}" title="Documentos">${D.ic('paperclip', 18)}${qtd ? `<span class="cont">${qtd}</span>` : ''}</button>`,
-      L.podeEstornar(l) ? `<button type="button" class="ibtn" data-acao="estornar" aria-label="Estornar" title="Estornar">${D.ic('arrow-u-up-left', 18)}</button>` : '<span class="ibtn vago" aria-hidden="true"></span>',
+      L.podeEstornar(l) ? `<button type="button" class="ibtn" data-acao="estornar" aria-label="Estornar" title="Estornar">${D.ic('arrow-u-up-left', 18)}</button>`
+        : (l.status_financeiro === 'pendente' && !L.soLeitura(l) ? `<button type="button" class="ibtn" data-acao="pagar" aria-label="${l.tipo === 'receita' ? 'Marcar como recebido' : 'Marcar como pago'}" title="${l.tipo === 'receita' ? 'Marcar como recebido' : 'Marcar como pago'}">${D.ic('check', 18)}</button>` : '<span class="ibtn vago" aria-hidden="true"></span>'),
       L.podeExcluir(l) ? `<button type="button" class="ibtn" data-acao="excluir" aria-label="Excluir" title="Excluir">${D.ic('trash', 18)}</button>` : '',
     ].join('');
     const sub = [l.categoria, l.favorecido].filter(Boolean).join(' · ');
@@ -110,6 +111,7 @@
         const l = D.lancCache.get(tr.dataset.id);
         if (acao === 'docs') L.abrir(l, 'docs');
         else if (acao === 'estornar') L.estornar(l);
+        else if (acao === 'pagar') L.pagar(l);
         else if (acao === 'excluir') L.excluir(l);
         else L.abrir(l);
       };
@@ -131,7 +133,7 @@
       <div data-lista></div></div>`;
     const importar = CC.$('[data-whatsapp]', el); if (importar) importar.addEventListener('click', () => D.ir('importar-whatsapp'));
     CC.$('[data-csv]', el).addEventListener('click', () => baixarCsv(f));
-    CC.$('[data-novo]', el).addEventListener('click', () => L.formulario(null));
+    CC.$('[data-novo]', el).addEventListener('click', () => L.formulario(null, null, f.obra || undefined));
     await L.montarLista(CC.$('[data-lista]', el), { f, vivo, aoContar: (t) => { CC.$('.cab .sub', el).textContent = t; } });
 
     // #/lancamentos?id=5 abre o lancamento; ?novo=1 abre o formulario.

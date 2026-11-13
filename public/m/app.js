@@ -42,7 +42,7 @@
     if (!nav.dataset.drag && window.arrastarAbas) { nav.dataset.drag = '1'; window.arrastarAbas(nav, pickTab); }
     if (!nav.classList.contains('is-ready')) requestAnimationFrame(() => nav.classList.add('is-ready'));
   }
-  function pickTab(key) { CC.go(key, key === 'lancar' ? { novo: true, from: [current] } : undefined); }
+  function pickTab(key) { CC.go(key, key === 'lancar' ? { novo: true, from: [current, currentParams], obraId: current === 'obra' ? currentParams.id : undefined } : undefined); }
 
   // Botao voltar do aparelho: uma entrada de guarda no historico; voltar fecha a folha, volta de tela ou, na primeira, sai.
   const pilha = [];

@@ -4,3 +4,6 @@
 - **Trabalho em andamento: desktop novo do Centro de Custos.** Comece por `docs/suite-desktop/LEIA-ME.md` e `docs/suite-desktop/PROMPT-CLAUDE-CODE.md`. O andamento fica em `docs/suite-desktop/STATUS-CLAUDE.md`.
 - O site do celular (`public/m/`) e o app Android (`android/`) seguem o pacote `docs/suite-mobile/`. Não altere esses dois sem pedido.
 - Commit só na branch da fase. Push e merge só quando o Lucas pedir.
+
+## Continuidade multi-conta
+- Para tarefas tecnicas, consulte docs/ai/START-HERE.md e o estado da Issue; nao pressuponha acesso ao historico de outra conta Claude.

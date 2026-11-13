@@ -54,10 +54,11 @@
     else if (pilha.push([name, params]) > 30) pilha.shift();
   }
   window.addEventListener('popstate', () => {
-    const folha = document.querySelector('.sheet-backdrop');
+    const folha = [...document.querySelectorAll('.sheet-backdrop')].pop();
     if (!folha && pilha.length < 2) return history.back();
     history.pushState(null, '', `#${current}`);
-    if (folha) return folha.remove();
+    // Fecha pelo proprio botao Fechar (encerra ditado e ouvintes); sem botao, so remove.
+    if (folha) { const x = folha.querySelector('.sheet-x'); if (x) x.click(); return folha.isConnected && folha.remove(); }
     pilha.pop();
     CC.go(pilha[pilha.length - 1][0], pilha[pilha.length - 1][1], true);
   });

@@ -26,7 +26,7 @@
       ${clientes.length ? `<label class="field"><span>Cliente cadastrado</span><select id="cd-cad"><option value="">Escolher um cliente cadastrado</option>
         ${clientes.map((c) => `<option value="${esc(c.id)}">${esc([c.company, c.name].filter(Boolean).join(' · '))}</option>`).join('')}</select></label>` : ''}
       ${F.campo('Cliente', 'cd-cli', i.clientName, ' maxlength="160"')}
-      <label class="field"><span>E-mails do cliente · até 15, separados por vírgula</span><textarea id="cd-emails" rows="2" autocapitalize="off" spellcheck="false" placeholder="financeiro@cliente.com.br">${esc((i.clientEmails || []).join(', '))}</textarea></label>
+      <label class="field"><span>E-mails do cliente · até 15, separados por vírgula</span><textarea id="cd-emails" rows="2" inputmode="email" autocapitalize="off" spellcheck="false" placeholder="financeiro@cliente.com.br">${esc((i.clientEmails || []).join(', '))}</textarea></label>
       <div class="grid2">${F.campo('Responsável', 'cd-resp', i.responsible, ' maxlength="120"')}${F.campo('Número da NF', 'cd-nf', i.invoiceNumber, ' placeholder="Ex.: 2.199"')}</div>
       <label class="field"><span>Situação da obra</span><select id="cd-op">${opcoes(B.OP, i.operationalStatus)}</select></label>
       <label class="field"><span>Situação financeira</span><select id="cd-fin">${opcoes(B.FIN, i.financialStatus)}</select></label>

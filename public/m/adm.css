@@ -84,3 +84,4 @@ button.adm-row:active { background: var(--accent-900); }
 .adm-como span { flex: 1; min-width: 0; }
 .adm-como button { min-height: 44px; padding: 0 14px; border: 0; border-radius: 10px; background: var(--surface); color: var(--text); font-weight: 600; }
 body.no-tabs .adm-como { bottom: calc(12px + var(--sab)); }
+body:has(.adm-como) { padding-bottom: calc(var(--barra-topo) + 78px); }

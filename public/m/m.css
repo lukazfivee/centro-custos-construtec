@@ -275,14 +275,14 @@ body.no-tabs .tabs { display: none; }
 .ia-go { display: flex; margin-top: 10px; min-height: 40px; }
 .ia-note { display: block; margin-top: 6px; text-align: center; font-size: 11px; color: var(--n300); }
 .ia-report { display: flex; flex-direction: column; gap: 10px; width: 100%; } .ia-report .label { display: inline-flex; align-items: center; gap: 6px; }
-.ia-report .field textarea { min-height: 110px; padding: 10px 14px; font: 15px/1.4 var(--font); resize: vertical; }
+.ia-report .field textarea { min-height: 110px; padding: 10px 14px; font: 16px/1.4 var(--font); resize: vertical; }
 @keyframes iaDot { 0%, 80%, 100% { transform: scale(.5); opacity: .4 } 40% { transform: none; opacity: 1 } }
 @keyframes fadeIn { from { opacity: 0 } to { opacity: 1 } }
 @keyframes sheetIn { from { transform: translateY(105%) } to { transform: none } }
 @keyframes scrIn { from { opacity: 0; transform: translateX(18px) } to { opacity: 1; transform: none } }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } .tabs.is-moving::before { transform: translateX(var(--active-x, 0%)); } }
 /* Entrar pelo site do celular (iPhone e navegador): screen-entrar.js */
-.login { min-height: calc(100vh - var(--sat) - var(--sab) - 40px); max-width: 420px; width: 100%; margin: 0 auto; padding-top: 7vh; display: flex; flex-direction: column; gap: 12px; }
+.login { min-height: calc(100dvh - var(--sat) - var(--sab) - 40px); max-width: 420px; width: 100%; margin: 0 auto; padding-top: 7vh; display: flex; flex-direction: column; gap: 12px; }
 .login-logo { width: 56px; height: auto; }
 .login .title { margin: 6px 0 0; }
 .login .sub { margin: 0 0 8px; }
@@ -338,3 +338,8 @@ body.no-tabs .tabs { display: none; }
 .od-row.on .od-chk { background: var(--accent-300); color: #fff; box-shadow: none; }
 .od-selbar { position: sticky; bottom: 0; display: flex; gap: 10px; padding: 12px 0 calc(12px + env(safe-area-inset-bottom)); background: var(--bg); }
 .od-selbar .btn, .od-selbar .btn2 { flex: 1; }
+/* Celular: toque sem zoom duplo, folha trava a pagina de tras, alvos de 44 px. */
+html { -webkit-text-size-adjust: 100%; } button, a, label, summary, select { touch-action: manipulation; }
+html:has(.sheet-backdrop) { overflow: hidden; } .sheet-backdrop { overscroll-behavior: contain; }
+.od-selbar { bottom: calc(var(--barra-topo) + 26px); }
+.nf-st { position: relative; } .nf-st::after { content: ''; position: absolute; inset: -6px -4px; }

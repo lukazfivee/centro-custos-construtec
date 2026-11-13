@@ -44,7 +44,25 @@
   }
   function pickTab(key) { CC.go(key, key === 'lancar' ? { novo: true, from: [current] } : undefined); }
 
-  CC.go = function (name, params) {
+  // Botao voltar do aparelho: uma entrada de guarda no historico; voltar fecha a folha, volta de tela ou, na primeira, sai.
+  const pilha = [];
+  function empilha(name, params) {
+    const topo = pilha[pilha.length - 1], antes = pilha[pilha.length - 2];
+    if (!pilha.length) history.pushState(null, '', location.hash);
+    if (topo && topo[0] === name) topo[1] = params;
+    else if (antes && antes[0] === name) { pilha.pop(); antes[1] = params; }
+    else if (pilha.push([name, params]) > 30) pilha.shift();
+  }
+  window.addEventListener('popstate', () => {
+    const folha = document.querySelector('.sheet-backdrop');
+    if (!folha && pilha.length < 2) return history.back();
+    history.pushState(null, '', `#${current}`);
+    if (folha) return folha.remove();
+    pilha.pop();
+    CC.go(pilha[pilha.length - 1][0], pilha[pilha.length - 1][1], true);
+  });
+
+  CC.go = function (name, params, doHistorico) {
     if (!permitido(name)) return CC.toast('Seu acesso é operacional.', 'shield-check');
     const screen = CC.screens[name];
     if (!screen) return;
@@ -55,6 +73,7 @@
     CC.nav += 1;
     document.body.classList.remove('no-tabs');
     paintTabs();
+    if (!doHistorico) empilha(name, params);
     history.replaceState(null, '', `#${name}`);
     const nav = CC.nav;
     Promise.resolve(screen({ ...currentParams, __nav: nav })).catch((error) => {

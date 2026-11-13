@@ -67,3 +67,13 @@ input[type="checkbox"], input[type="radio"] { accent-color: var(--accent-300); }
   .task { gap: 10px; padding: 12px; }
   .summary { padding: 8px 12px; gap: 6px; }
 }
+/* Lupa da gota (abas-arrastar.js): copia das abas dentro da gota, com o mesmo transform dela (1,25 x 1,38 e o esticar do
+   arrasto), entao os icones aparecem ampliados e deformados como sob vidro; a fileira anda ao contrario de --drag-x para
+   o centro da gota ficar parado e encolhe um pouco, para o aumento final ser de 1,15x. So ao segurar ou arrastar; as abas de baixo somem sob a gota (mascara por aba, --i). */
+.tabs-lupa { position: absolute; z-index: 3; top: 4px; bottom: 4px; left: 4px; width: calc((100% - 8px) / var(--tabs-n)); border-radius: 25px; overflow: hidden; pointer-events: none; color: var(--tab-active); opacity: 0; transform: translateX(var(--drag-x, 0px)) scale(1.08, 1.12); }
+.tabs-lupa > span { display: grid; grid-template-columns: repeat(var(--tabs-n), minmax(0, 1fr)); width: calc(var(--tabs-n) * 100%); height: 100%; transform-origin: calc(var(--drag-x, 0px) + 100% / var(--tabs-n) / 2) 50%; transform: translateX(calc(-1 * var(--drag-x, 0px))) scale(.92, .833); }
+.tabs-lupa > span > span { min-width: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.tabs-lupa .ico-off { display: none; } .tabs-lupa .ico-on { display: block; }
+.tabs.is-held .tabs-lupa { opacity: 1; transform: translateX(var(--drag-x, 0px)) scale(1.25, 1.38); transition: opacity .16s .1s, transform .3s cubic-bezier(.3, 1.2, .5, 1); }
+.tabs.is-dragging .tabs-lupa { transform: translateX(var(--drag-x, 0px)) scale(calc(1.25 + var(--stretch, 0) * 1.4), calc(1.38 - var(--stretch, 0) * .5)); transition: opacity .16s, transform 0s; }
+.tabs.is-held > .tab { --lx: calc(var(--drag-x, 0px) + 50% - var(--i, 0) * 100%); -webkit-mask-image: linear-gradient(to right, #000 calc(var(--lx) - 64%), transparent calc(var(--lx) - 57%), transparent calc(var(--lx) + 57%), #000 calc(var(--lx) + 64%)); mask-image: linear-gradient(to right, #000 calc(var(--lx) - 64%), transparent calc(var(--lx) - 57%), transparent calc(var(--lx) + 57%), #000 calc(var(--lx) + 64%)); }

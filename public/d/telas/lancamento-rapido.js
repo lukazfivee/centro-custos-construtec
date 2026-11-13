@@ -18,7 +18,7 @@
       ${U.campo({ rotulo: 'Obra / centro de custo', name: 'cost_center_id', tipo: 'select', valor: estado.obra, opcoes: obras.map((o) => ({ valor: o.id, rotulo: [o.codigo, o.nome].filter(Boolean).join(' · ') })) })}
       ${U.campo({ rotulo: 'Descrição', name: 'descricao', valor: estado.descricao, placeholder: 'Ex.: NF 18.442 · Câmeras IP dome' })}
       <div class="duas">
-        ${U.campo({ rotulo: 'Categoria', name: 'category_id', tipo: 'select', valor: estado.categoria, opcoes: cats.map((c) => ({ valor: c.id, rotulo: c.nome })) })}
+        ${U.campo({ rotulo: 'Categoria', name: 'category_id', tipo: 'select', valor: estado.categoria, opcoes: [{ valor: '', rotulo: 'Escolha a categoria' }, ...cats.map((c) => ({ valor: c.id, rotulo: c.nome }))] })}
         ${U.campo({ rotulo: 'Valor (R$)', name: 'valor', valor: estado.valor, placeholder: '0,00' })}
       </div>
       <div class="duas">

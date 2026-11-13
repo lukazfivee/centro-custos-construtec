@@ -73,9 +73,9 @@
       CC.$$('[data-tc-filtro]', view).forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
       pintar();
     }));
-    CC.$$('[data-tc-obra]', view).forEach((b) => b.addEventListener('click', () => CC.go('obra', { id: Number(b.dataset.tcObra) })));
+    CC.$$('[data-tc-obra]', view).forEach((b) => b.addEventListener('click', () => CC.go('obra', { id: Number(b.dataset.tcObra), from: ['home'] })));
     const enviar = CC.$('#tc-fila', view);
-    if (enviar) enviar.addEventListener('click', () => { const item = fila[0]; if (item) CC.go('servico', { id: Number(item.servicoId), tab: 'exec' }); });
+    if (enviar) enviar.addEventListener('click', () => { const item = fila.find((i) => i.servicoId); if (item) CC.go('servico', { id: Number(item.servicoId), tab: 'exec' }); else CC.go('lancamentos'); });
     pintar();
   };
 })(window.CC = window.CC || {});

@@ -74,6 +74,8 @@
     const teclas = (event) => {
       if (document.querySelector('.dialogo-camada')) return;
       if (event.key === 'Escape') { event.preventDefault(); fecharSePuder(); return; }
+      const salvar = event.key === 'Enter' && event.target.matches('input:not([type="file"]):not([list])') && CC.$('[data-salvar]', raiz);
+      if (salvar && !salvar.disabled) { event.preventDefault(); salvar.click(); return; }
       D.prenderFoco(CC.$('.drawer', raiz), event);
     };
     raiz.addEventListener('input', () => { ctl.sujo = true; });
@@ -90,7 +92,7 @@
     atual = { raiz, ctl, anterior, teclas, aoFechar: o.aoFechar };
     document.body.appendChild(raiz);
     ctl.desenhar(o.corpo);
-    const primeiro = D.focaveis(corpo)[0] || CC.$('[data-fechar]', raiz);
+    const primeiro = CC.$('[name="descricao"]', corpo) || D.focaveis(corpo)[0] || CC.$('[data-fechar]', raiz);
     if (primeiro) primeiro.focus();
     return ctl;
   }

@@ -31,9 +31,11 @@
   L.lerFiltros = () => {
     let salvo = {};
     try { salvo = JSON.parse(localStorage.getItem(CHAVE) || '{}') || {}; } catch { salvo = {}; }
+    // Quem estava no "mes atual" continua no mes atual depois da virada (senao o lancamento novo some da lista).
+    if (salvo.salvoEm && salvo.salvoEm !== CC.month() && salvo.mes === salvo.salvoEm) salvo.mes = CC.month();
     return { ...PADRAO, ...salvo, pagina: 1 };
   };
-  L.guardarFiltros = (f) => { try { localStorage.setItem(CHAVE, JSON.stringify({ ...f, pagina: 1 })); } catch { /* segue */ } };
+  L.guardarFiltros = (f) => { try { localStorage.setItem(CHAVE, JSON.stringify({ ...f, pagina: 1, salvoEm: CC.month() })); } catch { /* segue */ } };
   L.padrao = () => ({ ...PADRAO, mes: CC.month() });
 
   // Situacao do prototipo -> parametros do servidor (tipo + situacao).

@@ -92,7 +92,7 @@
     const recarregar = () => CC.screens.lanc({ id, from });
     if (CC.lancDocs) CC.lancDocs(CC.$('#lanc-docs', page), l, recarregar);
     const pagar = CC.$('#pagar', page);
-    if (pagar) pagar.addEventListener('click', () => pagarSheet(l, recarregar));
+    if (pagar) pagar.addEventListener('click', () => pagarSheet(l, from[0] === 'obra' && from[1] && from[1].tab === 'caixa' ? voltar : recarregar));
     const m = CC.$('#lanc-mais', page);
     if (m) m.addEventListener('click', () => menu(l, { podeEditar, podeEstornar, podeExcluir }, from, recarregar, voltar));
   };

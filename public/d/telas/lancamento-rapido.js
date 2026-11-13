@@ -26,7 +26,7 @@
         ${U.campo({ rotulo: 'Vencimento', name: 'vencimento', tipo: 'date', valor: estado.vencimento })}
       </div>
       <div class="fld"><span>Situação</span>${U.seg('status', SITUACOES[estado.tipo], estado.status, 'Situação')}</div>
-      <div class="nota">${D.ic('lightning')}<span>Fornecedor, NF, observação e anexos ficam para depois: abra o lançamento na lista e use Editar.</span></div>
+      <div class="nota">${D.ic('lightning')}<span>Fornecedor, NF, observação e anexos ficam para depois: ao registrar, use Completar e anexar.</span></div>
     </form>`;
   }
 
@@ -56,8 +56,9 @@
     const linhas = [['Obra', D.obraTexto(l)], ['Valor', v.texto], ['Situação', D.situacaoTexto(l)]];
     ctl.desenhar(`${D.sucesso('Lançamento registrado', l.descricao)}
       <div class="card resumo-ok">${linhas.map(([k, x]) => `<span><span class="muted">${esc(k)}</span><b>${esc(x)}</b></span>`).join('')}</div>`);
-    ctl.botoes(`<button type="button" class="btn btn-s" data-fechar>Fechar</button><button type="button" class="btn btn-p" data-outro>${D.ic('plus')}Lançar outro</button>`);
+    ctl.botoes(`<button type="button" class="btn btn-s" data-fechar>Fechar</button><button type="button" class="btn btn-s" data-completar>${D.ic('paperclip')}Completar e anexar</button><button type="button" class="btn btn-p" data-outro>${D.ic('plus')}Lançar outro</button>`);
     CC.$('[data-outro]', ctl.rodape).addEventListener('click', aoOutro);
+    CC.$('[data-completar]', ctl.rodape).addEventListener('click', () => { ctl.fechar(true); D.lanc.abrirPorId(l.id); });
     ctl.marcarSalvo();
   }
 
@@ -68,7 +69,7 @@
       CC.api('/categorias').then((r) => (Array.isArray(r.data) ? r.data : [])).catch(() => []),
     ]);
     if (!obras.length) {
-      await D.avisar('Cadastre uma obra primeiro', 'O lançamento precisa de uma obra ou centro de custo ativo.');
+      if (await D.confirmar({ titulo: 'Cadastre uma obra primeiro', texto: 'O lançamento precisa de uma obra ou centro de custo ativo.', ok: 'Ir para Obras', cancelar: 'Agora não', tom: 'aviso' })) D.ir('obras');
       return;
     }
     const hoje = CC.today();

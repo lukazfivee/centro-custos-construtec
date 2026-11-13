@@ -20,17 +20,18 @@
     return (Array.isArray(data) ? data : []).filter((o) => o.ativo !== false);
   };
 
-  function kpis(r) {
+  function kpis(r, mes, obraId) {
     const k = D.ui.kpi;
+    const lista = (sit) => `#/lancamentos?sit=${sit}&mes=${mes}${obraId ? `&obra=${obraId}` : ''}`;
     const res = Number(r.saldo) || 0;
     const qv = Number(r.qtdVencidos) || 0;
     return [
       k({ rotulo: 'Recebido', valor: CC.money(r.receitas), det: `${D.plural(r.qtdRecebidos || 0, 'recebimento', 'recebimentos')} no mês`, icone: 'arrow-down-left', tom: 'ok' }),
       k({ rotulo: 'Pago', valor: CC.money(r.despesas), det: `${r.qtdPagos || 0} despesas liquidadas`, icone: 'arrow-up-right', tom: 'saida' }),
       k({ rotulo: 'Resultado', valor: CC.money(res), det: 'recebido − pago', icone: 'scales', tom: 'info', tomValor: res < 0 ? 'err' : 'ok' }),
-      k({ rotulo: 'A receber', valor: CC.money(r.aReceber), det: 'previsto em aberto', icone: 'hourglass', tom: 'info' }),
-      k({ rotulo: 'A pagar', valor: CC.money(r.aPagar), det: 'contas pendentes', icone: 'calendar-blank', tom: 'warn' }),
-      k({ rotulo: 'Vencidos', valor: CC.money(r.vencidos), det: qv ? `${D.plural(qv, 'conta', 'contas')} em atraso` : 'nenhuma pendência', icone: 'warning', tom: qv ? 'err' : 'ok', tomValor: qv ? 'err' : '' }),
+      k({ rotulo: 'A receber', valor: CC.money(r.aReceber), det: 'previsto em aberto', icone: 'hourglass', tom: 'info', href: lista('a_receber') }),
+      k({ rotulo: 'A pagar', valor: CC.money(r.aPagar), det: 'contas pendentes', icone: 'calendar-blank', tom: 'warn', href: lista('a_pagar') }),
+      k({ rotulo: 'Vencidos', valor: CC.money(r.vencidos), det: qv ? `${D.plural(qv, 'conta', 'contas')} em atraso` : 'nenhuma pendência', icone: 'warning', tom: qv ? 'err' : 'ok', tomValor: qv ? 'err' : '', href: qv ? lista('vencidos') : '' }),
     ].join('');
   }
 
@@ -70,7 +71,7 @@
     selObra.innerHTML = `<option value="">Todas as obras</option>${obras.map((o) => `<option value="${esc(o.id)}"${String(o.id) === obraId ? ' selected' : ''}>${esc(o.nome)}</option>`).join('')}`;
     CC.$('.cab .sub', el).textContent = subtitulo(mes, obraId, obras);
     CC.$('[data-corpo]', el).innerHTML = `
-      <div class="kpis seis">${kpis(resumo)}</div>
+      <div class="kpis seis">${kpis(resumo, mes, obraId)}</div>
       <div class="grade">
         <section class="card bloco" aria-labelledby="ini-evo">
           <div class="bcab"><b id="ini-evo">Evolução mensal · 12 meses</b>

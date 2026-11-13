@@ -51,6 +51,7 @@
     if (editar) editar.addEventListener('click', () => O.formulario(obra, () => D.ir(location.hash.replace(/^#\/?/, ''))));
     CC.$('[data-lancar]', el).addEventListener('click', () => D.lanc.formulario(null, null, c.id));
     CC.$('[data-relatorio]', el).addEventListener('click', () => O.relatorio(obra));
+    D.lanc.recarregar = () => { if (vivo()) D.ir(location.hash.replace(/^#\/?/, '')); };
     const corpo = CC.$('[data-aba-corpo]', el);
     const desenhar = O.abas[aba];
     if (desenhar) await desenhar(corpo, obra, vivo, data);

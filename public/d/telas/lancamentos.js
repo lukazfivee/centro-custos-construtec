@@ -127,6 +127,8 @@
 
   async function render(el, rota, vivo) {
     const f = L.lerFiltros();
+    // Vindo do Inicio (#/lancamentos?sit=a_pagar&mes=...&obra=...): a lista abre ja filtrada.
+    if (/^(a_pagar|a_receber|vencidos)$/.test(rota.query.sit || '')) Object.assign(f, L.padrao(), { sit: rota.query.sit, mes: /^\d{4}-\d{2}$/.test(rota.query.mes || '') ? rota.query.mes : CC.month(), obra: /^\d+$/.test(rota.query.obra || '') ? rota.query.obra : '' });
     L.esquecerApoio(); // ao abrir a tela, le de novo obras, categorias e meses fechados
     el.innerHTML = `<div class="pagina lancamentos">
       ${U.cabecalho({ grupo: 'Operação', titulo: 'Lançamentos', sub: ' ', acoes: `${D.tem('p2') ? `<button type="button" class="btn btn-s" data-whatsapp>${D.ic('clipboard-text')}Importar do WhatsApp</button>` : ''}<button type="button" class="btn btn-s" data-csv>${D.ic('download-simple')}Exportar CSV</button><button type="button" class="btn btn-p" data-novo>${D.ic('plus')}Novo lançamento</button>` })}

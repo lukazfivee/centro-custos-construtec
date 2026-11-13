@@ -109,7 +109,7 @@
       const nfs = todas.filter((n) => n.tipo === tipo);
       const total = nfs.reduce((t, n) => t + Number(n.valor || 0), 0);
       return `<div class="nf-bloco"><span class="line"><span class="grow"><span class="label">${esc(titulo)}</span><small class="muted">${esc(sub)}${nfs.length ? ` · ${esc(money(total))}` : ''}</small></span>
-        ${gerir ? `<button class="chip-act" type="button" data-nova-nf="${tipo}">${icon('plus', 14)}Lançar NF</button>` : ''}</span>
+        ${gerir ? `<button class="chip-act" type="button" data-nova-nf="${tipo}">${icon('plus', 14)}Registrar NF</button>` : ''}</span>
         ${nfs.map((n) => `<div class="tx nf-row"><span class="grow"><b>${esc(n.observacao || n.nomeArquivo || 'Nota fiscal')}</b><small>${esc([CC.dateFull(n.dataEmissao), money(n.valor)].filter(Boolean).join(' · '))}</small></span>
           ${gerir ? `<button class="tag${n.status === 'paga' ? ' ok' : ' warn'} nf-st" type="button" data-alternar="${n.id}" aria-label="Alternar situação">${statusTexto(tipo, n.status)}</button>` : `<span class="tag${n.status === 'paga' ? ' ok' : ' warn'}">${statusTexto(tipo, n.status)}</span>`}
           ${n.temArquivo ? `<button class="back" type="button" data-pdf="${n.id}" aria-label="Abrir o PDF">${icon('file-pdf', 20)}</button>` : ''}

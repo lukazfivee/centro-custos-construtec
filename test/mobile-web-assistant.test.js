@@ -97,3 +97,10 @@ test('assistente: declarações cobrem todas as ferramentas', () => {
   const runs = [...source.slice(source.indexOf('const RUN = {'), source.indexOf('IA.run =')).matchAll(/^ {4}async (\w+)\(/gm)].map((m) => m[1]).sort();
   assert.deepEqual(names, runs);
 });
+
+test('assistente: o papel dev (suiteRole) usa o assistente com as permissões do servidor', () => {
+  const { CC } = loadTools(async () => ({ data: {} }));
+  CC.session.user = () => ({ id: 3, role: 'admin', suiteRole: 'dev' });
+  CC.sv.role = () => 'dev';
+  assert.equal(CC.ia.role(), 'admin');
+});

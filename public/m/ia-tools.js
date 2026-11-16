@@ -10,9 +10,10 @@
   const ROLES = ['admin', 'gestor', 'financeiro', 'engenharia', 'tecnico', 'comercial'];
   IA.role = () => {
     const u = CC.session.user() || {}, raw = u.suiteRole || u.role;
-    if (!CC.session.token() || ![...ROLES, 'supervisor'].includes(raw)) return '';
+    if (!CC.session.token() || ![...ROLES, 'supervisor', 'dev'].includes(raw)) return '';
     const role = CC.d ? CC.d.papelSuite() : (CC.sv ? CC.sv.role() : (raw === 'supervisor' ? 'tecnico' : raw));
-    return ROLES.includes(role) ? role : '';
+    const efetivo = role === 'dev' ? 'admin' : role; // dev = tudo; as permissões vêm do servidor (can)
+    return ROLES.includes(efetivo) ? efetivo : '';
   };
   const can = (p) => Boolean(IA.role() && (CC.d ? CC.d.tem(p) : CC.sv && CC.sv.can(p)));
   const operational = () => IA.role() === 'tecnico' || !can('p1');

@@ -59,10 +59,12 @@
       return;
     }
     const fila = await S.naFila(sv.id);
+    const verba = D.tem('p1') && !semRede ? await CC.api(`/centros-custo/${encodeURIComponent(id)}/detalhes`)
+      .then((r) => Number(r.data?.centro?.verba_realocada_manutencao || 0)).catch(() => 0) : 0;
     if (!vivo()) return;
     el.innerHTML = `<div class="pagina servico">${topo(sv, fila)}
       ${semRede ? U.faixa('warn', 'cloud-slash', 'Sem internet. Você está vendo o que foi carregado antes; as despesas na fila sobem quando a conexão voltar.', `<button type="button" class="btn btn-s" data-tentar>${D.ic('arrow-clockwise')}Atualizar</button>`) : ''}
-      <div class="grade-sv"><div class="principal">${B.kpis(sv, fila)}${B.porTipo(sv)}${B.lancamentos(sv, fila)}${B.anexos(sv)}</div>
+      <div class="grade-sv"><div class="principal">${B.kpis(sv, fila)}${verba ? `<section class="card bloco-sv"><b>Verba recebida de manutenção</b><p>${esc(CC.money(verba))}</p></section>` : ''}${B.porTipo(sv)}${B.lancamentos(sv, fila)}${B.anexos(sv)}</div>
         <div class="lado">${B.feito(sv)}${B.fotos(sv)}${B.aceite(sv)}${B.cobranca(sv)}</div></div></div>`;
     D.tecnicos.ligar(el, sv.id);
     ligar(el, sv, recarregar);

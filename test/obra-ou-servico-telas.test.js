@@ -22,7 +22,7 @@ test('desktop: abas Obras / Servicos / Todos com escolha lembrada e totais por t
 test('desktop: formulario escolhe Obra ou Servico e envia o tipo', () => {
   const form = ler('public/d/telas/obra-form.js');
   assert.match(form, /rotulo: 'Obra ou serviço', name: 'tipo'/);
-  assert.match(form, /tipo: v\('tipo'\) === 'servico' \? 'servico' : 'obra'/);
+  assert.match(form, /\['servico', 'contrato_manutencao'\]\.includes\(v\('tipo'\)\)/);
   assert.match(form, /Novo serviço/);
 });
 
@@ -49,5 +49,5 @@ test('migracao: coluna kind com obra como padrao e so obra ou servico', () => {
 test('sincronismo leva o tipo: pacote inteligente, CSV de cadastros e descarte', () => {
   assert.match(ler('services/smartSync.js'), /'description','kind'\]/);
   assert.match(ler('routes/cadastroSync.js'), /r\.kind \|\| 'obra'/);
-  assert.match(ler('services/costCenterArchive.js'), /kind: r\.kind === 'servico' \? 'servico' : 'obra'/);
+  assert.match(ler('services/costCenterArchive.js'), /\['servico', 'contrato_manutencao'\]\.includes\(r\.kind\)/);
 });

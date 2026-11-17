@@ -15,6 +15,7 @@ const { recordAudit } = require('../services/audit');
 const { getPortfolioSummary } = require('../services/budgets/budgetPortfolio');
 const { getCostCenterCurveS } = require('../services/budgets/budgetCurveS');
 const { getProposalOrigin } = require('../services/budgets/proposalOrigin');
+const { ensurePeriods, skipInactivePeriods } = require('../services/maintenanceBalance');
 
 const router = express.Router();
 router.use(autenticar);
@@ -94,6 +95,8 @@ router.get('/:id/detalhes', asyncRoute(async (req, res) => {
       cc.start_date::text AS data_inicio, cc.end_date::text AS data_fim,
       cc.contract_amount AS valor_contrato, cc.project_status AS situacao,
       cc.monthly_budget AS orcamento, cc.active AS ativo,cc.revision,cc.kind AS tipo,
+      COALESCE((SELECT SUM(m.amount * CASE WHEN m.reversal_of IS NULL THEN 1 ELSE -1 END)
+        FROM maintenance_movements m WHERE m.destination_id=cc.id AND m.movement_date<=${todaySql()}),0) AS verba_realocada_manutencao,
       COALESCE(SUM(t.amount * t.accounting_sign) FILTER (WHERE t.type='despesa'
         AND t.transaction_date >= $2 AND t.transaction_date < $3),0) AS total_comprometido_mes,
       COALESCE(SUM(t.amount * t.accounting_sign) FILTER (WHERE t.type='despesa'),0) AS total_comprometido,
@@ -150,15 +153,23 @@ router.get('/exportar.csv', bloquearEscopado, asyncRoute(async (req, res) => {
 router.post('/', exigirPermissao('p5'), asyncRoute(async (req, res) => {
   const data = validate(req.body);
   const publicId = crypto.randomUUID();
-  const { rows } = await getDb().query(
-    `INSERT INTO cost_centers
+  const created = await getDb().transaction(async (db) => {
+    if (data.kind === 'contrato_manutencao') await db.query('UPDATE financial_write_gate SET revision=revision+1 WHERE id=1');
+    const { rows } = await db.query(`INSERT INTO cost_centers
       (public_id,code,name,responsible,monthly_budget,client,contract_number,start_date,end_date,contract_amount,project_status,description,kind)
      VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13) RETURNING id,revision`,
     [publicId,data.code,data.name,data.responsible,data.budget,data.client,data.contractNumber,
       data.startDate,data.endDate,data.contractAmount,data.projectStatus,data.description,data.kind || 'obra']
-  );
-  await recordAudit({entityType:'obra',entityId:rows[0].id,action:'criada',summary:(data.kind === 'servico' ? 'Serviço criado: ' : 'Obra / centro criado: ')+data.name,data,user:req.usuario});
-  res.status(201).json(rows[0]);
+    );
+    if (data.kind === 'contrato_manutencao') {
+      const count = await ensurePeriods(db, { id:rows[0].id, active:true, start_date:data.startDate, end_date:data.endDate, monthly_budget:data.budget });
+      if (count) await recordAudit({entityType:'contrato_manutencao',entityId:rows[0].id,action:'competencias_criadas',summary:`Competências criadas no cadastro`,data:{ quantidade:count,valor_mensal:data.budget },user:req.usuario,client:db});
+    }
+    const label = data.kind === 'servico' ? 'Serviço criado: ' : data.kind === 'contrato_manutencao' ? 'Contrato de manutenção criado: ' : 'Obra / centro criado: ';
+    await recordAudit({entityType:'obra',entityId:rows[0].id,action:'criada',summary:label+data.name,data,user:req.usuario,client:db});
+    return rows[0];
+  });
+  res.status(201).json(created);
 }));
 
 router.put('/:id', exigirPermissao('p5'), asyncRoute(async (req, res) => {
@@ -167,21 +178,37 @@ router.put('/:id', exigirPermissao('p5'), asyncRoute(async (req, res) => {
   // Quem envia a revisao (desktop novo) nao sobrescreve a alteracao de outra pessoa.
   const expected = req.body.revisao == null || req.body.revisao === '' ? null : Number(req.body.revisao);
   if (expected !== null && (!Number.isInteger(expected) || expected < 1)) throw httpError(400, 'Revisão da obra inválida.');
-  const result = await getDb().query(
+  const result = await getDb().transaction(async (db) => {
+  await db.query('UPDATE financial_write_gate SET revision=revision+1 WHERE id=1');
+  const original = (await db.query(`SELECT id,kind,active,monthly_budget,start_date::text,end_date::text,
+    (created_at AT TIME ZONE 'America/Sao_Paulo')::date::text AS created_date FROM cost_centers WHERE id=$1 FOR UPDATE`, [id])).rows[0];
+  if (original?.kind === 'contrato_manutencao') {
+    if ((original.start_date || null) !== data.startDate && (await db.query('SELECT 1 FROM maintenance_periods WHERE cost_center_id=$1 LIMIT 1', [id])).rows.length) throw httpError(409, 'A data inicial não pode mudar após o registro de competências.');
+    if (!original.active && req.body.ativo !== false) await skipInactivePeriods(db, original);
+    const count = await ensurePeriods(db, original);
+    if (count) await recordAudit({entityType:'contrato_manutencao',entityId:id,action:'competencias_criadas',summary:'Competências geradas antes da atualização',data:{quantidade:count},user:req.usuario,client:db});
+    if (data.endDate && (await db.query('SELECT 1 FROM maintenance_periods WHERE cost_center_id=$1 AND period>date_trunc(\'month\',$2::date) LIMIT 1', [id,data.endDate])).rows.length) throw httpError(409, 'O término não pode excluir competências já registradas.');
+  }
+  const updated = await db.query(
     `UPDATE cost_centers SET code=$1,name=$2,responsible=$3,monthly_budget=$4,active=$5,
        client=$6,contract_number=$7,start_date=$8,end_date=$9,contract_amount=$10,
        project_status=$11,description=$12,kind=COALESCE($15::text,kind),revision=revision+1,updated_at=NOW()
-     WHERE id=$13 AND ($14::integer IS NULL OR revision=$14) RETURNING revision`,
+     WHERE id=$13 AND ($14::integer IS NULL OR revision=$14)
+       AND ($15::text IS NULL OR $15::text=kind OR NOT EXISTS
+         (SELECT 1 FROM maintenance_periods WHERE cost_center_id=$13)) RETURNING revision`,
     [data.code,data.name,data.responsible,data.budget,req.body.ativo !== false,data.client,
       data.contractNumber,data.startDate,data.endDate,data.contractAmount,data.projectStatus,
       data.description,id,expected,data.kind]
   );
-  if (!result.rowCount) {
-    const exists = await getDb().query('SELECT 1 FROM cost_centers WHERE id=$1', [id]);
+  if (!updated.rowCount) {
+    const exists = await db.query('SELECT kind,EXISTS(SELECT 1 FROM maintenance_periods WHERE cost_center_id=$1) AS has_periods FROM cost_centers WHERE id=$1', [id]);
+    if (exists.rows[0]?.has_periods && data.kind && exists.rows[0].kind !== data.kind) throw httpError(409, 'O tipo não pode mudar: o contrato já tem competências registradas.');
     if (exists.rows.length) throw httpError(409, 'Esta obra foi alterada por outra pessoa. Feche e abra de novo para ver a versão atual.');
     throw httpError(404, 'Centro de custo não encontrado.');
   }
-  await recordAudit({entityType:'obra',entityId:req.params.id,action:'atualizada',summary:'Obra / centro atualizado: '+data.name,data:{...data,revision:result.rows[0].revision},user:req.usuario});
+  await recordAudit({entityType:'obra',entityId:req.params.id,action:'atualizada',summary:'Obra / centro atualizado: '+data.name,data:{...data,revision:updated.rows[0].revision},user:req.usuario,client:db});
+  return updated;
+  });
   res.json({ ok: true,revisao:result.rows[0].revision });
 }));
 
@@ -215,11 +242,11 @@ function reportMonth(query) {
   return {month,range:monthRange(month)};
 }
 
-// Aceita 'obra' ou 'servico' (tipo ou kind). Vazio devolve null: quem chama decide o padrao.
+// Vazio devolve null: quem chama decide o padrao.
 function parseKind(value) {
   if (value == null || value === '') return null;
   const kind = String(value).trim().toLowerCase();
-  if (kind !== 'obra' && kind !== 'servico') throw httpError(400, 'Tipo inválido. Use obra ou servico.');
+  if (!['obra', 'servico', 'contrato_manutencao'].includes(kind)) throw httpError(400, 'Tipo inválido. Use obra, servico ou contrato_manutencao.');
   return kind;
 }
 

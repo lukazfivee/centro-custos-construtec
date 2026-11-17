@@ -5,6 +5,7 @@ const { recordAudit } = require('./audit');
 const { readTransactions, normalizeTransaction, sameBusiness, mutationError, writeTransaction } = require('./syncTransactions');
 const jobs = require('../lib/jobs');
 const { LINKED_TABLES } = require('./costCenterLinks');
+const { exportPeriods, importPeriods, exportMovements, importMovements } = require('./maintenanceSync');
 
 const FORMAT_VERSION = 3;
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -37,6 +38,8 @@ function financialStatusError(item, label) {
 
 async function buildPackage() {
   const db = getDb();
+  const periods = await exportPeriods(db);
+  const movements = await exportMovements(db);
   const instance = getInstanceIdentity();
   const [categories, centers, suppliers, transactions, tombstones] = await Promise.all([
     db.query(`SELECT public_id,name,type,active,revision,created_at,updated_at FROM categories ORDER BY public_id`),
@@ -80,13 +83,14 @@ async function buildPackage() {
       allocations:t.allocations || [],
     })),
   };
+  const maintenancePackage = periods.length > 0 || centers.rows.some((r) => r.kind === 'contrato_manutencao');
   const envelope = {
-    formatVersion:FORMAT_VERSION,
+    formatVersion:maintenancePackage ? 4 : FORMAT_VERSION,
     packageId:crypto.randomUUID(),
     generatedAt:new Date().toISOString(),
     source:{ id:instance.id,name:instance.name },
-    payload,
-    payloadHash:stableHash(payload),
+    payload: maintenancePackage ? { ...payload, maintenancePeriods:periods, maintenanceMovements:movements } : payload,
+    payloadHash:stableHash(maintenancePackage ? { ...payload, maintenancePeriods:periods, maintenanceMovements:movements } : payload),
   };
   return envelope;
 }
@@ -96,7 +100,8 @@ function parsePackage(content) {
   if (Buffer.byteLength(content, 'utf8') > 20 * 1024 * 1024) throw httpError(413, 'O pacote excede o limite de 20 MB.');
   let pack;
   try { pack = JSON.parse(content); } catch { throw httpError(400, 'O arquivo não contém um pacote JSON válido.'); }
-  if (Number(pack.formatVersion) !== FORMAT_VERSION) throw httpError(400, `Versão de pacote incompatível. Esperado: ${FORMAT_VERSION}.`);
+  if (![FORMAT_VERSION, 4].includes(Number(pack.formatVersion))) throw httpError(400, 'Versão de pacote incompatível.');
+  if (Number(pack.formatVersion) === 4 && !Array.isArray(pack.payload?.maintenancePeriods)) throw httpError(400, 'Competências de manutenção ausentes do pacote.');
   if (!UUID.test(String(pack.packageId || ''))) throw httpError(400, 'Identificador do pacote inválido.');
   if (!UUID.test(String(pack.source?.id || ''))) throw httpError(400, 'Identificador da instalação de origem inválido.');
   if (!pack.payload || typeof pack.payload !== 'object') throw httpError(400, 'Conteúdo do pacote ausente.');
@@ -123,7 +128,7 @@ async function addConflict(tx, packageImportId, type, publicId, reason, localDat
 
 // Obra ou servico. Pacotes antigos nao trazem o tipo: valem como obra.
 function kindOf(item) {
-  return item?.kind === 'servico' ? 'servico' : 'obra';
+  return ['servico', 'contrato_manutencao'].includes(item?.kind) ? item.kind : 'obra';
 }
 
 function validRevision(item) {
@@ -156,6 +161,10 @@ async function importSimpleEntity(tx, options) {
     result.incluidos += 1; result.porTipo[type].incluidos += 1; return;
   }
   const local = options.normalizeExisting(existing);
+  if (type === 'obra' && local.kind === 'contrato_manutencao' && item.kind !== local.kind) {
+    await addConflict(tx, packageImportId, type, item.publicId, 'O tipo do contrato de manutenção difere do pacote.', local, item, result);
+    return;
+  }
   if (sameJson(local, item, businessFields)) {
     result.ignorados += 1; result.porTipo[type].ignorados += 1; return;
   }
@@ -176,7 +185,7 @@ const ASYNC_ITEM_THRESHOLD = 200;
 
 function packageItemCount(pack) {
   const p = pack.payload;
-  return (p.categories?.length || 0) + (p.costCenters?.length || 0) + (p.suppliers?.length || 0) + (p.transactions?.length || 0);
+  return (p.categories?.length || 0) + (p.costCenters?.length || 0) + (p.suppliers?.length || 0) + (p.transactions?.length || 0) + (p.maintenancePeriods?.length || 0) + (p.maintenanceMovements?.length || 0);
 }
 
 // Aplica as exclusoes de centro de custo feitas em outra instalacao: grava a lapide local (para o centro nao ser
@@ -193,6 +202,7 @@ async function applyDeletedCostCenters(tx, ids, packageImportId, result) {
       for (const [table, label] of LINKED_TABLES) {
         if ((await tx.query(`SELECT 1 FROM ${table} WHERE cost_center_id=$1 LIMIT 1`, [center.id])).rows.length) { blocker = label; break; }
       }
+      if (!blocker && (await tx.query('SELECT 1 FROM maintenance_movements WHERE destination_id=$1 LIMIT 1', [center.id])).rows.length) blocker = 'destinações de manutenção recebidas';
       if (blocker) {
         await addConflict(tx, packageImportId, 'obra', publicId,
           `Esta obra foi excluída em outra instalação, mas aqui tem ${blocker} vinculados. Ela foi mantida; inative-a se não for mais usada.`,
@@ -220,6 +230,10 @@ async function runImport(pack, filename, user, ctx = noopJobContext) {
   };
 
   await db.transaction(async (tx) => {
+    if (Number(pack.formatVersion) === 4) {
+      await tx.query('LOCK TABLE recurring_templates IN SHARE ROW EXCLUSIVE MODE');
+      await tx.query('UPDATE financial_write_gate SET revision=revision+1 WHERE id=1');
+    }
     const inserted = await tx.query(`INSERT INTO sync_package_imports
       (package_id,filename,source_instance_id,source_instance_name,package_hash,imported_by)
       VALUES ($1,$2,$3,$4,$5,$6) RETURNING id`,
@@ -276,6 +290,7 @@ async function runImport(pack, filename, user, ctx = noopJobContext) {
     ctx.checkDeadline();
     const centerMap = new Map((await tx.query('SELECT public_id,id FROM cost_centers')).rows.map(r=>[String(r.public_id),r.id]));
     const categoryMap = new Map((await tx.query('SELECT public_id,id FROM categories')).rows.map(r=>[String(r.public_id),r.id]));
+    if (Number(pack.formatVersion) === 4) await importPeriods(tx, pack.payload.maintenancePeriods);
 
     const transactionItems = [...pack.payload.transactions].sort((a,b)=>Number(Boolean(a.reversalOf))-Number(Boolean(b.reversalOf)));
     for (let idx = 0; idx < transactionItems.length; idx++) {
@@ -336,6 +351,7 @@ async function runImport(pack, filename, user, ctx = noopJobContext) {
       }
     }
 
+    if (Number(pack.formatVersion) === 4) await importMovements(tx, pack.payload.maintenanceMovements || [], user);
     await tx.query('UPDATE sync_package_imports SET summary=$1::jsonb WHERE id=$2', [JSON.stringify(result), packageImportId]);
     await recordAudit({entityType:'sincronizacao',entityId:pack.packageId,action:'pacote_importado',
       summary:`Pacote inteligente importado: ${result.incluidos} incluído(s), ${result.atualizados} atualizado(s), ${result.conflitos} conflito(s).`,

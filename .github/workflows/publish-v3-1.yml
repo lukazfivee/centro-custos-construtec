@@ -20,8 +20,8 @@ jobs:
       # Unico lugar que muda a cada pre-lancamento: o numero da RC. O versionCode do
       # Android sai dele (3.1.0-rc.N -> 31000+N; ver versionCodeFor no Worker) e o app
       # instalado so oferece a atualizacao quando o codigo da release for maior.
-      RC_NUMBER: '54'
-      APP_NOTES: 'Tela de Logistica refeita no Centro de Custos: resumo com indicadores que abrem a lista, abas Ferramental, Materiais, Pendencias e Historico, fichas pendentes com revisao da divergencia, historico da ferramenta com impressao e tabelas em cartoes no celular.'
+      RC_NUMBER: '55'
+      APP_NOTES: 'Contratos de manutencao de volta ao Centro de Custos (competencias, faturamento, saldo e realocacao), mais o fluxo de lancar mais direto, Logistica e importacao do WhatsApp no celular e a barra de abas mais fluida.'
     steps:
       - name: Baixar codigo
         uses: actions/checkout@v7
@@ -98,6 +98,14 @@ jobs:
           make_latest: false
           body: |
             Pre-lancamento RC${{ env.RC_NUMBER }} da V3.1 para validacao interna.
+
+            Novidades da RC55:
+            - contratos de manutencao de volta: valor mensal desde o cadastro, acompanhamento de faturamento e pagamento, despesas recorrentes e avulsas, saldo acumulado e realocacao, inclusive envio ao financeiro como receita. Estavam na RC53 e nao entraram na RC54;
+            - fluxo de lancar mais direto no computador e no celular, com as pendencias do fluxo de uso;
+            - celular: Logistica do escritorio, importar do WhatsApp e CSV dos lancamentos; voltar do aparelho, folhas, alvos de toque e zoom do iOS ajustados;
+            - barra de abas: gota mais fluida, com lupa e zoom ao segurar;
+            - Suite: o Chamados abre em chamados.rcconstrutec.online e os links abrem na mesma aba; o papel dev administra os acessos do Chamados e usa a IA como administrador;
+            - correcao no ciclo de vida das apropriacoes de despesa; a migration nova e aplicada automaticamente ao abrir o app;
 
             Novidades da RC29:
             - barra de abas no estilo do iPhone (iOS 26): vidro transparente, lente que arrasta de uma aba para outra e icone preenchido na aba ativa;
